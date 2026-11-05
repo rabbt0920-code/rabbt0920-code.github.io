@@ -1,0 +1,2636 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>投胎修仙模擬器</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700&family=Noto+Serif+TC:wght@600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#0f1218;--bg2:#161a23;--card:#1b202b;--card2:#222937;--line:#2d3546;
+  --text:#ece6d6;--mute:#9ba2b0;--gold:#d9b45b;--gold-d:#8a7036;--jade:#6cc1a6;--red:#e2674d;--blue:#7fa6e0;
+  --r:14px;
+}
+*{box-sizing:border-box}
+html{color-scheme:dark}
+body{margin:0;min-height:100vh;color:var(--text);
+  background:radial-gradient(1100px 520px at 50% -8%,#212a3d 0%,rgba(15,18,24,0) 70%),var(--bg);
+  font:16px/1.75 'Noto Sans TC','PingFang TC','Microsoft JhengHei',system-ui,-apple-system,sans-serif}
+h1,h2,h3{font-family:'Noto Serif TC','Songti TC','PMingLiU',serif;font-weight:700;letter-spacing:.05em;margin:0;line-height:1.35}
+p{margin:0 0 .7em}
+button{font:inherit;color:inherit;cursor:pointer}
+button:focus-visible,summary:focus-visible,[tabindex]:focus-visible{outline:2px solid var(--gold);outline-offset:3px}
+h2[tabindex]:focus{outline:none}
+#app{max-width:780px;margin:0 auto;padding:18px 16px 72px}
+.muted{color:var(--mute)}.small{font-size:.86rem}
+.card{background:var(--card);border:1px solid var(--line);border-radius:var(--r);padding:20px;margin:14px 0}
+.card h2{font-size:1.35rem;margin-bottom:.5em}
+
+/* 按鈕 */
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:.4em;min-height:46px;padding:10px 22px;border-radius:999px;
+  border:1px solid var(--line);background:var(--card2);transition:background .15s,border-color .15s,transform .1s}
+.btn:hover:not(:disabled){border-color:var(--gold-d);background:#29324a}
+.btn:active:not(:disabled){transform:translateY(1px)}
+.btn.primary{background:linear-gradient(180deg,#e5c570,#c49a3e);color:#1a1405;border-color:#e9cf85;font-weight:700}
+.btn.primary:hover:not(:disabled){background:linear-gradient(180deg,#efd283,#cfa648)}
+.btn.ghost{background:transparent}
+.btn:disabled{opacity:.45;cursor:not-allowed}
+.btnrow{display:flex;flex-wrap:wrap;gap:10px;margin-top:16px}
+
+/* 標題頁 */
+.title{text-align:center;padding:44px 0 8px}
+.kicker{letter-spacing:.4em;color:var(--gold);font-size:.85rem;margin-bottom:.8em}
+.title h1{font-size:clamp(2.1rem,8vw,3.2rem);margin-bottom:.4em}
+.lead{max-width:34em;margin:0 auto 1.6em;color:#cfc9b8}
+.goals{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:22px 0;text-align:left}
+.goal{background:var(--card);border:1px solid var(--line);border-radius:var(--r);padding:14px 16px}
+.goal b{font-family:'Noto Serif TC',serif;font-size:1.1rem;display:block}
+.goal.done{border-color:var(--gold-d);background:linear-gradient(180deg,#262313,var(--card))}
+.goal .tag{font-size:.8rem;color:var(--gold)}
+.stampline{display:flex;flex-wrap:wrap;gap:6px 18px;justify-content:center;font-size:.9rem;color:var(--mute);margin:16px 0}
+details.reset{margin-top:28px;font-size:.88rem;color:var(--mute)}
+details.reset summary{cursor:pointer;display:inline-block;padding:6px}
+
+/* 詞條與配點 */
+.sec-h{display:flex;justify-content:space-between;align-items:baseline;gap:10px;flex-wrap:wrap;margin:6px 0 10px}
+.sec-h h3{font-size:1.1rem}
+.counter{color:var(--gold);font-weight:700}
+.traits{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:10px}
+.trait{text-align:left;background:var(--card2);border:1px solid var(--line);border-radius:12px;padding:10px 12px;min-height:76px;transition:border-color .15s,background .15s}
+.trait b{display:block;font-family:'Noto Serif TC',serif}
+.trait span{font-size:.85rem;color:var(--mute);display:block;line-height:1.5}
+.trait:hover:not(:disabled){border-color:var(--gold-d)}
+.trait.on{border-color:var(--gold);background:#2b2a1f}
+.trait.on b::after{content:' ✓';color:var(--gold)}
+.trait.rare b{color:var(--gold)}
+.trait:disabled{opacity:.5;cursor:not-allowed}
+.trait.locked{border-style:dashed}
+.alloc{display:grid;gap:8px}
+.arow{display:grid;grid-template-columns:4.2em 1fr auto;align-items:center;gap:12px;background:var(--card2);border:1px solid var(--line);border-radius:12px;padding:8px 12px}
+.arow .nm{font-family:'Noto Serif TC',serif}
+.arow .pv{font-size:.82rem;color:var(--mute)}
+.stepper{display:flex;align-items:center;gap:8px}
+.stepper button{width:40px;height:40px;border-radius:50%;border:1px solid var(--line);background:var(--bg2);font-size:1.2rem;line-height:1}
+.stepper button:hover:not(:disabled){border-color:var(--gold)}
+.stepper button:disabled{opacity:.35;cursor:not-allowed}
+.stepper output{min-width:1.6em;text-align:center;font-weight:700}
+
+/* HUD */
+.hud{position:sticky;top:0;z-index:5;background:rgba(15,18,24,.94);backdrop-filter:blur(6px);border-bottom:1px solid var(--line);margin:-18px -16px 6px;padding:12px 16px}
+.hud-top{display:grid;grid-template-columns:auto 1fr auto;gap:14px;align-items:center}
+.age{font-family:'Noto Serif TC',serif;font-size:2rem;font-weight:700;color:var(--gold);line-height:1}
+.age-u{font-size:.8rem;color:var(--mute);margin-left:2px}
+.realm b{font-family:'Noto Serif TC',serif;font-size:1.1rem}
+.realm small{color:var(--mute);display:block;font-size:.78rem;line-height:1.4}
+.hud .meta{text-align:right;font-size:.78rem;color:var(--mute);line-height:1.5}
+.bar{display:block;height:6px;border-radius:99px;background:#2a3142;overflow:hidden}
+.bar u{display:block;height:100%;background:var(--jade);border-radius:99px;transition:width .5s}
+.bar.xp u{background:linear-gradient(90deg,var(--gold-d),var(--gold))}
+.stats{display:grid;grid-template-columns:repeat(5,1fr);gap:8px;margin-top:10px}
+.stat{font-size:.82rem;color:var(--mute);line-height:1.3}
+.stat b{display:block;font-size:1.15rem;color:var(--text)}
+.stat .bar{height:4px;margin-top:3px}
+.chips{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px}
+.chip{display:inline-block;font-size:.76rem;line-height:1.5;padding:1px 9px;border-radius:99px;border:1px solid var(--line);background:var(--bg2);color:var(--mute);white-space:nowrap}
+.chip.gold{color:var(--gold);border-color:var(--gold-d)}
+.chip.danger{color:#ff9a85;border-color:#7b3a2e;background:#2a1713}
+.chip.lock{color:#ffd48a;border-color:#6f5a2a}
+.chip.cost{color:#e8c46a}
+.chip.st-bold{color:#f0a48f}.chip.st-diligent{color:#8fc9ff}.chip.st-timid{color:#c6b4f0}.chip.st-careful{color:#9bdcbc}
+
+/* 事件 */
+.event .passive{color:var(--mute);font-size:.86rem;margin-bottom:.8em}
+.etext{font-size:1.04rem;color:#ddd7c6}
+.opts{display:grid;gap:10px;margin-top:16px}
+.opt{text-align:left;background:var(--card2);border:1px solid var(--line);border-radius:12px;padding:12px 14px;min-height:56px;transition:border-color .15s,background .15s,transform .1s}
+.opt:hover:not(:disabled){border-color:var(--gold-d);background:#283148}
+.opt:active:not(:disabled){transform:translateY(1px)}
+.opt:disabled{opacity:.55;cursor:not-allowed}
+.olabel{display:block;font-weight:500}
+.ometa{display:flex;flex-wrap:wrap;gap:6px;margin-top:6px}
+.result{margin-top:16px;border-top:1px dashed var(--line);padding-top:16px}
+.roll{font-size:.86rem;color:var(--mute);margin-bottom:.6em}
+.roll strong{color:var(--text)}
+.roll b{padding:1px 10px;border-radius:99px;margin-left:6px;font-weight:700}
+.band-g .roll b{background:#2d4a3d;color:#9df0cc}
+.band-k .roll b{background:#2c3f53;color:#a9d1ff}
+.band-f .roll b{background:#4a3f25;color:#ffd48a}
+.band-b .roll b{background:#4d2a22;color:#ffa391}
+.rtext{font-size:1.04rem}
+.pextra{color:var(--gold);border-left:3px solid var(--gold-d);padding-left:12px;margin:.8em 0}
+.survive{color:#9df0cc;border-left:3px solid #3b7a62;padding-left:12px}
+.fx{list-style:none;padding:0;margin:.6em 0 0;display:flex;flex-wrap:wrap;gap:6px}
+.fx li{font-size:.84rem;padding:2px 10px;border-radius:99px;border:1px solid}
+.fx li.up{color:#9df0cc;border-color:#2f6a55;background:#142a23}
+.fx li.down{color:#ffa391;border-color:#7b3a2e;background:#2a1713}
+.unlock{margin-top:12px;padding:10px 14px;border:1px solid var(--gold-d);border-radius:12px;background:#262313;color:var(--gold)}
+.dead{color:#ffa391;font-family:'Noto Serif TC',serif;font-size:1.1rem;margin-top:12px}
+
+/* 一般元件 */
+.pbox{display:grid;gap:12px;margin-top:14px}
+.pcard{text-align:left;background:var(--card2);border:1px solid var(--line);border-radius:12px;padding:14px 16px}
+.pcard:hover{border-color:var(--gold)}
+.pcard b{font-family:'Noto Serif TC',serif;font-size:1.2rem;color:var(--gold)}
+.birth-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.birth-grid .card{margin:0}
+.birth-grid h3{font-size:1.05rem;color:var(--gold);margin-bottom:.2em}
+.endtitle{font-size:clamp(1.8rem,6vw,2.6rem);color:var(--gold);margin:.2em 0}
+.sum{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:10px;margin:14px 0}
+.sum div{background:var(--card2);border:1px solid var(--line);border-radius:12px;padding:8px 12px;font-size:.84rem;color:var(--mute)}
+.sum b{display:block;color:var(--text);font-size:1.05rem}
+.story p{font-size:1.04rem;line-height:1.95}
+.story em{color:var(--gold);font-style:normal}
+details.log{margin-top:16px;background:var(--card);border:1px solid var(--line);border-radius:var(--r);padding:6px 16px}
+details.log summary{cursor:pointer;padding:10px 0;color:var(--mute)}
+.log ol{margin:0;padding:0 0 10px 0;list-style:none;display:grid;gap:10px}
+.log li{font-size:.9rem;color:var(--mute);border-left:2px solid var(--line);padding-left:12px}
+.log li b{color:var(--text)}
+.toast{color:var(--gold);font-size:.9rem}
+
+@media (max-width:560px){
+  .goals,.birth-grid{grid-template-columns:1fr}
+  .hud-top{grid-template-columns:auto 1fr}
+  .hud .meta{grid-column:1/3;text-align:left;display:flex;gap:12px;flex-wrap:wrap}
+  .stats{gap:4px}
+  .stat{font-size:.74rem}
+  .arow{grid-template-columns:3.6em 1fr auto}
+}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+
+</style>
+</head>
+<body>
+<main id="app"></main>
+<script>
+// ===== data.js：遊戲資料（詞條、出身、事件） =====
+const SK={悟:'悟性',體:'體質',人:'人際',心:'心性',金:'金錢'};
+const SKEYS=['悟','體','人','心','金'];
+const REALMS=['凡人','練氣','築基','金丹','元嬰','化神','渡劫','仙尊'];
+const NEED=[0,10,30,60,100,150,210,280];      // 達到各境界所需修為
+const YEARS=[5,5,10,20,40,60,100,100];        // 各境界每回合經過的年數
+const LIFE=[55,110,180,400,900,1800,3500,1e9];// 各境界基礎壽元
+const BDC=[0,10,12,17,21,25,29,33];            // 突破難度
+const CLUE_NEED=4, CLUE_MAX=6;
+// 本命法寶：金丹期獲得，加成會隨境界成長
+const TAGN={fight:'體質檢定',learn:'悟性檢定',social:'人際檢定',heart:'心性檢定',money:'金錢檢定'};
+const TREASURES=[
+  {id:'dao',kind:'刀',n:'斷岳刀',fx:{體:1},tag:'fight',story:'刀身沉重，刃口殘留著上古戰場的殺氣。你握住刀柄的那一刻，刀鳴如龍吟。'},
+  {id:'jian',kind:'鐧',n:'鎮魂鐧',fx:{心:1},tag:'heart',story:'四稜鐧身黑得發亮，敲在地上，連心魔都要抖三抖。'},
+  {id:'fu',kind:'斧',n:'開山斧',fx:{體:1},style:'bold',story:'斧頭大得有點誇張，但你一抬手，竟然輕如鴻毛。「就是你了。」'},
+  {id:'zhang',kind:'章',n:'敕令玉章',fx:{人:1},tag:'social',story:'一方小小的玉印，蓋在哪裡，哪裡就多一分面子。你覺得這東西，很適合你。'},
+  {id:'juan',kind:'卷',n:'山河卷',fx:{悟:1},tag:'learn',story:'展開卷軸，裡面是一片雲霧繚繞的山河。你盯著看了三息，覺得自己好像懂了什麼。'},
+  {id:'zhen',kind:'針',n:'避劫針',fx:{心:1},style:'timid',story:'針尖細得幾乎看不見，卻能在最危險的時候，帶你躲過去。你默默把它收進袖口。'},
+  {id:'sword',kind:'劍',n:'青鋒劍',fx:{體:1},tag:'fight',story:'劍光清冷，劍意凜然。你剛握住，劍就輕輕一顫，像在向你問好。'},
+  {id:'bi',kind:'筆',n:'判官筆',fx:{悟:1},tag:'learn',story:'筆尖一落，天地都靜了一瞬。你忽然覺得，自己不只是在修煉，而是在寫一部書。'},
+  {id:'lu',kind:'爐',n:'九轉丹爐',fx:{金:2},tag:'money',story:'爐身溫熱，像是剛剛有人離開。丹爐的底座，刻著一行小字：「煉丹不易，且煉且珍惜。」'},
+  {id:'dun',kind:'盾',n:'玄龜盾',fx:{體:1},style:'careful',story:'盾面刻著一隻慢吞吞的老龜，看起來毫無殺氣，卻讓人很有安全感。'},
+  {id:'zhong',kind:'鐘',n:'鎮心鐘',fx:{心:1},tag:'heart',story:'小巧的銅鐘一響，雜念全消。你覺得這東西，比打坐有用。'},
+  {id:'san',kind:'傘',n:'避水傘',fx:{人:1},tag:'social',story:'一把普通的油紙傘，撐開時卻有淡淡靈光。一傘遮雨，也遮人情。'}
+];
+const TSET={勇猛:['dao','jian','fu'],膽小:['zhang','juan','zhen'],精進:['sword','bi','lu'],保守:['dun','zhong','san']};
+const PNAMES_F=['柳清漪','蘇青禾','沈落雁','白小滿','林語棠','秦月瑤','葉扶搖','陸知遙'];
+const PNAMES_M=['顧長歌','楚若寒','蕭凌霄','墨臨淵','白景行','葉扶搖','陸知遙','謝長風'];
+const PKINDS=['劍修','丹師','陣師','符修','醫修','散修'];
+// 孤兒不能出現「家人」：顯示時的替換表
+const ORPHAN_SUB=[
+ ['收了你娘兩個銅板','收了你兩個銅板——那是你好不容易討來的'],
+ ['躲在娘身後不敢出來','縮在牆角不敢出來'],
+ ['他吃了你家兩個饅頭','他吃了你討來的兩個饅頭'],
+ ['你娘說他是騙吃騙喝的，你卻記住了那句話','你自己也覺得他是騙吃騙喝的，卻記住了那句話'],
+ ['哭著跑回家','哭著跑回破廟'],
+ ['一路跑回家','一路跑回破廟'],
+ ['十歲了，家裡只供得起一條路：去私塾認字，或是去武館扎馬步。你爹說：「隨便選，反正都沒錢。」','十歲了，沒人替你做主，你只能自己選一條路：去私塾偷聽，或是去武館劈柴換飯。'],
+ ['躲在家裡哪都不去','縮在破廟裡哪都不去'],
+ ['你發現米缸才是你的人生導師','你發現討飯的破碗才是你的人生導師'],
+ ['二狗他娘笑得合不攏嘴','二狗的鄰居們笑得合不攏嘴'],
+ ['被二狗他娘一把推開','被前頭的大嬸一把推開'],
+ ['回家問爹娘「我能不能也去」','去問常給你饅頭的老乞丐：「我能不能也去」'],
+ ['你爹沉默良久：「兒啊，咱家祖墳上沒冒那股煙。」','老乞丐沉默良久：「孩子，咱們這種命，沒那股煙。」'],
+ ['家人說是中邪','街坊說是中邪'],
+ ['回家幫爹種地','留在鎮上幫人種地混飯'],
+ ['你家的院牆也被撞出一個洞，狼眼正對著你','你棲身的破廟牆也被撞出一個洞，狼眼正對著你'],
+ ['你家的狗','廟裡的野狗'],
+ ['守住了家人','守住了身邊的人'],
+ ['家裡損失了半年口糧','你損失了半年的存糧'],
+ ['你家後院','你棲身的柴房後院'],
+ ['你祖上的恩情','你過去不知情時種下的善緣']
+];
+const DEFTAG={悟:'learn',體:'fight',人:'social',心:'heart',金:'money'};
+const STYLE_FULL={bold:'勇猛',diligent:'精進',timid:'膽小',careful:'保守'};
+const STYLE2P=STYLE_FULL;
+
+const PERS={
+  勇猛:{style:'bold',opp:'timid',d:'敢打敢拚，逆風也要上。勇猛風格的選項檢定 +2，體質檢定 +1；膽小風格的選項 −1。'},
+  精進:{style:'diligent',opp:'careful',d:'一心向道，專注修行。精進風格的選項檢定 +2，修為獲取 +20%；保守風格的選項 −1。'},
+  膽小:{style:'timid',opp:'bold',d:'人生信條：活著最重要。膽小風格的選項檢定 +2；致命失敗時有 25% 機率「溜」過一劫；勇猛風格的選項 −1。'},
+  保守:{style:'careful',opp:'diligent',d:'穩字當頭，不輕易冒險。保守風格的選項檢定 +2；每回合固定積攢 1 點金錢；精進風格的選項 −1。'}
+};
+
+const FAMILIES=[
+  {id:'hunter',n:'山村獵戶',mod:{體:1,金:-1},d:'爹會射箭，娘會腌肉。'},
+  {id:'decline',n:'沒落世家',mod:{悟:1,金:1},d:'祖上闊過，如今只剩一本破族譜和很多規矩。'},
+  {id:'merchant',n:'商賈之家',mod:{金:3,體:-1},d:'算盤打得噼啪響，家裡什麼都缺，就是不缺靈石。'},
+  {id:'scholar',n:'書香門第',mod:{悟:1,心:1},d:'爹是秀才，已經考了二十年。'},
+  {id:'orphan',n:'流浪孤兒',mod:{體:1,心:1,金:-1,人:-1},d:'沒爹沒娘，但野草也能活。'},
+  {id:'cadet',n:'修仙家族旁支',mod:{悟:1,人:1,金:1},d:'嫡系吃肉，旁支喝湯，但湯裡有靈氣。'},
+  {id:'official',n:'官宦之家',mod:{人:2,金:1,體:-1},d:'祖父是知縣，一輩子沒見過仙人，卻很會見風使舵。'},
+  {id:'temple',n:'道觀棄嬰',mod:{悟:1,心:1,人:-1},d:'被撿到時襁褓裡塞著紙條：「好好養，別問。」'}
+];
+
+const PLACES=[
+  {id:'town',n:'青石鎮',aura:0.8,d:'凡人小鎮，靈氣稀薄，民風淳樸。據說三十年前有仙人路過買過包子。'},
+  {id:'mount',n:'落霞山脈',aura:1.1,d:'深山老林，妖獸出沒，機緣與危險共生。'},
+  {id:'sect',n:'天衍宗山腳',aura:1.5,d:'仙門腳下，靈氣濃郁，隔三差五有人御劍而過，包括但不限於迷路的。'},
+  {id:'market',n:'浮雲坊市',aura:1.0,d:'南北修士雲集的大坊市，物價感人，騙子比靈石多。'},
+  {id:'wild',n:'南荒瘴林',aura:1.2,d:'蠻荒之地，毒瘴瀰漫。能活下來的小孩，都很能活。'},
+  {id:'capital',n:'大炎皇都',aura:0.9,d:'人間王朝的都城，龍氣盤踞，修仙者在此被當作編外人員管理。'}
+];
+
+const TRAITS=[
+  {id:'body',n:'天生道體',d:'體質 +2，悟性 −1',mod:{體:2,悟:-1}},
+  {id:'mind',n:'過目不忘',d:'悟性 +2，人際 −1',mod:{悟:2,人:-1}},
+  {id:'social',n:'社牛體質',d:'人際 +2，心性 −1；人際檢定 +1',mod:{人:2,心:-1},cb:{social:1}},
+  {id:'heart',n:'道心通明',d:'心性 +2，金錢 −1',mod:{心:2,金:-1}},
+  {id:'rich',n:'含著金湯匙',d:'金錢 +3，心性 −1',mod:{金:3,心:-1}},
+  {id:'earth',n:'藍星來客',d:'悟性 +1；地球線索事件更常出現',mod:{悟:1},earth:1.8},
+  {id:'koi',n:'錦鯉附體',d:'所有檢定 +1，體質 −1',mod:{體:-1},luck:1},
+  {id:'trash',n:'廢柴開局',d:'悟性 −1，體質 −1；可分配點數 +3（莫欺少年窮）',mod:{悟:-1,體:-1},pts:3},
+  {id:'lone',n:'天煞孤星',d:'人際 −2，心性 +1；可分配點數 +2',mod:{人:-2,心:1},pts:2},
+  {id:'poor',n:'家徒四壁',d:'金錢 −1；可分配點數 +2；出身只會落在貧寒人家（山村獵戶、流浪孤兒、道觀棄嬰）',mod:{金:-1},pts:2},
+  {id:'grandpa',n:'戒指裡的老爺爺',d:'悟性 +1，人際 −1；修為獲取 +10%',mod:{悟:1,人:-1},expMul:0.1},
+  {id:'sign',n:'簽到系統',d:'每回合金錢 +1，心性 −1（叮！簽到成功）',mod:{心:-1},tick:{金:1}},
+  {id:'gou',n:'茍道傳人',d:'體質 +1，人際 −1；致命失敗時額外 30% 機率「溜」過',mod:{體:1,人:-1},flee:0.3},
+  {id:'war',n:'戰鬥民族血統',d:'體質 +1，心性 −1；體質檢定 +2',mod:{體:1,心:-1},cb:{fight:2}},
+  // —— 跨局解鎖的強力詞條 ——
+  {id:'u_xian',n:'仙緣再續',lock:true,hint:'悟性達到 8 時，也許會做一個奇怪的夢。',d:'悟性 +2；修為獲取 +25%',mod:{悟:2},expMul:0.25},
+  {id:'u_body',n:'不滅金身',lock:true,hint:'體質達到 10 時，天雷可能會找上你。',d:'體質 +3；可免死一次',mod:{體:3},save:1},
+  {id:'u_social',n:'紅塵老江湖',lock:true,hint:'人際達到 9 時，會有一場盛大的酒宴。',d:'人際 +3，金錢 +2；人際檢定 +2',mod:{人:3,金:2},cb:{social:2}},
+  {id:'u_heart',n:'大道無情',lock:true,hint:'心性達到 10 時，你會走到一處斷崖。',d:'心性 +3；心性檢定 +3',mod:{心:3},cb:{heart:3}},
+  {id:'u_gold',n:'財神爺轉世',lock:true,hint:'金錢達到 10 時，有陌生人會敲門。',d:'金錢 +4；可分配點數 +2',mod:{金:4},pts:2},
+  {id:'u_home',n:'故鄉的 Wi-Fi 訊號',lock:true,hint:'成功回到地球之後，才會收到這個訊號。',d:'開局自帶 1 條地球線索；地球線索事件更常出現',clue:1,earth:1.5}
+];
+
+// ---- 事件寫法輔助 ----
+// R(文字, 屬性變化, 附加)：結果。附加可含 flag / unflag / clue / unlock / die / goal / up / end / cont / p(個性追加)
+const R=(t,fx,x)=>Object.assign({t,fx:fx||{}},x||{});
+// O(選項文字, 風格, 檢定[屬性,難度]或null, 結果, 附加{cost,need,only})
+const O=(l,s,c,r,x)=>Object.assign({l,s,c,r:c?r:{k:r}},x||{});
+
+const EVENTS=[
+// =============== 童年 ===============
+{id:'c_fortune',t:'村口的算命先生',a:[5,5],text:'村口來了個自稱「鐵口直斷」的算命先生。他盯著你看了三息，眉頭一皺又一鬆，嘴裡嘟囔：「嘖，此子……」然後就閉嘴了。',o:[
+  O('大大方方讓他看相','bold',null,R('先生掐指一算，說你「命格奇特」，收了你娘兩個銅板。你不懂什麼是命格，但從此走路都帶風。',{心:1})),
+  O('偷看他手裡那本破書','diligent',['悟',6],{
+    g:R('書上全是鬼畫符，可你偏偏記住了其中一頁——日後才知道，那是最基礎的吐納圖。',{悟:1,exp:3}),
+    k:R('你看了半天，只覺得那些線條像蚯蚓在跳舞，但莫名有點興奮。',{exp:1}),
+    f:R('被逮個正著。先生笑瞇瞇地說：「偷看是要收費的。」你替他挑了一天水。',{體:1})}),
+  O('躲在娘身後不敢出來','timid',null,R('先生哈哈一笑，說了句「膽小也是福」，還送你一顆糖。你覺得這個世界還行。',{心:1,人:1})),
+  O('規規矩矩行禮，問他餓不餓','careful',null,R('他吃了你家兩個饅頭，留下一句「小友日後必有緣」就走了。你娘說他是騙吃騙喝的，你卻記住了那句話。',{人:1,心:1}))
+]},
+{id:'c_beast',t:'山貓與野果',a:[5,5],pl:['mount','wild'],text:'林子裡有一棵結滿紅果的樹，樹下蹲著一隻瞇眼的大山貓。顯然，這是牠的飯堂。',o:[
+  O('衝上去搶','bold',['體',7],{
+    g:R('你搶到果子，還順手把山貓嚇跑。吃下後渾身發熱，像有一條小蛇在肚子裡遊走。',{體:2,exp:3}),
+    k:R('搶到一顆果子，臉上多了三道爪痕。值得。',{體:1,exp:2}),
+    f:R('被撓得嗷嗷叫，哭著跑回家。',{體:-1})}),
+  O('蹲在遠處觀察山貓呼吸','diligent',['悟',7],{
+    g:R('你發現山貓每次呼吸，都有一絲極淡的白氣在口鼻間流轉。這是你第一次看見「靈氣」。',{悟:2,exp:4}),
+    k:R('看了半天，只覺得牠打呼很大聲。但你記住了那個節奏。',{悟:1,exp:2}),
+    f:R('被牠發現，一巴掌拍到山溝裡。',{體:-1})}),
+  O('繞到樹後偷偷摘','careful',['心',7],{
+    g:R('你耐心等到山貓打盹，悄悄摘了滿滿一懷果子。',{心:1,exp:3}),
+    k:R('摘到兩顆，山貓睜了一下眼，又閉上。你假裝什麼都沒發生。',{exp:1}),
+    f:R('空手而歸，還踩斷了樹枝。',{})}),
+  O('掉頭就跑','timid',null,R('你跑得飛快，一路跑回家，才發現自己居然追過了一隻兔子。',{體:1}))
+]},
+{id:'c_school',t:'私塾還是武館',a:[10,10],text:'十歲了，家裡只供得起一條路：去私塾認字，或是去武館扎馬步。你爹說：「隨便選，反正都沒錢。」',o:[
+  O('去私塾','diligent',['悟',8],{
+    g:R('你念書又快又穩，先生說你「有慧根」。你不知道慧根能不能吃。',{悟:2,exp:3},{flag:'literate'}),
+    k:R('勉強跟得上，起碼認得了「仙」字怎麼寫。',{悟:1}),
+    f:R('被同學叫「書呆」，念到一半還睡著了。',{人:-1})}),
+  O('去武館','bold',['體',8],{
+    g:R('師父說你骨架好，打起拳來虎虎生風，練出一身結實的筋骨。',{體:2,exp:3},{flag:'martial'}),
+    k:R('每天練得腰痠背痛，但確實壯了一圈。',{體:1,exp:2}),
+    f:R('練岔了氣，躺了半個月。',{體:-1})}),
+  O('到街上打聽怎麼賺錢','careful',['人',8],{
+    g:R('你幫雜貨鋪跑腿，攢下人生第一筆私房錢。',{金:2,人:1}),
+    k:R('賺了幾個銅板，還混了個臉熟。',{金:1}),
+    f:R('被地痞收了保護費。',{金:-1})}),
+  O('躲在家裡哪都不去','timid',null,R('平平安安長到十一歲。你發現米缸才是你的人生導師。',{心:2,體:-1}))
+]},
+{id:'c_immortal',t:'鄰家少年被仙人帶走',a:[10,10],text:'隔壁二狗昨天被一個御劍的老頭看上，一夜之間雞犬升天。全村都來圍觀，二狗他娘笑得合不攏嘴，你也被擠在人群裡。',o:[
+  O('擠上前套近乎','bold',['人',8],{
+    g:R('老頭看了你一眼：「嗯，這小娃根骨不錯，日後有緣。」全村人看你的眼神都變了。',{人:2,exp:4}),
+    k:R('老頭點點頭，順手給了你一塊麥芽糖。',{人:1,exp:2}),
+    f:R('被二狗他娘一把推開，摔了個屁股墩。',{人:-1})}),
+  O('觀察老頭的飛劍和呼吸','diligent',['悟',9],{
+    g:R('你看出老頭每次換氣，飛劍就輕輕一顫。「原來如此！」雖然你什麼也沒懂。',{悟:2,exp:5}),
+    k:R('你努力模仿老頭的呼吸，差點把自己憋暈。',{悟:1,exp:2}),
+    f:R('飛劍晃得你頭暈眼花，吐了一地。',{心:-1})}),
+  O('回家問爹娘「我能不能也去」','careful',null,R('你爹沉默良久：「兒啊，咱家祖墳上沒冒那股煙。」你默默記住了這句話。',{心:1})),
+  O('遠遠看著，不敢上前','timid',null,R('你縮在人群後面，心想：飛那麼高，摔下來會很痛吧。這份恐高讓你日後格外謹慎。',{心:1,exp:1}))
+]},
+{id:'c_test',t:'測靈根大典',a:[15,15],w:3,text:'十五歲這年，天衍宗的人來鎮上收徒。測靈石前排起長隊——每個人心裡都默念同一句話：「我不是廢柴，我是被埋沒的主角。」',o:[
+  O('老老實實排隊','careful',['悟',9],{
+    g:R('測靈石大放異彩，執事長老的茶杯都掉了：「天靈根？！」你被破格收入外門。',{exp:10},{flag:'inSect'}),
+    k:R('測出雜靈根，勉強被收入外門。執事說：「努力吧，孩子。」',{exp:8},{flag:'inSect'}),
+    f:R('靈石毫無反應，執事嘆氣：「回去吧。」你默默捏緊了拳頭。',{exp:5,心:1},{flag:'rogue'}),
+    b:R('測靈石「啪」地裂了。執事說你是廢靈根，四周響起笑聲。',{exp:3,心:-1},{flag:'rogue',p:{勇猛:{t:'你當場立誓：「三十年河東，三十年河西，莫欺少年窮！」',fx:{心:2}}}})}),
+  O('衝上前搶著測','bold',['體',9],{
+    g:R('你一掌拍上測靈石，光芒萬丈。執事大笑：「有魄力！」',{exp:10,體:1},{flag:'inSect'}),
+    k:R('你搶到名額，測出雜靈根，但氣勢上贏了。',{exp:8},{flag:'inSect'}),
+    f:R('被維持秩序的弟子按在地上，鼻青臉腫。',{人:-1,exp:5},{flag:'rogue'})}),
+  O('偷偷在家自己練氣','diligent',['悟',10],{
+    g:R('三個月後你自己引氣入體，連宗門都沒去。這大概就是傳說中的「自學成才」。',{悟:1,exp:12},{flag:'rogue'}),
+    k:R('你摸索出入門法門，進度緩慢，但方向是對的。',{exp:8},{flag:'rogue'}),
+    f:R('走火入魔差點瘋掉，家人說是中邪，請了道士。',{exp:4,心:-1},{flag:'rogue'}),
+    b:R('經脈受損，躺了半年。',{體:-2,exp:2},{flag:'rogue'})}),
+  O('溜走，不想當仙人','timid',null,R('你覺得修仙太危險，回家幫爹種地。三個月後，一位路過的散修見你抓蟲的姿勢很特別，隨手教了你一套吐納。',{exp:6,人:1},{flag:'rogue',p:{膽小:{t:'你抱著鋤頭，心想：這個世界真的很危險。',fx:{心:1}}}}))
+]},
+{id:'c_disaster',t:'妖獸之禍',a:[15,15],w:1.2,text:'這一年，一頭三階妖狼闖進村子，傷了十幾口人。你家的院牆也被撞出一個洞，狼眼正對著你。',o:[
+  O('抄起鋤頭上','bold',['體',10],{
+    g:R('你一鋤頭敲在妖狼眼睛上。路過的修士大讚「根骨清奇」，順手教了你一套拳法。',{體:2,exp:8},{flag:'rogue'}),
+    k:R('重傷，但活下來了。修士把狼打跑，留下一瓶傷藥。',{體:1,exp:6},{flag:'rogue'}),
+    f:R('被狼撲倒，修士出手相救，你欠下一份人情。',{體:-1,exp:4,人:1},{flag:'rogue'}),
+    b:R('妖狼的獠牙比你想像的更長。',{},{die:'死於妖狼之口，鄉親們為你立了一塊小碑'})}),
+  O('設陷阱智取','diligent',['悟',10],{
+    g:R('陷阱把妖狼困住。修士路過，驚嘆：「小小年紀竟懂陣法雛形！」',{悟:2,exp:10},{flag:'rogue'}),
+    k:R('陷阱只困了妖狼一瞬，但已足夠修士趕到。',{悟:1,exp:6},{flag:'rogue'}),
+    f:R('陷阱沒困住狼，反而困住了你家的狗。',{exp:3,人:-1},{flag:'rogue'})}),
+  O('等官府和鄉親處理','careful',['人',8],{
+    g:R('你帶頭組織鄉親，用火把和鍋盆驅走妖狼。大家都說你「穩得住」。',{人:2,exp:5},{flag:'rogue'}),
+    k:R('混亂中你守住了家人，沒出大事。',{人:1,exp:4},{flag:'rogue'}),
+    f:R('什麼都沒做成，家裡損失了半年口糧。',{金:-1,exp:3},{flag:'rogue'})}),
+  O('躲進地窖','timid',null,R('你縮在地窖裡，聽著外頭的慘叫等了一夜。天亮時，修士把狼頭掛在村口。你決定要變強——至少強到不用躲地窖。',{心:1,exp:5},{flag:'rogue'}))
+]},
+
+// =============== 成年・一般事件 ===============
+{id:'e_exam',t:'宗門外門考核',a:[16,45],rm:[0,1],nf:['inSect'],w:2,text:'天衍宗外門招收記名弟子，要求：二十歲以下，能引氣，無案底。你三條都沾邊。',o:[
+  O('正面報名','careful',['悟',10],{
+    g:R('主考官看了你一眼，「資質不錯」，直接錄取。',{exp:6},{flag:'inSect'}),
+    k:R('勉強通過，被分到最偏遠的院子。',{exp:4},{flag:'inSect'}),
+    f:R('差一點，被打回。',{人:-1})}),
+  O('花錢找關係走後門','diligent',['人',11],{
+    g:R('收錢的執事笑得很慈祥：「咱們宗門，最重視人才。」',{人:1,exp:4},{flag:'inSect'}),
+    k:R('關係通了，錢也花了，名額到手。',{exp:3},{flag:'inSect'}),
+    f:R('錢被騙走，人家連名字都是假的。',{金:-2})},{cost:{金:2}}),
+  O('硬闖山門','bold',['體',11],{
+    g:R('守門弟子被你嚇到，掌門路過說：「有膽色！」破格收錄。',{exp:6,人:-1},{flag:'inSect'}),
+    k:R('被攔下，但掌門看了笑話，順口說「讓他進來吧」。',{exp:3},{flag:'inSect'}),
+    f:R('被打斷兩根肋骨扔下山。',{體:-2}),
+    b:R('你被當成魔道奸細。',{},{die:'被當成魔道奸細，死在山門前'})}),
+  O('算了，繼續當散修','timid',null,R('宗門規矩多，你覺得散修自由自在——至少沒人逼你交月供。',{心:1,金:1}))
+]},
+{id:'e_market',t:'坊市撿漏',a:[16,99],rm:[0,2],pl:['market','capital','sect','town'],text:'地攤上擺著一塊髒兮兮的石頭，攤主說：「祖傳的，仙人遺落，只賣兩靈石！」你覺得他在騙人，但那石頭好像在對你眨眼。',o:[
+  O('買下來','bold',['悟',11],{
+    g:R('石頭裡藏著半卷功法殘頁！你當場眼眶發熱。',{悟:1,exp:10}),
+    k:R('只是塊普通鎮紙，勉強能鎮住你的心浮氣躁。',{心:1}),
+    f:R('騙局。攤主連夜跑路。',{})},{cost:{金:2}}),
+  O('用神識掃一下','diligent',['悟',12],{
+    g:R('是塊「養魂石」，攤主不識貨。你用一靈石買下，賺翻了。',{悟:1,exp:12}),
+    k:R('看出是塊普通的凝氣石，雖不值錢，但打坐時很有用。',{exp:4}),
+    f:R('神識被石頭反震，頭疼了三天。',{悟:-1})}),
+  O('殺價半天','careful',['人',10],{
+    g:R('殺到一靈石成交，順便和攤主交了朋友。',{exp:5,人:1}),
+    k:R('最後還是買了，只是比別人便宜一點點。',{exp:3}),
+    f:R('攤主翻臉，全市場看你笑話。',{人:-1})}),
+  O('路過不買','timid',null,R('三天後，聽說有人買了那塊石頭，一夜暴富。你告訴自己：「富貴險中求，但我選擇平安。」',{心:1}))
+]},
+{id:'e_cliff',t:'懸崖',a:[16,60],rm:[0,2],pl:['mount','wild','sect'],text:'追逐一頭靈鹿時，你一腳踩空，身子直往懸崖下墜——別慌，這種橋段，十個修仙人裡有九個都遇過。',o:[
+  O('拚命抓崖壁','bold',['體',11],{
+    g:R('你抓住藤蔓，順便發現一個隱蔽洞口，裡面有前輩遺骸與一枚儲物戒。',{體:1,金:3,exp:8}),
+    k:R('抓住藤蔓，掛了半天，爬了上來。',{體:1}),
+    f:R('摔斷腿，躺了一個月。',{體:-1}),
+    b:R('崖壁比你想像的滑。',{},{die:'失足墜崖，身後什麼奇遇都沒有'})}),
+  O('冷靜等待命運','careful',['心',10],{
+    g:R('你落進深潭，潭底竟有一汪靈泉，洗髓伐骨。',{心:1,體:1,exp:8}),
+    k:R('被一棵大樹接住，掛了半天，毫髮無傷。',{心:1}),
+    f:R('摔得很慘，但骨頭沒斷。',{體:-1}),
+    b:R('潭水比預想的淺。',{},{die:'墜崖身亡'})}),
+  O('嘗試施展輕身術','diligent',['悟',10],{
+    g:R('生死之間你福至心靈，無師自通領悟了御風訣的雛形！',{悟:2,exp:10}),
+    k:R('勉強減了速，摔得不算太慘。',{exp:5}),
+    f:R('失敗，被樹枝刮花了臉。',{人:-1})}),
+  O('扯著嗓子大喊救命','timid',null,R('回音在山谷裡迴盪了三遍，居然把一個採藥老人引來了。「小友，掉崖要找對地方。」他把你拉上來，送你一包傷藥。',{金:1,人:1},{p:{膽小:{t:'你的求救聲極具穿透力，老人說這是他聽過最真誠的呼救。',fx:{心:1}}}}))
+]},
+{id:'e_ring',t:'戒指裡的老爺爺',a:[16,60],rm:[0,2],nf:['grandpa'],w:1.2,text:'你在地攤上撿到一枚黑不溜秋的舊戒指。戴上後，腦海響起蒼老的聲音：「小娃娃，老夫乃上古大能殘魂，本想奪舍你……咦，你命格怎麼這麼硬？」',o:[
+  O('立刻拜師','diligent',['心',9],{
+    g:R('老爺爺感動落淚，傳你一套「無名功法」。後來你才知道，他其實只是忘了後半部分。',{悟:2,exp:12},{flag:'grandpa'}),
+    k:R('老爺爺答應指點，但每次都要先講三小時當年勇。',{悟:1,exp:6},{flag:'grandpa'}),
+    f:R('老爺爺嫌你資質差，但仍教了點皮毛。',{exp:3},{flag:'grandpa'})}),
+  O('警惕地跟他談條件','careful',['人',10],{
+    g:R('老爺爺答應不奪舍，條件是每月供奉一塊靈石——還算合理。',{悟:1,exp:8,金:-1},{flag:'grandpa'}),
+    k:R('老爺爺勉強答應，從此你多了個嘮叨的室友。',{exp:5},{flag:'grandpa'}),
+    f:R('老爺爺惱羞成怒，試圖奪舍。你的心性硬生生頂住了。',{心:-1}),
+    b:R('老爺爺比你想像的強。',{},{die:'被老爺爺奪舍，成為別人的容器'})}),
+  O('先下手為強，滴血認主','bold',['心',11],{
+    g:R('你比老爺爺還狠，他被你的氣勢鎮住：「前輩……不，小祖宗！」',{exp:12,心:1},{flag:'grandpa'}),
+    k:R('雙方僵持許久，最終達成了「互不干涉」的協議。',{exp:6},{flag:'grandpa'}),
+    f:R('魂力反噬，你吐了一口血。',{體:-1,心:-1}),
+    b:R('殘魂趁虛而入。',{},{die:'被殘魂奪舍，世上多了一位「老爺爺」'})}),
+  O('立刻摘下丟進河裡','timid',null,R('三天後，戒指出現在你的枕頭邊。老爺爺：「小娃娃，躲不掉的。」你默默戴了回去，並決定不跟老爺爺說話。',{心:1},{flag:'grandpa'}))
+]},
+{id:'e_breakoff',t:'退婚',a:[16,40],rm:[0,2],fm:['decline','official','cadet','merchant'],text:'一頂華貴的轎子停在你家門口。未婚妻家人拿著退婚書，語氣客氣得像在宣布你家的訃聞：「你我兩家，終究是不同世界的人。」',o:[
+  O('當場撕毀，立誓「莫欺少年窮」','bold',['心',10],{
+    g:R('誓言一出，天地間似有靈氣湧動，你的心境竟微微突破。',{心:2,exp:12}),
+    k:R('氣勢夠了，面子保住了。',{心:1,exp:5}),
+    f:R('氣勢十足，但場面尷尬，對方笑而不語。',{人:-1})}),
+  O('討要精神損失費','diligent',['人',11],{
+    g:R('對方被你說得啞口無言，賠了一筆「補償金」。',{金:4,人:1}),
+    k:R('討到一小筆，足夠買半年的饅頭。',{金:2}),
+    f:R('被亂棍趕出門。',{人:-1})}),
+  O('收下退婚書，禮貌送客','careful',['心',8],{
+    g:R('對方愣住，覺得你是個狠人。你自己也沒料到會這麼平靜。',{心:2,人:1}),
+    k:R('你把退婚書折好收起來，說「不送」。',{心:1}),
+    f:R('回屋大哭了三個時辰，然後告訴自己：女主你退你的，我修我的。',{心:1})}),
+  O('一言不發，低頭到對方離開','timid',null,R('村裡人都說你「懂事」。你只想著：絕不當冤種。',{心:1}))
+]},
+{id:'e_labor',t:'靈石礦脈的福報',a:[16,60],rm:[0,2],fl:['inSect'],nf:['inner'],text:'外門弟子的標準福報：每天挖十二時辰靈石礦，月供三塊，績效考核看天賦。',o:[
+  O('卷！加班到深夜','diligent',['體',9],{
+    g:R('你一個人挖了三個人的量，長老默默給你加了月供。',{exp:10,金:2,體:1}),
+    k:R('累得像條狗，但修為也跟著漲了。',{exp:6,金:1}),
+    f:R('累倒在礦道，被同門抬出來。',{體:-1})}),
+  O('組織同門罷工','bold',['人',11],{
+    g:R('長老讓步，福報減少一半，你成了外門名人。',{人:2,金:2}),
+    k:R('效果有限，但大家對你刮目相看。',{人:1}),
+    f:R('被長老記恨，穿了半年小鞋。',{人:-2})}),
+  O('請長老指點效率','careful',['悟',9],{
+    g:R('長老隨口教你一套省力口訣，你突然悟了。',{悟:1,exp:8}),
+    k:R('長老敷衍了你，但你從中領悟了一點點。',{exp:4}),
+    f:R('長老說你想太多。',{})}),
+  O('偷偷摸魚','timid',null,R('你在礦洞深處打坐，意外發現一處靈氣濃郁的石縫。「摸魚，才是修仙的真諦。」',{exp:6,心:1}))
+]},
+{id:'e_secret',t:'秘境開啟',a:[16,300],rm:[1,3],w:2,text:'天衍宗後山秘境百年一開，各路修士蜂擁而至。有人說裡面有金丹期修士的洞府，也有人說裡面的妖獸比人還聰明。',o:[
+  O('闖入核心區域','bold',['體',13],{
+    g:R('你搶到了半枚青陽丹和一道劍意傳承。',{exp:25,體:1}),
+    k:R('搶到一株靈藥，被對手追了三條街。',{exp:12,金:2}),
+    f:R('重傷逃出，什麼也沒撈著。',{體:-2,exp:3}),
+    b:R('核心區域的守護獸比你想的凶。',{},{die:'隕落於秘境核心，連名字都沒被記住'})}),
+  O('外圍採藥','careful',['悟',10],{
+    g:R('你在邊緣挖到一窩罕見靈草，賣了個好價。',{exp:12,金:2}),
+    k:R('收穫不算豐厚，但很安全。',{exp:6,金:1}),
+    f:R('空手而歸，還被蚊子咬了滿頭包。',{})}),
+  O('跟著大隊伍走','careful',['人',11],{
+    g:R('被大佬帶飛，躺著撿了一堆好處。',{exp:15,人:1}),
+    k:R('跟著混了點湯喝。',{exp:8}),
+    f:R('被推出去當炮灰，差點交代在裡面。',{體:-1,人:-1})}),
+  O('在入口賣符籙和傷藥','diligent',['人',9],{
+    g:R('生意興隆，賺得盆滿缽滿。',{金:5}),
+    k:R('賺了一點辛苦錢。',{金:3}),
+    f:R('被同行砸攤。',{金:-1})})
+]},
+{id:'e_chase',t:'被追殺',a:[16,200],rm:[0,3],text:'你在坊市露了富，被三個蒙面修士盯上。他們已經跟了你三條街，其中一個還在舔刀。',o:[
+  O('拚死一戰','bold',['體',12],{
+    g:R('你反殺三人，搜刮戰利品。',{金:4,體:1,exp:8}),
+    k:R('兩敗俱傷，但你站著，他們躺著。',{體:-1,金:2,exp:4}),
+    f:R('重傷逃脫，錢包也沒了。',{體:-2,金:-2}),
+    b:R('他們比你想像的強。',{},{die:'被三名蒙面修士圍殺於暗巷'})}),
+  O('設陷阱誘敵','diligent',['悟',12],{
+    g:R('陷阱把三人一網打盡，你笑得像個反派。',{悟:1,金:4,exp:8}),
+    k:R('困住了兩人，你趁機逃脫。',{exp:4}),
+    f:R('陷阱先困住了你自己。',{體:-1}),
+    b:R('陷阱炸偏了。',{},{die:'死在自己布置的陷阱裡'})}),
+  O('找巡城衛幫忙','careful',['人',10],{
+    g:R('巡城衛及時趕到，三人被抓，你還得了一筆獎金。',{人:1,金:1}),
+    k:R('巡城衛趕到，把你們都帶回去問話。',{}),
+    f:R('巡城衛收了賄賂，你只好自己跑。',{金:-2})}),
+  O('丟下保命符，全力逃跑','timid',['悟',8],{
+    g:R('保命符爆出刺眼白光，你跑得遠遠的。',{exp:2}),
+    k:R('你逃掉了，只是衣服少了半邊。',{}),
+    f:R('跑岔了路，被堵在死胡同，破財消災。',{金:-3})},{cost:{金:2}})
+]},
+{id:'e_comp',t:'宗門大比',a:[16,300],rm:[1,3],fl:['inSect'],nf:['inner'],w:2,text:'一年一度的外門大比。前三名可入內門，其餘繼續搬磚。',o:[
+  O('全力出手','bold',['體',13],{
+    g:R('你一路打進決賽，奪下前三。長老連說「後生可畏」。',{exp:18,人:2},{flag:'inner'}),
+    k:R('打進八強，贏得不少尊敬。',{exp:8,人:1}),
+    f:R('首輪被對手秒殺，臉朝下摔在擂台上。',{體:-1})}),
+  O('用盡策略','diligent',['悟',13],{
+    g:R('你用陣法與走位把對手耗到脫力，奪下前三。',{exp:18,悟:1},{flag:'inner'}),
+    k:R('靠心機贏了幾場，止步八強。',{exp:8}),
+    f:R('被識破戰術，輸得很難看。',{人:-1})}),
+  O('交好評審','careful',['人',12],{
+    g:R('評審對你格外關照，你「順理成章」入了內門。',{exp:10},{flag:'inner'}),
+    k:R('評審笑著收了禮，說「盡力了」。',{exp:5}),
+    f:R('賄賂被抓包，大家都在看你笑話。',{人:-2})},{cost:{金:2}}),
+  O('棄權，坐在觀眾席嗑瓜子','timid',null,R('有人說你沒志氣，你說：「命比面子重要。」',{心:1,金:1}))
+]},
+{id:'e_alchemy',t:'煉丹',a:[16,500],rm:[1,4],w:1.5,text:'你終於湊夠了材料，打算自己煉一爐丹。丹爐是祖傳的，傳到你這輩，只剩下鏽。',o:[
+  O('全力煉製','diligent',['悟',12],{
+    g:R('成丹九轉！藥香飄了三條街。',{exp:20,悟:1,金:3}),
+    k:R('成丹，但品相普通。',{exp:10,金:1}),
+    f:R('炸爐，眉毛沒了。',{金:-2}),
+    b:R('爐子炸得比預想的猛烈。',{體:-2,金:-3})}),
+  O('請丹師代勞','careful',['人',10],{
+    g:R('丹師心情好，額外多送你一顆。',{exp:15}),
+    k:R('丹到手，品質可以。',{exp:10}),
+    f:R('丹師「損耗」了你一半材料。',{exp:4})},{cost:{金:3}}),
+  O('不煉了，直接賣材料','careful',null,R('材料賣出不錯的價錢。你告訴自己：「煉丹是丹師的事，賺錢才是我的事。」',{金:3}))
+]},
+{id:'e_war',t:'正魔大戰',a:[16,800],rm:[2,4],w:2,text:'正魔兩道又打起來了。據說這次是因為某位長老的道侶被某位魔頭的徒弟撬了牆角，但誰知道呢，打仗總要找個理由。',o:[
+  O('衝鋒在前','bold',['體',15],{
+    g:R('你立下赫赫戰功，名字寫進了宗門功勳榜。',{exp:28,人:3,體:1}),
+    k:R('立了功，但負傷不輕。',{exp:14,體:-1,人:1}),
+    f:R('重傷退下，躺了三個月。',{體:-2,exp:4}),
+    b:R('戰場上最危險的地方，往往也是最顯眼的地方。',{},{die:'戰死沙場，名字刻在祭碑上第三百零二行'})},{p:{}}),
+  O('觀察戰局，伺機偷襲','diligent',['悟',14],{
+    g:R('你一擊斬殺魔道長老，成為傳奇。',{exp:30,悟:1}),
+    k:R('偷襲得手，傷了對手。',{exp:12}),
+    f:R('偷襲暴露，被追著砍了三座山頭。',{體:-1}),
+    b:R('偷襲不成，反被一劍穿心。',{},{die:'偷襲不成反被斬於劍下'})}),
+  O('負責後勤補給','careful',['人',12],{
+    g:R('你把後勤管得井井有條，大家都記得你的好。',{金:5,人:2,exp:6}),
+    k:R('平安無事，順便賺了一點辛苦錢。',{金:3,人:1}),
+    f:R('補給被劫，賠了不少。',{金:-3})}),
+  O('裝死躲過去','timid',null,R('你倒在屍堆裡一動不動，直到大戰結束。你的「演技」騙過了所有人，包括你自己。',{心:1,exp:4}))
+]},
+{id:'e_ruin',t:'上古遺跡',a:[16,800],rm:[2,5],w:2,text:'地動山搖之後，一座半埋的石殿從地底升起。大門上刻著三個你不認識、但莫名熟悉的字。',o:[
+  O('破禁入殿','bold',['悟',15],{
+    g:R('你破開禁制，取得《太虛劍典》殘卷。',{exp:35,悟:2}),
+    k:R('取得一批靈材，雖不算珍稀，但足夠養活一個小宗門。',{exp:15,金:4}),
+    f:R('被禁制反噬，渾身發麻。',{體:-2,心:-1}),
+    b:R('殿裡的禁制比殿還古老。',{},{die:'葬身遺跡，成為下一個傳說的註腳'})}),
+  O('仔細研究銘文','diligent',['悟',13],{
+    g:R('你解讀出一段上古口訣，豁然開朗。',{exp:25,悟:2}),
+    k:R('解出一小段，足夠你受用。',{exp:12,悟:1}),
+    f:R('看得頭暈腦脹，一無所獲。',{})}),
+  O('等別人先進，再跟進去','careful',['人',12],{
+    g:R('前面的人踩雷，你撿漏。',{exp:15,金:3}),
+    k:R('撿了一點殘羹冷炙。',{exp:8}),
+    f:R('寶物被人先取走，你只撿到一塊碎石。',{})}),
+  O('不進去','timid',null,R('這種「看起來很危險」的遺跡，直覺告訴你：別進。後來聽說進去的人，十個只出來三個。你默默為自己的直覺乾杯。',{心:2}))
+]},
+{id:'e_mind',t:'心魔試煉',a:[16,800],rm:[2,5],w:1.5,text:'閉關時，你忽然看見另一個自己坐在對面，笑著問：「如果你這一生都在修煉，結果還是會死，那這一切有什麼意義？」',o:[
+  O('直面心魔','bold',['心',14],{
+    g:R('你反問：「你為什麼這麼吵？」心魔笑著消散了。',{心:2,exp:25}),
+    k:R('吃力地壓下心魔，道心更加堅定。',{心:1,exp:10}),
+    f:R('心魔得逞，修為倒退。',{心:-1,exp:-12}),
+    b:R('心魔太了解你了。',{},{die:'被心魔奪舍，成為了另一個自己'})}),
+  O('靜心守一','careful',['心',12],{
+    g:R('你什麼也沒做，心魔自己無聊地走了。',{心:1,exp:15}),
+    k:R('撐過一夜，天亮時心魔已消。',{exp:8}),
+    f:R('心緒不寧，修為受損。',{exp:-6})}),
+  O('以修煉鎮之','diligent',['悟',14],{
+    g:R('你把心魔當成練功對象，越練越精神。',{悟:1,exp:20}),
+    k:R('勉強壓制，順便精進了一點。',{exp:10}),
+    f:R('走火入魔，吐血三升。',{體:-1,exp:-10})}),
+  O('逃出洞府，在外頭吹一夜風','timid',null,R('你連蒲團都不要了。在外面吹了一夜風，心魔居然沒追出來。「逃避可恥但有用。」',{心:1}))
+]},
+{id:'e_disciple',t:'收徒',a:[16,1500],rm:[3,6],w:1.5,text:'一個少年跪在你洞府外三日三夜，非要拜你為師。你看了看他的資質——還行；再看了看他的眼神——怎麼有點眼熟……',o:[
+  O('收為弟子','diligent',['人',12],{
+    g:R('徒弟後來成才，逢年過節都來孝敬你。',{人:2,金:3}),
+    k:R('徒弟中規中矩，偶爾還幫你跑腿。',{人:1,exp:5}),
+    f:R('徒弟是敵對勢力的臥底，捲走了你的小金庫。',{人:-1,金:-3}),
+    b:R('徒弟的眼神，原來是在等你轉身的那一刻。',{},{die:'被親手教出的逆徒背後一劍，「莫欺少年窮」報應不爽'})}),
+  O('收為記名弟子，保持距離','careful',['人',10],{
+    g:R('他很懂事，逢年過節送禮，不多問。',{人:1,金:2}),
+    k:R('彼此客氣，相安無事。',{金:1}),
+    f:R('他嫌你太冷淡，跑去別的山頭拜師了。',{})}),
+  O('一腳把他踹下山','bold',['心',12],{
+    k:R('少年哭著跑了。幾十年後，傳聞出現一位叫做……的魔道巨擘，你沒再多想。',{心:1},{flag:'rejected'}),
+    f:R('他跪在山腳不肯走，整座山的人都看你笑話。',{人:-1},{flag:'rejected'}),
+    g:R('他被你的氣勢嚇到，鞠躬三次，轉身走了。',{心:2},{flag:'rejected'})}),
+  O('假裝不在家','timid',null,R('你在洞府裡悄悄掩上門，聽著門外少年的啜泣，心想：「師父這個職業，我做不了。」',{心:1}))
+]},
+// =============== 道侶線 ===============
+{id:'d_meet',co:true,t:'一場邂逅',a:[30,50],rm:[1,7],nf:['partner','partnerLost'],text:'宗門交流會上，有人在人群中向你舉杯。對方自稱{P}，是一位{K}。「聽聞道友的名號已久。」對方笑著說。',o:[
+  O('舉杯回敬，主動攀談','bold',['人',10],{
+    g:R('你們從天南聊到地北，不知不覺聊到天亮。臨別時，{P}說：「不如結為道侶，一起走下去。」你竟說不出拒絕的話。',{人:1,心:1},{partner:1,aff:3}),
+    k:R('相談甚歡，你們互換了傳訊符。幾個月後，{P}笑著說：「不如同行？」',{人:1},{partner:1,aff:2}),
+    f:R('你緊張得把酒灑了，對方禮貌地笑笑，轉身離去。',{人:-1})}),
+  O('以武會友，切磋一場','diligent',['體',11],{
+    g:R('你們過了百招，最後同時收手。{P}說：「道友的路數，很合我的胃口。」你們從此結伴而行。',{exp:10,體:1},{partner:1,aff:3}),
+    k:R('不分勝負。你們笑著抱拳，成了同行的道友。',{exp:5},{partner:1,aff:2}),
+    f:R('你輸得很難看，對方客氣地說「承讓」。',{體:-1})}),
+  O('先暗中打聽對方底細','careful',['人',10],{
+    g:R('你打聽到{P}為人正派，便登門拜訪。對方又驚又喜：「你竟然做了功課。」你們結為道侶。',{人:1},{partner:1,aff:3}),
+    k:R('打聽完你鬆了口氣，才主動搭話。兩人慢慢熟悉，終於結伴。',{},{partner:1,aff:2}),
+    f:R('你打聽得太久，等你想搭話時，{P}已經離開了。',{})}),
+  O('假裝沒看見，繼續喝酒','timid',null,R('你低頭喝了三杯酒，抬頭時人已經不見了。你有點後悔。',{心:1}))
+]},
+{id:'d_walk',t:'並肩同行',fl:['partner'],a:[30,3000],rm:[1,7],w:3,rep:true,text:'你和{P}已經結伴多年。這個月，對方提議：「我們好久沒一起出門了。」',o:[
+  O('一起遊歷名山大川','bold',['體',11],{
+    g:R('你們一起翻過三座山，在山頂看了一場日出。{P}靠在你肩上，什麼也沒說。',{體:1,exp:8},{aff:2}),
+    k:R('途中遇到一點小麻煩，兩人一起解決，感情又深了一層。',{exp:4},{aff:1}),
+    f:R('走錯了路，吵了一架，但晚上又和好了。',{})}),
+  O('一起坐而論道','diligent',['悟',11],{
+    g:R('{P}的見解與你完全不同，卻讓你豁然開朗。你們一論就是三天。',{悟:1,exp:12},{aff:2}),
+    k:R('你們各抒己見，沒吵起來，也沒說服對方。',{exp:6},{aff:1}),
+    f:R('你們為了一個細節爭得面紅耳赤，不歡而散。',{},{aff:-1})}),
+  O('為對方準備一份禮物','careful',null,R('你準備了一份小禮物。{P}打開時愣了愣，笑著說：「你什麼時候學會這些的？」',{},{aff:2}),{cost:{金:2}}),
+  O('說「我想一個人靜一靜」','timid',null,R('{P}看了你一眼，沒有說話。第二天，對方的茶放在你門口，沒有留字條。',{心:1},{aff:-1}))
+]},
+{id:'d_danger',t:'共赴險境',fl:['partner'],a:[30,3000],rm:[2,6],w:2.5,text:'你們在途中遇上一頭兇名遠播的妖獸。{P}臉色一變：「我來擋，你先走！」',o:[
+  O('擋在對方身前','bold',['體',14],{
+    g:R('你一把推開{P}，硬接妖獸一擊，反手斬下牠的一臂。事後{P}紅著眼睛說：「下次不許這樣。」',{體:1,exp:20},{aff:3}),
+    k:R('你們聯手擊退妖獸，雙雙掛彩，相視而笑。',{exp:10},{aff:2}),
+    f:R('你受了重傷，{P}背著你逃了三十里。',{體:-2},{aff:2}),
+    b:R('妖獸比你們想像的凶。',{},{die:'為了掩護{P}撤退，永遠留在了那片荒野'})}),
+  O('並肩作戰，默契配合','diligent',['悟',14],{
+    g:R('你們的配合天衣無縫，妖獸倒下時，兩人都沒怎麼受傷。',{exp:22,悟:1},{aff:2}),
+    k:R('勉強配合，打贏了。',{exp:10},{aff:1}),
+    f:R('配合失誤，兩人各自受了傷。',{體:-1})}),
+  O('設下陷阱，引開妖獸','careful',['心',13],{
+    g:R('你不慌不忙布好陷阱，妖獸一頭撞了進去。{P}看著你，忽然笑了：「你這人，穩得讓人安心。」',{心:1,exp:12},{aff:2}),
+    k:R('陷阱拖住了妖獸一會兒，足夠你們撤退。',{exp:5},{aff:1}),
+    f:R('陷阱沒起作用，你們狼狽逃走。',{體:-1})}),
+  O('拉著對方轉身就跑','timid',null,R('你拉住{P}的手，轉身就跑。對方愣了一下，跟著你跑了很遠。「你這個人，」對方笑著說，「還挺靠譜。」',{心:1},{aff:1}))
+]},
+{id:'d_quarrel',t:'丹爐引發的戰爭',fl:['partner'],a:[30,3000],rm:[1,7],w:2,text:'你和{P}為了「丹爐到底該誰洗」吵了三天。這是你們吵過最久的一次。',o:[
+  O('低頭認錯','careful',['人',9],{
+    g:R('你一臉誠懇地道歉，還主動洗了丹爐。{P}笑出聲：「下不為例。」',{人:1},{aff:2}),
+    k:R('你道了歉，對方消了氣。',{},{aff:1}),
+    f:R('你道歉得太敷衍，對方更生氣了。',{},{aff:-1})}),
+  O('講道理','diligent',['悟',11],{
+    g:R('你把丹爐的使用頻率列成表格，雙方一看就明白。',{悟:1},{aff:1}),
+    k:R('你講完，對方點頭，但沒說話。',{}),
+    f:R('你越講越火大，對方摔門而去。',{},{aff:-2})}),
+  O('一腳踹翻丹爐','bold',['心',10],{
+    g:R('丹爐翻了。對方愣了三秒，噗哧笑出來：「你瘋了嗎？」兩人當場笑成一團。',{},{aff:2}),
+    k:R('丹爐翻了，場面尷尬，但沒人再吵了。',{}),
+    f:R('丹爐躺在地上，你們誰也不說話。',{},{aff:-2})}),
+  O('冷戰到底','timid',null,R('三天後，{P}先開口：「我們該洗丹爐了。」你默默站起來。',{心:1},{aff:-1}))
+]},
+{id:'d_truth',t:'你到底從哪裡來',fl:['partner'],nf:['partnerWilling'],ca:3,cl:1,a:[30,3000],rm:[1,7],w:5,rep:true,text:'夜裡，{P}忽然問你：「你每次看星星，眼神都像在看故鄉。你到底是從哪裡來的？」',o:[
+  O('全盤托出','bold',['人',12],{
+    g:R('你把一切都說了：藍星、地鐵、火鍋、手機。{P}聽完沉默了很久，然後說：「那我跟你一起去看看。」',{心:1},{flag:'partnerWilling',aff:3}),
+    k:R('{P}聽完愣了很久，最終點頭：「我信你。如果有一天你要回去，我會陪你。」',{},{flag:'partnerWilling',aff:2}),
+    f:R('{P}以為你在開玩笑，笑著拍了拍你的肩。你苦笑，決定改天再試。',{})}),
+  O('半真半假地描述','diligent',['悟',13],{
+    g:R('你用「很遠很遠的地方」開頭，一點一點把真相鋪開。{P}聽著聽著，眼睛亮了：「我想去看看。」',{悟:1},{flag:'partnerWilling',aff:2}),
+    k:R('{P}半信半疑，但說：「我願意等你說完全部。」',{},{flag:'partnerWilling',aff:1}),
+    f:R('你的故事前後矛盾，{P}皺起眉頭。',{},{aff:-1})}),
+  O('不說，先用行動陪伴','careful',null,R('你什麼也沒說，只是握住了對方的手。{P}也什麼都沒問。',{心:1},{aff:2})),
+  O('搪塞過去','timid',null,R('「就是個很遠的地方。」你說。{P}看了你一眼，沒有追問。',{},{aff:-1}))
+]},
+{id:'d_gap',t:'歲月的差距',fl:['partner'],a:[60,3000],rm:[3,5],w:3,text:'歲月不饒人。{P}的修為停在了原地，而你的步伐越來越快。這一天，對方輕聲說：「我的壽元，大約還剩二十年。」',o:[
+  O('傾盡資源，為對方延壽','careful',['人',12],{
+    g:R('你踏遍三座坊市，終於湊齊了延壽丹。{P}服下後，眼角有了光：「這輩子，我欠你的。」',{人:1},{aff:3}),
+    k:R('延壽丹起了作用，多了二十年。',{},{aff:2}),
+    f:R('藥材沒湊齊，你滿身疲憊地回來，{P}只是握住你的手。',{},{aff:1})},{cost:{金:6}}),
+  O('傾囊相授，助對方突破','diligent',['悟',15],{
+    g:R('你把自己的心得毫無保留地寫給對方。{P}閉關三年後出關，已與你同階。',{悟:1,exp:10},{aff:3}),
+    k:R('對方成功突破了一小步，壽元也延長了一些。',{},{aff:2}),
+    f:R('功法與對方不合，反而讓對方傷了經脈。',{},{aff:-1})}),
+  O('放下一切，陪伴到最後','careful',null,R('你放下一切，陪{P}走完最後的歲月。送別那天，你在墳前坐了三天三夜。',{心:2,exp:5},{partnerDie:1})),
+  O('假裝不知道，繼續閉關','timid',null,R('你把消息壓在心底，埋頭苦修。二十年後，{P}在你出關前悄悄走了，留下一封信：「不怪你。」',{心:-1,exp:10},{partnerDie:1}))
+]},
+// =============== 中後期通用 ===============
+{id:'e_council',t:'仙盟大會',a:[60,3000],rm:[3,6],w:1.6,text:'各大門派齊聚一堂，商討如何應對魔道、妖族與不知何時會爆發的空間裂縫。你發現這是一場一千句話裡只有兩句是人話的會議。',o:[
+  O('發表意見，直指要害','bold',['人',14],{
+    g:R('你的一席話說得全場鴉雀無聲，隨後掌聲雷動。你的名聲在修仙界又上了一個台階。',{人:3,exp:15}),
+    k:R('你的意見被部分採納，大家對你多了幾分尊重。',{人:1,exp:6}),
+    f:R('你直言不諱，得罪了幾位長老。',{人:-2})}),
+  O('暗中觀察，摸清各方底牌','diligent',['心',13],{
+    g:R('你一整場會議沒說一句話，卻把各方勢力的底細摸了個清清楚楚。',{人:1,悟:1,exp:20}),
+    k:R('你看出了幾個關鍵人物的立場。',{exp:8}),
+    f:R('被點名發言，卻什麼也答不出來。',{人:-1})}),
+  O('私下結盟，拉攏幾位長老','careful',['人',14],{
+    g:R('會議散後，你已和三位長老建立了私人同盟。',{人:3,金:4}),
+    k:R('你拉攏了一位長老，勉強算有收穫。',{人:1,金:2}),
+    f:R('被人察覺你的小動作，大家看你的眼神變了。',{人:-2,金:-2})}),
+  O('藉口上廁所溜了','timid',null,R('你一個「如廁」就是三天，沒人發現你不在。「會議可以不開，命不能不要。」',{心:1}))
+]},
+{id:'e_demon',t:'魔道的誘惑',a:[60,3000],rm:[3,6],w:1.6,text:'一位魔道前輩攔住你的去路：「道友，你卡在瓶頸已經很久了吧？我這裡有一門功法，三年之內，保你突破。只要……沾一點血。」',o:[
+  O('斷然拒絕，立場堅定','bold',['心',14],{
+    g:R('你一句「道不同」，斬釘截鐵。魔修眼神複雜，竟拱手而去。',{心:3,exp:20}),
+    k:R('你拒絕了，雖然心裡有那麼一絲動搖。',{心:1,exp:8}),
+    f:R('你拒絕得不夠堅決，魔修笑著說：「你會回來的。」',{心:-1})}),
+  O('假意答應，套取功法','diligent',['悟',15],{
+    g:R('你騙過了魔修，抄下了功法的核心——然後徹底銷毀。你知道了魔道的路數，卻沒有沾一滴血。',{悟:2,心:1,exp:30}),
+    k:R('你騙到一部分，但被魔修識破。',{悟:1,exp:12}),
+    f:R('你的演技被看穿，魔修的臉色變了。',{體:-1}),
+    b:R('魔修的手段，比你想像得更狠。',{},{die:'被魔修識破詭計，神魂俱滅'})}),
+  O('拖延，說要考慮一下','careful',['人',13],{
+    g:R('你拖了三天，魔修不耐煩地走了，你鬆了口氣。',{心:1}),
+    k:R('你勉強拖過去了，但心裡很不安。',{}),
+    f:R('魔修看出你在拖延，冷笑一聲，在你身上留了個標記。',{心:-1})}),
+  O('心動了，試一試','bold',['心',16],{
+    g:R('你只沾了一點，竟立刻突破了瓶頸，卻也從此背負了一道心魔。',{exp:40,心:-2}),
+    k:R('你沾了一點血，突破了瓶頸，但心裡隱約有些不安。',{exp:25,心:-1}),
+    f:R('魔功反噬，你吐血三升。',{體:-2,心:-2,exp:-10}),
+    b:R('魔功比你想像的更邪門。',{},{die:'入了魔道，從此世上少了一位修士，多了一頭魔'})})
+]},
+{id:'e_herb',t:'千年靈藥',a:[60,3000],rm:[3,6],w:1.6,text:'你偶然得知，後山的懸崖峭壁上，長著一株千年靈藥。傳說服用之人，可增壽百年、修為倍增。但同時，有幾股勢力也盯上了它。',o:[
+  O('趁夜摘取，神不知鬼不覺','bold',['體',14],{
+    g:R('你深夜出手，悄無聲息地摘下靈藥。第二天，大家發現靈藥不見了，你已經在洞府裡煉化了它。',{體:2,exp:40}),
+    k:R('你摘到了靈藥，但被人發現了蹤跡。',{exp:20,人:-1}),
+    f:R('被守衛發現，你狼狽逃出，一無所獲。',{體:-1}),
+    b:R('有人在崖邊布下了暗哨。',{},{die:'為了一株靈藥，死在了後山的懸崖下'})}),
+  O('聯合幾位修士，共同採摘','careful',['人',13],{
+    g:R('你們協作默契，靈藥被分成了五份，每個人都得到了足夠的好處。',{人:2,exp:25}),
+    k:R('靈藥分得不均，你得到了一小份。',{人:1,exp:12}),
+    f:R('同盟內鬥，靈藥被別人搶了去。',{人:-2})}),
+  O('研究藥性，提前準備克制手段','diligent',['悟',15],{
+    g:R('你提前調配了一份護脈丹，服用靈藥時毫無反噬，修為暴漲。',{悟:1,exp:45}),
+    k:R('你準備得還算充分，服藥後略有不適，但總體順利。',{exp:22}),
+    f:R('你的準備不夠充分，服藥後差點被藥力撐爆。',{體:-2,exp:10})}),
+  O('讓別人去爭，自己看看就好','timid',null,R('你坐在遠處看了一整天。最終，靈藥被一個你不認識的修士帶走了。你沒覺得後悔。',{心:1}))
+]},
+{id:'e_formation',t:'護山大陣',fl:['inSect'],a:[60,3000],rm:[3,5],w:2,text:'宗門的護山大陣出現了裂縫，長老們一籌莫展。有人找到了你：「你對陣法有些心得，能不能……幫個忙？」',o:[
+  O('親自操刀，修復大陣','diligent',['悟',14],{
+    g:R('你花了七天七夜，將大陣修復得比原本更堅固。長老們看你的眼神，已經變了。',{悟:2,人:3,exp:30}),
+    k:R('大陣被修好了，雖然有些粗糙，但足以應付。',{悟:1,人:1,exp:15}),
+    f:R('修復過程中出了岔子，大陣的裂縫更大了。',{人:-2})}),
+  O('召集同門，集思廣益','careful',['人',13],{
+    g:R('你把宗門裡的陣法愛好者全找來，眾人一起動手，三天就搞定。你成了組織者，名聲大振。',{人:4,exp:15}),
+    k:R('大家七嘴八舌，終於把大陣修好了。',{人:2,exp:6}),
+    f:R('意見太多，反而一事無成。',{人:-1})}),
+  O('藉機研究大陣的運作原理','bold',['悟',15],{
+    g:R('你一邊修復一邊研究，發現這座大陣的核心，竟與你的功法暗合。',{悟:2,exp:40}),
+    k:R('你研究了一部分，收穫不小。',{悟:1,exp:20}),
+    f:R('你過於投入，忽略了時間，修復拖延。',{人:-1})}),
+  O('推薦別人去做','timid',null,R('你把事情推給了別人，自己落得清閒。事後，那人受到了宗門的重賞。你有點後悔。',{心:-1}))
+]},
+{id:'e_politic',t:'宗門內鬥',fl:['inSect'],a:[40,3000],rm:[2,5],w:2,text:'宗門裡兩位長老因為掌門之位爭得不可開交，各自拉攏弟子。你的師兄師姐們也被分成了兩派。他們看著你，在等你表態。',o:[
+  O('站隊強勢一方','bold',['人',13],{
+    g:R('你押對了寶，強勢一方上位後，你被提拔為核心弟子。',{人:3,金:4,exp:20}),
+    k:R('你選了強勢的一方，雖然沒有太多好處，但也安全。',{人:1,金:1}),
+    f:R('你站的一方輸了，被對方清算。',{人:-3,金:-3})}),
+  O('兩邊都不站，專心修行','diligent',['心',12],{
+    g:R('你兩邊都不得罪，埋頭修行。紛爭結束後，兩邊都覺得你是個可交的人。',{心:2,人:2,exp:20}),
+    k:R('你保持中立，雖然被人孤立了一陣子。',{心:1,exp:10}),
+    f:R('兩邊都覺得你不識抬舉，暗中排擠你。',{人:-2})}),
+  O('暗中調解，居中斡旋','careful',['人',14],{
+    g:R('你憑著三寸不爛之舌，居然真的讓兩位長老坐下來談了一次。雖然沒完全和解，但避免了流血。',{人:4,心:1,exp:25}),
+    k:R('你的調解產生了一點效果。',{人:2}),
+    f:R('你兩頭不討好，被雙方都罵了一頓。',{人:-2})}),
+  O('稱病閉關，避開風頭','timid',null,R('你在洞府裡閉關三個月，出來時，紛爭已經結束了。',{心:1,exp:6}))
+]},
+{id:'e_void',t:'虛空遊歷',a:[200,5000],rm:[5,7],w:2,text:'修為到了這個階段，凡間的一切都顯得渺小。你站在山巔，感到一陣前所未有的空虛。星空在召喚你，你的神識，隱隱觸碰到了「世界」的邊緣。',o:[
+  O('破開虛空，探索邊界','bold',['心',16],{
+    g:R('你一步踏入虛空，在無數星辰間漫遊。你看見了無數個世界，也看見了自己的渺小與偉大。',{心:2,悟:2,exp:50}),
+    k:R('你在虛空邊緣走了一圈，獲得了一些感悟。',{悟:1,exp:25}),
+    f:R('虛空亂流把你捲了回來，你吐了一口血。',{體:-2}),
+    b:R('虛空比你想像的更危險。',{},{die:'迷失在虛空的亂流中，再也沒有回來'})}),
+  O('靜心推演，觀察世界運行的規律','diligent',['悟',17],{
+    g:R('你推演三年，隱約看見了一條連通世界的線，感到前所未有的清明。',{悟:3,exp:50}),
+    k:R('你推演出一些規律，收穫頗豐。',{悟:1,exp:25}),
+    f:R('推演過度，你的識海一片混亂。',{心:-1,exp:-8})}),
+  O('向天道問路','careful',['心',15],{
+    g:R('你向蒼天發問，三天後，天地間回應了一句：「慢慢來。」你莫名地笑了。',{心:2,exp:25}),
+    k:R('你沒得到回應，但心安了一些。',{心:1}),
+    f:R('你的問題，天地沒有回答。',{})}),
+  O('留在原地，繼續享受這份平靜','timid',null,R('你什麼也沒做，只是看了一夜的星星。這一刻，你覺得自己什麼都不缺。',{心:1}))
+]},
+{id:'e_heavenwar',t:'仙魔之戰',a:[200,5000],rm:[5,7],w:2.2,text:'天地間忽然出現一道巨大的裂縫，裂縫之後，是無邊無際的魔氣。仙界的使者匆匆趕來：「魔界入侵，凡有修為者，皆需出力！」大戰一觸即發。',o:[
+  O('衝上最前線，血戰魔將','bold',['體',18],{
+    g:R('你一人斬殺三名魔將，名字被刻在了仙界的功勳碑上。',{體:2,人:3,exp:60}),
+    k:R('你負傷殺敵，立下大功。',{體:-1,人:2,exp:30}),
+    f:R('你被魔將重創，躺了三十年才恢復。',{體:-3,exp:-10}),
+    b:R('魔將的實力，遠在你的預料之上。',{},{die:'在仙魔大戰中身隕，連殘魂都被魔氣吞噬'})}),
+  O('布下大陣，守住關隘','diligent',['悟',18],{
+    g:R('你的大陣擋住了魔潮三個月，為仙界爭取了寶貴的時間。',{悟:2,人:2,exp:55}),
+    k:R('大陣守住了一段時間，雖然最終被突破，但你已盡力。',{悟:1,exp:25}),
+    f:R('大陣被魔氣腐蝕，你匆忙撤退。',{心:-1})}),
+  O('整合各路援軍，統一指揮','careful',['人',17],{
+    g:R('你憑著多年積累的人脈，把各路散兵游勇整合成一支精銳。仙魔大戰後，你被推舉為聯軍統帥。',{人:4,exp:45}),
+    k:R('你整合了一部分援軍，起到了不小的作用。',{人:2,exp:20}),
+    f:R('各路援軍互不服氣，局面一團混亂。',{人:-2})}),
+  O('後撤保存實力','timid',null,R('你選擇退到安全地帶。事後，你聽說這場大戰，死了很多你認識的人。',{心:-2}))
+]},
+{id:'e_cave',t:'大能洞府',a:[100,4000],rm:[4,6],w:1.8,text:'你偶然發現一處隱秘的洞府，洞口刻著一行小字：「有緣者入，無緣者死。」洞府主人，是一位數千年前隕落的大能。這到底是機緣，還是陷阱？',o:[
+  O('闖入洞府，直取核心','bold',['悟',16],{
+    g:R('你一路闖過十八道禁制，在洞府深處找到了大能的傳承，修為暴漲。',{悟:2,體:1,exp:50}),
+    k:R('你闖過了大部分禁制，拿到了一些珍寶。',{exp:25,金:5}),
+    f:R('你被禁制擋在外面，狼狽退出。',{體:-2}),
+    b:R('洞府的最後一道禁制，是專門為闖入者準備的。',{},{die:'死於大能洞府的最後一道禁制，成了洞府的又一具白骨'})}),
+  O('仔細觀察，解析禁制','diligent',['悟',17],{
+    g:R('你解開了所有禁制，洞府的大門緩緩打開。裡面的傳承，全部歸你。',{悟:3,exp:55}),
+    k:R('你解開了一部分禁制，已能拿到不少寶物。',{悟:1,exp:25,金:3}),
+    f:R('你解了一天，也沒找到突破口。',{})}),
+  O('請同道一起探索','careful',['人',15],{
+    g:R('眾人合力，一一破解禁制。分贓時你也沒吃虧，還賺了幾個人情。',{人:3,exp:30,金:4}),
+    k:R('大家分了寶物，你得了一份。',{人:1,exp:15}),
+    f:R('有人暗中使絆，你損失慘重。',{人:-2,金:-3})}),
+  O('不入洞府，把位置記下來','timid',null,R('你把洞府的位置記在心裡，打算以後再來。但很多年後，你都沒有回來。',{心:1}))
+]},
+{id:'e_debate',t:'論道大會',a:[100,4000],rm:[4,6],w:1.8,text:'修仙界百年一度的「論道大會」召開了。來自四方的大能齊聚一堂，輪流登台闡述自己的「道」。台下的聽眾，個個都是行家。輪到你時，所有人都安靜了。',o:[
+  O('闡述自己一生所悟的道','diligent',['悟',16],{
+    g:R('你一口氣講了三個時辰。結束時，全場靜默了片刻，然後雷鳴般的掌聲響起。你的「道」，被許多人記住了。',{悟:2,人:3,exp:50}),
+    k:R('你講得中規中矩，部分人點頭稱是。',{悟:1,exp:25}),
+    f:R('你講到一半，被某位大能指出了破綻，場面尷尬。',{心:-1})}),
+  O('挑戰前一位發言者的觀點','bold',['心',16],{
+    g:R('你一句反問，把對方問得啞口無言。全場譁然，隨後掌聲四起。',{心:2,人:2,exp:40}),
+    k:R('你提出了一個有趣的反駁，引發了一場熱烈的討論。',{人:1,exp:20}),
+    f:R('你的質疑被對方輕鬆化解，反而顯得有些魯莽。',{人:-1,心:-1})}),
+  O('只說幾句，點到為止','careful',['心',14],{
+    g:R('你只說了短短三句話，卻讓人回味無窮。',{心:2,人:2,exp:30}),
+    k:R('你的簡短發言，沒有太多亮點，但也安全。',{exp:10}),
+    f:R('你太簡短了，大家以為你沒東西可說。',{人:-1})}),
+  O('推辭，只當聽眾','timid',null,R('你搖搖頭，在角落裡聽了三天的論道。這三天，你收穫比任何一次都多。',{悟:1,exp:15}))
+]},
+
+// =============== 劇情線 A：戒指裡的老爺爺 ===============
+{id:'s_gp1',t:'老爺爺的心事',fl:['grandpa'],nf:['gp1'],a:[16,3000],rm:[1,3],w:5,text:'夜深人靜，戒指裡的老爺爺難得沒有講當年勇。他沉默許久，才開口：「小子……老夫其實，欠一個人一個交代。」',o:[
+  O('靜靜聽他說完','careful',['心',10],{
+    g:R('老爺爺說起往事：他叫玄塵，曾是一代宗師，卻被最信任的大弟子暗算，神魂被封入戒中。他請你日後留意「幽冥宗」。',{悟:1,心:1,exp:6},{flag:'gp1'}),
+    k:R('老爺爺說了個大概，聲音越來越輕：「叛徒……幽冥宗……」',{心:1},{flag:'gp1'}),
+    f:R('老爺爺講到一半，你睡著了。他嘆了口氣：「罷了。」但你還是記住了「幽冥宗」三個字。',{},{flag:'gp1'})}),
+  O('追問細節，問出他的來歷','diligent',['悟',11],{
+    g:R('你一句一句追問，老爺爺終於全盤托出：他的本命法寶被叛徒奪走，他的宗門被屠。他說：「老夫不求報仇，只求，不要讓叛徒的陰謀得逞。」',{悟:1,exp:10},{flag:'gp1'}),
+    k:R('你問到了一部分真相。',{exp:5},{flag:'gp1'}),
+    f:R('你問得太急，老爺爺閉了嘴，過了三天才重新開口。',{},{flag:'gp1'})}),
+  O('勸他放下過去','bold',['心',11],{
+    g:R('老爺爺沉默良久：「你這小子……比老夫當年強。」他似乎輕鬆了一些。',{心:2},{flag:'gp1'}),
+    k:R('老爺爺嘆了口氣：「放不下啊。」',{心:1},{flag:'gp1'}),
+    f:R('老爺爺惱了：「你懂什麼！」他三天沒搭理你。',{},{flag:'gp1'})}),
+  O('假裝睡著','timid',null,R('你打起了呼嚕。老爺爺嘆氣：「罷了，老夫自己想。」但你隱約聽到了「幽冥宗」三個字。',{},{flag:'gp1'}))
+]},
+{id:'s_gp2',t:'舊宗門遺址',fl:['gp1'],nf:['gp2'],a:[30,3000],rm:[2,4],w:5,text:'老爺爺指點你去了一處荒山。那裡曾是他的宗門「玄塵宗」的山門，如今只剩斷壁殘垣與一棵半枯的古松。「就是這裡了。」他的聲音，有些顫抖。',o:[
+  O('清理遺址，尋找遺物','diligent',['悟',12],{
+    g:R('你在廢墟下挖出一個玉盒，裡面是玄塵老祖當年的傳承玉簡。老爺爺沉默了很久，才說：「謝謝。」',{悟:2,exp:15},{flag:['gp2','gp2full']}),
+    k:R('你找到了一些殘片，雖然不完整，但足以讓老爺爺露出一絲笑意。',{悟:1,exp:8},{flag:'gp2'}),
+    f:R('什麼也沒找到，你只挖了滿手繭。',{體:1},{flag:'gp2'})}),
+  O('在古松下祭拜','careful',['心',10],{
+    g:R('你在松下擺上清酒，鞠了三躬。老爺爺在戒指裡泣不成聲，過了很久，說了一句「老夫，終於可以釋懷了」。',{心:2,exp:10},{flag:['gp2','gp2full']}),
+    k:R('你祭拜完畢，老爺爺輕輕道了聲謝。',{心:1},{flag:'gp2'}),
+    f:R('你祭拜得有些草率，老爺爺沒說話。',{},{flag:'gp2'})}),
+  O('布陣驅散殘留的怨氣','diligent',['悟',13],{
+    g:R('你布下的陣法把山門上積壓了千年的怨氣一掃而空。古松上，竟抽出了一枚新芽。',{悟:1,心:1,exp:20},{flag:['gp2','gp2full']}),
+    k:R('怨氣被驅散了一部分，山門稍稍亮堂了些。',{exp:10},{flag:'gp2'}),
+    f:R('陣法失敗，怨氣反而被激發了。你匆忙撤離。',{體:-1},{flag:'gp2'})}),
+  O('掉頭就走，這裡有點陰森','timid',null,R('你拉著戒指轉身就走。老爺爺在戒指裡罵了一路：「膽小鬼！」',{},{flag:'gp2'}))
+]},
+{id:'s_gp3',t:'叛徒現身',fl:['gp2'],nf:['gp3'],a:[40,3000],rm:[3,5],w:5,text:'幽冥宗的長老找上了門：「這位道友，你身上，有『玄塵』的氣息。」戒指裡，老爺爺低聲說：「就是他。我的好徒弟，一千年了，還是那麼愛笑。」',o:[
+  O('正面對峙，直接揭穿','bold',['心',14],{
+    g:R('你一口喝破他的身份。叛徒臉色驟變，倉皇而逃。老爺爺在戒指裡，笑出了聲。',{心:2,人:1,exp:25},{flag:['gp3','gpWin']}),
+    k:R('雙方僵持不下，他撂了狠話退去。',{exp:12},{flag:'gp3'}),
+    f:R('你被他一掌震傷，老爺爺拚命替你擋了一擊。',{體:-2},{flag:'gp3'}),
+    b:R('叛徒的實力，比你想像的更強。',{},{die:'被叛徒當場擊殺，戒指落入了他手中'})}),
+  O('假裝不知情，與他周旋','careful',['人',13],{
+    g:R('你一邊套話，一邊暗自記下他的弱點。叛徒告辭時，還以為占了便宜。',{人:1,exp:20},{flag:['gp3','gpWin']}),
+    k:R('你與他周旋了一晚，得到了一些情報。',{exp:8},{flag:'gp3'}),
+    f:R('你被他看穿，幸好老爺爺出面解圍。',{體:-1},{flag:'gp3'})}),
+  O('設下陷阱，引他入局','diligent',['悟',14],{
+    g:R('你悄悄布下一座殺陣，將他困在其中，逼他交出了老爺爺的本命法寶殘片。',{悟:1,exp:30,金:3},{flag:['gp3','gpWin']}),
+    k:R('陷阱困住了他一瞬，你趁機逃脫。',{exp:10},{flag:'gp3'}),
+    f:R('陷阱被他一眼看穿，你吃了個悶虧。',{體:-1},{flag:'gp3'})}),
+  O('轉身就跑','timid',null,R('你拔腿就跑，叛徒在背後大笑：「小娃娃，跑得挺快。」老爺爺沉默片刻：「……下次，換個法子。」',{心:-1},{flag:'gp3'}))
+]},
+{id:'s_gp4',t:'老爺爺的最後一課',fl:['gp3'],nf:['gp4'],a:[60,5000],rm:[4,6],w:6,text:'深夜，戒指微微發熱。老爺爺的聲音比以往都輕：「小子，老夫的殘魂，撐不了多久了。有些事，是該告訴你了。」',o:[
+  O('靜靜聽他說','careful',['心',12],{
+    g:R('老爺爺說：「老夫……並不屬於這個世界。我來自一個叫『藍星』的地方。」他把一生所學盡數傳你，最後說了一句：「回家的路，在星空的盡頭。」你鼻子一酸。',{悟:2,心:1,exp:30},{clue:1,flag:['gp4','gpTruth']}),
+    k:R('老爺爺說了一個你不太懂的詞：「藍星」。他用最後的力量，在你識海裡刻下一幅星圖。',{悟:1,exp:15},{clue:1,flag:['gp4','gpTruth']}),
+    f:R('老爺爺說到一半，魂力不支：「星……」就再也沒了聲音。戒指安靜了下來。',{exp:5},{flag:'gp4'})}),
+  O('以自己的魂力，助他延續','diligent',['悟',15],{
+    g:R('你以自己的魂力為引，讓老爺爺的殘魂多撐了三天。三天裡，他把所有的秘密都告訴了你。',{悟:2,exp:30},{clue:1,flag:['gp4','gpTruth']}),
+    k:R('你多撐了老爺爺一天，聽到了一些零碎的故事。',{exp:12},{clue:1,flag:['gp4','gpTruth']}),
+    f:R('你魂力不足，反而傷了自己。老爺爺說：「別，小子，別。」',{體:-1,心:-1},{flag:'gp4'})}),
+  O('告訴他：「您不是一個人」','bold',['心',13],{
+    g:R('老爺爺沉默了很久，才說：「……你是不是，也是從那邊來的？」你沒有回答，只是笑。老爺爺的聲音，帶著顫抖：「那就好，那就好。」',{心:3,exp:25},{clue:1,flag:['gp4','gpTruth']}),
+    k:R('老爺爺說：「小子，有你這句話，老夫值了。」',{心:2},{flag:'gp4'}),
+    f:R('老爺爺沒聽懂你的意思，嘆了口氣：「老夫累了。」',{},{flag:'gp4'})}),
+  O('讓他好好休息，不再追問','timid',null,R('你把戒指輕輕握在手心，一夜沒睡。第二天，戒指再沒有發過熱。',{心:1},{flag:'gp4'}))
+]},
+
+// =============== 劇情線 B：宿敵 ===============
+{id:'s_rv1',t:'集市上的少年',a:[16,45],rm:[0,2],nf:['rival','rivalFriend'],w:4,text:'集市上，一個衣著華麗的少年擋住你的路，說你踩了他的靴子。那雙靴子，其實乾淨得像沒穿過。他的眼神裡寫滿了「我就是來找茬的」。',o:[
+  O('針鋒相對，當眾讓他下不了台','bold',['心',10],{
+    g:R('你三言兩語把他噎得面紅耳赤，周圍人哄笑。他咬牙：「你給我記住！」',{心:1,人:1},{flag:'rival'}),
+    k:R('你不卑不亢頂了回去，他悻悻而去。',{心:1},{flag:'rival'}),
+    f:R('你嘴上不饒人，卻被他帶來的人推了一把。',{體:-1},{flag:'rival'})}),
+  O('客氣道歉，化解尷尬','careful',['人',10],{
+    g:R('他愣住了，臉紅了半天，只丟下一句「算你識相」。後來你們竟成了點頭之交。',{人:2},{flag:'rivalFriend'}),
+    k:R('他哼了一聲走了，事情就此了結。',{人:1}),
+    f:R('他覺得你軟弱，更加變本加厲。',{人:-1},{flag:'rival'})}),
+  O('看出他在虛張聲勢，淡定以對','diligent',['悟',11],{
+    g:R('你看出他其實心裡發虛，只是想引起注意。你請他喝了杯茶，他的臉更紅了。',{悟:1,人:1},{flag:'rivalFriend'}),
+    k:R('你淡淡一笑，他反而有些不知所措。',{人:1}),
+    f:R('你猜錯了，他是真來找茬。',{體:-1},{flag:'rival'})}),
+  O('繞道走開','timid',null,R('你繞了條小路。身後傳來一聲冷哼，他記住了你的背影。',{},{flag:'rival'}))
+]},
+{id:'e_rival',t:'宿敵重逢',fl:['rival'],nf:['rivalMet'],a:[60,2000],rm:[3,5],w:4,text:'當年集市上那個找茬的少年，如今竟成了某大宗門的首席。他看你的眼神，充滿了「我等你很久了」。',o:[
+  O('正面對決','bold',['體',15],{
+    g:R('你一拳擊碎他的護體靈光，他愣了片刻：「……你什麼時候這麼強了？」',{exp:30,人:2},{flag:'rivalMet'}),
+    k:R('旗鼓相當，打到雙方都沒力氣。他笑著說：「下次再來。」',{exp:15,體:-1},{flag:'rivalMet'}),
+    f:R('被他壓著打了三條街。',{體:-2,人:-1},{flag:'rivalMet'}),
+    b:R('他這些年，確實更努力。',{},{die:'敗給宿敵，臨終聽到一句：「莫欺中年窮。」'})}),
+  O('智取','diligent',['悟',14],{
+    g:R('你布下一座簡易陣法，讓他自己走了進去。',{exp:28,悟:1},{flag:'rivalMet'}),
+    k:R('用小手段勝了半招。',{exp:12},{flag:'rivalMet'}),
+    f:R('陣法被他一眼看穿。',{體:-1},{flag:'rivalMet'})}),
+  O('主動結盟，化敵為友','careful',['人',13],{
+    g:R('他沉默片刻，伸出手：「過去的事，翻篇吧。」',{人:3,金:4},{flag:'rivalMet'}),
+    k:R('勉強達成了「互不干涉」的協議。',{人:1},{flag:'rivalMet'}),
+    f:R('他以為你是在示弱，反而更囂張了。',{人:-1},{flag:'rivalMet'})}),
+  O('轉身離開','timid',null,R('你頭也不回地走了。他在背後喊了一句什麼，你假裝沒聽見。',{心:1},{flag:'rivalMet'}))
+]},
+{id:'e_rival_f',t:'故人重逢',fl:['rivalFriend'],nf:['rivalMet'],a:[60,2000],rm:[3,5],w:4,text:'當年集市上那個紅著臉的少年，如今已是名震一方的人物。他在一場宴席上遠遠舉杯，笑著說：「我可沒忘了那杯茶。」',o:[
+  O('舉杯回敬，與他敘舊','careful',['人',11],{
+    g:R('你們聊了一整夜。他說：「這些年，我最想念的，其實是那杯茶。」你們結為摯友。',{人:3,心:1,exp:15},{flag:['rivalMet','rivalAlly']}),
+    k:R('敘了舊，客氣而溫暖。',{人:2},{flag:'rivalMet'}),
+    f:R('你們聊得有些尷尬，只好以酒掩飾。',{},{flag:'rivalMet'})}),
+  O('邀他切磋，點到為止','bold',['體',13],{
+    g:R('你們過了百招，不分勝負，相視而笑：「這才是對手。」',{體:1,人:2,exp:20},{flag:['rivalMet','rivalAlly']}),
+    k:R('切磋愉快，雙方都有收穫。',{exp:10},{flag:'rivalMet'}),
+    f:R('你輸了半招，他很客氣地說「承讓」。',{體:-1},{flag:'rivalMet'})}),
+  O('請他助你一臂之力','diligent',['人',12],{
+    g:R('他二話不說，答應了你的請求。你欠他一個人情，但覺得很值得。',{人:2,exp:20,金:3},{flag:['rivalMet','rivalAlly']}),
+    k:R('他給了你一點幫助，雖然不多，但很誠懇。',{人:1,exp:8},{flag:'rivalMet'}),
+    f:R('他婉拒了：「抱歉，這事我不便插手。」',{人:-1},{flag:'rivalMet'})}),
+  O('客氣寒暄，保持距離','timid',null,R('你們寒暄了幾句，各自散去。你覺得有些可惜，卻也說不上來為什麼。',{心:1},{flag:'rivalMet'}))
+]},
+{id:'e_rival_d',t:'師徒再見',fl:['rejected'],nf:['rivalMet'],a:[60,2000],rm:[3,5],w:4,text:'當年被你一腳踹下山的少年，如今成了魔道新晉巨擘，人稱「血衣修羅」。他站在你面前，一字一句：「師父，別來無恙。」',o:[
+  O('直面他，問他想要什麼','bold',['心',14],{
+    g:R('你直視他的眼睛：「我當年錯了嗎？」他愣住了。許久，他別過頭：「……我只是想要一個說法。」',{心:2,exp:25},{flag:'rivalMet'}),
+    k:R('兩人對峙許久，各自退了一步。',{心:1},{flag:'rivalMet'}),
+    f:R('他一掌拍來，你勉強接下，卻也被震退三步。',{體:-2},{flag:'rivalMet'}),
+    b:R('他的修為，早已不在你之下。',{},{die:'被親手教出來的魔道巨擘斬殺，死前，他說：「師父，這一次，我贏了。」'})}),
+  O('道歉：當年是我太過魯莽','careful',['心',13],{
+    g:R('他怔在原地，眼眶紅了：「……我等你這句話，等了五十年。」你們就著一壺酒，聊了一夜。',{心:3,人:2,exp:20},{flag:['rivalMet','rivalAlly']}),
+    k:R('他沉默許久，只說了一句：「我知道了。」',{心:1},{flag:'rivalMet'}),
+    f:R('他冷笑一聲：「現在說這些，有什麼用。」',{心:-1},{flag:'rivalMet'})}),
+  O('試探他的修為，看看這些年他走了多遠','diligent',['悟',14],{
+    g:R('你看出他的修為已經很高，卻處處留手。他對你，其實並無殺意。',{悟:1,exp:25},{flag:'rivalMet'}),
+    k:R('你試探了一番，雙方都沒有下殺手。',{exp:12},{flag:'rivalMet'}),
+    f:R('你的試探被他看穿，他的眼神冷了下來。',{體:-1},{flag:'rivalMet'})}),
+  O('轉身離開，不願再見','timid',null,R('你背對著他，一步一步走遠。他沒有追來，只是在背後輕聲說了一句什麼。你沒有聽清。',{心:-1},{flag:'rivalMet'}))
+]},
+{id:'s_rv3',t:'了斷',fl:['rivalMet'],nf:['rivalEnd'],a:[80,3000],rm:[4,6],w:6,text:'一切都該有個了斷。你與他的恩怨，在這一年走到了盡頭。他站在山巔等你，風把他的衣角吹得獵獵作響。',o:[
+  O('決一死戰','bold',['體',16],{
+    g:R('一戰七天七夜，你以半招之差勝出。他倒下時笑了：「這輩子，終於不是你讓我了。」',{體:2,exp:40,人:2},{flag:'rivalEnd'}),
+    k:R('兩敗俱傷，雙雙重傷，彼此一笑泯恩仇。',{體:-1,exp:20},{flag:'rivalEnd'}),
+    f:R('你輸了，他卻沒有下殺手：「下次。」',{體:-2},{flag:'rivalEnd'}),
+    b:R('這一戰，他豁出了一切。',{},{die:'敗於宿敵之手，臨終前他說：「對不起。我只是想贏你一次。」'})}),
+  O('擺下一壺酒，與他對飲','careful',['人',15],{
+    g:R('你擺下一壺酒，與他對飲三杯。他沉默許久，終於舉杯：「算了。」從此他成了你最可靠的盟友。',{人:3,心:2,exp:25},{flag:['rivalEnd','rivalAlly']}),
+    k:R('酒喝完了，恩怨也淡了一些。',{人:1,心:1},{flag:'rivalEnd'}),
+    f:R('他冷笑一聲，拂袖而去。',{人:-1},{flag:'rivalEnd'})}),
+  O('揭開當年的真相，點醒他','diligent',['悟',15],{
+    g:R('你把當年的來龍去脈一一說明。他聽完，沉默了很久，緩緩放下了劍。',{悟:1,心:2,exp:30},{flag:['rivalEnd','rivalAlly']}),
+    k:R('你說出了真相，他半信半疑，但已不再那麼激動。',{心:1,exp:12},{flag:'rivalEnd'}),
+    f:R('他不信你的話，認為你在狡辯。',{心:-1},{flag:'rivalEnd'})}),
+  O('把所有讓給他，退隱山林','timid',null,R('你把所有資源讓給了他。他愣住了，良久才說：「……你真是個傻子。」你笑了笑，轉身離去。',{心:2,金:-3},{flag:['rivalEnd','rivalAlly']}))
+]},
+// =============== 家境專屬（續） ===============
+{id:'f_hunter2',t:'山神祭',fm:['hunter'],a:[16,90],rm:[0,3],w:6,text:'山神祭到了。村長說，今年得獵一頭「山神的使者」——一頭活了三十年的白毛野豬王——才能保來年平安。全村的目光，都落在你身上。',o:[
+  O('接下重任，獨自進山','bold',['體',12],{
+    g:R('三天三夜的追蹤，你在山谷裡與野豬王正面撞上。一場惡戰後，你把牠扛下山。全村歡呼，你成了「山神的使者」。',{體:2,人:2,exp:10}),
+    k:R('你重傷了牠，牠逃進深山。村長說：「也算有誠意了。」',{體:1,人:1,exp:5}),
+    f:R('你被野豬王撞斷兩根肋骨，被人抬回村裡。',{體:-2}),
+    b:R('白毛野豬王比傳說中更凶。',{},{die:'被白毛野豬王拱下山崖，那年之後沒人敢再進山'})}),
+  O('召集獵戶，設下圍獵','careful',['人',11],{
+    g:R('你把村裡的獵手組織起來，布好陷阱，一網打盡。全村吃了三天的肉。',{人:3,金:2,exp:6}),
+    k:R('圍獵成功，但野豬王衝破了一角。',{人:1,exp:3}),
+    f:R('大家各有各的算盤，圍獵亂成一鍋粥。',{人:-1})}),
+  O('觀察足跡與習性，守在泉邊','diligent',['悟',12],{
+    g:R('你從泥土與樹皮上讀出了牠的路線，守在泉邊一箭定勝負。',{悟:1,體:1,exp:10}),
+    k:R('你推斷出牠的巢穴，但沒能守到牠。',{exp:5}),
+    f:R('追蹤一路跟丟，白走了十里山路。',{})}),
+  O('稱病躲開','timid',null,R('你抱著被子說身體不適。村長嘆了口氣，另請別人。你心裡有點愧疚。',{心:-1,人:-1}))
+]},
+{id:'f_hunter3',t:'獵人的直覺',fm:['hunter'],a:[80,3000],rm:[3,6],w:6,text:'你從小在山裡長大，養成了一種說不清的直覺。這天清晨，你忽然覺得整座山都在發抖——不是地震，是無數獸類同時往同一個方向逃。',o:[
+  O('立刻通知附近的村鎮撤離','careful',['人',13],{
+    g:R('你拉響警鐘，三座村鎮連夜撤離。獸潮過境時，沒有一個人死傷。人們為你立了一塊功德碑。',{人:3,心:2,exp:20}),
+    k:R('大部分人撤了出去，只有少數人損失了家當。',{人:1,exp:8}),
+    f:R('沒人信你的話，等獸潮到了才後悔。',{人:-1})}),
+  O('逆著獸潮，找出源頭','bold',['體',15],{
+    g:R('你在獸潮盡頭發現一頭受傷的上古妖獸，牠才是這一切的源頭。你一擊斬殺，獸潮瞬間散去。',{體:2,exp:35,金:4}),
+    k:R('你找到源頭，勉強擊退了牠。',{體:-1,exp:18}),
+    f:R('被獸潮沖得七零八落，狼狽退回。',{體:-2}),
+    b:R('源頭遠比你想像的龐大。',{},{die:'逆著獸潮而行，成為了獸潮的一部分'})}),
+  O('用野外經驗找一處安全地帶','diligent',['悟',14],{
+    g:R('你憑直覺找到一處山洞，躲過了獸潮，洞裡還有一株靈藥。',{悟:1,exp:20}),
+    k:R('躲過了獸潮，但損失了一些裝備。',{exp:8}),
+    f:R('你判斷錯了方向，差點被獸群追上。',{體:-1})}),
+  O('先自己躲起來再說','timid',null,R('你躲進了地底的石縫。獸潮過去後，你灰頭土臉地爬出來，山下的村莊已是一片狼藉。',{心:-1}))
+]},
+{id:'f_decline2',t:'討債的上門',fm:['decline'],a:[16,80],rm:[0,3],w:6,text:'一群人敲響了祖宅的大門，領頭的拿著一張泛黃的借據：「令祖百年前借了我家三百靈石，連本帶利，一共是三千。」你翻了翻借據，發現上面的印章看起來……很新。',o:[
+  O('逐條對質，找出借據的破綻','diligent',['悟',11],{
+    g:R('你指出印泥的年份不對，對方臉色大變，扔下借據落荒而逃。',{悟:1,人:1,exp:6}),
+    k:R('你抓到幾處破綻，雙方各退一步，只賠了一小筆。',{金:-1}),
+    f:R('你說了半天，對方一句「那就官府見」就把你堵住了。',{金:-3})}),
+  O('請族中長輩出面','careful',['人',10],{
+    g:R('長輩出面，說了幾句場面話，對方居然乖乖退下。你第一次覺得，祖上的名頭還有點用。',{人:2}),
+    k:R('長輩替你還了一半，另一半記在帳上。',{金:-1,人:1}),
+    f:R('長輩推說「這是你們這一房的事」，把你晾在一邊。',{人:-1})}),
+  O('把他們趕出門去','bold',['體',11],{
+    g:R('你一個人擋在門前，對方硬是沒敢往裡走一步。你在祖宅前立了威。',{體:1,心:1}),
+    k:R('把人趕走了，但對方撂下「改日再來」。',{}),
+    f:R('寡不敵眾，被推倒在地，丟了面子。',{體:-1,人:-1})}),
+  O('破財消災','timid',null,R('你湊了三百靈石遞過去。對方收了錢，臨走還說：「下次別再欠了。」',{金:-3}))
+]},
+{id:'f_decline3',t:'重振門楣',fm:['decline'],fl:['oldlib'],a:[60,3000],rm:[3,6],w:6,text:'你憑藉祖宅藏書上的心得，一路修到今日。族裡的老人們紛紛上門：「家主，咱家這百年的沒落，該到頭了。」他們看著你，眼裡有光，也有期望。',o:[
+  O('重開宗祠，立族規','careful',['人',13],{
+    g:R('你重開祠堂，立下新的族規。族人們看著你，彷彿看見了祖上的影子。從此家族漸漸有了生氣。',{人:3,金:3,exp:15}),
+    k:R('族規立下，反應平平，但至少有了開端。',{人:1,exp:6}),
+    f:R('族中老人對新規矩大為不滿，吵了三天。',{人:-1})}),
+  O('把祖傳功法整理成冊，傳授後輩','diligent',['悟',14],{
+    g:R('你花了一年整理功法，後輩中竟出了好幾個好苗子。族譜上，你的名字被寫在最前面。',{悟:2,人:2,exp:25}),
+    k:R('整理出了一部分，後輩進步有限。',{悟:1,exp:10}),
+    f:R('功法太深，後輩學不會，反而生了怨言。',{人:-1})}),
+  O('帶族人去奪回祖產','bold',['體',14],{
+    g:R('你一人一劍殺上門去，把被霸佔多年的祖產奪了回來。族人們跪了一地。',{體:1,人:2,金:5,exp:15}),
+    k:R('祖產拿回一半，對方答應不再追究。',{金:2,人:1}),
+    f:R('寡不敵眾，族人折損了幾個。',{人:-2,體:-1}),
+    b:R('對方請來了高人。',{},{die:'為奪回祖產，死在了自家祖宅的門前'})}),
+  O('不管了，各人有各人的路','timid',null,R('你搖搖頭：「各人有各人的路，我就不管了。」你轉身離開，背後傳來一聲嘆息。',{心:-1}))
+]},
+{id:'f_merchant2',t:'商會聯姻',fm:['merchant'],a:[16,70],rm:[0,3],w:6,text:'家裡的長輩拿著一幅畫像找到你：「對方是南城商會會長的獨子（獨女），這門親事，能讓咱家的生意再上三層樓。」你看了看畫像，沒說話。',o:[
+  O('談條件：先見面，再決定','careful',['人',11],{
+    g:R('見面後，雙方發現聊得很來，雖然沒成婚，卻成了生意夥伴。',{人:2,金:4}),
+    k:R('見了面，雙方客客氣氣，條件談妥，生意照做。',{金:2}),
+    f:R('雙方家長都插了嘴，場面一度尷尬。',{人:-1})}),
+  O('直接拒絕，婚事自己做主','bold',['心',11],{
+    g:R('你說得斬釘截鐵，長輩居然沒反駁，反而說：「像我年輕時。」',{心:2,人:1}),
+    k:R('長輩大發雷霆，但你的態度很堅決。',{心:1}),
+    f:R('長輩把你關進了祠堂三天。',{心:-1,體:-1})}),
+  O('答應聯姻，換取資源','diligent',['人',12],{
+    g:R('你們談成了互利的協議，雖然是政治婚姻，卻意外相處得不錯。',{金:6,人:2}),
+    k:R('聯姻成了，資源到手，但你心裡有點空。',{金:4,心:-1}),
+    f:R('對方並不買帳，兩家鬧得不太愉快。',{金:-2,人:-1})}),
+  O('找個藉口出遠門','timid',null,R('你以「歷練」為由，一走就是三年。回來時，那樁婚事早已不了了之。',{心:1,exp:4}))
+]},
+{id:'f_merchant3',t:'靈石行情',fm:['merchant'],a:[80,3000],rm:[3,6],w:6,text:'你敏銳地察覺到，南方的靈石礦即將減產，行情將暴漲。商會的幾位老朋友也在觀望，沒人敢第一個下手。',o:[
+  O('傾家囊買入，賭一把','bold',['金',12],{
+    g:R('一個月後，靈石價格翻了三倍。你大賺一筆，連商會會長都來登門請教。',{金:10,人:2,exp:10}),
+    k:R('行情上漲，你小賺一筆。',{金:5}),
+    f:R('礦區復工的消息一出，價格暴跌。你血本無歸。',{金:-6})}),
+  O('聯合商會，共同操盤','careful',['人',13],{
+    g:R('你和商會幾位大佬達成默契，穩穩賺了一筆，還換來幾個重要的人情。',{金:6,人:3}),
+    k:R('大家各懷心思，最終賺得不多。',{金:3,人:1}),
+    f:R('有人走漏消息，行情被攪亂，大家一起虧。',{金:-3,人:-1})}),
+  O('深入礦區，調查真相','diligent',['悟',14],{
+    g:R('你親自進了礦區，發現減產是假象。你反手賣空，賺得盆滿缽滿。',{金:8,悟:1,exp:15}),
+    k:R('你摸清了部分真相，及時調整了策略。',{金:4,exp:6}),
+    f:R('礦區戒備森嚴，你被攔在外面，什麼也沒查到。',{})}),
+  O('不碰，行情風險太大','timid',null,R('你把錢收好，什麼也沒做。事後行情果然劇烈震盪，你覺得自己的直覺救了你。',{心:1}))
+]},
+{id:'f_scholar2',t:'藏書閣的秘密',fm:['scholar'],a:[40,3000],rm:[2,5],w:6,text:'你在城中藏書閣借閱古籍時，發現某本書的頁腳有一行極小的批註：「此處有錯，真本在三樓東廂。」你心頭一跳——批註的筆跡，和你爹年輕時一模一樣。',o:[
+  O('夜探三樓東廂','bold',['體',12],{
+    g:R('你潛入東廂，找到了那本真本——裡面不僅有失傳的修煉心得，還附有你爹當年的批註。',{悟:2,exp:20}),
+    k:R('你找到了真本，但被巡夜的僕人發現，倉皇逃出。',{悟:1,exp:10}),
+    f:R('東廂門鎖上有禁制，你被反震彈出，驚動了守閣人。',{體:-1,人:-1})}),
+  O('光明正大向館主請教','careful',['人',12],{
+    g:R('館主沉默良久，領你上了三樓：「你爹當年也問過同樣的問題。」',{人:2,悟:1,exp:15}),
+    k:R('館主給你看了一部分，說「其餘的，等你有資格再說」。',{exp:8}),
+    f:R('館主冷冷一句「無可奉告」就送客了。',{})}),
+  O('研究批註，推演出真本內容','diligent',['悟',14],{
+    g:R('你僅憑批註與上下文，把真本的核心推演了出來，甚至比原本更完整。',{悟:2,exp:25}),
+    k:R('推演出大致輪廓，雖不完整，但已受益匪淺。',{悟:1,exp:12}),
+    f:R('推演錯誤，你一度走火入魔。',{心:-1,exp:-5})}),
+  O('把書放回，裝作沒看見','timid',null,R('你把書放回書架，走出了藏書閣。有些事，不知道也許更好。',{心:1}))
+]},
+{id:'f_scholar3',t:'著書立說',fm:['scholar'],a:[80,3000],rm:[3,6],w:6,text:'修行多年，你已有許多心得。幾位老友勸你：「該寫成書了，傳給後人。」你鋪開一張紙，卻又遲遲沒有落筆。',o:[
+  O('寫成《修行心得》，公開流傳','diligent',['悟',14],{
+    g:R('書一出，修仙界為之轟動。許多宗門把它列為必讀。你成了「一代宗師」。',{悟:1,人:3,金:4,exp:25}),
+    k:R('書銷量不錯，也有人批評，但你已問心無愧。',{人:2,金:2,exp:12}),
+    f:R('書寫得過於艱澀，沒人看得懂，印了一批全當了廢紙。',{金:-2})}),
+  O('只傳給入室弟子','careful',['人',12],{
+    g:R('弟子們拿到書如獲至寶，其中幾個果然青出於藍。',{人:2,悟:1,exp:15}),
+    k:R('書只在小範圍傳閱，但足以讓你欣慰。',{人:1,exp:8}),
+    f:R('你的弟子裡有人心術不正，把書偷偷賣了。',{人:-1,金:-1})}),
+  O('邊寫邊修，借寫書悟道','bold',['心',13],{
+    g:R('寫到一半，你忽然豁然開朗，連寫了三天三夜，竟在紙上悟出了新境界。',{心:2,悟:2,exp:30}),
+    k:R('書寫完了，你的心境也穩固了不少。',{心:1,exp:15}),
+    f:R('寫著寫著，你被自己的觀點困住了，一時走不出來。',{心:-1})}),
+  O('算了，這些東西寫了也沒人看','timid',null,R('你把紙放進抽屜，再也沒有打開過。',{}))
+]},
+{id:'f_orphan2',t:'乞丐幫的暗號',fm:['orphan'],fl:['beggar'],a:[16,80],rm:[0,3],w:6,text:'街上一個陌生乞丐湊過來，用你熟悉的暗號敲了敲碗：「老幫主說，你可以來了。」你這才知道，當年那位老乞丐，竟是丐幫的幫主。',o:[
+  O('赴約，聽聽他怎麼說','careful',['人',10],{
+    g:R('老幫主把一枚舊竹牌放進你手裡：「從今天起，你在街上，就沒人敢動你。」',{人:3,體:1,exp:8},{flag:'beggar2'}),
+    k:R('老幫主給了你一個座位和一碗熱湯，說：「慢慢來。」',{人:1,exp:4},{flag:'beggar2'}),
+    f:R('丐幫的幾個小頭目不服你，把你圍在巷子裡，考驗了你一番。',{體:-1,人:1},{flag:'beggar2'})}),
+  O('試探他的底細','diligent',['悟',11],{
+    g:R('你看出他每一個動作都暗藏章法——這根本是個隱世高人。你當場拜師。',{悟:1,exp:12},{flag:'beggar2'}),
+    k:R('你看出他確實不簡單，但沒敢多問。',{exp:5},{flag:'beggar2'}),
+    f:R('他笑著說：「小子，別瞎猜。」你被噎了一臉。',{},{flag:'beggar2'})}),
+  O('婉拒，不想再沾這種生活','timid',null,R('你說：「多謝，但我想靠自己走出去。」老幫主點點頭，沒有勉強。',{心:2}))
+]},
+{id:'f_orphan3',t:'碎玉的身世',fm:['orphan'],fl:['beggar2'],a:[40,3000],rm:[2,5],w:6,text:'丐幫幫主臨終前，留給你一塊刻著奇怪紋路的碎玉：「你的來歷，不簡單。」你摩挲著碎玉，隱約想起襁褓中的觸感。',o:[
+  O('追查碎玉來歷','diligent',['悟',13],{
+    g:R('碎玉來自一位隱世宗師，他當年為避災將襁褓中的你託付給了老幫主。你在他的墓前磕了三個頭，淚水止不住地流。',{心:2,悟:1,exp:20,金:2}),
+    k:R('你查到碎玉出自一座已毀的古宗，線索到此中斷，但你已覺得足夠。',{心:1,exp:10}),
+    f:R('線索全斷了，你有點失落。',{心:-1})}),
+  O('請丐幫的兄弟幫忙打聽','careful',['人',12],{
+    g:R('丐幫弟兄遍布天下，一個月後，你得到了確切的消息：你的生身之處，是一座名為「清河」的小鎮。',{人:3,exp:12}),
+    k:R('兄弟們給了你一些零碎的消息。',{人:1}),
+    f:R('消息傳來傳去，傳出了十幾個不同版本。',{})}),
+  O('不追了，向前看','bold',['心',11],{
+    g:R('你把碎玉掛在胸前：「過去是誰，不重要。重要的是，我現在是誰。」',{心:3}),
+    k:R('你把碎玉收進懷裡，不再多想。',{心:1}),
+    f:R('你嘴上說放下，夜裡卻睡不著。',{心:-1})}),
+  O('把碎玉當了換靈石','timid',null,R('碎玉賣了三百靈石。你對自己說：身世不能當飯吃。',{金:3,心:-1}))
+]},
+{id:'f_cadet2',t:'嫡系的刁難',fm:['cadet'],a:[16,90],rm:[0,3],w:6,text:'嫡系的大少爺在族中聚會上，故意把一杯茶潑在你衣服上，笑著說：「旁支的人，就該習慣被潑。」滿堂寂靜，所有人都在等你的反應。',o:[
+  O('當場回敬，不吃這一套','bold',['心',11],{
+    g:R('你端起茶杯，慢條斯理地澆在了他頭上：「旁支的人，也該習慣還手。」全場倒吸一口涼氣，隨後有人悄悄笑出了聲。',{心:2,人:1}),
+    k:R('你冷冷回了一句，沒讓對方占便宜。',{心:1}),
+    f:R('你剛出手，就被族老喝止，反被罰了一頓。',{人:-1,體:-1})}),
+  O('一笑置之，不動聲色','careful',['心',11],{
+    g:R('你擦了擦衣服，笑著說：「茶不錯。」大少爺自討沒趣，其他人看你的眼神多了幾分敬意。',{心:2,人:2}),
+    k:R('你忍下這口氣，事情不了了之。',{心:1}),
+    f:R('你憋著氣回屋，一夜沒睡好。',{心:-1})}),
+  O('暗中蒐集他的把柄','diligent',['人',12],{
+    g:R('你查到嫡系少爺私下的幾件醜事，沒聲張，只是留著。從此他對你客氣了許多。',{人:2,金:2,exp:6}),
+    k:R('你查到一些蛛絲馬跡，暫時沒有動手。',{人:1}),
+    f:R('你的動作被察覺，反而被他抓了把柄。',{人:-2})}),
+  O('低頭離席','timid',null,R('你默默離開了聚會，背後傳來一陣哄笑。你告訴自己：忍，是為了以後。',{心:1,人:-1}))
+]},
+{id:'f_cadet3',t:'家族大難',fm:['cadet'],a:[70,3000],rm:[3,6],w:6,text:'家族遭遇死對頭偷襲，主脈傷亡慘重，連族長都身受重傷。曾經看不起你的嫡系們，此刻都紅著眼睛看著你：「旁支的……這次，只有你能幫我們了。」',o:[
+  O('義無反顧，率先迎敵','bold',['體',15],{
+    g:R('你一人一劍，連殺三名敵將，守住了祖宅。從此族中無人再敢叫你「旁支」。',{體:2,人:4,exp:35}),
+    k:R('你守住了大門，雖然負傷，卻贏得了所有人的敬重。',{體:-1,人:3,exp:18}),
+    f:R('你拚盡全力，仍沒能守住整個家族，但你救出了幾個孩子。',{體:-2,人:2}),
+    b:R('敵人的首領是一位金丹後期的老怪。',{},{die:'為守護家族戰死，族譜上，你的名字終於寫在了主脈那一頁'})}),
+  O('運籌帷幄，聯絡外援','careful',['人',14],{
+    g:R('你把這些年攢下的人脈全拿了出來，一夜之間，十幾位盟友趕來支援。家族轉危為安。',{人:4,exp:25}),
+    k:R('你請來幾位援手，雖不能完全扭轉，但足以穩住局面。',{人:2,exp:12}),
+    f:R('你的求援信，大多石沉大海。',{人:-1})}),
+  O('帶走族中孩子與典籍，另立根基','diligent',['悟',14],{
+    g:R('你當機立斷，帶著幾十個孩子和全部典籍，連夜轉移。多年後，新的家族在另一座山上興旺起來。',{人:3,悟:1,exp:30}),
+    k:R('你護住了一部分孩子和典籍，家族元氣大傷，但延續下來了。',{人:2,exp:15}),
+    f:R('轉移的路上遭遇追殺，損失慘重。',{人:-1,體:-1})}),
+  O('袖手旁觀，這與我無關','timid',null,R('你站在遠處，看著祖宅燃燒。很多年後，你仍會夢見那一夜的火光。',{心:-3,人:-3}))
+]},
+{id:'f_official2',t:'朝堂風雲',fm:['official'],a:[40,3000],rm:[2,5],w:6,text:'朝中兩位大臣爭權，各自派人來拉攏你：「你是官宦之家出身，又有修為在身，不如站在咱們這邊。」兩邊的許諾都很誘人，兩邊的威脅也都很真實。',o:[
+  O('左右逢源，兩邊都不得罪','careful',['人',13],{
+    g:R('你一邊收了左相的禮，一邊給右相送了信，兩邊都以為你是自己人。多年後，勝出的那一方送了你一份厚禮。',{人:3,金:5,exp:12}),
+    k:R('你勉強維持了平衡，兩邊都對你客客氣氣。',{人:1,金:2}),
+    f:R('你的手段被識破，兩邊都不信任你了。',{人:-2})}),
+  O('選定一方，全力相助','bold',['心',13],{
+    g:R('你押對了寶，你支持的那一方大獲全勝，你成了新朝堂的座上賓。',{人:3,金:6,exp:15}),
+    k:R('你支持的一方勉強贏了，你得了些好處。',{人:1,金:3}),
+    f:R('你押錯了寶，被對方清算，損失慘重。',{人:-2,金:-4})}),
+  O('拒絕捲入，專心修煉','diligent',['心',12],{
+    g:R('你以修行為由婉拒，反而讓兩邊都高看了你一眼。',{心:2,exp:15}),
+    k:R('你躲開了麻煩，雖有些得罪人，但清靜自在。',{心:1,exp:8}),
+    f:R('兩邊都覺得你不識抬舉，暗中使了點絆子。',{人:-1})}),
+  O('偷偷離開皇都','timid',null,R('你連夜出城，朝堂的紛爭，從此與你無關。',{心:1}))
+]},
+{id:'f_official3',t:'告老還鄉',fm:['official'],a:[90,3000],rm:[3,6],w:6,text:'你的祖父，那位當了一輩子知縣的老人，終於要告老還鄉了。他在信裡說：「孫兒，我這一輩子，沒見過仙人。聽說你成了……能不能，讓祖父開開眼？」',o:[
+  O('帶祖父遊歷一回，讓他親眼看看','careful',['人',12],{
+    g:R('你帶著祖父御劍飛過雲海。老人家抓著你的袖子，眼眶紅了：「值了，這輩子值了。」',{心:2,人:2}),
+    k:R('你帶祖父見識了幾處靈山，老人家連連點頭。',{心:1,人:1}),
+    f:R('老人家被風吹得頭暈，吐了一路，卻還是笑著說「好」。',{心:1})}),
+  O('贈他一顆延壽丹','diligent',['悟',11],{
+    g:R('你用多年積累的藥材為他煉了一顆延壽丹。祖父多活了二十年，臨終前拉著你的手說：「好孩子。」',{心:2,悟:1,exp:10}),
+    k:R('丹藥生效了，祖父多了幾年的壽命。',{心:1}),
+    f:R('丹藥品質不夠，祖父只多撐了三個月。',{心:-1})},{cost:{金:3}}),
+  O('只送一封信，不去見面','timid',null,R('你寫了一封很長的信，卻沒有寄出。很多年後，你才知道，祖父在老宅的書房裡，一直擺著你小時候的畫像。',{心:-2})),
+  O('告訴他：修仙之人，不該牽掛紅塵','bold',['心',12],{
+    g:R('祖父沉默良久，說：「你說得對。」然後他轉過身，去澆院子裡的花。你知道，他其實懂。',{心:3}),
+    k:R('祖父點點頭：「也好。」',{心:1}),
+    f:R('你的話傷了老人家的心，他再也沒提這件事。',{心:-2,人:-1})})
+]},
+{id:'f_temple2',t:'紙條上的筆跡',fm:['temple'],fl:['noteclue'],a:[40,3000],rm:[2,5],w:6,text:'你整理觀主的遺物時，發現了一本舊書，書頁間夾著一張似曾相識的紙。你把它與當年包著你的那張紙條放在一起——上面的筆跡，竟不是觀主的。',o:[
+  O('循著筆跡去找寫字的人','diligent',['人',12],{
+    g:R('你沿著筆跡的線索，找到了一位隱居山間的老婦人。她見到你，愣了很久，才說：「你……長這麼大了。」',{心:2,人:2,exp:12},{flag:'noteclue2'}),
+    k:R('你找到了一位認得這筆跡的老者，但他只說了一句：「別再查了。」',{心:1},{flag:'noteclue2'}),
+    f:R('線索在半路中斷了，筆跡的主人，已不知去向。',{心:-1},{flag:'noteclue2'})}),
+  O('請觀中的老道士解讀','careful',['悟',11],{
+    g:R('老道士看了一會兒，說：「這是一位女子的筆跡。她當年……很不得已。」你默默點了點頭。',{心:2,exp:8},{flag:'noteclue2'}),
+    k:R('老道士只說了一句：「天機不可洩露。」',{心:1},{flag:'noteclue2'}),
+    f:R('老道士顧左右而言他，什麼也沒說。',{},{flag:'noteclue2'})}),
+  O('把紙放回去，不再追究','timid',null,R('你把紙夾回書裡，合上。有些答案，也許本來就不該知道。',{心:1}))
+]},
+{id:'f_temple3',t:'觀主的最後一課',fm:['temple'],fl:['noteclue2'],a:[80,3000],rm:[3,6],w:6,text:'你重回那座小道觀，在觀主的舊蒲團前坐了一夜。天亮時，你忽然明白了他當年寫下那張紙條時的心情——不是遺棄，而是託付。',o:[
+  O('在蒲團前靜坐，悟他的道','careful',['心',13],{
+    g:R('你在蒲團上坐了七天。第七天清晨，一縷清氣從蒲團裡升起，融入你的身體——那是觀主留下的最後一課。',{心:3,悟:1,exp:30}),
+    k:R('你坐了三天，心裡的結，散了大半。',{心:2,exp:15}),
+    f:R('你坐不住，匆匆離開。',{心:-1})}),
+  O('重修道觀，讓它延續下去','diligent',['人',12],{
+    g:R('你拿出多年積蓄，把道觀重新修葺一新。很快，山下的人家開始送孩子來學藝。觀裡又有了朗朗書聲。',{人:3,金:-3,心:2,exp:15}),
+    k:R('道觀被修好了一半，剩下的，你打算慢慢來。',{人:1,心:1}),
+    f:R('資金不夠，修了一半就停工了。',{金:-2})}),
+  O('把紙條供在觀主靈前，然後離開','bold',null,R('你把紙條供在靈前，磕了三個頭：「謝謝您。」然後轉身下山，沒有回頭。',{心:2})),
+  O('不回去了','timid',null,R('你站在山腳，抬頭看了看那座小道觀，終究沒有上去。',{心:-1}))
+]},
+// =============== 出生地專屬（續） ===============
+{id:'p_town2',t:'鎮上的瘟疫',pl:['town'],a:[16,80],rm:[0,3],w:6,text:'青石鎮來了一場怪病，染病的人渾身發冷、不言不語。鎮上的大夫束手無策，鄰居們一個個倒下。你聽說，病因似乎和後山的一口老井有關。',o:[
+  O('冒險去後山查那口井','bold',['體',11],{
+    g:R('你在井底發現一具被邪氣浸染的屍骸，毀掉它後，瘟疫果然消散。鎮上為你立了一塊碑。',{體:1,人:3,exp:10}),
+    k:R('你找到了一點線索，鎮上的病情緩和了。',{人:1,exp:5}),
+    f:R('你被井中的寒氣侵入，病倒了一個月。',{體:-2}),
+    b:R('井底的東西，比你想的更邪。',{},{die:'死在了後山那口老井旁，鎮上的瘟疫，三個月後才散'})}),
+  O('配藥救治鎮上的病人','diligent',['悟',11],{
+    g:R('你日夜研究，配出了解藥，救了鎮上近百人。從此鎮上人見了你，都客客氣氣叫你「小神醫」。',{悟:1,人:3,exp:8}),
+    k:R('你配出了緩解的方子，救了不少人。',{人:2}),
+    f:R('藥方不對，反而加重了幾個人的病情。',{人:-1,心:-1})}),
+  O('組織鄉親隔離，統一送水送飯','careful',['人',11],{
+    g:R('你把鎮上的人分成幾區，各有負責的人。疫情被牢牢控制住，沒有擴散。',{人:3,exp:6}),
+    k:R('隔離基本成功，但仍有零星病例。',{人:1}),
+    f:R('有人偷偷跑出隔離區，疫情擴散。',{人:-1})}),
+  O('帶著家當離開青石鎮','timid',null,R('你背起包袱連夜離開。多年後，你聽說青石鎮還在，但你再也沒回去過。',{心:-1}))
+]},
+{id:'p_town3',t:'回鄉',pl:['town'],a:[70,3000],rm:[3,6],w:6,text:'你已經很多年沒回過青石鎮了。這次路過，鎮口的老槐樹還在，只是賣包子的老闆換成了他的孫子。街角一個小孩好奇地看著你：「叔叔（阿姨），你是仙人嗎？」',o:[
+  O('蹲下來，陪他聊聊','careful',['人',10],{
+    g:R('你和小孩聊了一下午。他說他長大也想當仙人。你送了他一枚護身符。多年後，他真的來找你了。',{人:2,心:2,exp:8}),
+    k:R('你們聊了幾句，他笑得很開心。',{心:1}),
+    f:R('小孩被你身上的靈壓嚇哭了，旁人警惕地把他抱走。',{心:-1})}),
+  O('去老包子鋪坐一坐','diligent',['心',10],{
+    g:R('你吃了一籠包子，味道和幾十年前一樣。你坐了很久，忽然覺得，心裡有什麼東西鬆了。',{心:3,exp:15}),
+    k:R('包子味道變了，但你吃得很香。',{心:1}),
+    f:R('包子鋪早已關門，你站在門口，站了很久。',{心:-1})}),
+  O('為鎮上留下一座護鎮陣法','bold',['悟',13],{
+    g:R('你花了三天，在鎮口布下一座小型護陣。從此，青石鎮的瘟疫、妖獸，再也沒有踏進來過。',{悟:1,人:3,exp:20}),
+    k:R('陣法起效了，但威力有限。',{人:1,exp:8}),
+    f:R('陣法布到一半，靈氣不夠，只好作罷。',{})}),
+  O('悄悄看一眼，轉身離開','timid',null,R('你站在鎮口的老槐樹下，看了很久。然後轉身離去，什麼也沒留下。',{心:1}))
+]},
+{id:'p_mount2',t:'落霞山的妖王',pl:['mount'],a:[60,3000],rm:[3,5],w:6,text:'一頭新晉的妖王看中了落霞山，打算把整座山脈改成牠的後花園。山下的村民、你的洞府，全都在牠的規劃圖上。',o:[
+  O('單挑妖王','bold',['體',15],{
+    g:R('一戰三天，你以一招取勝，妖王臣服，成了你的護山靈獸。落霞山從此太平。',{體:2,exp:35,人:2}),
+    k:R('雙方打成平手，妖王退走，答應不再侵擾。',{體:-1,exp:18}),
+    f:R('你被妖王一爪拍進山壁，養了三個月傷。',{體:-3}),
+    b:R('妖王的實力超出了你的判斷。',{},{die:'死在落霞山的山巔，連洞府都被妖王占了'})}),
+  O('聯合群修，共同圍剿','careful',['人',14],{
+    g:R('你聯絡了方圓百里的修士，布下天羅地網。妖王被生擒，你分到了最大的一份戰利品。',{人:3,金:5,exp:20}),
+    k:R('圍剿成功，但各有損傷，你分到一小份。',{人:1,金:2,exp:10}),
+    f:R('同盟內部有人洩密，圍剿失敗。',{人:-2,金:-2})}),
+  O('布下大陣，封山避世','diligent',['悟',15],{
+    g:R('你把整座山封印起來，妖王被擋在陣外，山中靈氣更加濃郁。',{悟:2,exp:30}),
+    k:R('大陣暫時封住了山脈，但只能撐一陣子。',{exp:12}),
+    f:R('大陣被妖王一爪擊碎，你狼狽逃離。',{體:-1,exp:-5})}),
+  O('帶著村民撤離，讓出落霞山','timid',null,R('你把山下的村民送到安全的地方。回頭望去，落霞山已成了妖王的領地。',{人:2,心:-1}))
+]},
+{id:'p_mount3',t:'山中隱者',pl:['mount'],a:[16,300],rm:[1,4],w:6,text:'你在山路上遇見一位坐在石頭上打盹的老人。他睜開一隻眼，看了你一眼：「小子，你背上的柴，比你的命還重。」你一低頭，才發現自己背著三捆乾柴。',o:[
+  O('恭敬行禮，向老人請教','careful',['心',11],{
+    g:R('老人點點頭：「有點意思。」他隨手在地上畫了一個圈，你看了半個時辰，忽然悟了一個道理。',{心:2,悟:1,exp:15}),
+    k:R('老人隨口說了句偈語，你記在心裡，之後常拿出來想一想。',{心:1,exp:6}),
+    f:R('老人閉上了眼睛：「還沒到時候。」',{})}),
+  O('把背上的柴放下，陪他坐一會兒','diligent',['悟',11],{
+    g:R('你在老人旁邊坐了一下午，什麼也沒說。夕陽下，你體會到一種說不出來的安寧。',{悟:2,心:1,exp:12}),
+    k:R('你陪他坐了一會兒，什麼收穫也沒有，卻覺得很舒服。',{心:1}),
+    f:R('你坐得腿麻，心思亂飄。',{})}),
+  O('向他請教修行秘訣','bold',['人',11],{
+    g:R('老人笑了：「小子夠直接。」他傳了你一套山中隱士的吐納口訣。',{體:1,exp:12,人:1}),
+    k:R('老人說：「修行哪有什麼秘訣，多吃飯多睡覺。」你想了想，居然有點道理。',{體:1}),
+    f:R('老人皺眉：「年輕人不要太急。」',{})}),
+  O('背著柴繼續趕路','timid',null,R('你點點頭，繼續走。走了很遠，才想起來——那老人說的，好像不是柴。',{心:1}))
+]},
+{id:'p_sect2',t:'山門試煉',pl:['sect'],a:[16,60],rm:[0,2],w:6,text:'天衍宗一年一度的山門試煉開始了，凡人也可以參加。山腳下擠滿了人，你在人群裡看見了好幾張熟面孔——據說今年的獎勵是一枚築基丹。',o:[
+  O('全力闖關','bold',['體',11],{
+    g:R('你一路過關斬將，奪得第一，築基丹到手。',{體:1,exp:20,人:2},{flag:'pillZhuji'}),
+    k:R('你闖到了第三關，拿到了一份安慰獎。',{exp:8,金:2}),
+    f:R('你在第二關被淘汰，鼻青臉腫地爬下山。',{體:-1})}),
+  O('觀察前面人的失敗，總結經驗','diligent',['悟',11],{
+    g:R('你看了一整天，把每一關的規律都摸透了，最後輕輕鬆鬆拿下築基丹。',{悟:2,exp:20},{flag:'pillZhuji'}),
+    k:R('你雖然沒奪冠，但闖到了不錯的名次。',{exp:10}),
+    f:R('你想得太多，結果輪到你時，已經沒機會了。',{})}),
+  O('結交其他參賽者，組隊闖關','careful',['人',11],{
+    g:R('你和幾位參賽者結成隊伍，互相扶持，最終共同通關，你還交了幾個朋友。',{人:3,exp:12}),
+    k:R('隊伍中有人掉隊，但你們還是完成了試煉。',{人:1,exp:6}),
+    f:R('隊友內鬥，你們全部被淘汰。',{人:-1})}),
+  O('只在山腳下看熱鬧','timid',null,R('你在山腳下啃著烤紅薯，看了一整天的熱鬧。這也是一種收穫。',{心:1}))
+]},
+{id:'p_sect3',t:'宗門高層的邀請',pl:['sect'],a:[60,3000],rm:[3,5],w:6,text:'一名天衍宗的長老親自找到你：「聽說你在山腳修行多年，修為也很可觀。宗門正在招攬客卿，不知你有沒有興趣？」你知道，這不是個簡單的邀請。',o:[
+  O('欣然接受，成為宗門客卿','careful',['人',13],{
+    g:R('你以客卿身份入了宗門，不受宗規束縛，卻享有資源。你成了山腳下的一個傳說。',{人:3,金:5,exp:15},{flag:'inSect'}),
+    k:R('你接受了邀請，但被安排在邊緣位置。',{人:1,金:2},{flag:'inSect'}),
+    f:R('長老發現你的資質不如傳聞，態度冷淡了許多。',{人:-1})}),
+  O('開條件：不入宗門，只做合作','diligent',['悟',14],{
+    g:R('你提出以「合作」代替「從屬」，長老居然答應了。你既有資源，又保有自由。',{悟:1,人:2,金:4,exp:15}),
+    k:R('長老勉強同意，條件比你預期的低一點。',{金:2,人:1}),
+    f:R('長老認為你不識抬舉，轉身離開。',{人:-1})}),
+  O('婉拒，繼續做山腳的散修','timid',null,R('你說：「多謝抬愛，但我還是想自由一點。」長老點了點頭：「各人有各人的路。」',{心:1})),
+  O('借機打聽宗門內部的情報','bold',['人',12],{
+    g:R('你從長老的言談中，探到了宗門的幾個大秘密。這些情報，日後定能派上用場。',{人:2,exp:15,金:3}),
+    k:R('你探到一些不痛不癢的消息。',{人:1}),
+    f:R('你被長老看穿，對方的笑容不太對勁。',{人:-1})})
+]},
+{id:'p_market2',t:'坊市大騙局',pl:['market'],a:[16,80],rm:[0,3],w:6,text:'一個衣著光鮮的商人在坊市裡到處宣揚：「十塊靈石，換一百塊！三天後本金奉還，利潤翻十倍！」圍觀的人擠了個水洩不通，有人已經把家底掏了出來。你覺得，這事不對勁。',o:[
+  O('投一點試試水','bold',['金',9],{
+    g:R('三天後，你的靈石真的翻了十倍！你剛想加碼，商人人間蒸發了——不過你賺了。',{金:6}),
+    k:R('你拿回了本金，賺了一點，及時收手。',{金:2}),
+    f:R('商人跑路，你血本無歸。',{金:-3})},{cost:{金:2}}),
+  O('暗中調查商人的底細','diligent',['悟',11],{
+    g:R('你查出這個人是個慣犯，立刻通知了巡城衛。他當場被抓，你還得了一筆賞金。',{金:4,人:2,exp:6}),
+    k:R('你查到一些線索，但沒敢輕舉妄動。',{exp:4}),
+    f:R('你被商人的手下盯上，丟了錢袋。',{金:-2})}),
+  O('勸身邊的人不要上當','careful',['人',11],{
+    g:R('你當眾揭穿騙局，大家紛紛收回錢，商人灰溜溜地逃走了。',{人:3,心:1}),
+    k:R('有些人聽了你的勸，有些人沒聽。',{人:1}),
+    f:R('商人說你是同行嫉妒，周圍的人把你轟了出去。',{人:-2})}),
+  O('冷眼旁觀','timid',null,R('你抱著手站在人群外。三天後，商人果然捲款跑路，圍觀者哭成一片。你默默為自己的直覺乾杯。',{心:1}))
+]},
+{id:'p_market3',t:'商會的邀請',pl:['market'],a:[70,3000],rm:[3,6],w:6,text:'浮雲坊市最大的商會「天衡行」派人遞來燙金請柬：「閣下名聲遠播，本行願以長老之位相邀，共謀大業。」你看著請柬，心想：這到底是機緣，還是陷阱？',o:[
+  O('赴宴，當面談條件','careful',['人',13],{
+    g:R('你在宴席上侃侃而談，三言兩語，把原本的條件改成了對你更有利的版本。你成了天衡行的「名譽長老」。',{人:3,金:6,exp:15}),
+    k:R('你拿到了一個不錯的位置，只是條件沒有想像中優厚。',{人:2,金:3}),
+    f:R('宴席上暗流湧動，你喝了幾杯就覺得不對勁，及時離席。',{體:-1})}),
+  O('先查商會的底細','diligent',['悟',14],{
+    g:R('你查出天衡行背後有一股隱藏的勢力，及時避開了陷阱，還順手撿到了一條有價值的情報。',{悟:1,金:4,exp:20}),
+    k:R('你查到一些線索，決定暫時觀望。',{exp:8}),
+    f:R('你查來查去，只查到商會有很多錢。',{})}),
+  O('接受長老之位，掌管一部分生意','bold',['人',14],{
+    g:R('你接手生意後迅速整頓，三年便翻了一倍。你在坊市的地位，今非昔比。',{金:10,人:3,exp:12}),
+    k:R('你接手了生意，勉強維持，利潤不高。',{金:4,人:1}),
+    f:R('你接手的是個爛攤子，賠了不少。',{金:-4,人:-1})}),
+  O('婉拒，不涉商事','timid',null,R('你把請柬退了回去。事後，你聽說天衡行當年的另一位被邀者，被捲入了一場大官司。',{心:1}))
+]},
+{id:'p_wild2',t:'瘴林部落',pl:['wild'],a:[16,100],rm:[0,3],w:6,text:'你在瘴林深處，意外闖入一個隱秘的部落。他們的人皮膚黝黑，眼神警惕，圍著你喃喃自語。其中一位頭戴羽冠的老者站了出來：「外來人，你為什麼闖我族的聖地？」',o:[
+  O('誠懇道歉，說明來意','careful',['人',11],{
+    g:R('老者聽完，緩緩點頭：「你很坦誠。」部落收留了你一晚，還教你辨別瘴林的毒花。',{人:2,體:1,exp:10}),
+    k:R('部落沒有為難你，但讓你天亮前離開。',{人:1}),
+    f:R('老者揮手，兩個壯漢把你扔出了聖地。',{人:-1,體:-1})}),
+  O('展示修為，震懾部落','bold',['體',12],{
+    g:R('你一掌拍碎旁邊的巨石，部落眾人倒吸涼氣，老者低頭：「大人，請。」你成了他們的座上賓。',{體:1,人:1,exp:10,金:2}),
+    k:R('你的實力讓他們不敢動手，但也成了他們的眼中釘。',{體:1}),
+    f:R('你的威懾沒起作用，被他們用毒箭射中。',{體:-2}),
+    b:R('部落的毒，比你想像的更烈。',{},{die:'中了部落的毒箭，死在瘴林深處，無人知曉'})}),
+  O('向老者請教部落的修煉之法','diligent',['悟',12],{
+    g:R('老者看了你很久，點頭：「你的悟性不錯，我可以教你一招『血脈祭』。」',{悟:2,體:1,exp:20}),
+    k:R('老者教了你一個小訣竅，但沒有深入。',{exp:8}),
+    f:R('老者說：「這是我族的秘傳，外人不得學。」',{})}),
+  O('悄悄後退，原路返回','timid',null,R('你小心翼翼地後退，退出了部落的視線。後來你每想起這件事，都覺得自己錯過了什麼。',{心:1}))
+]},
+{id:'p_wild3',t:'南荒古祭壇',pl:['wild'],a:[80,3000],rm:[3,6],w:6,text:'瘴林深處，一座巨大的古祭壇從密林中顯露出來。祭壇上刻著無數你看不懂的符號，其中有一部分，與你曾見過的某種陣法暗合。祭壇中央，似乎在等待什麼。',o:[
+  O('登上祭壇，嘗試溝通','bold',['心',15],{
+    g:R('你站在祭壇中央，閉上眼睛。無數古老的聲音湧入你的識海，你聽見了遠古的歌謠，也看見了一段被遺忘的歷史。',{心:2,悟:2,exp:35}),
+    k:R('你與祭壇建立了一絲聯繫，獲得了零星的感悟。',{心:1,exp:18}),
+    f:R('祭壇的力量太過強大，你被震出老遠。',{體:-2,心:-1}),
+    b:R('祭壇的古老意志，並不歡迎外來者。',{},{die:'死在南荒古祭壇之上，成為了祭壇的又一道刻痕'})}),
+  O('研究符號，推演陣法','diligent',['悟',15],{
+    g:R('你花了七天七夜，把祭壇的符號解讀了大半。你推演出一套全新的陣法。',{悟:2,exp:35}),
+    k:R('你解讀了一部分，已大有收穫。',{悟:1,exp:18}),
+    f:R('符號太過古怪，你看得頭痛欲裂。',{心:-1})}),
+  O('拓印符號，帶回宗門','careful',['人',13],{
+    g:R('你把拓印的符號帶給了某位陣法大師，換來一份重禮與一個人情。',{人:3,金:5,exp:12}),
+    k:R('拓印被交給了宗門，你得了些獎勵。',{金:3}),
+    f:R('拓印時觸動了祭壇的禁制，你狼狽逃出。',{體:-1})}),
+  O('敬畏之餘，默默離開','timid',null,R('你對祭壇鞠了一躬，轉身離開。身後的林中，似乎有什麼東西，輕輕嘆了口氣。',{心:1}))
+]},
+{id:'p_capital2',t:'皇室的招攬',pl:['capital'],a:[30,300],rm:[1,4],w:6,text:'宮裡來了人，客客氣氣地遞給你一道聖旨：「陛下聽聞閣下修為不凡，願封你為『護國仙師』，享一品俸祿。」你看著聖旨上龍飛鳳舞的字，不知該喜還是該憂。',o:[
+  O('接旨，入宮為仙師','careful',['人',12],{
+    g:R('你入宮後，很快得到了皇帝的信任，一品俸祿、皇家藏書任你取用。',{人:3,金:5,exp:15}),
+    k:R('你成了護國仙師，但行動處處受限。',{人:1,金:3}),
+    f:R('宮廷風雲詭譎，你剛入宮就捲入一場明爭暗鬥。',{人:-1,金:-1})}),
+  O('要求平等相待，不受約束','bold',['心',12],{
+    g:R('你一句「不為臣，只為客」，反而讓皇帝敬重，答應給你自由出入皇宮的特權。',{心:2,人:2,金:3}),
+    k:R('皇帝勉強答應，但臉色不太好看。',{心:1}),
+    f:R('皇帝勃然大怒，你被趕出了皇都。',{人:-2,金:-2})}),
+  O('接受，但要求查閱皇家藏書','diligent',['悟',12],{
+    g:R('皇家藏書閣裡，有一整層的修煉秘籍。你在宮中三年，把它讀了個遍。',{悟:2,exp:25}),
+    k:R('你讀了一部分藏書，已受益匪淺。',{悟:1,exp:12}),
+    f:R('藏書閣的守衛極嚴，你只讀了幾本不重要的。',{exp:4})}),
+  O('婉拒，離開皇都','timid',null,R('你以「閒雲野鶴」為由婉拒，連夜出城。皇城裡的人還在議論這件事。',{心:1}))
+]},
+{id:'p_capital3',t:'改朝換代',pl:['capital'],a:[90,3000],rm:[3,6],w:6,text:'皇都的龍氣忽然劇烈波動。你推演天機，發現這個王朝的氣數，即將走到盡頭。已經有人在暗中串聯，準備改朝換代。各方勢力都在觀望，也都在尋找像你這樣的人。',o:[
+  O('扶持新朝，成為開國功臣','bold',['人',14],{
+    g:R('你選對了人，新朝建立後，你被封為「國師」，享無上尊榮。',{人:4,金:8,exp:25}),
+    k:R('新朝建立，你得了些好處，但也捲入了不少是非。',{人:2,金:4,exp:12}),
+    f:R('你選錯了人，被舊朝殘黨追殺。',{人:-2,體:-2}),
+    b:R('你支持的那一方被徹底擊潰。',{},{die:'在改朝換代的混亂中，被亂軍所殺'})}),
+  O('暗中觀察，伺機而動','diligent',['悟',14],{
+    g:R('你精準判斷了局勢，在最關鍵的時刻出手，立下首功。',{悟:1,人:3,金:5,exp:25}),
+    k:R('你保持中立，躲過了亂世，順便收集了些有用的情報。',{exp:12}),
+    f:R('你觀察得太久，錯過了最好的時機。',{})}),
+  O('勸皇帝體面退位，避免生靈塗炭','careful',['心',14],{
+    g:R('你一番話說動了皇帝，王朝和平過渡，萬民感念你的恩德。',{心:3,人:3,exp:30}),
+    k:R('皇帝猶豫不決，但最終減少了流血。',{心:1,人:1,exp:12}),
+    f:R('皇帝大怒，下令通緝你。',{人:-2})}),
+  O('帶著親近的人，離開皇都','timid',null,R('你選擇離開。多年後，你聽說新朝建立了。那座皇都，已經不再是你熟悉的樣子。',{心:-1}))
+]},
+{id:'e_pill',t:'丹房的人情',a:[16,60],rm:[0,1],nf:['pillZhuji'],w:2,text:'坊市丹房的老闆正愁著一爐丹藥賣不出去，其中有一枚築基丹，品相還不錯。「道友，要不要來點？」他搓著手，笑得像在賣保險。',o:[
+  O('砍價，寸步不讓','bold',['人',10],{
+    g:R('你砍得老闆直捂胸口，最後以一個友情價成交。「築基丹到手，賺到了。」',{人:1},{flag:'pillZhuji'}),
+    k:R('折騰半天，勉強拿下，雖然荷包瘦了一圈。',{金:-2},{flag:'pillZhuji'}),
+    f:R('老闆咬死不降價，你空手而回。',{})}),
+  O('幫老闆處理他的麻煩事，抵作丹錢','careful',['人',9],{
+    g:R('你替老闆擺平了一樁糾紛，他拍著胸脯把築基丹塞到你手裡：「這情，我記下了。」',{人:2},{flag:'pillZhuji'}),
+    k:R('忙了兩天，老闆給了你那枚築基丹。',{},{flag:'pillZhuji'}),
+    f:R('越幫越忙，老闆氣得把你趕了出去。',{人:-1})}),
+  O('直接花錢買','diligent',null,R('你數了數靈石，把築基丹買了下來。',{金:-3},{flag:'pillZhuji'}),{cost:{金:3}}),
+  O('沒錢，逛逛就走','timid',null,R('你在丹房門口看了半個時辰，最後空著手離開。',{心:1}))
+]},
+{id:'e_tianmo',t:'天魔入侵',a:[200,5000],rm:[6,6],nf:['tianmoDone'],w:30,text:'天穹裂開一道猙獰的豁口，無邊魔氣傾瀉而下。天魔之主的聲音響徹九州：「此界靈氣，本座要了。」仙界使者傳來急訊：整個修仙界的存亡，繫於渡劫期修士之手。你，恰好是目前站在這條線上的人。這不是演習，也不會有重來鍵。',o:[
+  O('衝上九天，與天魔之主正面決戰','bold',['體',22],{
+    g:R('你一拳轟碎魔主的本體，天魔潰逃，豁口在你身後緩緩合攏。九州萬民仰頭，只看見一道比朝陽還亮的背影。這一戰，足以寫進天地的史書。',{體:3,心:2,人:3,金:5,exp:120},{flag:['tianmoDone','tianmoWin']}),
+    k:R('你與天魔之主大戰七天七夜，終於將它逼回魔界，豁口勉強封上。你渾身是傷，但活了下來，世界也還在。',{體:1,心:1,人:2,金:3,exp:80},{flag:['tianmoDone','tianmoWin']}),
+    f:R('天魔之主的實力遠超想像，你的一擊被它隨手捏碎。魔氣淹沒了九州，修仙界在一夜之間，成了魔界的後花園。',{},{end:'worldend'}),
+    b:R('你衝得太快，也敗得太快。魔氣吞沒了一切，包括你。',{},{end:'worldend'})}),
+  O('以畢生所學布下封界大陣','diligent',['悟',23],{
+    g:R('你以自身為陣眼，布下前所未有的封界大陣，將豁口牢牢鎖死。連仙界使者都目瞪口呆：「這陣法……是你自己想的？」',{悟:3,心:2,人:2,金:5,exp:120},{flag:['tianmoDone','tianmoWin']}),
+    k:R('大陣撐住了豁口，雖然搖搖欲墜，卻也等到了援軍。你耗盡心力，但世界保住了。',{悟:1,心:1,人:2,金:3,exp:80},{flag:['tianmoDone','tianmoWin']}),
+    f:R('大陣在最後一刻出現一道裂紋，魔氣順著裂縫灌入。你眼睜睜看著結界崩潰，九州化為魔域。',{},{end:'worldend'}),
+    b:R('大陣反噬，你的神魂與陣法一同崩碎，再沒人能阻止魔氣了。',{},{end:'worldend'})}),
+  O('聯絡各方大能，結成聯軍共禦天魔','careful',['人',22],{
+    g:R('你一道傳訊，仙盟、妖族、佛修、魔道，甚至那位退隱千年的老怪物全都來了。聯軍如潮，天魔之主被圍殺在豁口之前。史稱「九州會盟」。',{人:4,心:2,悟:1,金:6,exp:120},{flag:['tianmoDone','tianmoWin']}),
+    k:R('聯軍來得不算整齊，但終究擋住了第一波魔潮。你居中調度，撐到了天魔退去。',{人:2,心:1,金:3,exp:80},{flag:['tianmoDone','tianmoWin']}),
+    f:R('各方勢力互相猜忌，聯軍還沒成形就潰散了。你站在空蕩蕩的盟台上，聽見魔氣席捲而來的聲音。',{},{end:'worldend'}),
+    b:R('有人在最關鍵的時刻臨陣倒戈。聯軍崩潰，魔氣一發不可收拾。',{},{end:'worldend'})}),
+  O('潛入魔界，直取天魔本源','timid',['心',23],{
+    g:R('你悄悄繞過魔潮，潛入魔界深處，一劍斬斷了天魔本源。豁口在魔氣失去源頭之後自行崩塌。沒人知道是誰做的，只有你知道。',{心:4,悟:2,體:1,金:5,exp:120},{flag:['tianmoDone','tianmoWin']}),
+    k:R('你冒險摸到本源附近，重創了它。天魔大軍失去統帥，開始潰散。',{心:2,悟:1,金:3,exp:80},{flag:['tianmoDone','tianmoWin']}),
+    f:R('你在魔界迷了路，等你終於找到本源時，外面的世界已經沒了。',{},{end:'worldend'}),
+    b:R('魔界比你想像的更加詭異，你連本源的影子都沒摸到，就被魔氣同化。',{},{end:'worldend'})})
+]},
+{id:'e_hermit',t:'平淡的五年',a:[16,99999],rm:[0,6],rep:true,w:0.7,text:'風平浪靜的歲月，沒有奇遇，沒有仇家，沒有女主，只有你和你的蒲團。',o:[
+  O('閉關苦修','diligent',['心',9],{
+    g:R('你心無旁騖，修為突飛猛進。',{exp:14,悟:1}),
+    k:R('穩穩當當地積累了一點。',{exp:8}),
+    f:R('心浮氣躁，白坐了五年。',{exp:3})}),
+  O('下山遊歷','bold',['體',9],{
+    g:R('你在路上遇到幾位高人，獲益匪淺。',{exp:6,金:2,人:1}),
+    k:R('平安無事，賺了點盤纏。',{exp:4,金:1}),
+    f:R('遇上山賊，破財消災。',{金:-2})}),
+  O('經營一點小生意','careful',['人',9],{
+    g:R('生意興隆，數錢數到手軟。',{金:5}),
+    k:R('小賺一筆。',{金:3}),
+    f:R('虧了一點。',{金:-1})}),
+  O('什麼都不做，睡五年','timid',null,R('醒來發現什麼事也沒發生，這就是最大的成功。',{體:1,心:1}))
+]},
+
+// =============== 地球線索 ===============
+{id:'ec_jade',t:'奇怪的玉簡',earth:1,a:[16,99999],rm:[0,7],text:'你在一處廢墟裡撿到一枚玉簡。神識探入，裡面只有一行字：「恢復出廠設定？是／否」',o:[
+  O('選「是」','bold',['悟',10],{
+    g:R('玉簡爆出一道光，一幅星空圖浮現。其中一顆藍色的星球，讓你莫名熱淚盈眶。',{悟:1,心:1},{clue:1}),
+    k:R('玉簡閃了閃，投影出一小段你完全看不懂、卻莫名熟悉的符號。',{},{clue:1}),
+    f:R('玉簡灰飛煙滅，什麼也沒留下。你盯著掌心的灰，有點空。',{心:-1})}),
+  O('先研究它的材質','diligent',['悟',12],{
+    g:R('材質不是玉，是某種你說不上來的「塑膠」。你隱約想起了什麼。',{悟:1},{clue:1}),
+    k:R('材質古怪，但你把紋路抄了下來。',{},{clue:1}),
+    f:R('研究半天，只確定這東西很硬。',{})}),
+  O('選「否」','careful',null,R('你不敢選。玉簡慢慢暗下去，最後一行字消失了。你有種錯過了什麼的預感。',{心:1})),
+  O('丟回廢墟，轉身就走','timid',null,R('「這種來歷不明的東西，絕對有毒。」你說服自己。',{}))
+]},
+{id:'ec_phone',t:'破損的手機殘骸',earth:1,a:[16,99999],rm:[0,7],text:'你在一位已故前輩的洞府中，找到一塊黑色的玻璃板，背面有個被咬了一口的水果圖案。神識探入，竟感到一絲熟悉的……電量不足。',o:[
+  O('嘗試喚醒','diligent',['悟',11],{
+    g:R('你竟然點亮了螢幕！顯示「電量 1%」，然後它永遠熄滅了。但你看見了一張照片，是你熟悉的街角。',{心:1},{clue:1}),
+    k:R('螢幕閃了一下，浮現出一串日期。那個日期，你認得。',{},{clue:1}),
+    f:R('螢幕碎成蜘蛛網，什麼也看不到了。',{})}),
+  O('帶回去供奉','careful',null,R('你把它擺在書案上，每天上香。三年後，你覺得心靜了很多。',{心:1})),
+  O('賣給收藏家','careful',null,R('賣了五百靈石。收藏家說：「這可能是上古的某種『通訊法器』。」你笑了笑，心想：快了。',{金:5})),
+  O('用力砸碎，眼不見為淨','bold',null,R('你把它砸成碎片。夜深人靜時，你有點後悔。',{心:-1}))
+]},
+{id:'ec_mural',t:'壁畫上的火鍋',earth:1,a:[16,99999],rm:[1,7],text:'古修士洞府的牆上有一幅壁畫：一群人圍著一口冒著紅油的大鍋，熱氣升騰，旁邊刻著八個字：「人生苦短，吃辣要緊」。',o:[
+  O('臨摹壁畫','diligent',['悟',10],{
+    g:R('你發現壁畫背景中隱約有一座城市天際線，是你熟悉的樣子。',{悟:1},{clue:1}),
+    k:R('你臨摹下來，覺得這畫風特別像某種「現代插畫」。',{},{clue:1}),
+    f:R('臨摹了半天，只畫出一鍋紅色的水。',{})}),
+  O('研究那八個字','careful',['心',11],{
+    g:R('你突然意識到，這八個字是用簡體字刻的。',{心:1},{clue:1}),
+    k:R('字跡古怪，但你猜到了一部分意思。',{},{clue:1}),
+    f:R('字太古怪，你什麼也沒看出來。',{})}),
+  O('肚子餓了，先離開','timid',null,R('你默默走出洞府。肚子叫得比你的修為還響。',{體:-0}))
+]},
+{id:'ec_laoxiang',t:'老鄉見老鄉',earth:1,a:[16,99999],rm:[1,7],text:'坊市裡有個髒兮兮的老頭，擺著攤子賣「炸雞」。你湊近一聞，眼眶瞬間紅了。他抬頭看了你一眼，壓低聲音：「今天星期四，V我五十。」',o:[
+  O('掏出五靈石：「V你，五十」','bold',null,R('老頭激動得老淚縱橫，拉著你說了一整夜的故事，最後給了你一個座標。',{人:1},{clue:1}),{cost:{金:3}}),
+  O('試著對暗號','diligent',['悟',9],{
+    g:R('「床前明月光」「疑是地上霜」——對上了！老頭抹著淚，交給你一張殘圖。',{悟:1},{clue:1}),
+    k:R('老頭愣了半天，才確認你是「自己人」。',{},{clue:1}),
+    f:R('老頭把你當成瘋子，轟了出去。',{人:-1})}),
+  O('假裝不認識，走開','timid',null,R('三年後，聽說那老頭暴斃了，攤子裡的炸雞配方失傳。你心裡有點空。',{心:-1}))
+]},
+{id:'ec_array',t:'陣法殘卷',earth:1,a:[16,99999],rm:[2,7],text:'你在藏經閣最深處找到一卷殘破的陣法圖，名為《歸墟引》——圖上的星位，與你記憶中的某個星座奇妙重合。',o:[
+  O('通宵研究','diligent',['悟',14],{
+    g:R('你解出了陣眼的位置，那是一個你終生難忘的座標。',{悟:1},{clue:1}),
+    k:R('解出一部分，足夠推測出大致方向。',{},{clue:1}),
+    f:R('看得頭痛欲裂，錯過了午飯。',{})}),
+  O('抄錄後上交宗門','careful',['人',12],{
+    g:R('宗門獎勵了你一筆，同時你偷偷多抄了一份。',{金:4,人:1},{clue:1}),
+    k:R('宗門讚賞你的覺悟，賞了一點靈石。',{金:2}),
+    f:R('被管事盤問，說你「居心叵測」。',{人:-1})}),
+  O('放回原處','timid',null,R('有些東西，看了會睡不著。你把它放回原處。',{}))
+]},
+{id:'ec_radio',t:'虛空裂縫的廣播',earth:1,a:[16,99999],rm:[3,7],text:'虛空亂流中傳來斷斷續續的聲音：「……這裡是……中央氣象台……明天……有……大風……」',o:[
+  O('強行靠近裂縫','bold',['心',14],{
+    g:R('你在亂流中站穩，聽清了完整的一段廣播。那個播報員的口音，你再熟悉不過。',{心:1},{clue:1}),
+    k:R('你勉強聽清了半句話。',{},{clue:1}),
+    f:R('被亂流撕扯，吐血飛退。',{體:-2}),
+    b:R('裂縫比你想像的更不穩定。',{},{die:'被虛空亂流撕碎，連魂魄都沒留下'})}),
+  O('以神識記錄頻率','diligent',['悟',15],{
+    g:R('你記錄下頻率，並推演出裂縫另一端的方位。',{悟:1},{clue:1}),
+    k:R('你記下了大致頻率。',{},{clue:1}),
+    f:R('神識被攪成漿糊，頭疼了三年。',{悟:-1})}),
+  O('遠離，不去管','careful',null,R('「這種聲音，聽多了容易想家。」你轉身離去。',{心:1}))
+]},
+{id:'ef_home',t:'歸途',cl:CLUE_NEED,rep:true,w:8,a:[16,99999],rm:[0,7],text:'線索拼合的那一刻，一個巨大的法陣輪廓在你腦海中浮現。只要有一處靈氣足夠的地方，一顆足夠堅定的心，你就能撕開通往藍星的那條路。',o:[
+  O('全力啟動法陣','bold',['心',14],{
+    g:R('法陣亮起，空間如水面般泛起漣漪。你踏入其中，眼前是熟悉的路燈與柏油馬路。',{},{goal:'earth'}),
+    k:R('法陣勉強撐住，你硬生生擠過了那道縫。回過神來，已站在熟悉的街角。',{},{goal:'earth'}),
+    f:R('法陣失控，反噬你的神識。你損失了一條線索。',{體:-2},{clue:-1}),
+    b:R('空間之門崩潰了。',{},{die:'被虛空吞噬，魂魄永遠留在了兩個世界之間'})}),
+  O('以悟性推演最安全的軌跡','diligent',['悟',15],{
+    g:R('你推演出一條最穩妥的軌跡，空間之門平穩開啟。',{},{goal:'earth'}),
+    k:R('軌跡有些小偏差，但你有驚無險地穿了過去。',{},{goal:'earth'}),
+    f:R('推演出錯，你被傳送到一片陌生的荒原。',{體:-1,金:-2},{clue:-1})}),
+  O('請同道與盟友護法','careful',['人',13],{
+    g:R('盟友們撐住了陣眼，你安穩地踏出那一步。',{},{goal:'earth'}),
+    k:R('護法人手不足，但你還是成功了。',{},{goal:'earth'}),
+    f:R('盟友們中途脫力，陣法中斷。',{人:-1},{clue:-1})},{need:{人:5}})
+]},
+
+// =============== 跨局稀有事件 ===============
+{id:'r_xian',t:'前世遺澤',rare:'u_xian',n:{悟:8},a:[16,99999],rm:[0,6],text:'夢中，你看見一個與你長得一模一樣的老人，端坐雲端，朝你點頭。他說：「你又來了。」',o:[
+  O('凝神問道','diligent',['悟',12],{
+    g:R('老人將一縷「仙緣」送入你的識海：「這一世，別再走錯了。」',{悟:1,exp:15},{unlock:'u_xian'}),
+    k:R('老人揮了揮手，一縷光落入你眉心。你知道，這就是答案。',{exp:10},{unlock:'u_xian'}),
+    f:R('夢醒了，什麼也沒記住，只剩一身冷汗。',{})}),
+  O('裝作沒看見','timid',null,R('夢醒後，你把這事當成夢。三年後你再夢見他，他看你的眼神，充滿了失望。',{心:1}))
+]},
+{id:'r_body',t:'雷劫淬體',rare:'u_body',n:{體:10},a:[16,99999],rm:[0,6],text:'一道無名天雷劈向你——不是劫，是意外。通常這種意外，不是死就是爆種。',o:[
+  O('硬接這一道雷','bold',['體',14],{
+    g:R('雷霆淬體，你的肉身金光流轉，雷劫過後，你渾身金燦燦的，像一尊佛像。',{體:2,exp:20},{unlock:'u_body'}),
+    k:R('你扛住了，皮開肉綻，但骨骼隱隱泛金。',{體:1,exp:12},{unlock:'u_body'}),
+    f:R('傷重倒地，爬了半個月才爬起來。',{體:-2}),
+    b:R('這道雷比你想的更狠。',{},{die:'被天雷劈成飛灰，連渣都沒剩'})}),
+  O('拔腿就跑','timid',['體',9],{
+    k:R('你跑得比雷還快。雷劈在你剛才站的位置，留下一個大坑。',{心:1}),
+    g:R('你跑得比雷還快，順便撿到一塊被劈出來的雷擊木。',{金:3}),
+    f:R('雷追著你劈了三里，頭髮焦黑，但活下來了。',{體:-1})})
+]},
+{id:'r_social',t:'天下英雄',rare:'u_social',n:{人:9},a:[16,99999],rm:[0,6],text:'你辦的一場酒宴，竟引來了半個修仙界的名流。有人敬酒，有人遞名帖，還有人——試圖挖你牆角。',o:[
+  O('一一應酬，滴水不漏','careful',['人',13],{
+    g:R('一夜之後，你成了所有人的「老朋友」。有人說，你只要說一聲，半個修仙界都會來幫你。',{人:2,金:3},{unlock:'u_social'}),
+    k:R('場面穩住了，你收穫了一堆名帖。',{人:1,金:2},{unlock:'u_social'}),
+    f:R('酒喝太多，說了不該說的話。',{體:-1,人:-1})}),
+  O('找個藉口提前離場','timid',null,R('「酒局可以少參加，命不能少。」你悄悄溜了。',{心:1}))
+]},
+{id:'r_heart',t:'斬心魔',rare:'u_heart',n:{心:10},a:[16,99999],rm:[0,6],text:'心魔尚未纏身，你卻自己走到了斷崖邊，將自己的「欲」與「念」，一刀斬下。',o:[
+  O('斬！','bold',['心',14],{
+    g:R('一刀斬落，天地俱寂。你的心如明鏡，再無一絲雜念。',{心:2,exp:20},{unlock:'u_heart'}),
+    k:R('斬斷了大半，剩下的你決定留著當紀念。',{心:1,exp:10},{unlock:'u_heart'}),
+    f:R('刀沒落下，你的手在抖。',{心:-1}),
+    b:R('你斬得太深了。',{},{die:'斬得太乾淨，連自己也一起斬了'})}),
+  O('不斬，下山吃碗麵','timid',null,R('「人要有點欲望，才有煙火氣。」你坐在麵攤前，吃得很滿足。',{心:1}))
+]},
+{id:'r_gold',t:'天降橫財',rare:'u_gold',n:{金:10},a:[16,99999],rm:[0,6],text:'一個陌生人敲開你的門，遞上一枚玉符：「我家主人欠你一個人情，這是利息。」你完全不記得什麼時候幫過他。',o:[
+  O('收下','diligent',['人',11],{
+    g:R('玉符是一枚「財神令」。從此，凡有財氣之處，總能聞到你的氣息。',{金:6},{unlock:'u_gold'}),
+    k:R('玉符能兌換一大筆資源，你收得心安理得。',{金:4},{unlock:'u_gold'}),
+    f:R('是騙局，玉符是假的。你損失了一筆保證金。',{金:-4})}),
+  O('拒絕，先查清來歷','careful',['人',12],{
+    g:R('查清來歷後，發現確實是你祖上的恩情。你坦然收下。',{金:5,人:1},{unlock:'u_gold'}),
+    k:R('查不出來歷，保險起見你拒絕了。',{心:1}),
+    f:R('對方惱怒，從此與你結下樑子。',{人:-1})})
+]},
+
+// =============== 仙尊之後 ===============
+{id:'i_idle',t:'仙尊的日常',rep:true,a:[16,99999],rm:[7,7],text:'成為仙尊之後的日子，意外地無聊。你的洞府有三千弟子，但你忽然很想吃一碗泡麵。',o:[
+  O('閉關推演天機','diligent',['悟',17],{
+    g:R('你推演出一條穿越虛空的軌跡，並在軌跡盡頭看見了一盞熟悉的路燈。',{悟:1},{clue:1}),
+    k:R('推演得到一條模糊的線索。',{},{clue:1}),
+    f:R('天機反噬，你吐了一口仙血。',{體:-1})}),
+  O('遊歷諸天','bold',['體',17],{
+    g:R('你在一處古老星域，發現了一座刻著「歡迎光臨」的石碑。',{體:1},{clue:1}),
+    k:R('你找到一處空間薄弱的地方，記下了座標。',{},{clue:1}),
+    f:R('什麼也沒找到，只收集了一堆很貴的星砂。',{金:3})}),
+  O('開宗立派，享受尊榮','careful',null,R('三千弟子齊聲高喊「仙尊萬歲」。你很滿意，但也很餓。',{人:1,金:3})),
+  O('原地發呆','timid',null,R('你什麼也不做，看了五十年的雲。雲很好看，但沒有火鍋。',{心:1}))
+]},
+// =============== 家境專屬事件 ===============
+{id:'f_hunter',t:'爹的獵弓',fm:['hunter'],a:[16,70],rm:[0,3],w:7,text:'你爹臨終前把那把祖傳獵弓交給你，說弓裡藏著「家傳絕學」。你拆開一看，弓身夾層只有一張泛黃紙條：「射箭要穩。」',o:[
+  O('每天苦練射術','diligent',['體',11],{
+    g:R('三年後，你百步穿楊，連飛過的靈雀都能射下來。',{體:2,exp:10}),
+    k:R('箭術有成，至少打獵時不再餓肚子。',{體:1,exp:6}),
+    f:R('練得肩膀脫臼，躺了半個月。',{體:-1})}),
+  O('帶弓上山狩獵','bold',['體',12],{
+    g:R('你射中一頭靈鹿，把鹿角賣給了藥鋪。',{金:4,exp:8,體:1}),
+    k:R('收穫不多，但夠吃一個月。',{金:2}),
+    f:R('被野豬頂翻在地，肋骨斷了兩根。',{體:-2}),
+    b:R('野豬比你想像的快。',{},{die:'被野豬頂死，葬禮上全村吃了席'})}),
+  O('把弓拿去當鋪','careful',null,R('當鋪老闆打量半天，說：「祖傳的？值三靈石。」你拿錢走人，心裡很平靜。',{金:3})),
+  O('把弓供在牆上，不敢碰','timid',null,R('你對著那張紙條發了三個月的呆，最終決定：穩，就是一切。',{心:1}))
+]},
+{id:'f_decline',t:'祖宅的暗門',fm:['decline'],a:[16,70],rm:[0,3],w:7,text:'家族破敗多年。你整理祖宅時，在地窖角落發現一道被灰塵蓋住的暗門，門上刻著褪色的族徽。',o:[
+  O('直接撬開','bold',['體',11],{
+    g:R('門後是一間藏書室，滿滿都是祖先留下的修行筆記。',{悟:2,exp:12},{flag:'oldlib'}),
+    k:R('裡面是一箱發霉的靈石，雖然不多，但夠買幾頓飽飯。',{金:3}),
+    f:R('機關彈出暗箭，擦過你的臉頰。',{體:-1})}),
+  O('研究族徽紋路','diligent',['悟',12],{
+    g:R('你解開了紋路中的機關口訣，暗門無聲而開，裡面的東西竟比你想的更珍貴。',{悟:2,exp:10,金:2}),
+    k:R('你解出一半，門縫裡漏出一點靈氣。',{exp:5}),
+    f:R('紋路太複雜，你看到頭暈。',{})}),
+  O('請族中長輩一同開啟','careful',['人',10],{
+    g:R('長輩含淚告訴你家族的往事，並把藏書交給你。',{人:2,悟:1,exp:8}),
+    k:R('長輩分了你一小部分，大部分被他們拿走了。',{人:1,exp:3}),
+    f:R('長輩說：「這是家醜，不可外揚。」暗門被重新封死。',{})}),
+  O('重新封上，假裝沒看見','timid',null,R('有些過去，不翻比較好。',{心:1}))
+]},
+{id:'f_merchant',t:'家族商隊',fm:['merchant'],a:[16,70],rm:[0,4],w:7,text:'家裡的商隊要走一趟危險的北線，管事請你隨行：「少爺（小姐）見過世面，以後才好接班。」',o:[
+  O('隨行護衛','bold',['體',12],{
+    g:R('途中遇襲，你一人頂住三個劫匪，從此商隊上下都服你。',{金:5,體:1,人:1,exp:6}),
+    k:R('擊退了劫匪，你也負了點傷。',{金:3,exp:4}),
+    f:R('劫匪太多，貨被劫走一半。',{體:-2,金:-2}),
+    b:R('劫匪的刀比你的快。',{},{die:'死於商隊遇襲，貨還沒保住'})}),
+  O('負責談生意','careful',['人',11],{
+    g:R('你把北方的買家說得心服口服，簽下一筆大單。',{金:6,人:2}),
+    k:R('生意談成，利潤中規中矩。',{金:3,人:1}),
+    f:R('被買家壓價，賠了本。',{金:-3})}),
+  O('研究沿途靈脈','diligent',['悟',11],{
+    g:R('你在路上發現一處隱蔽的靈氣匯聚點，順手打坐了三天。',{exp:12,金:2,悟:1}),
+    k:R('收穫不大，但你對靈氣流動有了新體會。',{exp:6}),
+    f:R('只顧著打坐，差點被商隊丟下。',{人:-1})}),
+  O('留在家裡看帳本','timid',null,R('你把帳本核對了三遍，發現管事偷偷貪了五十靈石。你默默記在心裡。',{金:2,心:1}))
+]},
+{id:'f_scholar',t:'科舉還是修仙',fm:['scholar'],a:[16,60],rm:[0,3],w:7,text:'爹終於考中了舉人，激動得三天沒睡。他一把抱住你：「兒啊，你也去考吧，光宗耀祖！」',o:[
+  O('乖乖去考','careful',['悟',10],{
+    g:R('你高中進士，被官府賞識，從此仕途與修行雙線並進。',{人:2,金:3,悟:1}),
+    k:R('中了舉人，不好不壞。爹笑得合不攏嘴。',{人:1,金:1}),
+    f:R('名落孫山。你把落榜的時間，用來練了三個月氣。',{心:1,exp:3})}),
+  O('「爹，我想修仙。」','bold',['心',10],{
+    g:R('爹沉默三天後，從箱底掏出一本家傳的《養氣篇》：「別死在外頭。」',{exp:12,心:1}),
+    k:R('爹嘆了一口氣，給了你一筆路費。',{金:2,exp:4}),
+    f:R('爹抄起戒尺追了你三條街。',{體:-1})}),
+  O('把修仙理論寫成八股文','diligent',['悟',12],{
+    g:R('主考官看完，說：「文章雖怪，卻有真意。」你竟一舉兩得。',{悟:2,exp:10,人:1}),
+    k:R('文章寫得不倫不類，但你對功法更熟悉了。',{悟:1}),
+    f:R('被先生批「不知所云」。',{})}),
+  O('兩邊都不碰，繼續讀書','timid',null,R('你捧著書，一讀就是五年。書很厚，日子很安穩。',{悟:1,心:1}))
+]},
+{id:'f_orphan',t:'舊日恩人',fm:['orphan'],a:[16,70],rm:[0,3],w:7,text:'當年分你半個饅頭的老乞丐，在街頭等你。他說他其實不是乞丐，而是某位大能的轉世——也可能只是想騙你的錢。',o:[
+  O('請他吃一頓飯','careful',null,R('老乞丐吃得很開心，留下一句「善有善報」和一個乞丐幫的暗號。',{人:2,exp:3},{flag:'beggar'}),{cost:{金:1}}),
+  O('虛心請教','diligent',['心',10],{
+    g:R('他傳你一套「乞丐吐納法」，居然很有效。你這輩子都沒想過，修仙是從街頭開始的。',{體:1,exp:12}),
+    k:R('他說了半天廢話，但你聽進去了一兩句。',{exp:5}),
+    f:R('他真的只是想騙錢，你被騙走了一個饅頭。',{金:-1})}),
+  O('拿棍子趕他走','bold',['心',9],{
+    g:R('他一邊跑一邊喊：「小子有前途！」',{心:2}),
+    k:R('他跑掉了，你心裡有點空。',{心:1}),
+    f:R('他沒跑，反而給了你一巴掌。',{人:-1})}),
+  O('假裝沒看見','timid',null,R('你繞了三條街走回家。後來你一直在想：他是不是真的是大能？',{心:1}))
+]},
+{id:'f_cadet',t:'家族資源分配',fm:['cadet'],a:[16,80],rm:[0,4],w:7,text:'家族一年一度的資源分配大會。嫡系分靈石，旁支分「勉勵」。族長宣布：今年旁支依表現分配。',o:[
+  O('當場展示實力','bold',['體',11],{
+    g:R('你一拳打碎測力石，族長沉默了三息：「旁支……也不錯。」',{exp:12,人:2}),
+    k:R('表現中規中矩，分到一小份。',{exp:6}),
+    f:R('被嫡系子弟當眾嘲笑。',{人:-1})}),
+  O('討好嫡系','careful',['人',11],{
+    g:R('你誇得誠懇又不諂媚，嫡系少爺送了你一瓶丹藥。',{金:4,人:1}),
+    k:R('拿到了一點好處。',{金:2}),
+    f:R('被識破，反而被取笑。',{人:-1,金:-1})}),
+  O('不爭，暗中修煉','diligent',['悟',11],{
+    g:R('你把分到的資源全換成修煉用的靈石，進步神速。',{exp:14,悟:1}),
+    k:R('穩穩當當積累了一點。',{exp:8}),
+    f:R('方法不對，進展緩慢。',{})}),
+  O('稱病不去','timid',null,R('你躺在床上，聽著遠處的鑼鼓聲，覺得這張床真舒服。',{心:1}))
+]},
+{id:'f_official',t:'官場的邀請',fm:['official'],a:[16,70],rm:[0,4],w:7,text:'祖父的老部下來信，說縣衙有個肥缺，問你要不要去「歷練」幾年。信末還附了一句：「順便，宗門的人也在查你家。」',o:[
+  O('接受歷練','careful',['人',11],{
+    g:R('你在官場如魚得水，三年後，人脈和積蓄都滿滿的。',{人:3,金:4}),
+    k:R('平平穩穩，攢了點人脈。',{人:1,金:2}),
+    f:R('捲入一場官場鬥爭，灰頭土臉。',{人:-1,金:-2})}),
+  O('把信交給宗門','diligent',['人',12],{
+    g:R('宗門執事看完信，說：「你家祖父是個明白人。」你被記了一功。',{人:2,exp:10}),
+    k:R('宗門收了信，沒表態。',{exp:5}),
+    f:R('宗門說你「多事」。',{人:-1})}),
+  O('拒絕，繼續修行','bold',['心',10],{
+    g:R('你把信燒了：「我的路，我自己走。」',{心:2,exp:8}),
+    k:R('你婉拒了，對方也沒生氣。',{心:1}),
+    f:R('得罪了祖父的舊部，往後少了一條人脈。',{人:-1})}),
+  O('裝作沒收到','timid',null,R('三個月後，對方再來信，語氣客氣了很多。你繼續裝作沒收到。',{心:1}))
+]},
+{id:'f_temple',t:'道觀的來信',fm:['temple'],a:[16,70],rm:[0,4],w:7,text:'你長大的那座小道觀來信：觀主圓寂了。臨終前他留下一句話：「當年那張紙條，是我寫的。」',o:[
+  O('回道觀奔喪','careful',['心',10],{
+    g:R('觀主留下一卷《清靜經》批註，你讀得淚流滿面，心境大有長進。',{心:2,悟:1,exp:8},{flag:'noteclue'}),
+    k:R('你在觀主靈前守了七天，心裡平靜了很多。',{心:1,exp:4},{flag:'noteclue'}),
+    f:R('道觀已經荒廢，只剩一張破蒲團。你坐了很久。',{心:1})}),
+  O('追查自己的身世','diligent',['人',11],{
+    g:R('你查到自己是某位隱世大能的後裔，對方暗中留下一份遺產。',{人:2,exp:10,金:2}),
+    k:R('查到一點線索，但足以讓你重新審視自己。',{人:1}),
+    f:R('線索全斷了，你有點失落。',{心:-1})}),
+  O('一笑置之，繼續趕路','bold',['心',9],{
+    g:R('你笑著說：「是誰寫的都行，我活得好好的。」心境澄明。',{心:2}),
+    k:R('你沒有回頭，但心裡記下了。',{心:1}),
+    f:R('夜裡，你夢見那座小道觀，夢裡下著雨。',{心:-1})}),
+  O('假裝沒收到','timid',null,R('你把信塞進抽屜最深處。很多年後，你又打開它，字已經模糊。',{心:1}))
+]},
+
+// =============== 出生地專屬事件 ===============
+{id:'p_town',t:'鎮上的包子鋪',pl:['town'],a:[16,70],rm:[0,4],w:7,text:'青石鎮最有名的包子鋪，老闆據說是隱居的前輩。你每天去買包子，他每天對你笑，笑得很有深意。',o:[
+  O('日日光顧，虛心請教','diligent',['人',9],{
+    g:R('老闆終於開口，教了你一式「揉麵功」——竟能凝練氣力。',{體:1,exp:8,人:1}),
+    k:R('老闆笑著送了你一籠包子。',{人:1}),
+    f:R('老闆只是想多賣幾個包子。',{金:-1})}),
+  O('偷偷觀察他揉麵','careful',['悟',10],{
+    g:R('你看出每一次揉按，都暗合吐納節奏。',{悟:1,exp:8}),
+    k:R('看了半天，只學會了揉麵。',{exp:3}),
+    f:R('被老闆發現，罰你洗了三天籠屜。',{體:1})}),
+  O('挑釁他','bold',['體',12],{
+    g:R('老闆輕輕一彈，你飛出三丈，但落地時悟出了一點什麼。',{體:1,exp:10}),
+    k:R('被打得七葷八素，但學會了「卸力」。',{exp:5,體:-1}),
+    f:R('被打得鼻青臉腫，躺了半個月。',{體:-2})}),
+  O('買了就走','timid',null,R('你買了兩個包子，邊走邊吃。這就是人生。',{體:1}))
+]},
+{id:'p_mount',t:'靈獸的巢穴',pl:['mount'],a:[16,80],rm:[0,4],w:7,text:'你在山脈深處發現一個巨大的巢穴，一頭二階靈獸正在孵蛋。蛋殼上流轉著微光。',o:[
+  O('偷蛋','bold',['體',13],{
+    g:R('你趁牠打盹抱走靈蛋，賣了個好價錢，還順手拔了牠一根羽毛。',{金:6,exp:12,體:1}),
+    k:R('偷到一枚碎蛋殼，也值錢。',{金:3,exp:6}),
+    f:R('被靈獸掀翻，斷了一根肋骨。',{體:-2}),
+    b:R('靈獸比你想像的護蛋。',{},{die:'被護蛋的靈獸踩成肉餅'})}),
+  O('等牠離巢覓食再動手','careful',['心',12],{
+    g:R('你蹲了三天三夜，趁牠離開那一刻取蛋，全身而退。',{心:1,金:5,exp:8}),
+    k:R('只拿到幾片蛋殼。',{金:2}),
+    f:R('等得太久，睡著被牠叼走。',{體:-1})}),
+  O('嘗試與靈獸溝通','diligent',['悟',13],{
+    g:R('靈獸認你為友，贈你一枚靈羽。',{悟:1,人:1,exp:12}),
+    k:R('牠沒攻擊你，已是莫大的恩賜。',{exp:6}),
+    f:R('牠打了個噴嚏，把你吹飛。',{體:-1})}),
+  O('默默離開','timid',null,R('你悄悄後退，連呼吸都放輕了。這也是一種生存智慧。',{心:1}))
+]},
+{id:'p_sect',t:'一頭栽進後院的弟子',pl:['sect'],a:[16,70],rm:[0,3],w:7,text:'天衍宗山腳最常見的風景：頭頂不時有人御劍而過。今天有個弟子飛得歪歪扭扭，一頭栽進了你家後院。',o:[
+  O('扶起他並替他治傷','careful',['人',9],{
+    g:R('他是內門弟子，感激涕零，送你一張符籙和一個人情。',{人:2,金:2,exp:6}),
+    k:R('他道了謝，留下幾枚銅錢。',{人:1,金:1}),
+    f:R('他醒來第一句話：「我的劍呢？」你賠了半個月口糧。',{金:-1})}),
+  O('偷看他的劍訣玉簡','diligent',['悟',11],{
+    g:R('你看懂了一半，無師自通了一式御劍術的基礎。',{悟:2,exp:10}),
+    k:R('看了一眼，記住了幾句。',{exp:5}),
+    f:R('被發現，賠了一筆封口費。',{金:-2,人:-1})}),
+  O('趁機拿走他的飛劍','bold',['體',11],{
+    g:R('你悄悄把飛劍賣給了黑市，賺了一筆。',{金:5,人:-1}),
+    k:R('賣得便宜點，也夠吃一陣。',{金:2,人:-1}),
+    f:R('他其實裝暈，狠狠揍了你一頓。',{體:-2})}),
+  O('假裝沒看見','timid',null,R('你把後院的門悄悄關上。第二天，他已經不見了。',{心:1}))
+]},
+{id:'p_market',t:'坊市黑市拍賣',pl:['market'],a:[16,100],rm:[0,4],w:7,text:'浮雲坊市一年一度的黑市拍賣。壓軸的拍品用黑布蓋著，只說「來歷不凡，價高者得」。',o:[
+  O('豪擲千金','bold',['金',9],{
+    g:R('黑布掀開，是一卷「上古殘卷」。你盯著它，手在發抖。',{悟:2,exp:15}),
+    k:R('拍到一件普通法器，勉強夠本。',{exp:6,體:1}),
+    f:R('被托兒抬價，白花了不少靈石。',{金:-2})},{cost:{金:3}}),
+  O('冷眼觀察，伺機撿漏','careful',['心',11],{
+    g:R('你看穿了托兒的套路，用低價拍下一件被忽略的寶貝。',{金:4,exp:6}),
+    k:R('撿到一個小漏。',{金:1}),
+    f:R('什麼也沒買，也沒什麼損失。',{})}),
+  O('趁亂偷','bold',['體',13],{
+    g:R('燈光一暗，你拿走了壓軸拍品。',{exp:15,金:3}),
+    k:R('只摸到一個小玩意。',{金:2}),
+    f:R('被護衛抓住，狠狠打了一頓。',{體:-2,人:-2}),
+    b:R('拍賣行的護衛，不是吃素的。',{},{die:'被拍賣行護衛當場格殺'})}),
+  O('當個吃瓜群眾','timid',null,R('你嗑著瓜子看人叫價，聽了一晚上的八卦。',{心:1}))
+]},
+{id:'p_wild',t:'瘴氣中的毒花',pl:['wild'],a:[16,80],rm:[0,4],w:7,text:'瘴林深處有一朵會發光的毒花，傳說採之可煉絕世毒丹，也傳說採之者十死無生。你路過時，它正對你搖曳。',o:[
+  O('強行採摘','bold',['體',12],{
+    g:R('你屏住呼吸一把拔起，毒花在你手裡乖乖不動了。',{金:5,體:1,exp:8}),
+    k:R('採到花，也吸了不少毒氣。',{金:3,體:-1}),
+    f:R('毒氣入體，你吐了三天。',{體:-3}),
+    b:R('毒花比傳說中更毒。',{},{die:'中毒身亡，臨死前還握著那朵花'})}),
+  O('以心神抵禦瘴氣','careful',['心',12],{
+    g:R('你一步一步走近，瘴氣竟不能侵你分毫。',{心:1,exp:10,金:3}),
+    k:R('採到花，但也消耗了不少。',{exp:5}),
+    f:R('瘴氣入體，你被迫退出。',{體:-1})}),
+  O('研究毒花紋路','diligent',['悟',12],{
+    g:R('你看出它的花紋與某種陣法相仿，若有所悟。',{悟:1,exp:10}),
+    k:R('你記下了花紋，打算以後再研究。',{exp:5}),
+    f:R('看久了，頭暈目眩。',{體:-1})}),
+  O('繞道而行','timid',null,R('你選了另一條路。後來聽說那朵花讓三個修士團滅了。',{心:1}))
+]},
+{id:'p_capital',t:'皇都的龍氣',pl:['capital'],a:[16,100],rm:[0,4],w:7,text:'皇都的龍氣每逢節慶震盪一次，據說站在特定位置修煉能事半功倍。但那些位置，通常都在宮牆之內。',o:[
+  O('夜闖宮牆','bold',['體',12],{
+    g:R('你潛入龍脈節點，打坐一夜，修為暴漲。',{exp:14,體:1}),
+    k:R('只打坐了片刻，就被趕了出來。',{exp:7}),
+    f:R('被侍衛追了一整條街，丟了錢袋。',{人:-2,金:-2}),
+    b:R('宮牆上的弓箭手，比你想像的多。',{},{die:'被御林軍亂箭射成刺蝟'})}),
+  O('買通守衛','careful',['人',11],{
+    g:R('守衛笑瞇瞇收了錢：「今晚月色不錯，我什麼都沒看見。」',{exp:12,人:1}),
+    k:R('守衛放你進去待了半個時辰。',{exp:6}),
+    f:R('守衛收了錢，轉頭把你舉報了。',{金:-2})},{cost:{金:2}}),
+  O('在城中觀測龍氣流動','diligent',['悟',12],{
+    g:R('你找到一處離龍脈最近的民宅，租下來日夜修煉。',{悟:1,exp:10}),
+    k:R('收穫有限，但也算略有所得。',{exp:5}),
+    f:R('看了一個月，只看出龍氣和我沒啥關係。',{})}),
+  O('老老實實在城外修煉','timid',null,R('城外的靈氣雖淡，勝在無人打擾。',{exp:3,心:1}))
+]},
+
+// =============== 中後期事件 ===============
+{id:'e_treasure',t:'東海寶船',a:[16,3000],rm:[3,6],w:1.6,text:'傳說東海有一艘上古寶船，每百年浮出海面一次，今年恰好是浮出之年。海面已經聚集了數十艘各宗門的船。',o:[
+  O('搶先登船','bold',['體',15],{
+    g:R('你第一個踏上甲板，搶到寶船的核心法器。',{exp:35,體:1,金:4}),
+    k:R('搶到一些邊角料，也值不少。',{exp:15,金:2}),
+    f:R('被後來者推下海，狼狽爬回。',{體:-2}),
+    b:R('寶船附近有隻比船還大的海獸。',{},{die:'葬身東海，連寶船的影子都沒看清'})}),
+  O('與他人組隊','careful',['人',13],{
+    g:R('你和幾位修士聯手登船，平分戰利品，安全又划算。',{exp:25,金:4,人:1}),
+    k:R('分到一小份，也算有收穫。',{exp:12,金:1}),
+    f:R('隊友臨陣倒戈，你被迫撤退。',{人:-2})}),
+  O('研究寶船沉浮規律','diligent',['悟',15],{
+    g:R('你算準了寶船最穩定的一刻，悄悄登船。',{exp:30,悟:1}),
+    k:R('你算準了時間，卻晚了一步。',{exp:12}),
+    f:R('算錯了方位，在海上漂了三天。',{體:-1})}),
+  O('在岸邊看熱鬧','timid',null,R('你坐在沙灘上喝茶，看著遠方的爭鬥。後來聽說死了二十三個人。',{心:1}))
+]},
+{id:'e_envoy',t:'天道客服',earth:1,a:[16,5000],rm:[4,6],w:1.5,text:'一個穿著制服的陌生人出現在你面前：「您好，這裡是天道公司客服。請問您最近是否遇到修煉瓶頸？」',o:[
+  O('接受諮詢','careful',['心',14],{
+    g:R('客服耐心地給了你三條建議，每一條都戳中要害。',{悟:1,exp:30}),
+    k:R('客服說了些套話，但你還是聽進去了一點。',{exp:15}),
+    f:R('客服說：「請您稍後再試。」然後消失了。',{})}),
+  O('投訴','bold',['人',14],{
+    g:R('天道給了你一筆補償，附贈一張「用戶滿意度調查」。',{金:6,exp:20}),
+    k:R('你拿到了一張優惠券，可兌換一次突破加成。',{金:3}),
+    f:R('你被拉黑了。',{心:-1})}),
+  O('詢問能不能回地球','diligent',['悟',15],{
+    g:R('客服遲疑片刻，低聲說：「抱歉，無法處理跨平台業務。但我可以提供一點『非官方』建議。」',{悟:1},{clue:1}),
+    k:R('客服說：「這個需求我們會記錄。」然後遞給你一張表格。',{exp:10}),
+    f:R('客服禮貌地說：「這超出我的權限。」',{})}),
+  O('掉頭就走','timid',null,R('你覺得這種陌生人，肯定有詐。',{心:1}))
+]},
+{id:'e_tide',t:'靈氣潮汐',a:[16,3000],rm:[2,6],w:1.8,text:'天地間靈氣忽然濃郁數倍，持續十年。這是百年難遇的「靈潮」，各路修士蜂擁而至，連隔壁山頭的老祖都出關了。',o:[
+  O('全力閉關','diligent',['心',13],{
+    g:R('你抓住這難得的機會，修為一日千里。',{exp:35,悟:1}),
+    k:R('收穫不錯，但被人打擾了幾次。',{exp:20}),
+    f:R('心浮氣躁，白白浪費了機會。',{exp:5})}),
+  O('趁機賣靈石、丹藥','careful',['人',12],{
+    g:R('你抓住商機，賺得盆滿缽滿。',{金:8,人:1}),
+    k:R('賺了一筆，雖不算暴富。',{金:4}),
+    f:R('存貨太少，錯過了最好的行情。',{金:1})}),
+  O('搶佔靈氣最濃的洞府','bold',['體',14],{
+    g:R('你一拳轟開洞府大門，把原住戶「請」了出去。',{exp:25,人:-1,體:1}),
+    k:R('搶到了次一等的洞府。',{exp:12}),
+    f:R('被洞府主人打得頭破血流。',{體:-2}),
+    b:R('洞府主人是一位隱世老祖。',{},{die:'搶到洞府的那一刻，被老祖一指點死'})}),
+  O('避世不出','timid',null,R('你把門一關，什麼也不管。靈潮過去，你的修為居然也漲了一點。',{心:1,exp:5}))
+]},
+{id:'e_oldfriend',t:'故人離世',a:[16,5000],rm:[3,6],w:1.6,text:'當年一同入門的老友壽元耗盡，臨終前托人給你帶了一壺酒。你拿著那壺酒，忽然意識到：你已經很久沒回過頭了。',o:[
+  O('為他守靈','careful',['心',12],{
+    g:R('七天七夜，你在靈前想了很多事，心境竟更加澄明。',{心:2,exp:15}),
+    k:R('你守完了靈，心裡踏實了。',{心:1,exp:8}),
+    f:R('你守到一半，悲從中來，修為倒退了一點。',{心:-1})}),
+  O('借酒悟道','diligent',['悟',14],{
+    g:R('酒入喉，往事如煙，你豁然開朗。',{悟:2,exp:25}),
+    k:R('酒意朦朧中，你感受到一絲道的氣息。',{exp:12}),
+    f:R('酒喝多了，宿醉三天。',{體:-1})}),
+  O('帶著酒下山遊歷','bold',['體',12],{
+    g:R('一路喝一路走，你遇到幾位同樣失意的故人，一起暢談通宵。',{人:2,exp:10}),
+    k:R('平安歸來，酒也喝完了。',{exp:5}),
+    f:R('酒後被劫，吃了點虧。',{金:-2})}),
+  O('一個人喝完，什麼也不想','timid',null,R('你喝完最後一滴，把酒壺放在窗台。第二天醒來，你覺得自己好像老了一點。',{心:1,體:-1}))
+]}
+];
+
+// ===== engine.js：遊戲規則（不依賴 DOM，可在 Node 測試） =====
+let RNG=Math.random;
+const setRng=f=>{RNG=f;};
+const rnd=(a,b)=>a+Math.floor(RNG()*(b-a+1));
+const d6=()=>rnd(1,6);
+const clamp=(v,a,b)=>Math.max(a,Math.min(b,v));
+const pick=a=>a[Math.floor(RNG()*a.length)];
+const traitOf=id=>TRAITS.find(t=>t.id===id);
+const WAYS=[0,0,1,2,3,4,5,6,5,4,3,2,1];
+// 兩顆六面骰總和 < k 的機率
+function pLt(k){let c=0;for(let s=2;s<=12;s++)if(s<k)c+=WAYS[s];return c/36;}
+
+// ---- 開局 ----
+const slots=meta=>meta.runs>=1?5:3;
+const basePts=meta=>meta.runs>=1?12:10;
+const extraPts=sel=>Math.min(5,sel.reduce((a,id)=>a+(traitOf(id).pts||0),0));
+const MAX_ALLOC=8;
+// 隨機提供詞條候選：第一世 5 個，之後 7 個（含已解鎖的強力詞條）
+function offerTraits(meta){
+  const pool=TRAITS.filter(t=>!t.lock||meta.unlocked.includes(t.id));
+  const a=pool.slice();
+  for(let i=a.length-1;i>0;i--){const j=Math.floor(RNG()*(i+1));[a[i],a[j]]=[a[j],a[i]];}
+  return a.slice(0,meta.runs>=1?7:5).map(t=>t.id);
+}
+
+function createRun(sel,alloc,legacy,gender){
+  const stats={};
+  SKEYS.forEach(k=>stats[k]=1+(alloc[k]||0));
+  sel.forEach(id=>{const t=traitOf(id);for(const k in(t.mod||{}))stats[k]+=t.mod[k];});
+  const lowPool=FAMILIES.filter(f=>['hunter','orphan','temple'].includes(f.id));
+  const family=pick(sel.includes('poor')?lowPool:FAMILIES),place=pick(PLACES);
+  for(const k in family.mod)stats[k]+=family.mod[k];
+  SKEYS.forEach(k=>stats[k]=Math.max(0,stats[k]));
+  const run={gender:gender||'男',stats,traits:sel.slice(),family,place,age:0,realm:0,exp:0,persona:null,
+    pScore:{勇猛:0,精進:0,膽小:0,保守:0},flags:[],done:[],clue:0,
+    goals:{immortal:false,earth:false},treasure:null,partner:null,cand:null,save:0,log:[],newUnlocks:[],turns:0,post:null,ended:null};
+  sel.forEach(id=>{const t=traitOf(id);if(t.save)run.save+=t.save;if(t.clue)run.clue+=t.clue;});
+  if(legacy&&legacy.list){run.legacy=legacy;legacy.list.forEach(l=>{for(const k in(l.mod||{}))run.stats[k]+=l.mod[k];if(l.save)run.save+=l.save;});}
+  return run;
+}
+
+const has=(run,f)=>run.flags.includes(f);
+const lifespan=run=>LIFE[run.realm]+(run.stats.體)*(2+run.realm*2);
+
+function expMul(run){
+  let m=1;
+  run.traits.forEach(id=>m+=(traitOf(id).expMul||0));
+  if(run.persona==='精進')m+=0.2;
+  if(run.partner)m+=0.1;
+  return m;
+}
+
+// ---- 屬性變化 ----
+function applyFx(run,fx,lines){
+  for(const k in fx){
+    let v=fx[k];if(!v)continue;
+    if(k==='exp'){
+      if(v>0)v=Math.round(v*expMul(run));
+      run.exp=Math.max(0,run.exp+v);
+      if(v)lines.push({txt:`修為 ${v>0?'+':''}${v}`,up:v>0});
+    }else{
+      const before=run.stats[k];
+      run.stats[k]=clamp(before+v,0,30);
+      const real=run.stats[k]-before;
+      if(real)lines.push({txt:`${SK[k]} ${real>0?'+':''}${real}`,up:real>0});
+    }
+  }
+}
+
+// ---- 回合推進 ----
+function passive(run){
+  if(run.realm>=7)return 0;
+  const yf=Math.pow(YEARS[run.realm]/5,0.7);
+  let g=(2+run.stats.悟*0.5)*run.place.aura*yf*expMul(run);
+  if(run.age<16)g*=0.3;
+  return Math.round(g);
+}
+function advance(run){
+  const y=YEARS[run.realm];
+  run.age+=y;run.turns++;
+  const lines=[`${y}年過去了`];
+  const g=passive(run);
+  if(g>0){run.exp+=g;lines.push(`靈氣滋養，修為 +${g}`);}
+  const tmp=[];
+  run.traits.forEach(id=>{const t=traitOf(id);if(t.tick){applyFx(run,t.tick,tmp);}});
+  if(run.persona==='保守')applyFx(run,{金:1},tmp);
+  tmp.forEach(l=>lines.push(l.txt));
+  if(run.post!==null)run.post++;
+  return lines;
+}
+
+// ---- 事件篩選 ----
+function eligible(run,e,meta){
+  const[amin,amax]=e.a||[16,99999];
+  if(run.age<amin||run.age>amax)return false;
+  const[rmin,rmax]=e.rm||[0,6];
+  if(run.realm<rmin||run.realm>rmax)return false;
+  if(e.pl&&!e.pl.includes(run.place.id))return false;
+  if(e.fm&&!e.fm.includes(run.family.id))return false;
+  if(e.fl&&!e.fl.every(f=>has(run,f)))return false;
+  if(e.nf&&e.nf.some(f=>has(run,f)))return false;
+  if(e.n)for(const k in e.n)if(run.stats[k]<e.n[k])return false;
+  if(e.cl&&run.clue<e.cl)return false;
+  if(e.ca!==undefined&&(!run.partner||run.partner.aff<e.ca))return false;
+  if(e.rare&&meta.unlocked.includes(e.rare))return false;
+  if(e.earth&&(run.goals.earth||run.clue>=CLUE_MAX))return false;
+  if(e.id==='ef_home'&&run.goals.earth)return false;
+  if(!e.rep&&run.done.includes(e.id))return false;
+  return true;
+}
+function weight(run,e){
+  let w=e.w!==undefined?e.w:(e.rare?4:1);
+  if(e.earth){
+    w*=1.3;
+    run.traits.forEach(id=>{const m=traitOf(id).earth;if(m)w*=m;});
+  }
+  return w;
+}
+const tlevel=run=>1+Math.max(0,Math.floor((run.realm-3)/2));
+const treasureOf=run=>run.treasure?TREASURES.find(t=>t.id===run.treasure):null;
+function tdesc(t){
+  const b=t.tag?TAGN[t.tag]:`${STYLE_FULL[t.style]}風格選項`;
+  const s=Object.keys(t.fx).map(k=>`${SK[k]} +${t.fx[k]}`).join('、');
+  return `${b}加成（隨境界成長），${s}`;
+}
+const partnerChance=run=>clamp((run.stats.人-2)*0.07,0,0.75);
+function pickEvent(run,meta){
+  // 道侶邂逅：30~50 歲、已有修為，人際越高越容易觸發
+  const dm=EVENTS.find(x=>x.id==='d_meet');
+  if(eligible(run,dm,meta)&&RNG()<partnerChance(run)){
+    run.cand={name:pick(run.gender==='女'?PNAMES_M:PNAMES_F),kind:pick(PKINDS)};
+    return dm;
+  }
+  const tm=EVENTS.find(x=>x.id==='e_tianmo');
+  if(run.realm===6&&eligible(run,tm,meta))return tm;
+  const pool=EVENTS.filter(e=>!e.co&&eligible(run,e,meta));
+  if(!pool.length)return EVENTS.find(e=>e.id===(run.realm>=7?'i_idle':'e_hermit'));
+  const ws=pool.map(e=>weight(run,e));
+  let r=RNG()*ws.reduce((a,b)=>a+b,0);
+  for(let i=0;i<pool.length;i++){r-=ws[i];if(r<=0)return pool[i];}
+  return pool[pool.length-1];
+}
+
+// ---- 檢定 ----
+const dcOf=(run,ev,o)=>o.c[1]+(ev.brk?0:Math.floor(run.realm*1.0));
+const fzOf=ev=>ev.brk?2:3; // 失敗帶寬：低於「難度−fz」即為大失敗
+function bonusFor(run,o){
+  let b=0;
+  if(run.persona){
+    const P=PERS[run.persona];
+    if(o.s===P.style)b+=2;else if(o.s===P.opp)b-=1;
+    if(run.persona==='勇猛'&&o.c&&o.c[0]==='體')b+=1;
+  }
+  if(o.c){
+    const tag=DEFTAG[o.c[0]];
+    run.traits.forEach(id=>{const t=traitOf(id);if(t.cb&&t.cb[tag])b+=t.cb[tag];});
+  }
+  run.traits.forEach(id=>{const t=traitOf(id);if(t.luck)b+=t.luck;});
+  if(run.partner&&run.partner.aff>=6)b+=1;
+  const tr=treasureOf(run);
+  if(tr&&o.c){
+    if(tr.tag&&DEFTAG[o.c[0]]===tr.tag)b+=tlevel(run);
+    if(tr.style&&STYLE_FULL[tr.style]&&o.s===tr.style)b+=tlevel(run);
+  }
+  return b;
+}
+function optInfo(run,ev,i){
+  const o=ev.o[i];
+  const info={locked:false,reason:'',chance:null,pDie:0,deadly:false,bonus:0};
+  if(o.only&&!o.only.includes(run.persona)){info.locked=true;info.reason=`需要個性：${o.only.join('／')}`;}
+  if(o.need)for(const k in o.need)if(run.stats[k]<o.need[k]){info.locked=true;info.reason=`${SK[k]}需達 ${o.need[k]}`;}
+  if(o.cost)for(const k in o.cost)if(run.stats[k]<o.cost[k]){info.locked=true;info.reason=`${SK[k]}不足（需 ${o.cost[k]}）`;}
+  if(o.c){
+    const k=o.c[0],dc=dcOf(run,ev,o);
+    const sv=run.stats[k],b=bonusFor(run,o);
+    info.bonus=b;info.dc=dc;
+    info.chance=Math.round((1-pLt(dc-sv-b))*100);
+    const pB=pLt(dc-fzOf(ev)-sv-b);
+    const pF=pLt(dc-sv-b)-pB;
+    const rf=o.r.f,rb=o.r.b||o.r.f;
+    info.pDie=(rf&&rf.die?pF:0)+(rb&&rb.die?pB:0);
+    info.deadly=!!((rf&&rf.die)||(o.r.b&&o.r.b.die));
+  }
+  return info;
+}
+
+// ---- 結算 ----
+function resolve(run,ev,i,meta){
+  const o=ev.o[i];
+  const out={lines:[],text:'',extra:'',band:null,roll:null,die:null,end:null,goal:null,unlock:null,survive:''};
+  if(o.cost)for(const k in o.cost){run.stats[k]-=o.cost[k];out.lines.push({txt:`${SK[k]} −${o.cost[k]}（花費）`,up:false});}
+  if(!run.persona&&o.s)run.pScore[STYLE2P[o.s]]++;
+  let band='k';
+  if(o.c){
+    const k=o.c[0],dc=dcOf(run,ev,o);
+    const b=bonusFor(run,o),d1=d6(),d2=d6();
+    const total=run.stats[k]+b+d1+d2,diff=total-dc;
+    band=diff>=5?'g':diff>=0?'k':diff>=-fzOf(ev)?'f':'b';
+    out.roll={k,dc,b,d1,d2,total,sv:run.stats[k]};
+  }
+  const res=o.r[band]||(band==='g'?o.r.k:band==='b'?o.r.f:null)||o.r.k;
+  out.band=o.c?band:null;
+  out.text=res.t;
+  const px=res.p&&res.p[run.persona];
+  if(px)out.extra=px.t;
+  if(res.die){
+    const fleeP=1-(1-(run.persona==='膽小'?0.25:0))*(1-run.traits.reduce((a,id)=>Math.max(a,traitOf(id).flee||0),0));
+    if(fleeP>0&&RNG()<fleeP){
+      out.survive='千鈞一髮之際，你施展了祖傳的「溜」字訣，居然真的逃過一劫。';
+      applyFx(run,{體:-2},out.lines);
+    }else if(run.save>0){
+      run.save--;
+      out.survive='護體金光閃過，你撿回了一條命（「不滅金身」已消耗）。';
+      applyFx(run,{體:-1},out.lines);
+    }else{
+      out.die=res.die;
+      run.log.push({age:run.age,t:ev.t,s:o.l,r:res.die});
+      return out;
+    }
+  }else{
+    applyFx(run,res.fx,out.lines);
+    if(px&&px.fx)applyFx(run,px.fx,out.lines);
+  }
+  if(res.flag)[].concat(res.flag).forEach(f=>{if(!has(run,f))run.flags.push(f)});
+  if(res.unflag){const u=[].concat(res.unflag);run.flags=run.flags.filter(f=>!u.includes(f))}
+  if(res.partner&&!run.partner&&run.cand){
+    run.partner={name:run.cand.name,kind:run.cand.kind,aff:0};
+    if(!has(run,'partner'))run.flags.push('partner');
+    out.lines.push({txt:`結為道侶：${run.partner.name}（${run.partner.kind}）`,up:true});
+  }
+  if(res.treasure){
+    run.treasure=res.treasure;
+    out.lines.push({txt:`獲得本命法寶：${treasureOf(run).n}`,up:true});
+  }
+  if(res.aff&&run.partner){
+    const before=run.partner.aff;
+    run.partner.aff=clamp(before+res.aff,0,10);
+    const real=run.partner.aff-before;
+    if(real)out.lines.push({txt:`${run.partner.name} 好感 ${real>0?'+':''}${real}（${run.partner.aff}/10）`,up:real>0});
+  }
+  if(res.partnerDie&&run.partner){
+    out.lines.push({txt:`${run.partner.name} 離世了`,up:false});
+    run.partner=null;
+    run.flags=run.flags.filter(f=>f!=='partner'&&f!=='partnerWilling');
+    run.flags.push('partnerLost');
+  }
+  if(res.clue){
+    run.clue=Math.max(0,run.clue+res.clue);
+    out.lines.push({txt:`地球線索 ${res.clue>0?'+':''}${res.clue}（${run.clue}/${CLUE_NEED}）`,up:res.clue>0});
+  }
+  if(res.unlock&&!meta.unlocked.includes(res.unlock)){
+    meta.unlocked.push(res.unlock);run.newUnlocks.push(res.unlock);out.unlock=res.unlock;
+  }
+  if(res.up){
+    const lv0=tlevel(run);
+    run.realm++;
+    run.exp=Math.max(run.exp,NEED[run.realm]);
+    ['悟','體','心'].forEach(k=>run.stats[k]=clamp(run.stats[k]+1,0,30));
+    out.lines.push({txt:`境界提升：${REALMS[run.realm]}`,up:true});
+    out.lines.push({txt:'悟性、體質、心性各 +1',up:true});
+    const tr0=treasureOf(run);
+    if(tr0&&tlevel(run)>lv0)out.lines.push({txt:`${tr0.n} 與你同步成長：加成提升至 +${tlevel(run)}`,up:true});
+    if(run.realm===7){run.goals.immortal=true;out.goal='immortal';}
+  }
+  if(res.goal){run.goals[res.goal]=true;out.goal=res.goal;}
+  if(res.end)out.end=res.end;
+  if(res.cont&&run.goals.immortal&&run.post===null)run.post=0;
+  if(!ev.rep&&!ev.brk&&!run.done.includes(ev.id))run.done.push(ev.id);
+  run.log.push({age:run.age,t:ev.t,s:o.l,r:res.t});
+  return out;
+}
+
+// ---- 突破事件 ----
+const BTEXT=[
+  '',
+  '丹田裡那縷若有若無的氣流，終於在這一夜壯大到可以被稱作「氣」。',
+  '靈氣凝聚成液，只差最後一步，把這潭死水化為築基的地基。',
+  '丹田中靈液翻湧，你要把它們壓縮成一顆金色的圓。壓不好，就是爆體。',
+  '金丹碎，元嬰生。聽起來像一場自殺式的新生。',
+  '元嬰需與天地共鳴。你站在山巔，聽見風裡有萬千低語。',
+  '劫雲在你頭頂聚集，連鳥都不敢飛過。這是天道的期末考試，不及格就是退學——永久的那種。',
+  '九九八十一道天雷，最後一道，據說會問你一個問題：「你為什麼想成仙？」'
+];
+const BOK=['',
+  '天地靈氣如溪流匯入丹田，你睜開眼，世界的顏色變了。',
+  '靈液凝成道基，一股厚重的力量沉入丹田。',
+  '金丹凝成，光華流轉，你彷彿聽見天地在鼓掌。',
+  '一個小小的嬰孩在你識海裡睜開了眼，對你笑了笑。',
+  '你與天地共鳴，風雲雷雨皆為你所用。',
+  '雷劫散去，你站在焦土中央，連衣角都沒亂。',
+  '最後一道雷停在你頭頂三寸，天道似乎在等你的回答。你說了真話。它沉默半晌，放行。'];
+const BFAIL=['',
+  '氣流在丹田轉了一圈，又散了。',
+  '道基晃了晃，又塌了回去。',
+  '金丹成形到一半，裂了。',
+  '元嬰還沒睜眼就縮了回去。',
+  '共鳴中斷，耳邊一片寂靜。',
+  '劫雲散去，你被劈得外焦裡嫩，勉強撿回一口氣。',
+  '最後一道雷劈了下來，你沒答好。'];
+const BBAD=['',
+  '氣血逆行，你咳出一口血。',
+  '靈氣失控，經脈刺痛。',
+  '丹成之際，丹火反噬，五臟如焚。',
+  '元嬰與肉身失去聯繫，一陣劇痛。',
+  '天地之力反彈，神魂劇震。',
+  '雷光吞沒了你的身影。',
+  '天道沒有放行。'];
+function makeBreakEvent(run){
+  const r=run.realm+1,nm=REALMS[r],dc=BDC[r];
+  const gap=NEED[r-1]!==undefined?NEED[r]-NEED[r-1]:NEED[r],loss=Math.round(gap*0.45),deadly=r>=3;
+  const up=(pre,fx,ex)=>R(pre+BOK[r],fx||{},Object.assign({up:1},ex));
+  const fail=pre=>R(pre+BFAIL[r],deadly?{exp:-loss,體:-1}:{exp:-loss});
+  const bad=(pre,die)=>deadly?R(pre+BBAD[r],{exp:-loss,體:-2},{die}):R(pre+BBAD[r],{exp:-loss,體:-1});
+  const dieTxt=`突破${nm}失敗，身死道消`;
+  const free=r===2&&has(run,'pillZhuji'),px={unflag:'pillZhuji'};
+  const pillOpt=free?
+    O('服下破境丹（築基丹・免費）','diligent',['悟',dc-6],{
+      g:up('築基丹的藥力化開，',{exp:Math.round(gap*0.2)},px),k:up('丹力穩穩托住了你，',null,px),
+      f:R('築基丹沒能化開。'+BFAIL[r],{exp:-loss},px),b:R('藥力與你的氣息衝撞。'+BBAD[r],{exp:-loss,體:-1},px)}):
+    O(`服下破境丹（花費 金錢 ${2+r}）`,'diligent',['悟',dc-4],{
+      g:up('丹藥化開，',{exp:Math.round(gap*0.2)}),k:up('丹力支撐，'),
+      f:fail('丹藥沒能化開。'),b:R('丹藥藥力太猛。'+BBAD[r],{exp:-loss,體:-1})},{cost:{金:2+r}});
+  const ev={id:'brk'+r,brk:true,t:`突破・${nm}`,text:BTEXT[r],o:[
+    O('穩紮穩打，調息圓滿','careful',['心',dc],{
+      g:up('你心如止水，',{exp:Math.round(gap*0.2)}),k:up('你一步一步穩住心神，'),
+      f:fail('你穩住了，但還差一口氣。'),b:bad('你太急了。',dieTxt)}),
+    O('強行衝關，一口氣到底','bold',['悟',dc-2],{
+      g:up('你一咬牙豁出去，',{悟:1,exp:Math.round(gap*0.3)}),k:up('驚險萬分，'),
+      f:fail('你衝到一半氣竭。'),b:bad('反噬來得又快又猛。',dieTxt)}),
+    pillOpt,
+    O('請前輩護法','careful',['人',dc-1],{
+      g:up('前輩護法得力，',{人:1}),k:up('在前輩的照看下，'),
+      f:fail('護法的前輩中途有事離開。'),b:R('前輩出手保住了你的命。'+BBAD[r],{exp:-loss,體:-1})},{need:{人:4}})
+  ]};
+  if(r===7)ev.o=ev.o.filter(x=>x.l!=='請前輩護法');
+  return ev;
+}
+
+// ---- 本命法寶 ----
+function treasureEvent(run){
+  const sect=has(run,'inSect');
+  if(sect){
+    const set=TSET[run.persona]||TSET.保守;
+    const style=PERS[run.persona||'保守'].style;
+    const o=set.map(id=>{
+      const t=TREASURES.find(x=>x.id===id);
+      return O(`${t.n}（${t.kind}）——${tdesc(t)}`,style,null,R(t.story+'從此，這便是你的本命法寶。',t.fx,{treasure:id}));
+    });
+    return{id:'g_treasure',t:'本命法寶',brk:true,text:'金丹初成，宗門長老帶你走進寶庫：「本命法寶，要與你的性情相投。三件，選一件。」你看了看自己這一路走來的樣子，三件法寶在架子上微微發光，像是在等你。',o};
+  }
+  const t=pick(TREASURES);
+  return{id:'g_treasure',t:'天降法寶',brk:true,text:'金丹初成的那一刻，遠處山崖忽然射來一道流光，繞著你轉了三圈，最終停在你面前。散修無門無派，卻有天地眷顧——你一眼就知道，這是你的本命法寶。',o:[
+    O(`收下「${t.n}」（${t.kind}）——${tdesc(t)}`,'careful',null,R(t.story+'從此，這便是你的本命法寶。',t.fx,{treasure:t.id}))
+  ]};
+}
+
+// ---- 個性 ----
+function personaChoices(run){
+  return Object.keys(run.pScore).map(k=>[k,run.pScore[k]+RNG()*0.5]).sort((a,b)=>b[1]-a[1]).slice(0,2).map(x=>x[0]);
+}
+
+// ---- 目標事件 ----
+function goalEvent(run,goal){
+  if(goal==='earth'&&run.partner&&has(run,'partnerWilling')){
+    const o=[O('帶{P}逛夜市，就在這裡安定下來','careful',null,R('你牽著{P}走進夜市。對方第一次嘗到珍珠奶茶，瞪大了眼睛：「這是什麼法寶？」……你們在藍星的某個角落，過起了平凡又吵鬧的日子。',{},{end:'earth_together'}))];
+    if(!run.goals.immortal)o.push(O('吃完火鍋，帶{P}一起回去闖一闖','bold',null,R('你們一口氣吃了三份麻辣鍋。{P}被辣得眼淚直流，卻還是笑著說：「再來一份。」之後你們手牽著手，回頭走進那道光。',{心:1},{cont:1})));
+    return{id:'g_earth_together',t:'攜手歸鄉',brk:true,text:'光芒散去，你站在熟悉的街角。身旁傳來腳步聲——{P}也踏了出來，好奇地看著滿街的霓虹和呼嘯的機車。「這就是你的故鄉？」{P}眼睛亮亮的，「比我想像的吵。」',o};
+  }
+  if(goal==='earth'){
+    const o=[O('留在這裡，過完這一生','careful',null,R('你拎著一袋鹽酥雞，坐在路邊，看著車流。沒有人知道你是誰，也沒有人知道你曾經斬過妖、渡過劫。你覺得這樣就很好。',{},{end:'earth'}))];
+    o.push(O('吃完火鍋，再回去闖一闖','bold',null,R('你一口氣吃了三份麻辣鍋，拍拍肚子，回頭看了一眼法陣。「仙尊的位置，還等著我呢。」',{心:1},{cont:1})));
+    return{id:'g_earth',t:'歸鄉',brk:true,text:'光芒散去，你站在熟悉的街角。便利店的燈光、機車的噪音、滷肉飯的香氣……你用了整整一息才確認：這不是夢。口袋裡的靈石，在這裡連一瓶礦泉水都換不到。',o};
+  }
+  const o=[O('受萬界朝拜，坐鎮九天','careful',null,R('你俯瞰眾生，偶爾有人說，仙尊半夜會對著一碗泡麵發呆。',{},{end:'immortal'}))];
+  o.push(O('仙尊也有鄉愁——繼續尋找歸途','diligent',null,R('你把仙尊的位置往旁邊挪了挪，決定先回家看看。',{心:1},{cont:1})));
+  return{id:'g_immortal',t:'九天之上',brk:true,text:'最後一道天雷散去，你立於雲端，天地為之臣服。三千大道在你腳下鋪開，連仙界的使者都為你讓出了主座。你卻忽然想起了一件小事：你還沒去過廁所。',o};
+}
+
+// ---- 流程 ----
+function startTurn(run,meta){
+  const lines=advance(run);
+  if(run.post!==null&&run.post>=10)return{end:{type:'immortal'}};
+  if(run.age>=lifespan(run)){
+    return{end:{type:'old',cause:run.realm===0?'凡人壽盡':`${REALMS[run.realm]}壽元耗盡，坐化於洞府`}};
+  }
+  return{ev:pickEvent(run,meta),passive:lines};
+}
+function afterEvent(run,out,ev){
+  if(out.die)return{end:{type:'died',cause:out.die}};
+  if(out.end)return{end:{type:out.end}};
+  if(out.goal){
+    if(run.goals.immortal&&run.goals.earth)return{end:{type:run.partner&&has(run,'partnerWilling')?'perfect_together':'perfect'}};
+    return{ev:goalEvent(run,out.goal),passive:[]};
+  }
+  if(!run.persona&&run.age>=15)return{persona:true};
+  if(ev&&ev.id==='brk3'&&run.realm>=3&&!run.treasure)
+    return{ev:treasureEvent(run),passive:['丹成之際，天地間有物與你共鳴']};
+  if(ev&&!ev.brk&&run.age>=16&&run.realm<7&&run.exp>=NEED[run.realm+1])
+    return{ev:makeBreakEvent(run),passive:['修為已足，你決定趁勢衝擊下一個境界']};
+  return{next:true};
+}
+function cont(run){if(run.goals.immortal&&run.post===null)run.post=0;}
+
+const ENDINGS={
+  perfect:{n:'雙願皆圓',t:'你既成了仙尊，又回到了藍星。傳說中那位在夜市排隊買珍奶的老先生，後來被人發現口袋裡掉出一顆會發光的金丹。這一世，圓滿得像主角模板。'},
+  immortal:{n:'一念成仙尊',t:'你立於九天之上，萬界叩首。只是夜深人靜時，你偶爾會想起一碗泡麵的味道。'},
+  earth:{n:'歸去來兮',t:'藍星的風，還是那麼吵。你在街角買了一杯珍奶，沒人知道你是誰。你坐在路邊，靜靜喝完。'},
+  earth_together:{n:'攜手歸鄉',hidden:true,t:'你牽著道侶的手，走過那道光。後來藍星的夜市多了一對奇怪的伴侶：一個總在研究手機怎麼上網，一個在攤位前熟練地翻炸雞。街坊都說，他們看起來特別幸福。'},
+  perfect_together:{n:'仙侶歸鄉',hidden:true,t:'你既成了仙尊，又牽著道侶的手回到了藍星。據說後來有人在夜市看見一對氣質不凡的伴侶，為了「珍奶要不要加珍珠」吵了十分鐘，最後手牽手走了。那一天，附近的路燈忽然全亮了。'},
+  worldend:{n:'世界毀滅',t:'天魔的笑聲響徹九州。靈氣被抽乾，山河化為魔域，修仙界從此只剩下史書上的一行註腳：「某年某月，天魔降臨，無人阻之。」黑暗中，你隱約聽見孟婆在嘆氣：「這次的業績，我沒法報。」'},
+  old:{n:'壽終',t:'歲月終究比劍更快。你合上眼，想著下輩子如果還能選，大概還是會選這條路。'},
+  died:{n:'隕落',t:'修仙界每天都有人死去，你只是其中之一。好消息是：下一世，你可以多帶些行李。'}
+};
+
+// 顯示用文字：孤兒替換、道侶名稱
+function T(run,s){
+  if(!run||!s)return s;
+  if(run.family.id==='orphan'){for(const[a,b]of ORPHAN_SUB)s=s.split(a).join(b);}
+  for(const[a,b]of(run.gender==='女'?GENDER_F:GENDER_M))s=s.split(a).join(b);
+  const p=run.partner||run.cand;
+  if(p)s=s.split('{P}').join(p.name).split('{K}').join(p.kind);
+  return s;
+}
+
+
+// ===== 遺澤（前世死於非命） =====
+const LEGACIES=[
+  {id:'l_body',n:'不甘的肉身',d:'體質 +2',mod:{體:2}},
+  {id:'l_mind',n:'殘留的神識',d:'悟性 +1，心性 +1',mod:{悟:1,心:1}},
+  {id:'l_friend',n:'舊日人脈',d:'人際 +2，金錢 +1',mod:{人:2,金:1}},
+  {id:'l_gold',n:'地府退款',d:'金錢 +3',mod:{金:3}},
+  {id:'l_save',n:'死不瞑目的執念',d:'一次免死',save:1,minRealm:2}
+];
+function makeLegacyRecord(run,cause){return{realm:run.realm,age:run.age,cause:cause||'死於非命'};}
+function rollLegacy(meta,rng){
+  const rec=meta.legacy;if(!rec)return null;
+  const r=rng||RNG;
+  if(r()>=0.75)return{missed:true,rec};
+  const pool=LEGACIES.filter(l=>!l.minRealm||rec.realm>=l.minRealm);
+  for(let i=pool.length-1;i>0;i--){const j=Math.floor(r()*(i+1));[pool[i],pool[j]]=[pool[j],pool[i]];}
+  return{rec,list:pool.slice(0,rec.realm>=3?2:1)};
+}
+
+// ===== 成就（第二世起開始記錄） =====
+const ACH=[
+  {id:'a_zhuji',n:'初窺門徑',d:'修至築基',t:(r)=>r.realm>=2},
+  {id:'a_jindan',n:'金丹大道',d:'修至金丹',t:(r)=>r.realm>=3},
+  {id:'a_yuanying',n:'元嬰出竅',d:'修至元嬰',t:(r)=>r.realm>=4},
+  {id:'a_huashen',n:'化神通玄',d:'修至化神',t:(r)=>r.realm>=5},
+  {id:'a_xian',n:'登臨仙尊',d:'成為仙尊',t:(r)=>r.goals.immortal},
+  {id:'a_earth',n:'故鄉的風',d:'回到地球',t:(r)=>r.goals.earth},
+  {id:'a_both',n:'既要又要',d:'同一世完成兩個目標',t:(r)=>r.goals.immortal&&r.goals.earth},
+  {id:'a_love',n:'執子之手',d:'一世中結為道侶',t:(r)=>r.flags.includes('partner')||r.flags.includes('partnerLost')},
+  {id:'a_treasure',n:'命中註定的寶物',d:'得到本命法寶',t:(r)=>!!r.treasure},
+  {id:'a_gp',n:'玄塵的託付',d:'聽完戒指老爺爺的最後一課',t:(r)=>r.flags.includes('gpTruth')},
+  {id:'a_gpsect',n:'山門有後',d:'為玄塵宗遺址清理怨氣、祭拜或尋回傳承',t:(r)=>r.flags.includes('gp2full')},
+  {id:'a_rival',n:'化敵為友',d:'與宿敵握手言和',t:(r)=>r.flags.includes('rivalAlly')},
+  {id:'a_rivalend',n:'恩怨了斷',d:'與宿敵走到故事盡頭',t:(r)=>r.flags.includes('rivalEnd')},
+  {id:'a_legacy',n:'前世的饋贈',d:'帶著遺澤降生',t:(r)=>!!(r.legacy&&r.legacy.list)},
+  {id:'a_orphan',n:'英雄不問出處',d:'孤兒出身，成為仙尊',t:(r)=>r.family.id==='orphan'&&r.goals.immortal},
+  {id:'a_rogue',n:'野生仙尊',d:'散修出身，成為仙尊',t:(r)=>r.flags.includes('rogue')&&r.goals.immortal},
+  {id:'a_rich',n:'財大氣粗',d:'金錢達到 12',t:(r)=>r.stats.金>=12},
+  {id:'a_hex',n:'五邊形戰士',d:'五項屬性都達到 8',t:(r)=>SKEYS.every(k=>r.stats[k]>=8)},
+  {id:'a_young',n:'英年早逝',d:'二十歲前死去',t:(r,t)=>t==='died'&&r.age<20},
+  {id:'a_savior',n:'力挽天傾',d:'擊退天魔，保住修仙界',t:(r)=>r.flags.includes('tianmoWin')},
+  {id:'a_old',n:'老不死',d:'活過一千歲',t:(r)=>r.age>=1000}
+];
+function checkAch(run,meta,type){
+  if(meta.runs<1)return[];
+  meta.ach=meta.ach||[];
+  const got=[];
+  ACH.forEach(a=>{if(!meta.ach.includes(a.id)&&a.t(run,type)){meta.ach.push(a.id);got.push(a.id);}});
+  return got;
+}
+
+const GENDER_F=[['小子','丫頭'],['女主','男主'],['少爺（小姐）','小姐']];
+const GENDER_M=[['少爺（小姐）','少爺']];
+
+// ===== ui.js：介面與流程 =====
+const KEY='xiuxian-sim-v1';
+const defaultMeta=()=>({runs:0,unlocked:[],endings:[],best:0,introSeen:false,ach:[],legacy:null});
+function loadMeta(){try{const s=localStorage.getItem(KEY);if(s)return Object.assign(defaultMeta(),JSON.parse(s));}catch(e){}return defaultMeta();}
+function saveMeta(){try{localStorage.setItem(KEY,JSON.stringify(meta));}catch(e){}}
+let meta=loadMeta(),run=null;
+const ui={screen:'title',sel:[],alloc:{},offer:[],cur:null,pchoices:[],flash:'',gender:'男'};
+const app=document.getElementById('app');
+const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const FLAGNAME={inSect:'天衍宗弟子',inner:'內門',rogue:'散修出身',partner:'有道侶',grandpa:'戒指裡有位老爺爺',literate:'讀過書',martial:'練過武'};
+const BAND={g:'大成功',k:'成功',f:'失敗',b:'大失敗'};
+
+// ---------- 標題 ----------
+function endingsHtml(){
+  const keys=Object.keys(ENDINGS);
+  const got=keys.filter(k=>meta.endings.includes(k)).length;
+  return `<div class="card" style="text-align:left"><div class="sec-h"><h3>結局收集</h3><span class="counter">${got} / ${keys.length}</span></div>
+    <div class="chips" style="margin:0">${keys.map(k=>meta.endings.includes(k)?`<span class="chip gold">${ENDINGS[k].n}${ENDINGS[k].hidden?'（隱藏）':''}</span>`:`<span class="chip">${ENDINGS[k].hidden?'？？？（隱藏）':'？？？'}</span>`).join('')}</div></div>`;
+}
+function achHtml(){
+  const got=ACH.filter(a=>(meta.ach||[]).includes(a.id)).length;
+  return `<div class="card" style="text-align:left"><div class="sec-h"><h3>成就清單</h3><span class="counter">${got} / ${ACH.length}</span></div>
+    <div class="chips" style="margin:0">${ACH.map(a=>(meta.ach||[]).includes(a.id)?`<span class="chip gold" title="${esc(a.d)}">${esc(a.n)}・${esc(a.d)}</span>`:`<span class="chip" title="${esc(a.d)}">？？？・${esc(a.d)}</span>`).join('')}</div></div>`;
+}
+function vTitle(){
+  const first=meta.runs===0;
+  const g1=meta.endings.includes('immortal')||meta.endings.includes('perfect')||meta.endings.includes('perfect_together');
+  const g2=meta.endings.includes('earth')||meta.endings.includes('perfect')||meta.endings.includes('earth_together')||meta.endings.includes('perfect_together');
+  const total=TRAITS.filter(t=>t.lock).length;
+  return `<section class="title">
+    <p class="kicker">人生模擬・修仙篇</p>
+    <h1 data-focus tabindex="-1">投胎修仙模擬器</h1>
+    <p class="lead">${first?'一世五年一回合。選詞條、配點、隨機出身，十五歲定性，然後賭上這條命，看看你能走到哪裡。':'一世五年一回合。選詞條、配點、隨機出身，十五歲定性，然後賭上這條命，去成為仙尊——或者，回家。'}</p>
+    ${first?'':`<div class="goals">
+      <div class="goal ${g1?'done':''}"><b>成為仙尊</b><span class="muted small">修為圓滿，扛過九九天劫。</span>${g1?'<div class="tag">已達成</div>':''}</div>
+      <div class="goal ${g2?'done':''}"><b>回到地球</b><span class="muted small">集齊線索，撕開通往藍星的路。</span>${g2?'<div class="tag">已達成</div>':''}</div>
+    </div>`}
+    <button class="btn primary" data-act="new">${first?'開始投胎':'再次投胎'}</button>
+    ${first?'':`<div class="stampline"><span>已輪迴 ${meta.runs} 世</span><span>強力詞條 ${meta.unlocked.length}/${total}</span><span>最高境界：${REALMS[meta.best]}</span></div>${endingsHtml()}${achHtml()}`}
+    ${first?'':`<details class="reset"><summary>重置存檔</summary>
+      <p>這會清除輪迴次數、已解鎖的詞條與結局紀錄（只存在這個瀏覽器）。</p>
+      <button class="btn ghost" data-act="reset">確定清除</button>
+    </details>`}
+  </section>`;
+}
+
+// ---------- 創角 ----------
+const allocSum=()=>SKEYS.reduce((a,k)=>a+ui.alloc[k],0);
+const modSum=k=>ui.sel.reduce((a,id)=>a+((traitOf(id).mod||{})[k]||0),0);
+function trimAlloc(){
+  const b=basePts(meta)+extraPts(ui.sel);
+  while(allocSum()>b){let m=SKEYS[0];SKEYS.forEach(k=>{if(ui.alloc[k]>ui.alloc[m])m=k;});ui.alloc[m]--;}
+}
+function vCreate(){
+  const sl=slots(meta),bud=basePts(meta)+extraPts(ui.sel),left=bud-allocSum();
+  const tr=ui.offer.map(id=>{
+    const t=traitOf(id),on=ui.sel.includes(id),full=!on&&ui.sel.length>=sl;
+    return `<button class="trait ${on?'on':''} ${t.lock?'rare':''}" data-act="trait" data-id="${t.id}" aria-pressed="${on}" ${full?'disabled':''}><b>${esc(t.n)}${t.lock?'　（強力）':''}</b><span>${esc(t.d)}</span></button>`;
+  }).join('');
+  const lockedList=TRAITS.filter(t=>t.lock&&!meta.unlocked.includes(t.id));
+  const hints=(meta.runs>=1&&lockedList.length)?`<details class="reset" style="margin-top:12px"><summary>尚未解鎖的強力詞條（${lockedList.length}）</summary><ul class="small">${lockedList.map(t=>`<li>${esc(t.hint)}</li>`).join('')}</ul></details>`:'';
+  const rows=SKEYS.map(k=>{
+    const a=ui.alloc[k],m=modSum(k),tot=Math.max(0,1+a+m);
+    return `<div class="arow"><span class="nm">${SK[k]}</span>
+      <span class="pv">基礎 1 + 配點 ${a}${m?` ${m>0?'+':'−'} 詞條 ${Math.abs(m)}`:''} → <b style="color:var(--text)">${tot}</b></span>
+      <span class="stepper"><button data-act="alloc" data-k="${k}" data-d="-1" aria-label="${SK[k]}減少" ${a<=0?'disabled':''}>−</button><output>${a}</output><button data-act="alloc" data-k="${k}" data-d="1" aria-label="${SK[k]}增加" ${(a>=MAX_ALLOC||left<=0)?'disabled':''}>＋</button></span></div>`;
+  }).join('');
+  return `<section class="card"><h2 data-focus tabindex="-1">投胎前的準備</h2>
+    <p class="muted small">出身（家庭與地方）會在你投胎後隨機決定。${meta.runs>=1?'輪迴之後，你能帶的行李變多了。':''}</p>
+    <div class="sec-h"><h3>性別</h3></div>
+    <div class="btnrow" style="margin:0 0 6px"><button class="btn ${ui.gender==='男'?'primary':''}" data-act="gender" data-g="男" aria-pressed="${ui.gender==='男'}">男</button><button class="btn ${ui.gender==='女'?'primary':''}" data-act="gender" data-g="女" aria-pressed="${ui.gender==='女'}">女</button></div>
+    <div class="sec-h"><h3>命運給你的詞條</h3><span class="counter">從 ${ui.offer.length} 個中選 ${sl} 個　${ui.sel.length} / ${sl}</span></div>
+    <div class="traits">${tr}</div>${hints}
+    <div class="sec-h" style="margin-top:22px"><h3>配點</h3><span class="counter">剩餘 ${left} 點　<span class="muted small">（共 ${bud} 點${extraPts(ui.sel)?`，詞條加成 +${extraPts(ui.sel)}`:''}；單項上限 ${MAX_ALLOC}）</span></span></div>
+    <div class="alloc">${rows}</div>
+    <div class="btnrow">
+      <button class="btn primary" data-act="born" ${left!==0?'disabled':''}>投胎！</button>
+      <button class="btn" data-act="rand">隨機配點</button>
+      <button class="btn ghost" data-act="home">返回</button>
+    </div>
+    ${left!==0?'<p class="muted small" style="margin-top:10px">需要把所有點數分配完，才能投胎。</p>':''}
+  </section>`;
+}
+
+// ---------- 出生 ----------
+function vBirth(){
+  return `<section class="card"><h2 data-focus tabindex="-1">你睜開了眼睛</h2>
+    <p class="muted">${(run.family.id==='orphan'||run.family.id==='temple')?'一陣天旋地轉之後，你聽見有人在喊：「是個孩子！誰家的？……算了，先抱走！」':'一陣天旋地轉之後，你聽見有人在喊：「是個'+(run.gender==='女'?'女孩':'男孩')+'！母子平安！」'}</p>
+    <div class="birth-grid">
+      <div class="card"><h3>${esc(run.family.n)}</h3><p class="small muted">${esc(run.family.d)}</p></div>
+      <div class="card"><h3>${esc(run.place.n)}</h3><p class="small muted">${esc(run.place.d)}</p></div>
+    </div>
+    <div class="stats" style="margin-top:16px">${SKEYS.map(statCell).join('')}</div>
+    <div class="chips">${run.traits.map(id=>`<span class="chip gold">${esc(traitOf(id).n)}</span>`).join('')||'<span class="chip">無詞條</span>'}</div>
+    ${run.legacy?`<div class="card"><h3>遺澤・前世的餘蔭</h3><p class="small muted">上一世：${esc(run.legacy.rec.cause)}。閻王看不下去，補償了你。</p><div class="chips">${run.legacy.list.map(l=>`<span class="chip gold">${esc(l.n)}：${esc(l.d)}</span>`).join('')}</div></div>`:(run.legacyMiss?`<p class="small muted">上一世死得很冤，可惜地府這次表單遞晚了——沒有遺澤。</p>`:'')}
+    <div class="btnrow"><button class="btn primary" data-act="live">開啟人生</button></div>
+  </section>`;
+}
+
+// ---------- 遊戲 ----------
+function statCell(k){
+  const v=run.stats[k];
+  return `<div class="stat"><span>${SK[k]}</span><b>${v}</b><i class="bar"><u style="width:${Math.min(100,v/20*100)}%"></u></i></div>`;
+}
+function hud(){
+  const next=run.realm<7?NEED[run.realm+1]:null,prev=NEED[run.realm];
+  const pct=next?clamp((run.exp-prev)/(next-prev),0,1)*100:100;
+  return `<header class="hud">
+    <div class="hud-top">
+      <div><span class="age">${run.age}</span><span class="age-u">歲</span></div>
+      <div class="realm"><b>${REALMS[run.realm]}</b><i class="bar xp"><u style="width:${pct}%"></u></i><small>${next?`修為 ${run.exp} / ${next}`:'已臻極境'}</small></div>
+      <div class="meta"><span>${esc(run.family.n)}・${esc(run.place.n)}</span><span>個性：${run.persona||'十五歲定性'}</span>${(meta.runs>=1||run.clue>0||run.goals.earth)?`<span>地球線索 ${run.clue}/${CLUE_NEED}${run.goals.earth?'・已歸鄉':''}</span>`:''}${run.partner?`<span>道侶：${esc(run.partner.name)}（好感 ${run.partner.aff}/10）</span>`:''}</div>
+    </div>
+    <div class="stats">${SKEYS.map(statCell).join('')}</div>
+    <div class="chips">${run.traits.map(id=>`<span class="chip gold">${esc(traitOf(id).n)}</span>`).join('')}${run.save>0?'<span class="chip">免死 ×'+run.save+'</span>':''}${run.legacy?run.legacy.list.map(l=>`<span class="chip gold">遺澤：${esc(l.n)}</span>`).join(''):''}${run.flags.includes('pillZhuji')?'<span class="chip gold">築基丹</span>':''}${treasureOf(run)?`<span class="chip gold">本命法寶：${esc(treasureOf(run).n)} Lv${tlevel(run)}</span>`:''}</div>
+  </header>`;
+}
+const tx=s=>esc(T(run,s));
+function optBtn(ev,o,i){
+  const f=optInfo(run,ev,i);
+  const chips=[`<span class="chip st-${o.s}">${STYLE_FULL[o.s]}</span>`];
+  if(o.c)chips.push(`<span class="chip">${SK[o.c[0]]}檢定・成功率 ${f.chance}%</span>`);
+  else chips.push('<span class="chip">無需檢定</span>');
+  if(o.cost)for(const k in o.cost)chips.push(`<span class="chip cost">花費 ${SK[k]} ${o.cost[k]}</span>`);
+  if(f.pDie>=0.005)chips.push(`<span class="chip danger">致死風險 ${Math.round(f.pDie*100)}%</span>`);
+  else if(f.deadly)chips.push('<span class="chip danger">致死風險 &lt;1%</span>');
+  if(f.locked)chips.push(`<span class="chip lock">${esc(f.reason)}</span>`);
+  return `<button class="opt" data-act="pick" data-i="${i}" ${f.locked?'disabled':''}><span class="olabel">${tx(o.l)}</span><span class="ometa">${chips.join('')}</span></button>`;
+}
+function vResult(c){
+  const out=c.out,r=out.roll;
+  const rollLine=r?`<p class="roll">${SK[r.k]}檢定：${r.sv}${r.b?(r.b>0?' + ':' − ')+Math.abs(r.b):''} + 骰子 ${r.d1}+${r.d2} = <strong>${r.total}</strong>（難度 ${r.dc}）<b>${BAND[out.band]}</b></p>`:'';
+  return `<div class="result band-${out.band||'k'}">
+    ${rollLine}
+    <p class="rtext">${tx(out.text)}</p>
+    ${out.extra?`<p class="pextra">〔${run.persona}〕${tx(out.extra)}</p>`:''}
+    ${out.survive?`<p class="survive">${esc(out.survive)}</p>`:''}
+    ${out.lines.length?`<ul class="fx">${out.lines.map(l=>`<li class="${l.up?'up':'down'}">${esc(l.txt)}</li>`).join('')}</ul>`:''}
+    ${out.unlock?`<p class="unlock">解鎖新詞條：<b>${esc(traitOf(out.unlock).n)}</b>　下次投胎就能選了。</p>`:''}
+    ${out.die?`<p class="dead">${tx(out.die)}</p>`:''}
+    <div class="btnrow"><button class="btn primary" data-act="cont" data-focus>${out.die?'魂歸輪迴':'繼續'}</button></div>
+  </div>`;
+}
+function logHtml(){
+  if(!run.log.length)return '';
+  return `<details class="log"><summary>人生記事（${run.log.length}）</summary><ol>${run.log.slice().reverse().map(l=>`<li><b>${l.age} 歲・${tx(l.t)}</b><br>${tx(l.s)}</li>`).join('')}</ol></details>`;
+}
+function vPlay(){
+  const c=ui.cur,ev=c.ev;
+  const body=c.out?vResult(c):`<div class="opts">${ev.o.map((o,i)=>optBtn(ev,o,i)).join('')}</div>`;
+  return `${hud()}
+    <article class="card event" aria-live="polite">
+      <p class="passive">【${run.age} 歲】${c.passive.map(tx).join('・')}</p>
+      <h2 data-focus tabindex="-1">${tx(ev.t)}</h2>
+      <p class="etext">${tx(ev.text)}</p>
+      ${body}
+    </article>${logHtml()}`;
+}
+
+// ---------- 定性 ----------
+function vPersona(){
+  const cards=ui.pchoices.map(p=>`<button class="pcard" data-act="persona" data-p="${p}"><b>${p}</b><p class="small muted" style="margin:.3em 0 0">${esc(PERS[p].d)}</p><p class="small" style="margin:.4em 0 0;color:var(--gold)">過去的選擇傾向：${run.pScore[p]} 次</p></button>`).join('');
+  return `${hud()}<section class="card"><h2 data-focus tabindex="-1">十五歲，性情已定</h2>
+    <p>前十五年，你做過的每一個選擇，都在悄悄塑造你。現在，你要成為什麼樣的人？</p>
+    <p class="muted small">之後的事件，會依你的個性有不同的結果與加成。</p>
+    <div class="pbox">${cards}</div></section>`;
+}
+
+// ---------- 結局 ----------
+function vEnd(){
+  const e=run.ended,E=ENDINGS[e.type];
+  const flags=run.flags.filter(f=>FLAGNAME[f]).map(f=>`<span class="chip">${FLAGNAME[f]}</span>`).join('');
+  const unl=run.newUnlocks.map(id=>`<p class="unlock">本世解鎖：<b>${esc(traitOf(id).n)}</b>（${esc(traitOf(id).d)}）</p>`).join('');
+  return `<section class="card"><p class="kicker" style="margin:0">${REALMS[run.realm]}期・享年 ${run.age} 歲</p>
+    <h2 class="endtitle" data-focus tabindex="-1">${E.n}</h2>
+    ${E.hidden?'<p class="toast">✦ 隱藏結局</p>':''}${e.cause?`<p style="color:#ffa391">${tx(e.cause)}</p>`:''}
+    <p>${tx(E.t)}</p>
+    <div class="sum">
+      <div>成為仙尊<b>${run.goals.immortal?'✓ 達成':'未達成'}</b></div>
+      <div>回到地球<b>${run.goals.earth?'✓ 達成':'未達成'}</b></div>
+      <div>地球線索<b>${run.clue} / ${CLUE_NEED}</b></div>
+      <div>個性<b>${run.persona||'尚未定性'}</b></div>
+      <div>本命法寶<b>${treasureOf(run)?esc(treasureOf(run).n)+' Lv'+tlevel(run):'無'}</b></div>
+      <div>道侶<b>${run.partner?esc(run.partner.name):(run.flags.includes('partnerLost')?'已離世':'無')}</b></div>
+      <div>性別<b>${run.gender}</b></div>
+      <div>出身<b>${esc(run.family.n)}</b></div>
+      <div>故鄉<b>${esc(run.place.n)}</b></div>
+    </div>
+    <div class="stats" style="margin:8px 0">${SKEYS.map(statCell).join('')}</div>
+    <div class="chips">${run.traits.map(id=>`<span class="chip gold">${esc(traitOf(id).n)}</span>`).join('')}${flags}</div>
+    ${unl}
+    ${(run.newAch||[]).map(id=>{const a=ACH.find(x=>x.id===id);return `<p class="unlock">成就達成：<b>${esc(a.n)}</b>（${esc(a.d)}）</p>`}).join('')}
+    <details class="log" open><summary>這一世的記事（${run.log.length}）</summary><ol>${run.log.map(l=>`<li><b>${l.age} 歲・${tx(l.t)}</b><br>${tx(l.s)}</li>`).join('')}</ol></details>
+    <div class="btnrow"><button class="btn primary" data-act="new">再投胎一次</button><button class="btn ghost" data-act="home">回到首頁</button></div>
+  </section>`;
+}
+
+// ---------- 首死劇情 ----------
+function vStory(){
+  return `<section class="card story"><h2 data-focus tabindex="-1">奈何橋邊</h2>
+    <p>黑暗中，一個懶洋洋的聲音響起：「喲，又一個。你這一世死得挺有創意。」</p>
+    <p>你面前出現一座橋，橋邊坐著一位大娘，手裡捧著一碗湯，湯碗上貼著標籤：<em>孟婆・不加香菜</em>。</p>
+    <p>「喝了這碗，下輩子別想這輩子的事。」大娘挑起眉毛。你搖了搖頭。</p>
+    <p>她愣了一下，笑了：「行，有骨氣。不過……」她瞇起眼，打量你的魂魄，「你這魂裡摻了點不屬於這個世界的東西。有意思。」</p>
+    <p>她揮了揮手，一道光落在你額頭。你忽然覺得，自己能多帶幾個<em>詞條</em>，也多了一點可以支配的<em>潛力</em>。</p>
+    <p>「去吧，再投一次。」她轉過身，聲音漸遠，「這次，多帶點行李。」</p>
+    <p class="muted small">詞條欄位 3 → 5，配點 10 → 12。從這一世起，會記錄成就；若死於非命，下一世有機會獲得遺澤。</p>
+    <div class="btnrow"><button class="btn primary" data-act="create">再次投胎</button></div>
+  </section>`;
+}
+
+// ---------- 流程 ----------
+function render(scroll=true){
+  const v={title:vTitle,create:vCreate,birth:vBirth,play:vPlay,persona:vPersona,end:vEnd,story:vStory}[ui.screen]();
+  app.innerHTML=v;
+  if(scroll){
+    window.scrollTo(0,0);
+    const f=app.querySelector('[data-focus]');
+    if(f)f.focus({preventScroll:true});
+  }
+}
+function startCreate(){if(meta.gender)ui.gender=meta.gender;ui.offer=offerTraits(meta);ui.sel=[];ui.alloc={悟:0,體:0,人:0,心:0,金:0};ui.screen='create';render();}
+function enterTurn(s,flash){
+  if(s.end)return endRun(s.end.type,s.end.cause);
+  ui.cur={ev:s.ev,passive:s.passive.slice(),out:null};
+  if(flash)ui.cur.passive.unshift(flash);
+  ui.screen='play';render();
+}
+function nextTurn(flash){enterTurn(startTurn(run,meta),flash);}
+function endRun(type,cause){
+  run.ended={type,cause};
+  run.newAch=checkAch(run,meta,type);
+  meta.legacy=(type==='died'||type==='worldend')?makeLegacyRecord(run,cause):null;
+  meta.runs++;
+  [type].concat(run.goals.immortal?['immortal']:[],run.goals.earth?['earth']:[]).forEach(t=>{if(!meta.endings.includes(t))meta.endings.push(t);});
+  meta.best=Math.max(meta.best,run.realm);
+  if(run.goals.earth&&!meta.unlocked.includes('u_home')){meta.unlocked.push('u_home');run.newUnlocks.push('u_home');}
+  saveMeta();
+  ui.screen='end';render();
+}
+function afterContinue(){
+  const nx=afterEvent(run,ui.cur.out,ui.cur.ev);
+  if(nx.end)return endRun(nx.end.type,nx.end.cause);
+  if(nx.ev){ui.cur={ev:nx.ev,passive:nx.passive,out:null};return render();}
+  if(nx.persona){ui.pchoices=personaChoices(run);ui.screen='persona';return render();}
+  nextTurn(ui.flash);ui.flash='';
+}
+
+app.addEventListener('click',e=>{
+  const b=e.target.closest('[data-act]');
+  if(!b||b.disabled)return;
+  const a=b.dataset.act;
+  switch(a){
+    case 'new':
+      if(meta.runs===1&&!meta.introSeen){meta.introSeen=true;saveMeta();ui.screen='story';render();}
+      else startCreate();
+      break;
+    case 'create':startCreate();break;
+    case 'home':ui.screen='title';render();break;
+    case 'reset':
+      meta=defaultMeta();saveMeta();ui.screen='title';render();break;
+    case 'gender':ui.gender=b.dataset.g;meta.gender=ui.gender;saveMeta();render(false);break;
+    case 'trait':{
+      const id=b.dataset.id,i=ui.sel.indexOf(id);
+      if(i>=0)ui.sel.splice(i,1);else if(ui.sel.length<slots(meta))ui.sel.push(id);
+      trimAlloc();render(false);
+      const again=app.querySelector(`[data-id="${id}"]`);if(again)again.focus({preventScroll:true});
+      break;}
+    case 'alloc':{
+      const k=b.dataset.k,d=+b.dataset.d;
+      const bud=basePts(meta)+extraPts(ui.sel);
+      if(d>0&&(ui.alloc[k]>=MAX_ALLOC||allocSum()>=bud))break;
+      if(d<0&&ui.alloc[k]<=0)break;
+      ui.alloc[k]+=d;render(false);
+      const sel=`[data-act="alloc"][data-k="${k}"][data-d="${d}"]`;
+      const n=app.querySelector(sel);if(n&&!n.disabled)n.focus({preventScroll:true});
+      break;}
+    case 'rand':{
+      const bud=basePts(meta)+extraPts(ui.sel);
+      SKEYS.forEach(k=>ui.alloc[k]=0);
+      let left=bud;while(left>0){const k=SKEYS[Math.floor(Math.random()*5)];if(ui.alloc[k]<MAX_ALLOC){ui.alloc[k]++;left--;}}
+      render(false);break;}
+    case 'born':
+      {const lg=rollLegacy(meta);meta.legacy=null;saveMeta();run=createRun(ui.sel,ui.alloc,lg&&lg.list?lg:null,ui.gender);run.legacyMiss=lg&&lg.missed?lg.rec:null;}ui.screen='birth';render();break;
+    case 'live':
+      run.age=0;nextTurn();break;
+    case 'pick':{
+      const c=ui.cur;if(c.out)break;
+      const i=+b.dataset.i;
+      if(optInfo(run,c.ev,i).locked)break;
+      c.pick=i;c.out=resolve(run,c.ev,i,meta);
+      if(c.out.unlock)saveMeta();
+      render(false);
+      const nb=app.querySelector('[data-act="cont"]');if(nb)nb.focus({preventScroll:true});
+      break;}
+    case 'cont':afterContinue();break;
+    case 'persona':
+      run.persona=b.dataset.p;ui.flash=`十五歲，你的性情已定：${run.persona}`;
+      nextTurn(ui.flash);ui.flash='';break;
+  }
+});
+render();
+
+</script>
+</body>
+</html>
