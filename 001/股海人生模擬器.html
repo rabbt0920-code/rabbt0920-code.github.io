@@ -1,0 +1,2068 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1">
+<meta name="description" content="22 歲到 65 歲的股市人生模擬：買台積電、玩槓桿、扛黑天鵝、躲灰犀牛，看你能走到哪個退休結局。">
+<meta name="theme-color" content="#0e131a">
+<title>股海人生模擬器</title>
+<style>
+:root{--ph:#0e131a;--panel:#161e29;--panel2:#1c2634;--line:#273244;--txt:#e7edf4;--mut:#8b9aae;--up:#ff4d5e;--dn:#1fbf78;--acc:#4da3ff;--gold:#f4c15a;--warn:#ff9a5b;--yp:#7b2cf5}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;height:100%}
+body{display:flex;justify-content:center;align-items:center;background:radial-gradient(circle at 30% 15%,#1b2840,#05080d 65%);color:var(--txt);font:14px/1.5 system-ui,-apple-system,"PingFang TC","Noto Sans TC","Microsoft JhengHei",sans-serif}
+button{font:inherit;color:var(--txt);background:#223047;border:1px solid #33445e;border-radius:10px;padding:8px 12px;cursor:pointer}
+button:active:not(:disabled){transform:scale(.97)}
+button:disabled{opacity:.4;cursor:not-allowed}
+button.primary{background:#2563c9;border-color:#3a7bef;font-weight:700}
+button.buy{background:#d93445;border-color:#ff5d6c;font-weight:700}
+button.sell{background:#15965c;border-color:#2fcf8a;font-weight:700}
+button.ghost{background:transparent}
+input[type=number],textarea,select{font:inherit;color:var(--txt);background:#0b1119;border:1px solid #33445e;border-radius:10px;padding:8px 10px}
+small,.mut{color:var(--mut)}
+.up{color:var(--up)}.dn{color:var(--dn)}
+.hidden{display:none!important}
+h2{font-size:15px;margin:0 0 8px}
+h3{margin:0 0 8px}
+
+/* ---------- 手機外框 ---------- */
+#phone{position:relative;width:100%;max-width:430px;height:100dvh;background:var(--ph);display:flex;flex-direction:column;overflow:hidden}
+@media (min-width:520px) and (min-height:720px){
+  #phone{height:min(920px,calc(100dvh - 40px));border-radius:40px;border:11px solid #020305;box-shadow:0 0 0 2px #2b3548,0 30px 90px #000d}
+}
+
+/* ---------- 狀態列 ---------- */
+#status{flex:none;padding:10px 14px 8px;background:linear-gradient(180deg,#131c2a,#0e131a);border-bottom:1px solid var(--line)}
+.srow1{display:flex;align-items:center;gap:6px;font-size:12px;color:var(--mut);margin-bottom:6px;white-space:nowrap;overflow:hidden}
+.srow1 b{color:var(--txt);font-size:15px}
+.chip{display:inline-block;padding:1px 8px;border-radius:10px;background:#243349;font-size:11px;color:#c9d3df}
+.chip.gold{background:#3a2f12;color:var(--gold);border:1px solid #6b5520}
+.sgrid{display:grid;grid-template-columns:1fr 1fr;gap:2px 16px}
+.sgrid label{display:flex;justify-content:space-between;font-size:11px;color:var(--mut)}
+.sgrid b{font-size:18px;font-variant-numeric:tabular-nums}
+.bar{height:7px;background:#070b11;border-radius:6px;overflow:hidden;margin:6px 0 2px;border:1px solid #1f2a3a}
+.bar i{display:block;height:100%;background:linear-gradient(90deg,#1fb7a6,#7be0cf);transition:width .4s}
+.bar.mood i{background:linear-gradient(90deg,#ff8fb8,#ffd0e3)}
+.bar i.low{background:linear-gradient(90deg,#d9534f,#ff8a65)}
+
+/* ---------- 主畫面 ---------- */
+#screen{flex:1;overflow-y:auto;padding:12px 12px 18px;overscroll-behavior:contain}
+.page{display:none}.page.on{display:block;animation:fade .18s}
+@keyframes fade{from{opacity:.4;transform:translateY(4px)}}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:12px;margin-bottom:10px}
+.row{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.kv{display:grid;grid-template-columns:auto 1fr;gap:3px 14px}
+.kv>span:nth-child(odd){color:var(--mut)}
+.kv>b{text-align:right;font-variant-numeric:tabular-nums}
+
+#nextbar{flex:none;padding:8px 12px;background:#0e131a;border-top:1px solid var(--line)}
+#btnNext{width:100%;padding:12px;font-size:16px;border-radius:14px}
+#tabs{flex:none;display:grid;grid-template-columns:repeat(5,1fr);background:#090d14;border-top:1px solid var(--line);padding:2px 0 calc(4px + env(safe-area-inset-bottom))}
+#tabs button{position:relative;background:none;border:none;border-radius:0;color:var(--mut);font-size:11px;display:flex;flex-direction:column;align-items:center;gap:0;padding:6px 0}
+#tabs button span{font-size:21px;filter:grayscale(1);opacity:.65}
+#tabs button.on{color:var(--txt);font-weight:700}
+#tabs button.on span{filter:none;opacity:1}
+.dot{position:absolute;top:5px;right:27%;width:8px;height:8px;border-radius:50%;background:var(--up);display:none}
+.dot.show{display:block}
+
+/* ---------- 股票 App ---------- */
+.idxrow{display:flex;justify-content:space-between;align-items:flex-end;gap:8px;margin-bottom:6px}
+.idxval{font-size:28px;font-weight:800;font-variant-numeric:tabular-nums;line-height:1.1}
+.chartbox{position:relative;height:190px;margin-top:6px}
+.chartbox.tall{height:210px}
+canvas{display:block;width:100%;background:#0b1119;border-radius:10px}
+.acct{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;text-align:center}
+.acct div{background:var(--panel2);border-radius:10px;padding:6px 2px}
+.acct small{display:block;font-size:11px}
+.acct b{font-size:14px;font-variant-numeric:tabular-nums}
+.seg{display:grid;grid-template-columns:repeat(4,1fr);gap:4px;background:#0b1119;border-radius:12px;padding:4px;margin-bottom:10px;position:sticky;top:-12px;z-index:2}
+.seg button{border:none;background:none;padding:7px 0;font-size:13px;color:var(--mut);border-radius:9px}
+.seg button.on{background:#2a3a55;color:var(--txt);font-weight:700}
+.qrow{display:grid;grid-template-columns:1fr auto 78px;gap:10px;align-items:center;padding:10px 6px;border-bottom:1px solid #1d2735;cursor:pointer}
+.qrow:active{background:#1b2534}
+.qname b{font-size:15px}
+.qname small{display:block;font-size:11px}
+.qprice{font-variant-numeric:tabular-nums;font-size:15px;text-align:right}
+.pill{border-radius:7px;padding:5px 0;text-align:center;font-weight:700;font-size:13px;color:#fff;background:#3a4658;font-variant-numeric:tabular-nums}
+.pill.up{background:var(--up)}.pill.dn{background:var(--dn)}
+.tag{font-size:10px;padding:0 6px;border-radius:8px;border:1px solid #3b4d68;color:#b8c7dc;margin-left:4px;vertical-align:2px}
+.hrow{display:grid;grid-template-columns:1fr auto;gap:2px 10px;padding:10px 6px;border-bottom:1px solid #1d2735;cursor:pointer}
+.hrow .r{text-align:right;font-variant-numeric:tabular-nums}
+.empty{text-align:center;color:var(--mut);padding:24px 6px}
+.dca{display:grid;grid-template-columns:1fr auto;gap:8px 10px;align-items:center}
+.dca input{width:90px;text-align:right}
+#levStatus .kv{margin:8px 0}
+
+/* ---------- 底部交易面板 ---------- */
+.overlay{position:absolute;inset:0;background:#000b;display:flex;align-items:center;justify-content:center;padding:16px;z-index:20}
+.overlay.sheet{align-items:flex-end;padding:0;z-index:15}
+.sheet-card{background:#141c27;width:100%;max-height:90%;overflow:auto;border-radius:22px 22px 0 0;padding:8px 16px 18px;border-top:1px solid #33445e;animation:up .22s}
+.grab{width:42px;height:5px;border-radius:3px;background:#3a4658;margin:2px auto 10px}
+@keyframes up{from{transform:translateY(60px);opacity:.4}}
+.qtyrow{display:flex;gap:6px;align-items:center;margin:8px 0}
+.qtyrow input{flex:1;min-width:0;text-align:right;font-size:17px}
+.quick{display:grid;grid-template-columns:repeat(5,1fr);gap:6px}
+.quick button{padding:6px 0;font-size:12px}
+.tradebtns{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:10px}
+.tradebtns button{padding:12px;font-size:16px;border-radius:12px}
+.msg{min-height:20px;font-size:13px;color:var(--gold);margin-top:6px}
+.card2{background:#1a2331;border-radius:12px;padding:10px;margin:8px 0}
+
+/* ---------- 壓乎新聞 ---------- */
+.ybar{background:linear-gradient(110deg,#4b14b8,#7b2cf5 60%,#9a5cff);border-radius:16px;padding:12px 14px;margin-bottom:10px;color:#fff}
+.ylogo{font-size:22px;font-weight:900;font-style:italic;letter-spacing:1px}
+.ylogo i{color:#ffd84d;font-style:italic}
+.news{padding:10px 0;border-bottom:1px solid #1d2735}
+.news:last-child{border-bottom:none}
+.news b{display:block;font-size:15px;line-height:1.45}
+.news small{display:block;margin-top:3px}
+.an{display:grid;grid-template-columns:40px 1fr auto;gap:10px;align-items:center;padding:8px 0;border-bottom:1px solid #1d2735}
+.an:last-child{border-bottom:none}
+.an .face{font-size:28px;text-align:center}
+.view{padding:3px 10px;border-radius:12px;font-weight:700;font-size:13px}
+.view.bull{background:#3a1218;color:#ff7b88}.view.bear{background:#0f3324;color:#4fe0a0}.view.side{background:#2a3446;color:#c9d3df}
+.rhino{border:1px solid #8a4b1d;background:linear-gradient(160deg,#2b1a0e,#161e29)}
+.therm{display:flex;gap:4px;margin:6px 0}
+.therm i{flex:1;height:8px;border-radius:4px;background:#2a3446}
+.therm i.on1{background:#f4c15a}.therm i.on2{background:#ff9a5b}.therm i.on3{background:#ff4d5e}
+.hit{font-weight:700}.hit.ok{color:#4fe0a0}.hit.no{color:#ff7b88}
+
+/* ---------- 人生規劃 / 日誌 ---------- */
+.stances{display:grid;grid-template-columns:repeat(3,1fr);gap:6px}
+.stances button{padding:10px 2px;font-size:13px}
+.stances button.on{background:#2563c9;border-color:#4a8bff}
+#lifeLog{max-height:none}
+.l{padding:4px 0;border-bottom:1px dashed #1f2a3a;font-size:13px}
+.l.head{margin-top:8px;color:var(--acc);font-weight:700;border-bottom:1px solid #2a3b55}
+.l.good{color:var(--gold)}.l.bad{color:var(--warn)}.l.market{color:#8cc3ff}.l.info{color:#c9d3df}
+
+/* ---------- 存檔 / 成就 ---------- */
+.btngrid{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.btngrid button{padding:12px 6px}
+.achgrid{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.ach{border:1px solid #2f3c52;border-radius:12px;padding:8px;font-size:12px;color:#6f7d92;background:#121924;cursor:pointer;text-align:left}
+.ach b{display:block;font-size:13px}
+.ach.on{border-color:#6b5520;color:#d9c48b;background:#211c10}
+.ach.on b{color:var(--gold)}
+.ach.eq{outline:2px solid var(--gold)}
+
+/* ---------- 對話框 ---------- */
+.card.dlg{max-width:400px;width:100%;max-height:88%;overflow:auto;background:#182231;border:1px solid #33445e;border-radius:18px;padding:18px;margin:0}
+.btns{display:flex;flex-wrap:wrap;gap:8px;margin-top:14px}
+.btns button{flex:1;min-width:120px;padding:11px}
+table.sum{width:100%;border-collapse:collapse;font-variant-numeric:tabular-nums}
+table.sum td{padding:5px 2px;border-bottom:1px solid #22304a}
+table.sum td:last-child{text-align:right}
+#toast{position:absolute;left:50%;top:170px;transform:translateX(-50%);background:#2a2412;border:1px solid #6b5520;color:var(--gold);padding:8px 14px;border-radius:14px;font-size:13px;z-index:40;opacity:0;pointer-events:none;transition:opacity .3s;max-width:90%;text-align:center}
+#toast.show{opacity:1}
+
+/* ---------- 新增元件 ---------- */
+.iconbtn{margin-left:auto;flex:none;padding:3px 9px;border-radius:10px;font-size:15px;line-height:1.1;display:flex;align-items:center;gap:4px}
+.iconbtn small{font-size:11px;color:#c9d3df}
+.iconbtn.on{background:#2563c9;border-color:#4a8bff}
+.levsel{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin:0 0 8px}
+.levsel button.on{background:#2563c9;border-color:#4a8bff;font-weight:700}
+.shoprow{display:grid;grid-template-columns:36px 1fr auto;gap:10px;align-items:center;padding:9px 2px;border-bottom:1px solid #1d2735}
+.shoprow:last-child{border-bottom:none}
+.shoprow .ic{font-size:26px;text-align:center}
+.shoprow small{display:block;font-size:11px}
+.shoprow button{min-width:86px;padding:7px 8px;font-size:13px}
+.prop{background:var(--panel2);border-radius:12px;padding:10px;margin-bottom:8px}
+.prop:last-child{margin-bottom:0}
+.prop .top{display:flex;justify-content:space-between;align-items:center;gap:8px}
+.prop .top b{font-size:15px}
+.uses{display:grid;grid-template-columns:repeat(3,1fr);gap:4px;margin:8px 0}
+.uses button{padding:5px 0;font-size:12px}
+.uses button.on{background:#2563c9;border-color:#4a8bff}
+.chips{display:flex;flex-wrap:wrap;gap:4px;margin-top:6px}
+.diffs{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.diff{text-align:left;padding:10px;border-radius:12px;background:#141c27}
+.diff b{display:block;font-size:15px}.diff small{display:block;line-height:1.35;margin-top:2px}
+.diff.on{border-color:#4a8bff;background:#17284a}
+.colA,.colB{min-width:0}
+
+/* ---------- 電腦橫向（平板式）介面 ---------- */
+@media (min-width:900px) and (min-height:600px){
+  #phone{max-width:1280px;width:calc(100vw - 48px);height:min(880px,calc(100dvh - 40px));border-radius:30px;border:10px solid #020305;
+         display:grid;grid-template-columns:100px minmax(0,1fr);grid-template-rows:auto minmax(0,1fr) auto}
+  #tabs{grid-column:1;grid-row:1/4;display:flex;flex-direction:column;justify-content:center;gap:6px;border-top:none;border-right:1px solid var(--line);padding:14px 8px;background:#080c12}
+  #tabs button{padding:12px 0;font-size:12px;border-radius:14px}
+  #tabs button.on{background:#1b2a40}
+  #tabs button span{font-size:24px}
+  .dot{right:18px;top:8px}
+  #status,#screen,#nextbar{grid-column:2}
+  #status{padding:12px 20px 10px}
+  .sgrid{grid-template-columns:repeat(4,1fr);gap:2px 24px}
+  .sgrid b{font-size:20px}
+  #screen{padding:16px 20px}
+  .page.on{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:16px;align-items:start}
+  .chartbox{height:280px}
+  .seg{position:static}
+  .overlay.sheet{align-items:center;padding:20px}
+  .sheet-card{max-width:580px;border-radius:22px;max-height:94%}
+  .grab{display:none}
+  #nextbar{display:flex;justify-content:flex-end;padding:10px 20px}
+  #btnNext{width:auto;min-width:360px}
+  .card.dlg{max-width:520px}
+  #toast{top:90px}
+  .startcard{max-width:760px;margin:0 auto}
+}
+
+/* ---------- 開始畫面 ---------- */
+#start{background:radial-gradient(circle at 50% 0%,#1f3256,#0b1018 70%);align-items:stretch;padding:0;z-index:30}
+.startcard{overflow:auto;padding:28px 18px 20px;width:100%}
+.logo{font-size:30px;font-weight:900;text-align:center;margin:4px 0 2px}
+.modes{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:8px 0}
+.mode{text-align:left;padding:12px;border-radius:14px;background:#141c27}
+.mode b{display:block;font-size:15px}.mode small{display:block;margin-top:4px;line-height:1.4}
+.mode.on{border-color:#4a8bff;background:#17284a;box-shadow:0 0 0 1px #4a8bff}
+.eras{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.era{text-align:left;padding:10px;border-radius:12px;background:#141c27}
+.era b{font-size:17px}.era small{display:block;line-height:1.35;margin-top:2px}
+.era.on{border-color:#f4c15a;background:#2a2412}
+.big{width:100%;padding:14px;font-size:17px;border-radius:14px;margin-top:12px}
+details{margin-top:14px;background:#121924;border-radius:12px;padding:10px 12px}
+details summary{cursor:pointer;font-weight:700}
+details ul{margin:8px 0 0;padding-left:18px;line-height:1.7}
+.endbox{background:#111a26;border:1px solid #33445e;border-radius:12px;padding:12px;margin:0 0 12px}
+.endbox .t{font-size:18px;font-weight:800;color:var(--gold)}
+</style>
+</head>
+<body>
+<div id="phone">
+  <header id="status">
+    <div class="srow1"><b id="sAge">22 歲</b><span id="sDate"></span><span id="sJob" class="chip"></span><span id="sTitle" class="chip gold hidden"></span><button id="btnSaveTop" class="iconbtn" title="存檔／讀檔">💾<small>存檔</small></button></div>
+    <div class="sgrid">
+      <div><label>淨資產</label><b id="sNet"></b></div>
+      <div><label>現金</label><b id="sCash"></b></div>
+      <div><label><span>❤️ 健康</span><span id="sHealth"></span></label><div class="bar"><i id="bHealth"></i></div></div>
+      <div><label><span>😊 心情</span><span id="sMood"></span></label><div class="bar mood"><i id="bMood"></i></div></div>
+    </div>
+  </header>
+
+  <main id="screen">
+    <!-- 股票 App -->
+    <section class="page on" id="pg-stock"><div class="colA">
+      <div class="card">
+        <div class="idxrow">
+          <div><small id="idxLabel">加權指數</small><div class="idxval" id="idxVal"></div></div>
+          <div style="text-align:right"><div id="idxChg" class="pill" style="padding:4px 10px"></div><small id="idxNote"></small></div>
+        </div>
+        <select id="selChart" style="width:100%"></select>
+        <div class="chartbox"><canvas id="chart"></canvas></div>
+      </div>
+      <div class="card acct" id="acct"></div></div><div class="colB">
+      <div class="seg" id="seg">
+        <button data-seg="quote" class="on">行情</button><button data-seg="hold">持股</button><button data-seg="dca">定期定額</button><button data-seg="lev">5倍槓桿</button>
+      </div>
+      <div class="segpg card" id="seg-quote" style="padding:4px 8px"><div id="quoteList"></div><small style="display:block;padding:8px 4px">點一下個股即可下單。紅漲綠跌（台股慣例）。</small></div>
+      <div class="segpg card hidden" id="seg-hold" style="padding:4px 8px"><div id="holdList"></div></div>
+      <div class="segpg card hidden" id="seg-dca">
+        <h2>🔁 定期定額</h2>
+        <p class="mut" style="margin:0 0 10px">每年年初自動買進，單位：萬元。現金不足時當年略過。</p>
+        <div class="dca" id="dcaBox"></div>
+      </div>
+      <div class="segpg card hidden" id="seg-lev">
+        <h2>🎰 台指期槓桿</h2>
+        <p class="mut" style="margin:0 0 8px">投入保證金，獲得 5 倍（困難模式可選 10 倍）大盤漲跌。5 倍時大盤漲 20% 你賺 100%、跌 10% 保證金就少一半；10 倍時跌 5% 就少一半，跌破 50% 會被<b class="up">強制平倉</b>。只能在年初操作。</p>
+        <div class="levsel" id="levSel"><button data-lev="5" class="on">5 倍</button><button data-lev="10">10 倍 🔥</button></div>
+        <div class="row"><input type="number" id="levAmt" min="1" step="1" value="10" style="width:110px;text-align:right"><span>萬元</span>
+          <button id="btnLevOpen" class="buy">開倉／加碼</button><button id="btnLevClose" class="sell">全部平倉</button></div>
+        <div id="levStatus"></div>
+        <div class="msg" id="levMsg"></div>
+      </div>
+    </div></section>
+
+    <!-- 壓乎新聞 -->
+    <section class="page" id="pg-news"></section>
+
+    <!-- 人生規劃 -->
+    <section class="page" id="pg-life"><div class="colA">
+      <div class="card" id="lifeProfile"></div>
+      <div class="card">
+        <h2>🧭 今年的生活態度</h2>
+        <div class="stances" id="stances"></div>
+        <p class="mut" id="stanceDesc" style="margin:8px 0 0"></p>
+      </div>
+      <div class="card">
+        <h2>📨 職涯</h2>
+        <div class="row"><button id="btnHop">投履歷跳槽</button><small id="hopInfo" style="flex:1"></small></div>
+      </div>
+      </div><div class="colB">
+      <div class="card">
+        <h2>📜 人生日誌 <small>（最新在上）</small></h2>
+        <div id="lifeLog"></div>
+      </div>
+    </div></section>
+
+    <!-- 購物 -->
+    <section class="page" id="pg-shop"></section>
+
+    <!-- 房地產 -->
+    <section class="page" id="pg-estate"><div class="colA">
+      <div class="card">
+        <div class="idxrow">
+          <div><small>房價指數</small><div class="idxval" id="hpVal"></div></div>
+          <div style="text-align:right"><div id="hpChg" class="pill" style="padding:4px 10px"></div><small>去年漲跌</small></div>
+        </div>
+        <div class="chartbox"><canvas id="reChart"></canvas></div>
+        <p class="mut" style="margin:8px 0 0;font-size:12px">首購頭期款 2 成、利率 2.2%；第二戶起頭期款 4 成、利率 2.6%。銀行會審核房貸年繳不得超過收入的 6 成。買賣時有契稅代書費 2%、仲介費 4%，獲利要繳房地合一稅（持有越短稅越重）。</p>
+      </div>
+      <div class="card"><h2>🔑 我的房產 <small id="propCount"></small></h2><div id="propList"></div></div>
+    </div><div class="colB">
+      <div class="card"><h2>🏷 今年待售物件 <small>（每年更新）</small></h2><div id="listingList"></div></div>
+      <div class="card"><h2>⚠️ 房地產風險</h2><p class="mut" style="margin:0;font-size:13px;line-height:1.7">🌀 地震颱風、💥 附近氣爆（買保險可理賠修繕費，但房價跌幅照算）<br>🎓 少子化學生套房租不出去　🏢 附近興建大量社宅<br>🏗 重劃區交屋潮供過於求　💧 漏水壁癌　😈 惡房客<br>🚇 也有好事：捷運通車、都更通過、劃入明星學區</p></div>
+      <div class="msg" id="reMsg"></div>
+    </div></section>
+
+    <!-- 存檔 / 讀檔 -->
+    <section class="page" id="pg-save"><div class="colA">
+      <div class="card" id="saveInfo"></div>
+      <div class="card">
+        <h2>💾 存檔／讀檔</h2>
+        <div class="btngrid">
+          <button id="btnSave" class="primary">💾 存檔</button>
+          <button id="btnLoad">📂 讀取存檔</button>
+          <button id="btnExport">⬇ 匯出存檔代碼</button>
+          <button id="btnImport">⬆ 匯入存檔代碼</button>
+          <button id="btnHelp">❓ 遊戲說明</button>
+          <button id="btnRestart">🔄 重新開始</button>
+        </div>
+        <p class="mut" style="margin:10px 0 0;font-size:12px">每年會自動存檔在這個瀏覽器。換裝置或清除瀏覽器資料前，請先匯出存檔代碼。</p>
+      </div>
+      </div><div class="colB">
+      <div class="card">
+        <h2>🏆 成就與稱號 <small id="achCount"></small></h2>
+        <p class="mut" style="margin:0 0 8px;font-size:12px">成就會永久收藏，跨局保留。點已解鎖的成就可設為稱號，顯示在狀態列。</p>
+        <div class="achgrid" id="achGrid"></div>
+      </div>
+      <div class="card">
+        <h2>🎬 結局圖鑑 <small id="endCount"></small></h2>
+        <div class="achgrid" id="endGrid"></div>
+      </div>
+    </div></section>
+  </main>
+
+  <div id="nextbar"><button id="btnNext" class="primary">結束今年 ▶</button></div>
+  <nav id="tabs">
+    <button data-tab="stock" class="on"><span>📈</span>股票App</button>
+    <button data-tab="news"><span>📰</span>壓乎新聞<i class="dot" id="newsDot"></i></button>
+    <button data-tab="life"><span>🧭</span>人生規劃</button>
+    <button data-tab="shop"><span>🛍</span>購物</button>
+    <button data-tab="estate"><span>🏠</span>房地產</button>
+  </nav>
+
+  <div id="toast"></div>
+  <div id="sheet" class="overlay sheet hidden"><div class="sheet-card" id="sheetCard"></div></div>
+  <div id="modal" class="overlay hidden"><div class="card dlg"><h3 id="mTitle"></h3><p id="mText" style="margin:0;white-space:pre-line"></p><div class="btns" id="mBtns"></div></div></div>
+  <div id="dlg" class="overlay hidden" style="z-index:32"><div class="card dlg"><h3 id="dTitle"></h3><div id="dBody"></div><div class="btns" id="dBtns"></div></div></div>
+  <div id="endOverlay" class="overlay hidden" style="z-index:25"><div class="card dlg" id="endCard"></div></div>
+  <div id="start" class="overlay hidden"><div class="startcard" id="startCard"></div></div>
+</div>
+<script id="events-data">
+/* =====================================================================
+ *  《股海人生模擬器》事件資料庫（獨立區塊，可單獨維護）
+ *
+ *  欄位說明
+ *    id      事件代號
+ *    group   年齡層標籤：全年齡 / 20-30 歲 / 30-40 歲 / 40-50 歲 / 50-64 歲
+ *    ages    [最小年齡, 最大年齡]，不在範圍內不會抽到
+ *    w()     權重（可依玩家狀態動態調整，0 = 目前不會觸發）
+ *    自動事件   run() → [訊息, 樣式]       （樣式：good / bad / info）
+ *    選擇事件   title, text(), choices() → [{label, run() → [訊息, 樣式]}]
+ *
+ *  依賴的全域：G（玩家狀態）、C()（依物價調整金額）、fmt()、rand()、chance()、
+ *             dH()/dM()（調整健康/心情）、salary()、holdValue()、doBuy()、
+ *             JOBS、HOUSE_BASE、clamp()
+ *  持續性效果存放在 G.fx（如創業、進修），由 tickFx() 每年結算。
+ * ===================================================================== */
+const fx = () => G.fx || (G.fx = {});
+const liquid = () => G.cash + holdValue() - G.margin + (G.fut?G.fut.eq:0);
+const hasStock = () => holdValue() > 0;
+
+const EVENTS = [
+  /* ================= 全年齡：自動事件 ================= */
+  { id:'bonus', group:'全年齡', ages:[22,64], w:()=>8,
+    run(){ const x=Math.round(salary()*rand(.08,.2)/1000)*1000; G.cash+=x; dM(3); return [`🎁 拿到年終獎金 ${fmt(x,1)}！`,'good']; } },
+  { id:'windfall', group:'全年齡', ages:[22,64], w:()=>3,
+    run(){ const x=C(rand(30000,100000)); G.cash+=x; dM(4); return [`🧧 意外之財（紅包／中獎／二手轉賣）${fmt(x,1)}`,'good']; } },
+  { id:'raise', group:'全年齡', ages:[22,64], w:()=>5,
+    run(){ G.hopBonus=Math.min(.6,G.hopBonus+.05); dM(4); return ['📈 表現受到肯定，獲得加薪 +5%！','good']; } },
+  { id:'mentor', group:'全年齡', ages:[24,60], w:()=>G.level<JOBS.length-1?2:0,
+    run(){ G.level++; dM(6); return [`🌟 貴人相助，破格升遷為「${JOBS[G.level].t}」！`,'good']; } },
+  { id:'gym', group:'全年齡', ages:[22,64], w:()=>3,
+    run(){ const x=C(20000); G.cash-=x; dH(8); dM(2); return [`💪 辦了健身房會員、開始規律運動 ${fmt(-x)}，健康 +8`,'good']; } },
+  { id:'quiet', group:'全年齡', ages:[22,64], w:()=>6,
+    run(){ dM(2); return ['🍵 平靜的一年，沒什麼大事發生。','info']; } },
+  { id:'souvenir', group:'全年齡', ages:[22,64], w:()=>hasStock()?3:0,
+    run(){ dM(2); return ['🎒 領到股東會紀念品（今年是一支原子筆），心情 +2。','good']; } },
+  { id:'sick', group:'全年齡', ages:[22,64], w:()=>8+(100-G.health)/8,
+    run(){ const x=C(30000); G.cash-=x; dH(-12); dM(-3); return [`🏥 生病住院 ${fmt(-x)}，健康 -12`,'bad']; } },
+  { id:'accident', group:'全年齡', ages:[22,64], w:()=>3,
+    run(){ const x=C(40000); G.cash-=x; dH(-10); dM(-4); return [`🚑 發生小車禍，醫藥與修車共 ${fmt(-x)}，健康 -10`,'bad']; } },
+  { id:'layoff', group:'全年齡', ages:[23,62], w:()=>3+(G.market.swan&&G.market.swan.recession?7:0),
+    run(){ const loss=salary()*.35; G.cash-=loss; dM(-10); if(G.level>0&&chance(.25)) G.level--;
+      return [`📦 公司裁員，你被資遣！空窗期損失約 ${fmt(-loss)}，心情 -10（可能降級）`,'bad']; } },
+  { id:'scam', group:'全年齡', ages:[22,64], w:()=>3,
+    run(){ const x=Math.min(C(80000),Math.max(0,G.cash)*.4+C(10000)); G.cash-=x; dM(-8); return [`🕵️ 被投資詐騙集團騙走 ${fmt(-x)}，心情 -8`,'bad']; } },
+  { id:'divorce', group:'全年齡', ages:[26,64], w:()=>G.married?Math.max(0,1.2+(50-G.mood)/10):0,
+    run(){ const x=Math.max(C(200000),Math.max(0,G.cash)*.2); G.cash-=x; G.married=false; dM(-15);
+      return [`💔 婚姻破裂，財產分割與律師費 ${fmt(-x)}，心情 -15`,'bad']; } },
+  { id:'repair', group:'全年齡', ages:[28,64], w:()=>G.props.length?3:0,
+    run(){ const x=C(60000); G.cash-=x; return [`🔧 房屋漏水與老舊修繕 ${fmt(-x)}`,'bad']; } },
+
+  /* ================= 全年齡：選擇事件 ================= */
+  { id:'travel', group:'全年齡', ages:[22,64], w:()=>4, title:'✈️ 旅遊邀約',
+    text:()=>`朋友邀你出國旅行，預算約 ${fmt(C(60000))}。要去嗎？`,
+    choices:()=>[
+      { label:'A. 出發！', run(){ const x=C(60000); G.cash-=x; dM(14); dH(3); return [`🏝 旅行回來充飽電 ${fmt(-x)}，心情 +14、健康 +3`,'good']; } },
+      { label:'B. 省錢在家', run(){ dM(-1); return ['🏠 選擇省錢，心情 -1。','info']; } } ] },
+  { id:'tip', group:'全年齡', ages:[22,64], w:()=>G.cash>C(50000)?5:1, title:'🤫 朋友報明牌',
+    text:()=>`飯局上朋友神祕兮兮地說：「迷因飆股要噴了，這次絕對穩！」你要拿約 15% 現金（上限 ${fmt(C(100000))}）跟單嗎？`,
+    choices:()=>[
+      { label:'A. 跟單買迷因股', run(){
+          const spend=Math.min(Math.max(0,G.cash)*.15,C(100000));
+          const qty=Math.floor(spend/(G.prices.MEME*(1+AM.MEME.buyFee)));
+          if(qty<1) return ['💸 手頭太緊，沒錢跟單。','info'];
+          const r=doBuy('MEME',qty,false); return ['📣 聽信明牌：'+r.msg,'info']; } },
+      { label:'B. 一笑置之', run(){ return ['😌 你沒被明牌牽著走。','info']; } } ] },
+  { id:'fomo', group:'全年齡', ages:[22,64], w:()=>G.cash>C(80000)?3:0, title:'📱 群組裡大家都在曬台積電',
+    text:()=>`LINE 群組一片紅通通，同事說「現在不買就晚了」。要拿約 20% 現金（上限 ${fmt(C(500000))}）追進台積電嗎？`,
+    choices:()=>[
+      { label:'A. 追進台積電', run(){
+          const spend=Math.min(Math.max(0,G.cash)*.2,C(500000));
+          const qty=Math.floor(spend/(G.prices.TSMC*(1+AM.TSMC.buyFee)));
+          if(qty<1) return ['💸 資金不足，只能看別人賺。','info'];
+          const r=doBuy('TSMC',qty,false); dM(2); return ['🧲 跟風進場：'+r.msg,'info']; } },
+      { label:'B. 按兵不動', run(){ return ['🧘 你選擇不追高。','info']; } } ] },
+
+  /* ================= 20-30 歲 ================= */
+  { id:'study', group:'20-30 歲', ages:[22,32], w:()=>!fx().study?4:0, title:'🎓 進修機會',
+    text:()=>`你考上在職碩士班，學費約 ${fmt(C(300000))}，未來三年升遷機率 +8%，畢業後薪資行情 +6%，但會比較累。`,
+    choices:()=>[
+      { label:'A. 報名進修', run(){ const x=C(300000); G.cash-=x; fx().study=3; dM(-3); return [`📚 開始在職進修 ${fmt(-x)}，心情 -3，三年後畢業`,'info']; } },
+      { label:'B. 不進修', run(){ return ['🛋 你決定下班就好好休息。','info']; } } ] },
+  { id:'phone', group:'20-30 歲', ages:[22,30], w:()=>4, title:'📱 新手機分期 0 利率',
+    text:()=>`最新旗艦手機開賣，分期 0 利率，一次買斷約 ${fmt(C(40000))}。`,
+    choices:()=>[
+      { label:'A. 買！', run(){ const x=C(40000); G.cash-=x; dM(4); return [`📱 入手新手機 ${fmt(-x)}，心情 +4`,'info']; } },
+      { label:'B. 舊的還能用', run(){ dM(1); return ['🪙 忍住了，心情 +1。','info']; } } ] },
+  { id:'reunion', group:'20-30 歲', ages:[24,35], w:()=>3, title:'🥂 同學會',
+    text:()=>`同學會上大家都在比誰的工作比較厲害、車子比較好。`,
+    choices:()=>[
+      { label:'A. 打腫臉充胖子', run(){ const x=C(50000); G.cash-=x; dM(3); return [`💸 請客買單 ${fmt(-x)}，心情 +3`,'info']; } },
+      { label:'B. 坦然做自己', run(){ dM(1); return ['😌 AA 制，聊得很開心，心情 +1。','info']; } } ] },
+  { id:'sidejob', group:'20-30 歲', ages:[22,30], w:()=>4, title:'💻 接案副業',
+    text:()=>`朋友介紹你下班後接案，預計多賺 ${fmt(C(80000))}，但會犧牲睡眠。`,
+    choices:()=>[
+      { label:'A. 接下案子', run(){ const x=C(80000); G.cash+=x; dH(-3); dM(-1); return [`🌙 熬夜接案賺進 ${fmt(x,1)}，健康 -3、心情 -1`,'good']; } },
+      { label:'B. 好好睡覺', run(){ return ['😴 你選擇保護肝臟。','info']; } } ] },
+  { id:'renter', group:'20-30 歲', ages:[22,32], w:()=>!hasSelf()?3:0,
+    run(){ const x=C(30000); G.cash-=x; dM(-3); return [`🏚 房東不退押金還要你補修繕費 ${fmt(-x)}，心情 -3`,'bad']; } },
+
+  /* ================= 30-40 歲（成家立業） ================= */
+  { id:'marry', group:'30-40 歲', ages:[26,45], w:()=>(!G.married)?7:0, title:'💍 步入禮堂',
+    text:()=>`你遇到了對的人，對方向你求婚。婚禮約 ${fmt(C(200000))}，婚後生活費增加，但配偶也有收入。`,
+    choices:()=>[
+      { label:'A. 結婚！', run(){ const x=C(200000); G.cash-=x; G.married=true; dM(15); return [`💒 結婚了！婚禮花費 ${fmt(-x)}，心情 +15`,'good']; } },
+      { label:'B. 再等等', run(){ dM(-2); return ['⏳ 你決定先專注自己，心情 -2。','info']; } } ] },
+  { id:'baby', group:'30-40 歲', ages:[26,42], w:()=>(G.married&&!G.hadKid)?6:0, title:'👶 小生命',
+    text:()=>`你們有了寶寶的計畫。養孩子之後約 22 年，每年多花 ${fmt(C(100000))}。`,
+    choices:()=>[
+      { label:'A. 迎接新生命', run(){ const x=C(50000); G.cash-=x; G.hadKid=true; G.kidYears=22; dM(10); return [`🍼 小寶貝誕生！待產與用品 ${fmt(-x)}，心情 +10，往後 22 年生活費增加`,'good']; } },
+      { label:'B. 暫時不要', run(){ dM(-1); return ['🌿 決定暫時不生。','info']; } } ] },
+  { id:'house', group:'30-40 歲', ages:[27,64], w:()=>(!hasSelf()&&G.props.length<MAX_PROPS&&liquid()>=HOUSE_BASE*G.houseIdx*.2*1.05)?5:0, title:'🏠 看到心儀的房子',
+    text:()=>{ fx().houseL=makeListing('family'); const L=fx().houseL, t=buyTerms(L.price);
+      return `仲介帶你看了一間${L.name}，總價約 ${fmt(L.price)}，頭期款 ${fmt(t.down)}，房貸 30 年、利率 ${(t.rate*100).toFixed(1)}%，每年繳 ${fmt(t.pay)}。買來自住就不用再付房租。（之後也能在「房地產」頁買賣房子）`; },
+    choices:()=>[
+      { label:'A. 買下來自住！', run(){ const r=buyProp(fx().houseL,'self'); delete fx().houseL; return [(r.ok?'🔑 ':'🏦 ')+r.msg, r.ok?'good':'bad']; } },
+      { label:'B. 繼續租屋', run(){ delete fx().houseL; return ['🏘 繼續租屋，等待更好的時機。','info']; } } ] },
+  { id:'car', group:'30-40 歲', ages:[28,45], w:()=>!fx().car?3:0, title:'🚗 換車的念頭',
+    text:()=>`通勤與接送越來越需要車。新車約 ${fmt(C(600000))}，二手車約 ${fmt(C(200000))}。`,
+    choices:()=>[
+      { label:'A. 買新車', run(){ const x=C(600000); G.cash-=x; fx().car=true; dM(8); return [`🚘 提了新車 ${fmt(-x)}，心情 +8`,'info']; } },
+      { label:'B. 買二手車', run(){ const x=C(200000); G.cash-=x; fx().car=true; dM(3); return [`🚙 入手二手車 ${fmt(-x)}，心情 +3`,'info']; } },
+      { label:'C. 繼續搭大眾運輸', run(){ return ['🚇 省下一大筆錢。','info']; } } ] },
+  { id:'burnout', group:'30-40 歲', ages:[28,55], w:()=>G.mood<50?5:1, title:'🔥 工作倦怠',
+    text:()=>`連續的加班讓你覺得快要撐不住了。要請長假好好休息，還是硬撐下去？`,
+    choices:()=>[
+      { label:'A. 請長假（損失約 15% 年薪）', run(){ const x=salary()*.15; G.cash-=x; dM(15); dH(8); return [`🛌 請了長假 ${fmt(-x)}，心情 +15、健康 +8`,'good']; } },
+      { label:'B. 硬撐', run(){ dM(-5); dH(-6); return ['😵 硬撐下去，心情 -5、健康 -6。','bad']; } } ] },
+
+  /* ================= 創業（25-50 歲，影響後續數年的資金與成功機率） ================= */
+  { id:'startup', group:'30-40 歲', ages:[25,50], w:()=>(!fx().venture&&G.level>=1)?4:0, title:'🚀 朋友邀你合夥創業',
+    text:()=>`前同事找你合夥創業，需要投入 ${fmt(C(300000))}。接下來三年決定成敗：成功回收 4 倍，失敗血本無歸。成功率取決於你的職涯經驗、健康、心情與投入程度；途中可能被追加資金。`,
+    choices:()=>[
+      { label:'A. 拒絕', run(){ return ['🙅 你選擇穩穩領薪水。','info']; } },
+      { label:'B. 答應，投入資金', run(){
+          const x=C(300000); G.cash-=x; fx().venture={left:3,inv:x}; dM(5);
+          return [`🤝 你投入 ${fmt(-x)} 加入創業，三年後見分曉（成功率會受健康、心情與生活態度影響）`,'info']; } } ] },
+
+  /* ================= 40-50 歲（中年） ================= */
+  { id:'midlife', group:'40-50 歲', ages:[40,50], w:()=>4, title:'🪞 中年危機',
+    text:()=>`某天照鏡子，你突然覺得人生好像少了點什麼。`,
+    choices:()=>[
+      { label:'A. 買跑車/名錶犒賞自己', run(){ const x=C(500000); G.cash-=x; dM(12); return [`🏎 衝動消費 ${fmt(-x)}，心情 +12`,'info']; } },
+      { label:'B. 報名鐵人三項', run(){ const x=C(30000); G.cash-=x; dH(8); dM(5); return [`🏊 重新愛上運動 ${fmt(-x)}，健康 +8、心情 +5`,'good']; } },
+      { label:'C. 默默承受', run(){ dM(-3); return ['😶 什麼都沒做，心情 -3。','bad']; } } ] },
+  { id:'tuition', group:'40-50 歲', ages:[35,55], w:()=>G.hadKid?4:0, title:'🎒 孩子的教育選擇',
+    text:()=>`孩子面臨升學，出國留學要 ${fmt(C(1500000))}，補習上公立要 ${fmt(C(100000))}。`,
+    choices:()=>[
+      { label:'A. 送出國留學', run(){ const x=C(1500000); G.cash-=x; dM(6); return [`🛫 孩子出國深造 ${fmt(-x)}，心情 +6`,'info']; } },
+      { label:'B. 公立＋補習', run(){ const x=C(100000); G.cash-=x; dM(2); return [`📖 補習費 ${fmt(-x)}，心情 +2`,'info']; } },
+      { label:'C. 讓孩子自己決定', run(){ dM(3); return ['🌱 尊重孩子的選擇，心情 +3。','good']; } } ] },
+  { id:'headhunter', group:'40-50 歲', ages:[40,55], w:()=>3, title:'🕴 獵頭來電',
+    text:()=>`對手公司開出更高的薪水挖角，但成功率不是百分之百，也要面對新環境。`,
+    choices:()=>[
+      { label:'A. 跳槽', run(){
+          if(chance(.65)){ G.hopBonus=Math.min(.6,G.hopBonus+.2); dM(-2); return ['🕴 跳槽成功！薪水 +20%，心情 -2（適應期）。','good']; }
+          dM(-6); G.hopBonus=Math.max(-.5,G.hopBonus-.05); return ['🕴 新公司與傳聞不同，薪水 -5%、心情 -6。','bad']; } },
+      { label:'B. 留在原公司', run(){ return ['🛡 你選擇留下。','info']; } } ] },
+  { id:'care', group:'40-50 歲', ages:[45,64], w:()=>4,
+    run(){ const x=C(100000); G.cash-=x; dM(-4); dH(-3); return [`👵 長輩需要照顧，看護與醫療支出 ${fmt(-x)}，心情 -4、健康 -3`,'bad']; } },
+  { id:'bigill', group:'40-50 歲', ages:[40,64], w:()=>Math.max(0,2+(65-G.health)/8),
+    run(){ const x=C(150000); G.cash-=x; dH(-22); dM(-8); return [`🩺 檢查出重大疾病，手術與療養 ${fmt(-x)}，健康 -22、心情 -8`,'bad']; } },
+  { id:'inherit', group:'40-50 歲', ages:[45,64], w:()=>1.5,
+    run(){ const x=C(1000000); G.cash+=x; dM(3); return [`🕊 長輩留下一筆遺產 ${fmt(x,1)}，心情複雜`,'good']; } },
+
+  /* ================= 50-64 歲（準備退休） ================= */
+  { id:'earlyretire', group:'50-64 歲', ages:[55,64], w:()=>4, title:'📜 公司優退方案',
+    text:()=>`公司提供優退方案：一次給你 1.5 年薪水，但之後只能轉任約聘，薪水大減。`,
+    choices:()=>[
+      { label:'A. 接受優退', run(){ const x=salary()*1.5; G.cash+=x; G.hopBonus=Math.max(-.5,G.hopBonus-.35); dM(8); dH(6);
+          return [`🎉 領到優退金 ${fmt(x,1)}，改為輕鬆的約聘，心情 +8、健康 +6，但薪水下降`,'good']; } },
+      { label:'B. 繼續全職', run(){ dM(-1); return ['💼 你決定再拼幾年。','info']; } } ] },
+  { id:'checkup', group:'50-64 歲', ages:[50,64], w:()=>4, title:'🧪 健檢紅字',
+    text:()=>`年度健檢出現幾個紅字，醫生建議進一步做精密檢查（約 ${fmt(C(80000))}）。`,
+    choices:()=>[
+      { label:'A. 立刻精密檢查', run(){ const x=C(80000); G.cash-=x; dH(5); dM(2); return [`🩻 提早發現並處理 ${fmt(-x)}，健康 +5、心情 +2`,'good']; } },
+      { label:'B. 先觀察看看', run(){
+          if(chance(.5)){ dH(-8); dM(-3); return ['😰 拖著不處理，狀況惡化：健康 -8、心情 -3。','bad']; }
+          dM(1); return ['😮‍💨 運氣不錯，沒事，心情 +1。','info']; } } ] },
+  { id:'groupscam', group:'50-64 歲', ages:[45,64], w:()=>3, title:'👨‍🏫 投資老師邀你進 VIP 群',
+    text:()=>`網路上的「投資老師」保證帶你穩賺，入會費與保證金約 ${fmt(C(400000))}。`,
+    choices:()=>[
+      { label:'A. 加入', run(){ const x=C(400000);
+          if(chance(.25)){ G.cash+=x*.3; dM(4); return [`🍀 竟然真的賺了 ${fmt(x*.3,1)}（大概只是運氣）`,'good']; }
+          G.cash-=x; dM(-12); return [`🕵️ 被詐騙集團騙走 ${fmt(-x)}，心情 -12`,'bad']; } },
+      { label:'B. 退群並檢舉', run(){ dM(2); return ['🔎 你識破詐騙並檢舉，心情 +2。','good']; } } ] },
+  { id:'grandkid', group:'50-64 歲', ages:[55,64], w:()=>G.hadKid?3:0,
+    run(){ const x=C(20000); G.cash-=x; dM(8); return [`👶 抱到孫子了！紅包與玩具 ${fmt(-x)}，心情 +8`,'good']; } },
+];
+</script>
+<script>
+'use strict';
+/* =====================================================================
+ *  股海人生模擬器  v2（手機介面版）
+ *  金額單位一律為「元」，顯示時自動轉成 萬 / 億。
+ * ===================================================================== */
+
+/* ---------- 常數 ---------- */
+const START_AGE = 22, RETIRE_AGE = 65, START_CASH = 100000;
+const MAINT = 1.3;                     // 融資維持率，低於即斷頭
+const LTV = 0.6, MARGIN_RATE = 0.06;   // 融資成數、融資年利率
+const CASH_RATE = 0.015, DEBT_RATE = 0.10;
+const LIVING = 300000, RENT = 90000, HOUSE_BASE = 6000000;
+const LEV = 5, LEV_STOP = 0.5, LEV_FEE = 0.0004;   // 台指期：5 倍、保證金剩 50% 強制平倉、手續費（以名目金額計）
+
+/* ---------- 標的（listed = 歷史模式的上市年份）---------- */
+const ASSETS = [
+  { id:'BLUE', name:'龍頭權值股', tag:'穩健',   price:100, alpha:.01,  beta:1.0,  idio:.08, div:.02, buyFee:.0015, sellFee:.0045, color:'#2fcf8a' },
+  { id:'DIV',  name:'高股息ETF',  tag:'收息ETF', price:30,  alpha:-.01, beta:.5,   idio:.05, div:.05, buyFee:.0015, sellFee:.0025, color:'#f4c15a', etf:true, listed:2007 },
+  { id:'TSMC', name:'台積電(2330)', tag:'護國神山', price:600, alpha:.015, beta:1.15, idio:.12, div:.02, buyFee:.0015, sellFee:.0045, color:'#5ad1e6', sec:'tech', sl:.5, jumpUp:.05, jumpDn:.05, jumpUpR:[1.15,1.4], jumpDnR:[.75,.9], listed:1994 },
+  { id:'ACCTON', name:'智邦(2345)', tag:'AI網通', price:500, alpha:.03, beta:1.35, idio:.22, div:.03, buyFee:.0015, sellFee:.0045, color:'#7bd88f', sec:'tech', sl:.7, jumpUp:.10, jumpDn:.08, jumpUpR:[1.15,1.5], jumpDnR:[.7,.88] },
+  { id:'GREEN', name:'綠山金(2884)', tag:'金融股', price:28, alpha:0, beta:.8, idio:.09, div:.04, buyFee:.0015, sellFee:.0045, color:'#8bc34a', sec:'fin', sl:1, listed:2002 },
+  { id:'FPC',  name:'台塑(1301)',   tag:'傳產景氣', price:60,  alpha:-.02, beta:.7,   idio:.10, div:.05, buyFee:.0015, sellFee:.0045, color:'#c9a0ff', sec:'trad', sl:1, jumpUp:.04, jumpDn:.06, jumpUpR:[1.15,1.35], jumpDnR:[.7,.88] },
+  { id:'YAGEO',name:'國巨(2327)',   tag:'被動元件', price:400, alpha:-.02, beta:1.5,  idio:.24, div:.02, buyFee:.0015, sellFee:.0045, color:'#ff9ec4', sec:'tech', sl:.4, jumpUp:.09, jumpDn:.09, jumpUpR:[1.3,1.9], jumpDnR:[.55,.8] },
+  { id:'MEME', name:'迷因飆股',   tag:'高風險', price:20,  alpha:0,    beta:1.6,  idio:.45, div:0,   buyFee:.0015, sellFee:.0045, color:'#ff7a59', jumpUp:.09, jumpDn:.11, jumpUpR:[1.8,3.2], jumpDnR:[.25,.55] },
+  { id:'LYG',  name:'龍巖(5530)', tag:'生命禮儀', price:70, alpha:.02, beta:-.15, idio:.07, div:.04, buyFee:.0015, sellFee:.0045, color:'#b0bec5', crashBoost:.12 },
+  { id:'BOND', name:'公債ETF',    tag:'避險ETF',   price:100, alpha:.045, beta:-.25, idio:.035,div:0,   buyFee:.001,  sellFee:.001,  color:'#59a6ff', etf:true, listed:2017 },
+];
+ASSETS.forEach(a => { const m=a.name.match(/^(.*?)\((\d+)\)$/); a.short=m?m[1]:a.name; a.code=m?m[2]:''; });
+const AM = Object.fromEntries(ASSETS.map(a => [a.id, a]));
+
+/* ---------- 市場局勢（馬可夫鏈）---------- */
+const REGIMES = {
+  bull: { name:'牛市', icon:'🐂', mm:.20,  vol:.8, house:.05 },
+  side: { name:'盤整', icon:'😐', mm:.05,  vol:.7, house:.02 },
+  bear: { name:'熊市', icon:'🐻', mm:-.14, vol:1.2, house:-.03 },
+};
+const RKEYS = ['bull','side','bear'];
+const VIEW = { bull:'看多', side:'看盤整', bear:'看空' };
+const ANALYSTS = [                       // acc 為隱藏設定，不會顯示給玩家
+  { id:'zhe', name:'折折分析師',   icon:'🧐', acc:.55, quotes:['資金面仍有支撐','技術面看起來','籌碼面顯示'] },
+  { id:'ba',  name:'巴順順分析師', icon:'🤡', acc:.20, quotes:['我拿我的名聲保證','這次真的不一樣','老師的直覺很少錯'] },
+  { id:'ai',  name:'AI 分析師',    icon:'🤖', acc:.60, quotes:['根據 1,024 項指標回測','模型信心水準中等','綜合總經數據'] },
+];
+const TRANS = { bull:[.6,.25,.15], side:[.3,.4,.3], bear:[.35,.3,.35] };
+const NEWS = {
+  bull:['外資連續買超，市場氣氛樂觀','企業財報亮眼，分析師調升目標價','開戶數創高，資金行情蠢蠢欲動'],
+  side:['多空消息交雜，市場觀望氣氛濃厚','指數在區間內震盪，量能萎縮','大家都在等下一個催化劑'],
+  bear:['景氣燈號轉藍，市場憂心衰退','外資大舉提款，空頭氣氛瀰漫','財報不如預期，分析師下修展望'],
+};
+
+/* ---------- 黑天鵝：無法預測，沒有任何前兆 ---------- */
+const SWANS = [
+  { name:'突發戰爭', desc:'區域戰爭毫無預警爆發，能源價格飆升，全球股市恐慌。', qm:[-.15,-.06,.02,.03], vol:1, ex:{FPC:-.08,LYG:.08,BOND:.05,TSMC:-.06}, house:-.05, infl:.04, recession:true, next:'side', w:1.5 },
+  { name:'地緣政治危機', desc:'海峽情勢驟然升溫，外資連日大舉撤出台股。', qm:[-.12,-.06,.03,.04], vol:.9, ex:{TSMC:-.1,ACCTON:-.06,GREEN:-.05,BOND:.04}, house:-.06, infl:.01, recession:false, next:'side', w:1.5 },
+  { name:'全球疫情爆發', desc:'不明病毒蔓延全球，第一季恐慌熔斷，之後在大水推動下 V 型反彈。', qm:[-.30,.12,.14,.10], vol:.9, shape:[.15,.6,.25], ex:{LYG:.06}, house:0, infl:.01, recession:false, next:'bull', w:1.5 },
+  { name:'惡性通膨與暴力升息', desc:'央行急踩煞車，債券與成長股同步重挫，物價飛漲。', qm:[-.04,-.07,-.06,-.04], vol:.8, ex:{BOND:-.14,MEME:-.15,GREEN:.05}, house:-.04, infl:.08, recession:false, next:'side', w:1.5 },
+  { name:'強震重創供應鏈', desc:'規模 7 強震造成大規模停工，電子供應鏈大亂。', qm:[-.1,.02,.03,.03], vol:.8, ex:{TSMC:-.05,YAGEO:.12,LYG:.05}, house:-.03, infl:.01, recession:false, next:'side', w:1 },
+  { name:'央行大放水狂潮', desc:'央行突然無限量 QE，資金氾濫、全民開戶，連迷因股都瘋狂。', qm:[.08,.10,.10,.08], vol:.8, ex:{MEME:.5}, house:.08, infl:.03, recession:false, next:'side', w:1.5 },
+];
+
+/* ---------- 灰犀牛：有前兆，會先吹泡泡 2~4 年才爆 ---------- */
+const RHINOS = [
+  { id:'house', name:'房地產泡沫', icon:'🏚',
+    build:{ ex:{GREEN:.08,BLUE:.04}, house:.10 },
+    warns:[['房價所得比再創新高，年輕人直呼買不起','央行：房市仍在可控範圍'],
+           ['建商推案量暴增，銀行房貸成數放寬到九成','投資客：房價只會漲不會跌'],
+           ['空屋率創新高，多家建商傳出資金鏈警訊','財經名嘴：這次不一樣'],
+           ['預售屋大量解約，代銷業者裁員','官員：基本面依然健康']],
+    burst:{ name:'房地產泡沫破裂', desc:'房價崩跌拖垮銀行，信用緊縮席捲市場。', qm:[-.06,-.15,-.12,-.04], vol:1, ex:{GREEN:-.25,BOND:.06}, house:-.25, infl:0, recession:true, next:'bear' } },
+  { id:'tech', name:'科技估值泡沫', icon:'🫧',
+    build:{ ex:{ACCTON:.15,YAGEO:.12,TSMC:.08,MEME:.25}, house:.03 },
+    warns:[['科技股本益比突破 60 倍，散戶開戶數創新高','分析師：產業革命才剛開始'],
+           ['零營收新創掛牌首日翻倍，人人都在聊當沖','鄉民：閉著眼睛買都賺'],
+           ['大股東申報轉讓持股暴增，內部人悄悄出貨','名嘴：現在不上車就來不及了'],
+           ['融資餘額創歷史新高，菜籃族借錢買股','券商：散戶情緒指標過熱']],
+    burst:{ name:'科技估值泡沫破裂', desc:'夢想撐不起估值，高本益比科技股與迷因股集體崩跌。', qm:[-.12,-.14,-.08,-.04], vol:.9, ex:{MEME:-.4,ACCTON:-.3,YAGEO:-.3,TSMC:-.1,BOND:.04}, house:-.04, infl:0, recession:true, next:'bear' } },
+  { id:'debt', name:'債務危機', icon:'💳',
+    build:{ ex:{BOND:-.03,FPC:.05}, house:.04 },
+    warns:[['企業債務創歷史新高，低利借錢擴張成風潮','經濟學家：利率低，債務不是問題'],
+           ['多家企業發行高利垃圾債，評等機構下修展望','官員：金融體系穩健'],
+           ['信評機構接連降評，債券利差急速擴大','市場：央行一定會出手救'],
+           ['數家中型企業延遲付息，銀行緊縮放款','專家：只是個案']],
+    burst:{ name:'債務危機引爆', desc:'違約潮爆發，信用市場凍結，金融股與景氣股重挫。', qm:[-.08,-.12,-.1,-.03], vol:1, ex:{GREEN:-.2,BOND:-.08,FPC:-.12}, house:-.08, infl:.01, recession:true, next:'bear' } },
+];
+
+/* ---------- 歷史模式：擬真年表（ret = 加權指數年報酬，數值為擬真重現）---------- */
+const HIST_START = { 1990:9624, 2000:8448, 2010:8188, 2020:11997 };
+const HIST = {
+  1990:{ ret:-.53, title:'台股萬點泡沫破滅', desc:'指數從 12,682 點一路崩到 2,485 點，全民炒股夢碎。', kind:'rhino', qm:[.05,-.45,-.15,-.05], ex:{MEME:-.4}, house:-.1, recession:true },
+  1991:{ ret:.01, title:'波斯灣戰爭', desc:'伊拉克入侵科威特引爆戰爭，油價飆升、股市劇烈震盪。', kind:'swan', qm:[-.08,.1,.0,-.01], ex:{FPC:-.06} },
+  1992:{ ret:-.27, title:'泡沫餘震', desc:'資產泡沫後遺症延續，市場陷入長期整理。' },
+  1993:{ ret:.80, title:'資金行情大噴發', desc:'利率下滑、資金回流，指數一年漲八成。', kind:'boom' },
+  1994:{ ret:.17, title:'台積電掛牌上市', desc:'晶圓代工新創公司上市，市場半信半疑。' },
+  1995:{ ret:-.27, title:'台海飛彈危機', desc:'飛彈試射逼近台灣，外資撤離、指數重挫。', kind:'swan', qm:[-.05,-.15,-.1,.02], ex:{BOND:.04,LYG:.05}, house:-.06 },
+  1996:{ ret:.34, title:'危機解除、資金回籠', desc:'國安基金進場，電子股開始崛起。' },
+  1997:{ ret:.18, title:'亞洲金融風暴', desc:'泰銖崩盤引發骨牌效應，台股下半年急轉直下。', kind:'swan', qm:[.2,.18,-.1,-.12] },
+  1998:{ ret:-.22, title:'本土型金融風暴', desc:'企業掏空、地雷股接連爆發，金融體系受創。', kind:'crisis', ex:{GREEN:-.1} },
+  1999:{ ret:.32, title:'921 大地震與網路熱潮', desc:'大地震重創中部，但網路題材讓科技股狂飆。', qm:[.1,.15,-.05,.1], ex:{ACCTON:.2,MEME:.3},
+         warn:['網路股本益比動輒破百，「新經濟」成為顯學','零獲利的 .com 公司市值超越百年老店'] },
+  2000:{ ret:-.44, title:'網路泡沫破裂', desc:'科技股估值崩塌，加上政黨輪替與政經動盪，指數腰斬。', kind:'rhino', qm:[.1,-.12,-.25,-.3], ex:{MEME:-.5,ACCTON:-.3,YAGEO:-.3}, recession:true },
+  2001:{ ret:.17, title:'911 恐怖攻擊', desc:'美國遭受恐攻，全球股市停擺後暴跌，年底才反彈。', kind:'swan', qm:[.05,-.1,-.18,.45], ex:{LYG:.04} },
+  2002:{ ret:-.20, title:'科技寒冬', desc:'泡沫後遺症延續，企業縮減支出。' },
+  2003:{ ret:.32, title:'SARS 疫情', desc:'SARS 爆發、和平醫院封院，股市先跌後漲。', kind:'swan', qm:[-.12,.1,.15,.15], ex:{LYG:.05} },
+  2004:{ ret:.04, title:'319 槍擊案', desc:'總統大選前夕槍擊案，選後股市跌停。', kind:'swan', qm:[.1,-.12,.03,.05] },
+  2005:{ ret:.07, title:'溫和成長', desc:'全球景氣復甦，台股穩步走高。' },
+  2006:{ ret:.20, title:'資產全面上漲', desc:'房價與股價齊揚，次級房貸市場蓬勃發展。',
+         warn:['美國次級房貸核貸標準越來越寬鬆，「零頭期款」盛行','專家：美國房價從未全國性下跌過'] },
+  2007:{ ret:.09, title:'次貸暗流', desc:'美國房貸機構接連出包，但股市仍創高。', qm:[.08,.12,.02,-.12],
+         warn:['美國多家次貸放款機構倒閉，避險基金傳出鉅虧','信用利差急速擴大，銀行間互不信任'] },
+  2008:{ ret:-.46, title:'全球金融海嘯', desc:'雷曼兄弟倒閉，全球信用凍結，史詩級崩盤。', kind:'rhino', qm:[-.05,-.08,-.25,-.25], ex:{GREEN:-.25,BOND:.08}, house:-.12, infl:.035, recession:true },
+  2009:{ ret:.78, title:'救市大放水', desc:'各國央行降息印鈔，股市從谷底 V 型反彈。', kind:'boom' },
+  2010:{ ret:.10, title:'ECFA 簽署', desc:'兩岸經濟合作協議，傳產與金融股受惠。' },
+  2011:{ ret:-.21, title:'歐債危機', desc:'希臘債務違約疑慮擴散，美債遭降評。', kind:'crisis', qm:[.0,.0,-.15,-.07], ex:{GREEN:-.08} },
+  2012:{ ret:.09, title:'證所稅風暴', desc:'證所稅爭議讓成交量急凍。' },
+  2013:{ ret:.12, title:'美股創高', desc:'QE 資金持續推升全球股市。' },
+  2014:{ ret:.08, title:'油價崩跌', desc:'國際油價腰斬，塑化股承壓。', ex:{FPC:-.12} },
+  2015:{ ret:-.10, title:'中國股災', desc:'陸股泡沫破裂、人民幣貶值，亞股同步重挫。', kind:'crisis', qm:[.04,-.02,-.12,.0] },
+  2016:{ ret:.11, title:'川普當選', desc:'選前恐慌、選後大漲。' },
+  2017:{ ret:.15, title:'台股站上萬點', desc:'台股長期站穩萬點，存股風氣興起。', ex:{DIV:.03} },
+  2018:{ ret:-.09, title:'美中貿易戰與被動元件狂潮', desc:'國巨上半年漲到天上又崩回人間，貿易戰重創科技股。', kind:'crisis', qm:[.0,.04,.0,-.12], ex:{YAGEO:.35,MEME:-.15} },
+  2019:{ ret:.23, title:'台商回流', desc:'貿易戰轉單效應，台股大漲。' },
+  2020:{ ret:.23, title:'新冠疫情爆發', desc:'疫情讓全球股市熔斷，隨後無限 QE 帶來 V 型反彈。', kind:'swan', qm:[-.18,.25,.03,.15], ex:{LYG:.06,MEME:.2} },
+  2021:{ ret:.24, title:'航海王與全民瘋股市', desc:'貨櫃三雄狂飆，開戶數創新高，散戶當沖成風。', kind:'boom', ex:{MEME:.6} },
+  2022:{ ret:-.22, title:'俄烏戰爭與暴力升息', desc:'戰爭推升通膨，聯準會一年升息 4 碼以上，股債雙殺。', kind:'swan', qm:[-.05,-.1,-.1,.02], ex:{BOND:-.14,TSMC:-.1,GREEN:-.05}, infl:.03 },
+  2023:{ ret:.27, title:'ChatGPT 引爆 AI 浪潮', desc:'生成式 AI 橫空出世，AI 伺服器供應鏈噴發。', kind:'boom', ex:{ACCTON:.4,TSMC:.08} },
+  2024:{ ret:.29, title:'AI 伺服器狂潮', desc:'AI 晶片供不應求，台積電市值一路創高。', kind:'boom', ex:{ACCTON:.4,TSMC:.3} },
+  2025:{ ret:.24, title:'關稅震撼與 AI 續航', desc:'對等關稅一度讓台股重挫，之後 AI 需求帶動強勢反彈。', kind:'swan', qm:[-.1,.0,.18,.15], ex:{TSMC:.1} },
+};
+
+/* ---------- 熱門題材（壓乎新聞預測，有真有假）---------- */
+const TOPICS = [
+  { t:'AI 伺服器需求爆發，網通與晶圓代工訂單看到明年', ids:['ACCTON','TSMC'], dir:1 },
+  { t:'先進製程訂單滿載，護國神山產能供不應求', ids:['TSMC'], dir:1 },
+  { t:'被動元件缺貨潮再起，報價喊漲三成', ids:['YAGEO'], dir:1 },
+  { t:'被動元件庫存調整，通路商急砍單', ids:['YAGEO'], dir:-1 },
+  { t:'塑化報價觸底回升，傳產股醞釀反攻', ids:['FPC'], dir:1 },
+  { t:'中國塑化產能過剩，台塑四寶獲利承壓', ids:['FPC'], dir:-1 },
+  { t:'升息循環利差擴大，金融股獲利看俏', ids:['GREEN'], dir:1 },
+  { t:'存股族瘋高股息 ETF，規模屢創新高', ids:['DIV'], dir:1 },
+  { t:'降息循環即將啟動，債券 ETF 迎來大行情', ids:['BOND'], dir:1 },
+  { t:'高齡化社會來臨，生命禮儀產業長期看好', ids:['LYG'], dir:1 },
+  { t:'散戶論壇號召軋空，迷因股蓄勢待發', ids:['MEME'], dir:1 },
+  { t:'網紅股主力疑似出貨，散戶小心接刀', ids:['MEME'], dir:-1 },
+  { t:'AI 泡沫論甚囂塵上，科技股恐面臨修正', ids:['ACCTON','TSMC'], dir:-1 },
+];
+const SOURCES = ['壓乎財經','股市爆料公社','鄉民股版熱議','財經週刊','外資內部報告'];
+
+/* ---------- 難度（僅自由模式）---------- */
+const DIFFS = {
+  easy:   { name:'簡單', icon:'🌱', desc:'大約每 4 年才跌 1 年，黑天鵝較少。', mmAdj:.07,  volMul:.9,  swanMul:.6, levs:[5] },
+  normal: { name:'普通', icon:'⚖️', desc:'貼近真實台股：約 3 成的年份下跌。', mmAdj:0,    volMul:1,   swanMul:1,  levs:[5] },
+  hard:   { name:'困難', icon:'🔥', desc:'只有 4 成年份會漲，大盤暴漲暴跌、黑天鵝更多，開放 10 倍槓桿。', mmAdj:-.03, volMul:1.35, swanMul:1.6, levs:[5,10],
+            regAdj:{bull:.40,side:-.16,bear:-.02}, trans:{bull:[.22,.3,.48],side:[.1,.35,.55],bear:[.15,.3,.55]} },
+};
+
+/* ---------- 房地產 ---------- */
+const PROP_TYPES = {
+  student: { name:'大學旁學生套房', icon:'🎓', base:1800000,  yld:.055, drift:-.006, vol:.04, vac:.10, w:3 },
+  studio:  { name:'市區小套房',     icon:'🏢', base:2800000,  yld:.042, drift:0,     vol:.04, vac:.07, w:3 },
+  oldapt:  { name:'老公寓（都更題材）', icon:'🏚', base:4500000, yld:.032, drift:-.004, vol:.05, vac:.08, w:2 },
+  presale: { name:'重劃區預售屋',   icon:'🏗', base:5000000,  yld:.02,  drift:.012,  vol:.07, vac:.15, w:2 },
+  family:  { name:'郊區三房華廈',   icon:'🏘', base:6000000,  yld:.026, drift:.002,  vol:.035,vac:.06, w:3 },
+  town:    { name:'鄉間透天厝',     icon:'🏡', base:7500000,  yld:.02,  drift:0,     vol:.04, vac:.10, w:1 },
+  lux:     { name:'蛋黃區景觀豪宅', icon:'🌆', base:16000000, yld:.018, drift:.006,  vol:.05, vac:.08, w:1 },
+};
+const PROP_RISKS = [
+  { id:'quake',  p:.03,  text:'地震／颱風重創，房屋受損', cost:[.03,.08], val:-.05, nat:true, mood:-4 },
+  { id:'gas',    p:.008, text:'附近發生氣爆，整區房價重挫', cost:[.02,.06], val:-.15, nat:true, mood:-8 },
+  { id:'leak',   p:.06,  text:'漏水、壁癌一起來', cost:[.005,.02], val:-.02, only:null, x:{oldapt:2} },
+  { id:'student',p:.20,  text:'少子化學生減少，套房租不出去', val:-.08, vac:true, only:['student'] },
+  { id:'social', p:.08,  text:'附近興建大量社宅，房價與租金承壓', val:-.10, only:['presale','family','studio'] },
+  { id:'supply', p:.10,  text:'重劃區交屋潮供給過剩，價格鬆動', val:-.12, vac:true, only:['presale'] },
+  { id:'tenant', p:.07,  text:'遇到惡房客：積欠房租還破壞屋況', cost:[.005,.015], vac:true, rented:true },
+  { id:'mrt',    p:.035, text:'附近捷運宣布通車，房價大漲', val:.12, good:true },
+  { id:'renewal',p:.06,  text:'都更案通過！一坪換一坪還有找', val:.40, good:true, only:['oldapt'] },
+  { id:'school', p:.03,  text:'劃入明星學區，詢問度暴增', val:.08, good:true, only:['family','studio','town'] },
+];
+const MAX_PROPS = 5;
+
+/* ---------- 購物 ---------- */
+const SHOP = [
+  { id:'phone',   cat:'3C',   icon:'📱', name:'旗艦手機',     price:40000,    mood:5,  life:3,  keep:{mood:1} },
+  { id:'pc',      cat:'3C',   icon:'🖥', name:'電競電腦',     price:70000,    mood:6,  life:4,  keep:{mood:1} },
+  { id:'console', cat:'3C',   icon:'🎮', name:'遊戲主機',     price:18000,    mood:4,  life:5,  keep:{mood:1} },
+  { id:'bag',     cat:'奢侈品', icon:'👜', name:'名牌包',     price:150000,   mood:8,  life:8,  keep:{mood:1} },
+  { id:'ring',    cat:'奢侈品', icon:'💎', name:'鑽石首飾',   price:300000,   mood:9,  life:30, keep:{mood:1} },
+  { id:'watch',   cat:'奢侈品', icon:'⌚', name:'瑞士名錶',   price:600000,   mood:10, life:30, keep:{mood:1} },
+  { id:'scooter', cat:'交通',  icon:'🛵', name:'機車',        price:90000,    mood:3,  life:8,  keep:{cost:8000} },
+  { id:'car',     cat:'交通',  icon:'🚗', name:'國產汽車',    price:800000,   mood:8,  life:10, keep:{mood:1,cost:60000} },
+  { id:'ev',      cat:'交通',  icon:'🚙', name:'進口電動車',  price:1800000,  mood:12, life:10, keep:{mood:2,cost:40000} },
+  { id:'supercar',cat:'交通',  icon:'🏎', name:'義大利超跑',  price:12000000, mood:20, life:10, keep:{mood:3,cost:400000} },
+  { id:'gym',     cat:'健康',  icon:'💪', name:'健身房年費',   price:24000,  health:6,  mood:2, yearly:true },
+  { id:'checkup', cat:'健康',  icon:'🩺', name:'高級健康檢查', price:30000,  health:8,  mood:1, yearly:true },
+  { id:'vipcheck',cat:'健康',  icon:'🏥', name:'頂級全身健檢（含癌症篩檢）', price:120000, health:15, mood:3, yearly:true, minAge:35 },
+  { id:'spa',     cat:'健康',  icon:'💆', name:'按摩 SPA 療程', price:15000, health:2,  mood:5, yearly:true },
+  { id:'trip',    cat:'享受',  icon:'✈️', name:'出國旅遊',     price:80000,  health:2,  mood:12, yearly:true },
+  { id:'michelin',cat:'享受',  icon:'🍽', name:'米其林大餐',   price:15000,  mood:4, yearly:true },
+  { id:'concert', cat:'享受',  icon:'🎤', name:'演唱會搖滾區', price:8000,   mood:4, yearly:true },
+];
+const SHOPM = Object.fromEntries(SHOP.map(i=>[i.id,i]));
+
+/* ---------- 職涯 / 生活態度 ---------- */
+const JOBS = [
+  { t:'社會新鮮人', sal:420000,  promo:.22 }, { t:'專員',     sal:520000,  promo:.18 },
+  { t:'資深專員',   sal:650000,  promo:.15 }, { t:'主管',     sal:820000,  promo:.12 },
+  { t:'經理',       sal:1050000, promo:.09 }, { t:'協理',     sal:1400000, promo:.06 },
+  { t:'總監',       sal:1900000, promo:0 },
+];
+const STANCES = {
+  hustle:  { name:'🔥 拼事業',   health:-6, mood:-4, promo:.14, sal:1.08, cost:1.0,  desc:'每年健康 -6、心情 -4；升遷機率大增、績效獎金 +8%。' },
+  balance: { name:'⚖️ 平衡生活', health:1,  mood:1,  promo:.05, sal:1.0,  cost:1.0,  desc:'健康與心情小幅回升，升遷機率普通。' },
+  relax:   { name:'🌴 養生享樂', health:3,  mood:6,  promo:0,   sal:.97,  cost:1.15, desc:'健康 +3、心情 +6，但生活費 +15%、薪水略低、幾乎不升遷。' },
+};
+
+/* =====================================================================
+ *  工具
+ * ===================================================================== */
+const $ = s => document.querySelector(s);
+const rand = (a=0,b=1) => a + Math.random()*(b-a);
+const randi = (a,b) => a + Math.floor(Math.random()*(b-a+1));
+const chance = p => Math.random() < p;
+const clamp = (x,a,b) => Math.max(a, Math.min(b, x));
+const pick = arr => arr[Math.floor(Math.random()*arr.length)];
+function randn(){ let u=0,v=0; while(!u)u=Math.random(); while(!v)v=Math.random(); return Math.sqrt(-2*Math.log(u))*Math.cos(2*Math.PI*v); }
+function randt(df=5){ let c=0; for(let i=0;i<df;i++){ const z=randn(); c+=z*z; } return randn()/Math.sqrt(c/df)*Math.sqrt((df-2)/df); }
+function pickW(items, wf){
+  let t=0; const ws = items.map(i => { const w = Math.max(0, wf(i)); t+=w; return w; });
+  if(t<=0) return null;
+  let r = Math.random()*t;
+  for(let i=0;i<items.length;i++){ r-=ws[i]; if(r<=0) return items[i]; }
+  return items[items.length-1];
+}
+function fmt(n, sign){
+  const a = Math.abs(n); let s;
+  if(a>=1e8) s=(a/1e8).toFixed(2)+'億';
+  else if(a>=1e6) s=(a/1e4).toFixed(0)+'萬';
+  else if(a>=1e4) s=(a/1e4).toFixed(1)+'萬';
+  else s=Math.round(a).toLocaleString();
+  const neg = n<0 && Math.round(a)>0;
+  return (neg?'-':(sign&&Math.round(a)>0?'+':''))+'$'+s;
+}
+const pct = (x,sign=true) => (sign&&x>0?'+':'')+(x*100).toFixed(1)+'%';
+const upDn = x => x>0?'up':(x<0?'dn':'');
+function tickRound(p){ const t=p<10?.01:p<50?.05:p<100?.1:p<500?.5:p<1000?1:5; return Math.max(.5, Math.round(p/t)*t); }
+const px = p => p.toFixed(p<50?2:p<1000?1:0);
+const esc = s => String(s).replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+
+/* =====================================================================
+ *  永久收藏（跨局保留的成就／結局／稱號）
+ * ===================================================================== */
+const META_KEY='stockLifeSim.meta';
+let META={ach:{},endings:{},title:null,plays:0,best:null};
+function loadMeta(){ try{ const t=localStorage.getItem(META_KEY); if(t) META=Object.assign(META,JSON.parse(t)); }catch(e){} }
+function saveMeta(){ try{ localStorage.setItem(META_KEY,JSON.stringify(META)); }catch(e){} }
+
+/* =====================================================================
+ *  遊戲狀態
+ * ===================================================================== */
+let G;
+let Y=null, AUTO_SUMMARY=true;
+const LOGS=[];
+
+function newGame(opts={}){
+  const mode = opts.mode==='history' ? 'history' : 'free';
+  const startYear = mode==='history' ? (opts.startYear||2000) : null;
+  const idx0 = mode==='history' ? HIST_START[startYear] : 10000;
+  const diff = mode==='history' ? 'normal' : (DIFFS[opts.diff] ? opts.diff : 'normal');
+  G = {
+    v:3, mode, startYear, diff,
+    age:START_AGE, year:1, cpi:1, wageIdx:1, houseIdx:1,
+    cash:START_CASH, health:85, mood:75,
+    level:0, hopBonus:0, hopUsed:false, justHopped:false, stance:'balance',
+    married:false, hadKid:false, kidYears:0, props:[], listings:[], owned:{}, shopYear:{},
+    margin:0, idx:idx0, fut:null,
+    holdings:{}, dca:{}, prices:{}, chg:{}, since:{},
+    hist:{ ages:[START_AGE], net:[START_CASH], idx:[idx0], house:[100] },
+    mh:{ x:[START_AGE], idx:[idx0] }, mv:1,
+    market:null, lastMarket:null, lastSwanYear:-9, forcedNext:null, lastIdxChg:null,
+    rhino:null, rhinoPeak:0,
+    stats:{ marginCalls:0, swans:0, memeProfit:0, startupWin:false, houseBought:false, crisisHunter:false,
+            realizedLoss:0, levDoubles:0, levLiquidations:0, rhinoEscape:false, rhinos:0, histCrises:0, shopSpent:0, propDeals:0, propProfit:0 },
+    ach:{}, fx:{}, over:false, busy:false,
+  };
+  ASSETS.forEach(a => {
+    G.holdings[a.id]={qty:0,cost:0}; G.dca[a.id]=0; G.prices[a.id]=a.price; G.chg[a.id]=null; G.since[a.id]=null;
+    G.hist[a.id]=[a.price]; G.mh[a.id]=[a.price];
+  });
+  LOGS.length=0;
+  ['#endOverlay','#modal','#sheet','#dlg','#start'].forEach(s=>$(s).classList.add('hidden'));
+  document.querySelectorAll('[data-dca]').forEach(i => i.value=0);
+  META.plays=(META.plays||0)+1; saveMeta();
+  rollMarket(); genListings(); startYearLedger();
+  log(mode==='history'
+    ? `🎓 ${startYear} 年，22 歲，大學畢業。口袋裡有 ${fmt(START_CASH)}。你將親身經歷這段真實的歷史。`
+    : `🎓 [${DIFFS[diff].icon}${DIFFS[diff].name}] 22 歲，大學畢業。口袋裡有 ${fmt(START_CASH)}，第一份工作剛到手。目標：65 歲退休前，讓資產最大化！`,'info');
+  log('💡 提示：年底才領薪水，所以年初能動用的只有手上現金。記得先看看「壓乎新聞」。','info');
+  logHead(yearLabel());
+  newsUnread=true;
+  switchTab('stock');
+  render();
+}
+
+/* ---------- 年份 ---------- */
+const calYear = (y=G.year) => G.mode==='history' ? G.startYear + y - 1 : null;
+const yearLabel = () => G.mode==='history' ? `—— ${calYear()} 年｜${G.age} 歲 ——` : `—— ${G.age} 歲 ——`;
+const isListed = id => { const a=AM[id]; return !(G.mode==='history' && a.listed && calYear()<a.listed); };
+
+/* ---------- 資產計算 ---------- */
+const holdValue = () => ASSETS.reduce((s,a) => s + G.holdings[a.id].qty*G.prices[a.id], 0);
+const futEq = () => G.fut ? G.fut.eq : 0;
+const propValue = p => p.base*G.houseIdx*p.mult;
+const houseValue = () => G.props.reduce((s,p)=>s+propValue(p),0);
+const houseEquity = () => G.props.reduce((s,p)=>s+propValue(p)-p.loan,0);
+const hasSelf = () => G.props.some(p=>p.use==='self');
+const D = () => DIFFS[G.diff||'normal'];
+const netWorth = () => G.cash + holdValue() - G.margin + futEq() + houseEquity();
+const maintRatio = () => G.margin>0 ? holdValue()/G.margin : Infinity;
+const riskShare = () => (holdValue()-G.margin+futEq()) / Math.max(1, netWorth());
+const salary = () => JOBS[G.level].sal * G.wageIdx * (1+G.hopBonus) * STANCES[G.stance].sal;
+const C = n => Math.round(n*G.cpi/1000)*1000;
+const dH = x => { G.health = clamp(G.health+x,0,100); };
+const dM = x => { G.mood = clamp(G.mood+x,0,100); };
+
+/* ---------- 日誌 ---------- */
+function log(msg, cls='info'){ LOGS.push({m:msg,c:cls,y:G?G.year:1}); if(LOGS.length>600) LOGS.shift(); }
+const logHead = t => log(t,'head');
+
+/* ---------- 年度帳本 ---------- */
+function startYearLedger(){
+  Y={ startNet:netWorth(), startEq:houseEquity(), health:G.health, mood:G.mood, pnl:0, div:0, fut:0, income:0, rent:0, spend:0, shop:0, interest:0, event:'' };
+}
+function buildYearSummary(endNet){
+  if(!Y) return null;
+  const d=endNet-Y.startNet, eq=houseEquity()-Y.startEq;
+  const rows=[['📊 股市損益',Y.pnl],['💵 股息',Y.div],['🎰 台指期損益',Y.fut],['💼 工作收入（稅後）',Y.income],['🏘 房租收入',Y.rent],['🏠 生活、房貸與持有成本',-Y.spend],['🛍 購物',-Y.shop],
+              ['🏡 房產淨值變化',eq],['🏦 利息收支',Y.interest]];
+  rows.push(['🎲 事件、手續費與其他一次性項目', d-rows.reduce((t,r)=>t+r[1],0)]);
+  return { age:G.age-1, yr:G.mode==='history'?calYear(G.year-1):null, d, pc:Y.startNet>0?d/Y.startNet:null, startNet:Y.startNet, endNet,
+           rows:rows.filter(r=>Math.abs(r[1])>=100), event:Y.event, h0:Y.health, h1:G.health, m0:Y.mood, m1:G.mood };
+}
+function showYearSummary(S){
+  const head=S.d>=0?`💰 這一年賺了 <b class="up">${fmt(S.d)}</b>`:`📉 這一年虧了 <b class="dn">${fmt(-S.d)}</b>`;
+  const lm=G.lastMarket;
+  const body=`
+    <p style="margin:0 0 4px;font-size:17px">${head}${S.pc==null?'':`（${pct(S.pc)}）`}</p>
+    <p class="mut" style="margin:0 0 8px">淨資產 ${fmt(S.startNet)} → <b style="color:var(--txt)">${fmt(S.endNet)}</b></p>
+    ${lm?`<p style="margin:0 0 8px">📊 大盤 <b class="${upDn(lm.idxChg)}">${pct(lm.idxChg)}</b>｜${esc(lm.label)}</p>`:''}
+    <table class="sum">${S.rows.map(r=>`<tr><td>${r[0]}</td><td class="${upDn(r[1])}">${fmt(r[1],true)}</td></tr>`).join('')}</table>
+    ${S.event?`<p style="margin:10px 0 0">🎲 年度事件：${esc(S.event.replace(/^[^\s]+\s/,''))}</p>`:''}
+    <p class="mut" style="margin:8px 0 0">健康 ${Math.round(S.h0)} → ${Math.round(S.h1)}｜心情 ${Math.round(S.m0)} → ${Math.round(S.m1)}</p>`;
+  showDialog({title:`📒 ${S.yr?S.yr+' 年｜':''}${S.age} 歲年度結算`,body,buttons:[{label:`進入 ${G.age} 歲`,primary:true}]});
+}
+
+/* =====================================================================
+ *  市場：每年年初決定這一年的劇本
+ * ===================================================================== */
+function genTopics(){
+  const pool=TOPICS.filter(t=>t.ids.every(isListed));
+  const out=[]; const used=new Set();
+  while(out.length<2 && pool.length>out.length){
+    const t=pick(pool); if(used.has(t.t)) continue; used.add(t.t);
+    const real=chance(.55);
+    out.push({ t:t.t, ids:t.ids, dir:t.dir, real, eff: real ? t.dir*rand(.15,.35) : -t.dir*rand(0,.08), src:pick(SOURCES) });
+  }
+  return out;
+}
+function rollMarket(){
+  const prev = G.market ? G.market.regime : null;
+  const m = { regime:null, swan:null, target:null, hist:null, rhino:null, rhinoBuild:null, warn:null, hints:{}, quotes:{}, topics:[], news:'' };
+  const H = G.mode==='history' ? HIST[calYear()] : null;
+
+  // 歷史模式：新股上市
+  if(G.mode==='history') ASSETS.forEach(a=>{ if(a.listed===calYear() && calYear()!==G.startYear){ G.prices[a.id]=a.price; log(`🔔 新股上市：${a.name} 今年正式掛牌！`,'market'); } });
+
+  if(H){
+    m.hist=H; m.target=H.ret;
+    m.regime = H.ret>.08?'bull':(H.ret<-.05?'bear':'side');
+    if(H.kind||H.qm||H.ex) m.swan={ name:H.title, desc:H.desc, qm:H.qm||null, ex:H.ex||{}, house:H.house, infl:H.infl||0, recession:!!H.recession, vol:.8,
+                                    kind:H.kind==='rhino'?'rhino':(H.kind==='swan'?'swan':'hist'), hist:true };
+    if(H.warn) m.warn={ name:'歷史的伏筆', icon:'🦏', level:Math.min(3,H.warn.length+1), lines:H.warn.map(t=>[t,'']) };
+  } else {
+    let regime;
+    if(G.forcedNext){ regime=G.forcedNext; G.forcedNext=null; }
+    else if(prev){ const TR=D().trans||TRANS; regime = pickW(RKEYS, k => TR[prev][RKEYS.indexOf(k)]); }
+    else regime = pickW(RKEYS, k => ({bull:.45,side:.3,bear:.25})[k]);
+    m.regime=regime;
+
+    // 灰犀牛：前兆期 → 爆發
+    if(G.rhino){
+      G.rhino.yr++;
+      const R=RHINOS.find(r=>r.id===G.rhino.id);
+      if(G.rhino.yr>G.rhino.len){
+        m.swan={...R.burst, kind:'rhino'}; G.rhino=null; G.lastSwanYear=G.year;
+      } else {
+        m.regime='bull'; m.rhinoBuild=R.build;
+        const lv=Math.min(3,G.rhino.yr);
+        m.warn={ name:R.name, icon:R.icon, level:lv, lines:R.warns.slice(0,Math.min(R.warns.length,G.rhino.yr+1)) };
+      }
+    } else if(G.year>=3 && G.year-G.lastSwanYear>=3 && G.age<=RETIRE_AGE-4 && chance(.07*D().swanMul)){
+      const R=pick(RHINOS); G.rhino={id:R.id, yr:1, len:randi(2,4)}; G.rhinoPeak=0; G.stats.rhinos++;
+      m.regime='bull'; m.rhinoBuild=R.build;
+      m.warn={ name:R.name, icon:R.icon, level:1, lines:R.warns.slice(0,2) };
+    }
+    // 黑天鵝：毫無前兆
+    if(!m.swan && !G.rhino && G.year>=2 && G.year-G.lastSwanYear>=3 && chance(.06*D().swanMul)){
+      m.swan={...pickW(SWANS, s=>s.w), kind:'swan'}; G.lastSwanYear=G.year;
+    }
+  }
+  // 分析師預測的是「今年的實際結果」
+  const tot = m.swan&&m.swan.qm ? m.swan.qm.reduce((x,y)=>x*(1+y),1)-1 : (m.target!=null ? m.target : null);
+  const truth = tot==null ? m.regime : (tot>.08?'bull':(tot<-.05?'bear':'side'));
+  m.truth=truth;
+  const wrong = () => RKEYS.filter(k=>k!==truth)[Math.floor(Math.random()*2)];
+  ANALYSTS.forEach(a => { m.hints[a.id] = chance(a.acc) ? truth : wrong(); m.quotes[a.id]=pick(a.quotes); });
+  m.news = pick(NEWS[chance(.5) ? truth : wrong()]);
+  m.topics = genTopics();
+  G.market = m;
+}
+
+/* ---------- 逐月模擬 ----------
+ *  厚尾（t 分布）、波動叢聚、產業因子、8 月除息、台股跳動單位、每月檢查融資與期貨保證金。
+ *  歷史模式：先產生隨機路徑，再等比例校正，使全年漲跌等於年表數字。
+ * ------------------------------------------------------------- */
+const SECTORS = { tech:.12, trad:.08, fin:.08 };
+function simulateMarket(){
+  const m=G.market, reg=REGIMES[m.regime], sw=m.swan;
+  const p0={...G.prices}, q0={}; ASSETS.forEach(a => q0[a.id]=G.holdings[a.id].qty);
+  const eq0 = ASSETS.reduce((s,a)=>s+q0[a.id]*p0[a.id],0) - G.margin;
+  const idx0 = G.idx, fut0 = G.fut ? G.fut.eq : null;
+  let called=false, div=0, futPnl=0;
+  if(G.mv==null) G.mv=1;
+  const expTot = sw&&sw.qm ? sw.qm.reduce((x,y)=>x*(1+y),1)-1 : (m.target!=null ? m.target : reg.mm);
+  const crashYear = expTot < -.2;
+  // 個股額外衝擊：黑天鵝／灰犀牛／題材
+  const ex={};
+  const addEx=o=>{ for(const k in (o||{})) ex[k]=(ex[k]||0)+o[k]; };
+  if(sw) addEx(sw.ex); if(m.rhinoBuild) addEx(m.rhinoBuild.ex);
+  m.topics.forEach(t=>t.ids.forEach(id=>{ ex[id]=(ex[id]||0)+t.eff; }));
+
+  if(sw){
+    if(sw.kind==='swan'){ G.stats.swans++; log(`🦢 黑天鵝降臨：${sw.name}！${sw.desc}`,'market'); }
+    else if(sw.kind==='rhino') log(`🦏 灰犀牛衝撞：${sw.name}！${sw.desc}`,'market');
+    else log(`📜 ${calYear()} 年大事：${sw.name}。${sw.desc}`,'market');
+  } else if(m.hist) log(`📜 ${calYear()} 年：${m.hist.title}。${m.hist.desc}`,'market');
+
+  // 1) 先產生 12 個月的大盤報酬
+  const sd=.15/Math.sqrt(12), mqs=[];
+  const volReg = m.target!=null ? .75 : (sw ? sw.vol : reg.vol)*D().volMul;
+  const drift = m.target!=null ? 0 : (D().mmAdj + (D().regAdj&&!sw ? D().regAdj[m.regime] : 0))/12;
+  for(let k=0;k<12;k++){
+    const q=Math.floor(k/3), w=k%3;
+    let mu;
+    if(sw&&sw.qm) mu=Math.pow(1+sw.qm[q], (sw.shape||[1/3,1/3,1/3])[w]) - 1;
+    else if(m.target!=null) mu=Math.pow(1+m.target,1/12)-1;
+    else mu=Math.pow(1+reg.mm,1/12)-1;
+    const z=randt(6);
+    mqs.push(Math.max(-.28, mu + drift + sd*volReg*G.mv*z));
+    G.mv = clamp(.88*G.mv + .12 + .03*((z<0?1.8:.5)*Math.abs(z)-.9), .75, 2.0);
+  }
+  if(m.target!=null){                                   // 歷史模式：校正到年表報酬
+    const F=mqs.reduce((x,r)=>x*(1+r),1), adj=Math.pow((1+m.target)/F,1/12);
+    for(let k=0;k<12;k++) mqs[k]=(1+mqs[k])*adj-1;
+  }
+
+  // 2) 逐月推進
+  for(let k=0;k<12;k++){
+    const mq=mqs[k];
+    G.idx *= 1+mq;
+    const sec={}; for(const key in SECTORS) sec[key]=SECTORS[key]/Math.sqrt(12)*randt(6);
+    for(const a of ASSETS){
+      let r = (a.alpha+a.div)/12 + a.beta*mq + (a.sec? a.sl*sec[a.sec] : 0) + a.idio/Math.sqrt(12)*randt(5);
+      if(ex[a.id]) r += ex[a.id]/12;
+      if(a.crashBoost && crashYear) r += a.crashBoost/12;
+      { const x=G.prices[a.id]/a.price;
+        if(a.id==='MEME'){ if(x>30) r-=.25/3; else if(x>10) r-=.12/3; } else if(a.jumpUp){ if(x>40) r-=.2/3; else if(x>15) r-=.08/3; } }
+      let f = Math.max(.3, 1+r);
+      if(a.jumpUp && isListed(a.id)){
+        if(chance(a.jumpUp/12)){ const j=rand(...a.jumpUpR); f*=j; log(`🚀 ${a.name} 利多爆發，單月大漲 ${((j-1)*100).toFixed(0)}%！`,'market'); }
+        else if(chance(a.jumpDn/12)){ const j=rand(...a.jumpDnR); f*=j; log(`💣 ${a.name} 爆出利空，單月重挫 ${((1-j)*100).toFixed(0)}%！`,'market'); }
+      }
+      G.prices[a.id] = tickRound(G.prices[a.id]*f);
+    }
+    if(k===7){                                          // 8 月除息
+      for(const a of ASSETS){ if(!a.div) continue;
+        const h=G.holdings[a.id]; if(h.qty>0) div += h.qty*G.prices[a.id]*a.div;
+        G.prices[a.id] = tickRound(G.prices[a.id]*(1-a.div)); }
+    }
+    if(G.margin>0 && !called && holdValue()/G.margin < MAINT){ marginCall(k+1); called=true; }
+    if(G.fut){                                          // 台指期逐月結算
+      const d=G.fut.notional*mq; G.fut.eq+=d; futPnl+=d;
+      if(G.fut.eq < G.fut.margin*LEV_STOP) liquidateFut(k+1);
+    }
+    G.mh.x.push(+(G.age+(k+1)/12).toFixed(3)); G.mh.idx.push(G.idx); ASSETS.forEach(a=>G.mh[a.id].push(G.prices[a.id]));
+  }
+  if(div>0){ G.cash+=div; log(`💵 8 月除息，股息入帳 ${fmt(div,1)}`,'good'); }
+
+  ASSETS.forEach(a => { G.chg[a.id] = G.prices[a.id]/p0[a.id]-1; });
+  G.lastIdxChg = G.idx/idx0-1;
+  if(G.lastIdxChg<-.2 && G.chg.LYG>.03) log('📰 財經快訊：股市崩盤，龍巖(5530)逆勢飆漲！股民戲稱「這很台股」，分析師表示無法解釋。','market');
+
+  // 5 倍槓桿：單回合翻倍
+  if(G.fut && fut0!=null && G.fut.eq>=2*fut0){ G.stats.levDoubles++; log(`🎰 台指期部位今年翻倍！（${fmt(fut0)} → ${fmt(G.fut.eq)}，累計 ${G.stats.levDoubles} 次）`,'good'); }
+
+  // 持股損益 → 心態
+  const pnl = ASSETS.reduce((s,a)=>s+q0[a.id]*(G.prices[a.id]-p0[a.id]),0);
+  if(Y){ Y.pnl=pnl; Y.div=div; Y.fut=futPnl; }
+  const label = sw ? (sw.kind==='swan'?'🦢':sw.kind==='rhino'?'🦏':'📜')+sw.name : (m.hist ? '📜'+m.hist.title : (m.rhinoBuild?'🫧泡沫持續膨脹':reg.icon+reg.name));
+  let line = `📊 今年實際局勢：${label}｜大盤 ${pct(G.lastIdxChg)}`;
+  const base = eq0 + (fut0||0);
+  if(base > 80000*G.cpi){
+    const ret = clamp((pnl+futPnl)/base,-1,3);
+    line += `｜你的投資損益 ${fmt(pnl+futPnl,1)}（${pct(ret)}）`;
+    if(ret < -.1){ const d=Math.min(18,Math.round(-ret*30)); dM(-d); line+=`，帳面縮水讓心情 -${d}`; }
+    else if(ret > .15){ const d=Math.min(10,Math.round(ret*15)); dM(d); line+=`，賺錢心情 +${d}`; }
+    if(crashYear && ret>=0) G.stats.crisisHunter=true;
+  }
+  log(line,'market');
+  if(G.mode==='history' && G.lastIdxChg<-.2) G.stats.histCrises++;
+
+  // 題材回顧
+  m.topics.forEach(t=>{ const avg=t.ids.reduce((s,id)=>s+G.chg[id],0)/t.ids.length; t.result=avg; t.hit=(t.dir>0?avg>G.lastIdxChg:avg<G.lastIdxChg); });
+  G.lastMarket={ label, idxChg:G.lastIdxChg, topics:m.topics, hints:m.hints, truth:m.truth, swan:sw?{name:sw.name,kind:sw.kind,desc:sw.desc}:null,
+                 hist:m.hist?{title:m.hist.title,desc:m.hist.desc}:null, yr:calYear() };
+
+  if(sw && !sw.hist) G.forcedNext = sw.next;
+  const hg = sw && sw.house!=null ? sw.house : (m.rhinoBuild ? m.rhinoBuild.house : reg.house);
+  G.houseIdx = Math.max(.4, G.houseIdx*(1 + hg + (m.target!=null?0:D().mmAdj*.15) + .02*randn()*D().volMul));
+}
+
+function marginCall(month){
+  G.stats.marginCalls++;
+  let proceeds=0;
+  for(const a of ASSETS){
+    const h=G.holdings[a.id]; if(h.qty<=0) continue;
+    const got = h.qty*G.prices[a.id]*(1-a.sellFee);
+    if(a.id==='MEME') G.stats.memeProfit += got-h.cost;
+    if(got<h.cost) G.stats.realizedLoss += h.cost-got;
+    proceeds+=got; h.qty=0; h.cost=0; G.since[a.id]=null;
+  }
+  const loan=G.margin; G.margin=0; G.cash += proceeds-loan;
+  dM(-20); dH(-5);
+  log(`💥 ${month} 月融資維持率跌破 ${(MAINT*100).toFixed(0)}%！券商斷頭：全部持股被強制賣出（${fmt(proceeds)}），償還融資 ${fmt(loan)}。心情 -20、健康 -5。`,'bad');
+}
+function liquidateFut(month){
+  const f=G.fut, back=Math.max(0,f.eq), loss=f.margin-back;
+  G.cash+=back; G.stats.realizedLoss+=Math.max(0,loss); G.stats.levLiquidations++; G.fut=null;
+  dM(-15); dH(-3);
+  log(`☠️ ${month} 月台指期保證金跌破 50%，遭強制平倉！投入 ${fmt(f.margin)} 只剩 ${fmt(back)}。心情 -15、健康 -3。`,'bad');
+}
+
+/* =====================================================================
+ *  交易
+ * ===================================================================== */
+function calcBuy(id, qty, useMargin){
+  const a=AM[id], gross=qty*G.prices[id], fee=gross*a.buyFee;
+  const loan = useMargin ? gross*LTV : 0;
+  return { gross, fee, loan, self: gross+fee-loan };
+}
+function doBuy(id, qty, useMargin){
+  qty=Math.floor(qty);
+  if(!isListed(id)) return {ok:false,msg:`${AM[id].name} 在 ${calYear()} 年還沒上市`};
+  if(!(qty>0)) return {ok:false,msg:'請輸入大於 0 的整數股數'};
+  const c=calcBuy(id,qty,useMargin);
+  if(c.self>G.cash) return {ok:false,msg:`現金不足，需要 ${fmt(c.self)}`};
+  if(useMargin){
+    const newM=G.margin+c.loan, newH=holdValue()+c.gross;
+    if(newH/newM<1.5) return {ok:false,msg:'融資後維持率需 ≥ 150%，請降低融資額度'};
+    G.margin=newM;
+  }
+  G.cash-=c.self;
+  const h=G.holdings[id]; if(h.qty===0) G.since[id]=G.year;
+  h.qty+=qty; h.cost+=c.gross+c.fee;
+  return {ok:true,msg:`買進 ${AM[id].name} ${qty.toLocaleString()} 股，花費 ${fmt(c.self)}${useMargin?`（融資 ${fmt(c.loan)}）`:''}，手續費 ${fmt(c.fee)}`};
+}
+function doSell(id, qty){
+  const a=AM[id], h=G.holdings[id];
+  qty=Math.min(Math.floor(qty),h.qty);
+  if(!(qty>0)) return {ok:false,msg:'沒有可賣出的股數'};
+  const gross=qty*G.prices[id], hv=holdValue(), proceeds=gross*(1-a.sellFee);
+  const repay = G.margin>0 ? Math.min(G.margin, G.margin*gross/hv) : 0;
+  const costPart=h.cost*qty/h.qty, profit=proceeds-costPart;
+  h.qty-=qty; h.cost-=costPart; if(h.qty===0) h.cost=0;
+  G.since[id] = h.qty>0 ? G.year : null;              // 只要賣過就重新計算持有年數
+  G.margin-=repay; if(G.margin<1) G.margin=0;
+  G.cash+=proceeds-repay;
+  if(id==='MEME') G.stats.memeProfit+=profit;
+  if(profit<0) G.stats.realizedLoss+=-profit;
+  return {ok:true,msg:`賣出 ${a.name} ${qty.toLocaleString()} 股，實拿 ${fmt(proceeds-repay)}（損益 ${fmt(profit,1)}${repay>0?`，償還融資 ${fmt(repay)}`:''}）`};
+}
+function futOpen(amt, lev=LEV){
+  amt=Math.floor(amt);
+  if(!D().levs.includes(lev)) return {ok:false,msg:`${lev} 倍槓桿只在困難模式開放`};
+  if(!(amt>0)) return {ok:false,msg:'請輸入投入金額'};
+  if(amt>G.cash) return {ok:false,msg:`現金不足（可用 ${fmt(Math.max(0,G.cash))}）`};
+  const notional=amt*lev, fee=notional*LEV_FEE;
+  if(amt+fee>G.cash) return {ok:false,msg:'現金不足以支付手續費'};
+  G.cash-=amt+fee;
+  if(!G.fut) G.fut={margin:0,notional:0,eq:0};
+  G.fut.margin+=amt; G.fut.notional+=notional; G.fut.eq+=amt;
+  return {ok:true,msg:`台指期投入保證金 ${fmt(amt)}，曝險 ${fmt(notional)}（${lev} 倍），手續費 ${fmt(fee)}`};
+}
+function futClose(){
+  if(!G.fut) return {ok:false,msg:'目前沒有台指期部位'};
+  const f=G.fut, fee=f.notional*LEV_FEE, back=Math.max(0,f.eq-fee), pl=back-f.margin;
+  G.cash+=back; if(pl<0) G.stats.realizedLoss+=-pl; G.fut=null;
+  return {ok:true,msg:`台指期全部平倉，取回 ${fmt(back)}（損益 ${fmt(pl,1)}）`};
+}
+function ensureCash(){
+  if(G.cash>=0) return;
+  if(G.fut){ const r=futClose(); log('🆘 現金不足，台指期被迫平倉：'+r.msg,'bad'); }
+  for(const id of ['BOND','LYG','DIV','GREEN','FPC','BLUE','TSMC','ACCTON','YAGEO','MEME']){
+    let guard=0;
+    while(G.cash<0 && G.holdings[id].qty>0 && guard++<6){
+      const hv=holdValue(), mf=hv>0?Math.min(.95,G.margin/hv):0;
+      const per=G.prices[id]*(1-AM[id].sellFee)*(1-mf);
+      const q=Math.min(G.holdings[id].qty, Math.ceil(-G.cash/per));
+      const r=doSell(id,q); if(r.ok) log('🆘 現金不足，被迫變賣：'+r.msg,'bad');
+    }
+  }
+  while(G.cash<0 && G.props.length){                     // 最後只能賣房（先賣非自住）
+    let i=G.props.findIndex(p=>p.use!=='self'); if(i<0) i=0;
+    const r=sellProp(i,true); log('🆘 現金不足，房子被迫賤賣：'+r.msg,'bad');
+  }
+}
+function runDCA(){
+  for(const a of ASSETS){
+    const amt=G.dca[a.id]; if(!(amt>0)) continue;
+    if(!isListed(a.id)){ log(`🔁 定期定額 ${a.name}：尚未上市，本年略過。`,'info'); continue; }
+    const spend=Math.min(amt, Math.max(0,G.cash));
+    const qty=Math.floor(spend/(G.prices[a.id]*(1+a.buyFee)));
+    if(qty<1){ log(`🔁 定期定額 ${a.name}：現金不足，本年略過。`,'bad'); continue; }
+    const r=doBuy(a.id,qty,false); if(r.ok) log('🔁 定期定額：'+r.msg,'info');
+  }
+}
+
+/* =====================================================================
+ *  房地產
+ * ===================================================================== */
+let PUID=1;
+function makeListing(type){
+  const T=PROP_TYPES[type], lm=rand(.85,1.15);
+  return { lid:Math.random().toString(36).slice(2,8), type, name:T.name, icon:T.icon, base:T.base*lm, price:T.base*lm*G.houseIdx, deal:lm };
+}
+function genListings(){
+  const keys=Object.keys(PROP_TYPES), out=[];
+  while(out.length<3){ const t=pickW(keys,k=>PROP_TYPES[k].w); if(!out.some(l=>l.type===t)) out.push(makeListing(t)); }
+  G.listings=out;
+}
+const mortgagePay = (loan,r,yrs=30) => loan*r/(1-Math.pow(1+r,-yrs));
+function buyTerms(price){
+  const n=G.props.length, down=price*(n?0.4:0.2), rate=n?.026:.022;   // 第二戶起限貸 6 成
+  const loan=price-down, pay=mortgagePay(loan,rate), fee=price*.02;
+  return { down, rate, loan, pay, fee, need:down+fee };
+}
+function buyProp(L, use){
+  if(G.props.length>=MAX_PROPS) return {ok:false,msg:`最多只能持有 ${MAX_PROPS} 間房`};
+  const t=buyTerms(L.price);
+  if(t.need>G.cash) return {ok:false,msg:`現金不足：頭期款＋契稅代書費共需 ${fmt(t.need)}`};
+  const f=calcFinance(), canPay=.6*(f.sal+f.spouse+f.rent*.7);       // 銀行審核：房貸年付金 ≤ 收入 6 成
+  const allPay=G.props.reduce((s,p)=>s+(p.loan>0?p.pay:0),0)+t.pay;
+  if(allPay>canPay) return {ok:false,msg:`銀行婉拒：房貸年繳 ${fmt(allPay)} 超過收入的 6 成（${fmt(canPay)}）`};
+  if(use==='self' && hasSelf()) use='rent';
+  G.cash-=t.need;
+  G.props.push({ uid:PUID++ + Date.now()%100000, type:L.type, name:L.name, icon:L.icon, base:L.base, mult:1, cost:L.price+t.fee,
+                 loan:t.loan, pay:t.pay, rate:t.rate, yearsLeft:30, use, ins:false, vac:false, bought:G.year });
+  G.listings=G.listings.filter(x=>x.lid!==L.lid);
+  G.stats.houseBought=true; dM(use==='self'?8:4);
+  return {ok:true,msg:`買下${L.name}（${fmt(L.price)}），頭期款 ${fmt(t.down)}，房貸每年 ${fmt(t.pay)}，用途：${USE_NAME[use]}`};
+}
+const USE_NAME={self:'自住',rent:'出租',vacant:'空置'};
+function sellTerms(p, forced){
+  const v=propValue(p)*(forced?.85:1), fee=v*.04, gain=v-fee-p.cost, yrs=G.year-p.bought;
+  let rate = yrs<2?.45 : yrs<5?.35 : yrs<10?.20 : .15;            // 房地合一稅（簡化）
+  if(p.use==='self' && yrs>=6) rate=.10;
+  const tax=Math.max(0,gain)*rate;
+  return { v, fee, gain, tax, rate, yrs, net:v-fee-tax-p.loan };
+}
+function sellProp(i, forced){
+  const p=G.props[i]; if(!p) return {ok:false,msg:'找不到這間房'};
+  const t=sellTerms(p,forced);
+  G.cash+=t.net; G.props.splice(i,1);
+  const pl=t.gain-t.tax; G.stats.propProfit+=pl; G.stats.propDeals++; if(pl<0) G.stats.realizedLoss+=-pl;
+  return {ok:true,msg:`${forced?'法拍價':''}賣出${p.name}（${fmt(t.v)}），扣仲介費、房地合一稅 ${fmt(t.tax)} 與房貸後，拿回 ${fmt(t.net)}（損益 ${fmt(pl,1)}）`};
+}
+function setUse(i,use){
+  const p=G.props[i]; if(!p) return;
+  if(use==='self' && hasSelf() && p.use!=='self') G.props.forEach(q=>{ if(q.use==='self') q.use='rent'; });
+  p.use=use;
+}
+function propYear(){                                    // 每年：漲跌、空租、風險事件
+  G.props.forEach(p=>{
+    const T=PROP_TYPES[p.type];
+    p.mult=Math.max(.2, p.mult*(1+T.drift+T.vol*randn()*D().volMul));
+    p.vac = p.use==='rent' && chance(T.vac);
+    const pool=PROP_RISKS.filter(r=>(!r.only||r.only.includes(p.type)) && (!r.rented||p.use==='rent'));
+    for(const r of pool.sort(()=>Math.random()-.5)){
+      if(!chance(r.p*((r.x&&r.x[p.type])||1))) continue;
+      const v=propValue(p); let msg=`${p.icon} ${p.name}：${r.text}`;
+      if(r.cost){ const c=v*rand(...r.cost);
+        if(r.nat && p.ins){ msg+=`，修繕費 ${fmt(c)} 由保險理賠`; } else { G.cash-=c; msg+=`，修繕費 ${fmt(-c)}`; } }
+      if(r.val){ p.mult*=1+r.val; msg+=`，房價 ${pct(r.val)}`; }
+      if(r.vac && p.use==='rent'){ p.vac=true; msg+='，今年收不到房租'; }
+      if(r.mood) dM(r.mood);
+      log(msg, r.good?'good':'bad');
+      break;
+    }
+    if(p.vac && p.use==='rent' && !LOGS.slice(-3).some(l=>l.m.includes(p.name))) log(`${p.icon} ${p.name}今年空租，收不到房租。`,'bad');
+  });
+}
+
+/* =====================================================================
+ *  購物
+ * ===================================================================== */
+const itemPrice = it => C(it.price);
+function itemState(it){
+  if(it.minAge && G.age<it.minAge) return {ok:false,why:`${it.minAge} 歲以上`};
+  if(it.yearly && G.shopYear[it.id]===G.year) return {ok:false,why:'今年已買'};
+  if(!it.yearly && G.owned[it.id]) return {ok:false,why:`已擁有（還能用 ${G.owned[it.id].left} 年）`};
+  if(itemPrice(it)>G.cash) return {ok:false,why:'現金不足'};
+  return {ok:true};
+}
+function buyItem(id){
+  const it=SHOPM[id], st=itemState(it); if(!st.ok) return {ok:false,msg:`${it.name}：${st.why}`};
+  const c=itemPrice(it); G.cash-=c; G.stats.shopSpent+=c; if(Y) Y.shop+=c;
+  if(it.mood) dM(it.mood); if(it.health) dH(it.health);
+  if(it.yearly) G.shopYear[it.id]=G.year; else G.owned[it.id]={left:it.life};
+  return {ok:true,msg:`買了${it.icon}${it.name} ${fmt(-c)}${it.mood?`，心情 +${it.mood}`:''}${it.health?`，健康 +${it.health}`:''}`};
+}
+function tickOwned(){
+  for(const id of Object.keys(G.owned)){
+    const it=SHOPM[id], o=G.owned[id];
+    if(it.keep&&it.keep.mood) dM(it.keep.mood);
+    o.left--;
+    if(o.left<=0){ delete G.owned[id]; log(`${it.icon} 你的${it.name}已經老舊報廢，可以考慮換新了。`,'info'); }
+  }
+}
+
+/* =====================================================================
+ *  財務結算
+ * ===================================================================== */
+function calcFinance(){
+  const s=STANCES[G.stance];
+  const sal=salary(), tax=.06+.02*G.level, netInc=sal*(1-tax);
+  const spouse=G.married ? 220000*G.wageIdx*.92 : 0;
+  let living=LIVING*G.cpi*(1+.15*G.level)*s.cost;
+  if(G.married) living+=120000*G.cpi;
+  if(G.kidYears>0) living+=100000*G.cpi;
+  if(G.health<40) living+=30000*G.cpi;
+  if(hasSelf()) living-=RENT*G.cpi;
+  let housePay=0, houseCost=0, rent=0;
+  G.props.forEach(p=>{ const v=propValue(p); houseCost+=v*.005+(p.ins?v*.0015:0); if(p.loan>0) housePay+=p.pay;
+    if(p.use==='rent' && !p.vac) rent+=v*PROP_TYPES[p.type].yld; });
+  const upkeep=Object.keys(G.owned).reduce((t,id)=>t+((SHOPM[id].keep||{}).cost||0)*G.cpi,0);
+  living+=upkeep;
+  return { sal, netInc, spouse, living, upkeep, housePay, houseCost, rent, net:netInc+spouse+rent-living-housePay-houseCost };
+}
+function settleFinances(){
+  const f=calcFinance(), sw=G.market.swan;
+  const cashInt = G.cash>0 ? G.cash*CASH_RATE : G.cash*DEBT_RATE;
+  const marInt = G.margin*MARGIN_RATE;
+  G.cash += f.netInc + f.spouse + f.rent - f.living - f.housePay - f.houseCost + cashInt - marInt;
+  if(Y){ Y.income=f.netInc+f.spouse; Y.rent=f.rent; Y.spend=f.living+f.housePay+f.houseCost; Y.interest=cashInt-marInt; }
+  let extra='';
+  G.props.forEach(p=>{
+    if(p.loan<=0) return;
+    const interest=p.loan*p.rate;
+    p.loan=Math.max(0,p.loan-(p.pay-interest)); p.yearsLeft--;
+    if(p.loan<1||p.yearsLeft<=0){ p.loan=0; p.pay=0; extra+=` 🎉${p.name}房貸還清！`; }
+  });
+  log(`💼 年度收支：薪資(稅後${G.married?'+配偶':''}) ${fmt(f.netInc+f.spouse,1)}${f.rent?`｜房租 ${fmt(f.rent,1)}`:''}｜生活 ${fmt(-f.living)}${f.housePay?`｜房貸 ${fmt(-f.housePay)}`:''}${f.houseCost?`｜持有成本 ${fmt(-f.houseCost)}`:''}｜利息 ${fmt(cashInt-marInt,1)}${extra}`,'info');
+  const infl = sw&&sw.infl ? sw.infl : clamp(.02+randn()*.007,0,.04);
+  if(infl>=.06) log(`🔥 通膨高達 ${pct(infl,false)}，物價飆漲！`,'bad');
+  G.cpi*=1+infl; G.wageIdx*=1+.8*infl+.006;
+}
+
+/* =====================================================================
+ *  人生事件
+ * ===================================================================== */
+function pickEvent(){ return pickW(EVENTS, e => (G.age>=e.ages[0]&&G.age<=e.ages[1]) ? e.w() : 0); }
+function tickFx(){
+  const f=fx();
+  if(f.venture){
+    const v=f.venture; v.left--;
+    if(v.left>0 && chance(.3)){ const x=C(50000); G.cash-=x; v.inv+=x; dM(-2); log(`🚀 創業公司資金吃緊，你被迫追加 ${fmt(x)}。`,'bad'); }
+    if(v.left<=0){
+      let p=.18+.03*G.level+(G.mood>=60?.06:0)+(G.health>=60?.04:0)+(G.stance==='hustle'?.05:0);
+      p=clamp(p,.1,.45); f.venture=null;
+      if(chance(p)){ const x=v.inv*4; G.cash+=x; dM(20); G.stats.startupWin=true; log(`🎉 創業成功！（成功率 ${(p*100).toFixed(0)}%）公司被收購，你回收 ${fmt(x,1)}，心情 +20`,'good'); }
+      else { dM(-15); log(`📉 創業失敗（成功率 ${(p*100).toFixed(0)}%），累計投入的 ${fmt(-v.inv)} 全數泡湯，心情 -15`,'bad'); }
+    } else log(`🚀 創業進行中…（剩 ${v.left} 年，已投入 ${fmt(v.inv)}）`,'info');
+  }
+  if(f.study>0){ f.study--; if(f.study===0){ G.hopBonus=Math.min(.6,G.hopBonus+.06); log('🎓 在職進修畢業，薪資行情 +6%！','good'); } }
+}
+function showChoice(ev, done){
+  G.busy=true; render();
+  $('#mTitle').textContent=ev.title+(ev.group?`　［${ev.group}］`:''); $('#mText').textContent=ev.text();
+  const box=$('#mBtns'); box.innerHTML='';
+  ev.choices().forEach((c,i) => {
+    const b=document.createElement('button'); b.textContent=c.label; if(i===0) b.className='primary';
+    b.onclick=()=>{ $('#modal').classList.add('hidden'); const [m,cls]=c.run(); if(Y) Y.event=m; log(m,cls); done(); };
+    box.appendChild(b);
+  });
+  $('#modal').classList.remove('hidden');
+}
+
+/* =====================================================================
+ *  回合流程
+ * ===================================================================== */
+function endYear(){
+  if(G.over||G.busy) return;
+  G.busy=true; closeSheet();
+  // 灰犀牛：記錄泡沫期最高曝險，爆發年檢查是否已在高點套現
+  const sh=riskShare();
+  if(G.market.warn) G.rhinoPeak=Math.max(G.rhinoPeak||0, sh);
+  if(G.market.swan && G.market.swan.kind==='rhino'){
+    if((G.rhinoPeak||0)>=.4 && sh<=.1){ G.stats.rhinoEscape=true; log('🦏 你在泡沫破裂前果斷套現，成功躲過灰犀牛！','good'); }
+    G.rhinoPeak=0;
+  }
+  runDCA();
+  simulateMarket();
+  propYear();
+  settleFinances();
+  const ev=pickEvent();
+  if(!ev){ finishYear(); return; }
+  if(ev.choices){ log(`🎲 年度事件：${ev.title}`,'info'); showChoice(ev, finishYear); }
+  else { const [m,cls]=ev.run(); if(Y) Y.event=m; log('🎲 '+m,cls); finishYear(); }
+}
+function finishYear(){
+  const s=STANCES[G.stance];
+  dH(s.health - Math.max(0,G.age-35)*.08);
+  dM(s.mood + (60-G.mood)*.1);
+  if(G.mood<20){ dH(-3); log('😞 長期低落的心情拖垮了身體，健康 -3。','bad'); }
+  const J=JOBS[G.level];
+  if(J.promo>0){
+    let p=J.promo+s.promo;
+    if(G.mood<25) p*=.5; else if(G.mood>=70) p*=1.2;
+    if(G.health<30) p*=.5;
+    if(G.justHopped) p*=.5;
+    if(fx().study>0) p+=.08;
+    if(chance(p)){ G.level++; dM(6); log(`🎖 升遷為「${JOBS[G.level].t}」，年薪提升！`,'good'); }
+  }
+  G.justHopped=false; G.hopUsed=false;
+  if(G.kidYears>0) G.kidYears--;
+  tickFx();
+  tickOwned();
+  ensureCash();
+  const nw=netWorth();
+  if(G.health<=0) return endGame('death');
+  if(nw < -1500000*G.cpi) return endGame('bankrupt');
+
+  G.age++; G.year++;
+  G.hist.ages.push(G.age); G.hist.net.push(nw); G.hist.idx.push(G.idx); G.hist.house.push(G.houseIdx*100);
+  ASSETS.forEach(a => G.hist[a.id].push(G.prices[a.id]));
+  checkAch();
+  if(G.age>=RETIRE_AGE) return endGame('retire');
+  const sum=buildYearSummary(nw);
+  if(sum) log(`📒 ${sum.age} 歲結算：淨資產 ${fmt(sum.d,true)}${sum.pc==null?'':`（${pct(sum.pc)}）`}`,sum.d>=0?'good':'bad');
+
+  rollMarket(); genListings();
+  logHead(yearLabel());
+  G.busy=false;
+  if(G.health<35) log('⚠ 健康亮紅燈！再惡化會有生命危險、醫療支出也會增加，建議改為「養生享樂」。','bad');
+  if(G.mood<25) log('⚠ 心情低落中：升遷機率減半，且會拖累健康。','bad');
+  newsUnread=true;
+  render();
+  saveTo('auto');
+  startYearLedger();
+  if(sum && AUTO_SUMMARY) showYearSummary(sum);
+}
+
+/* =====================================================================
+ *  成就（永久收藏）與結局
+ * ===================================================================== */
+const etfHeld = () => ['DIV','BOND'].some(id=>G.holdings[id].qty>0 && G.since[id]!=null && G.year-G.since[id]>=30);
+const ACHS = [
+  { id:'a1',  n:'🪙 第一桶金',     d:'淨資產 ≥ 300 萬（22 歲幣值）',   f:()=>netWorth()/G.cpi>=3e6 },
+  { id:'a2',  n:'💰 千萬富翁',     d:'淨資產 ≥ 1,000 萬（22 歲幣值）', f:()=>netWorth()/G.cpi>=1e7 },
+  { id:'a3',  n:'👑 億萬富翁',     d:'淨資產 ≥ 1 億（22 歲幣值）',     f:()=>netWorth()/G.cpi>=1e8 },
+  { id:'leek',n:'🥬 韭菜之王',     d:'累計追高殺低（實現虧損）超過 1,000 萬', f:()=>G.stats.realizedLoss>=1e7 },
+  { id:'buffett', n:'🗿 鋼鐵巴菲特', d:'同一檔 ETF 持有超過 30 年，期間一股都沒賣', f:etfHeld },
+  { id:'levking', n:'🎰 槓桿天王', d:'5 倍槓桿單回合翻倍 3 次', f:()=>G.stats.levDoubles>=3 },
+  { id:'healthy', n:'🧘 健康至上', d:'退休時資產一般（< 3,000 萬），但健康與心情都 ≥ 95', f:()=>G.age>=RETIRE_AGE&&netWorth()/G.cpi<3e7&&G.health>=95&&G.mood>=95 },
+  { id:'rhino',   n:'🦏 高點套現',   d:'灰犀牛爆發前，把重押的部位果斷出清', f:()=>G.stats.rhinoEscape },
+  { id:'a4',  n:'🦢 黑天鵝倖存者', d:'經歷 2 次黑天鵝且仍活著', f:()=>G.stats.swans>=2 },
+  { id:'a11', n:'🎯 危機獵人',     d:'崩盤年仍有正報酬', f:()=>G.stats.crisisHunter },
+  { id:'witness', n:'📜 歷史見證人', d:'歷史模式中挺過 3 次大跌（大盤年跌 > 20%）', f:()=>G.stats.histCrises>=3 },
+  { id:'a5',  n:'💥 斷頭初體驗',   d:'被券商斷頭或期貨強制平倉 1 次', f:()=>G.stats.marginCalls+G.stats.levLiquidations>=1 },
+  { id:'a6',  n:'🚀 迷因戰神',     d:'迷因股累計獲利 ≥ 100 萬', f:()=>G.stats.memeProfit>=1e6 },
+  { id:'a7',  n:'🏠 有殼蝸牛',     d:'買下人生第一間房',  f:()=>G.stats.houseBought },
+  { id:'landlord', n:'🔑 包租公',   d:'同時出租 3 間房子', f:()=>G.props.filter(p=>p.use==='rent').length>=3 },
+  { id:'flipper',  n:'📈 房市炒手', d:'買賣房地產累計獲利 ≥ 1,000 萬', f:()=>G.stats.propProfit>=1e7 },
+  { id:'spender',  n:'🛍 敗家之王', d:'購物累計花費 ≥ 500 萬', f:()=>G.stats.shopSpent>=5e6 },
+  { id:'a8',  n:'👨‍👩‍👧 家庭美滿',   d:'結婚並生子',        f:()=>G.married&&G.hadKid },
+  { id:'a9',  n:'🧪 創業成功',     d:'創業賭局贏了',      f:()=>G.stats.startupWin },
+  { id:'a10', n:'🧺 雞蛋不放一籃', d:'同時持有 4 種以上標的', f:()=>ASSETS.filter(a=>G.holdings[a.id].qty>0).length>=4 },
+];
+function checkAch(){
+  if(!G) return;
+  ACHS.forEach(a => { if(!G.ach[a.id] && a.f()){
+    G.ach[a.id]=true; log(`🏆 解鎖成就：${a.n}（${a.d}）`,'good');
+    if(!META.ach[a.id]){ META.ach[a.id]=true; saveMeta(); toast(`🏆 新成就：${a.n}`); }
+  }});
+}
+function rankOf(realNet, kind){
+  if(kind==='death') return '英年早逝：把健康賣給了市場';
+  if(kind==='bankrupt') return '破產人生：被市場上了一課';
+  if(realNet<1e7) return '平凡社畜';
+  if(realNet<3e7) return '小康之家';
+  if(realNet<8e7) return '財務自由預備役';
+  if(realNet<2e8) return '股海老司機';
+  return '股神降臨';
+}
+const ENDINGS = [
+  { id:'freedom', icon:'🌏', title:'財務自由環遊世界', test:c=>c.real>=8e7&&c.health>=60&&c.mood>=60,
+    text:c=>`淨資產 ${fmt(c.real)}（22 歲幣值），健康 ${Math.round(c.health)}、心情 ${Math.round(c.mood)}。65 歲生日當天你遞出辭呈，買了一張單程機票。護照蓋滿章的那天你才明白：最貴的資產其實是時間。` },
+  { id:'memegod', icon:'🚀', title:'迷因賭神', test:c=>c.mp>=3e6,
+    text:c=>`你靠迷因股累計賺進約 ${fmt(c.mp)}。酒桌上你是傳說，只是你自己也說不清楚，這到底是實力還是運氣。` },
+  { id:'stockworker', icon:'🧙', title:'股神打工人', test:c=>c.real>=3e7&&c.share>=.4,
+    text:c=>`白天你是「${JOBS[c.level].t}」，晚上是市場裡的隱藏大佬。${(c.share*100).toFixed(0)}% 的資產躺在股市替你加班，同事以為你靠薪水過活，其實你的股息早就比年薪還高。` },
+  { id:'margin', icon:'💥', title:'槓桿斷頭族', test:c=>c.calls>=2,
+    text:c=>`這輩子被斷頭或強制平倉 ${c.calls} 次，客服已經認得你的聲音。你學到最貴的一課：槓桿是把雙面刃，而你每次都握在刀刃那一側。` },
+  { id:'sickrich', icon:'🏥', title:'富而不健康', test:c=>c.health<35,
+    text:c=>`你累積了 ${fmt(c.nw)}，但健康只剩 ${Math.round(c.health)}。每天吃的藥比買的股票還多，這才明白「活著」才是最大的資產。` },
+  { id:'houseslave', icon:'🏠', title:'一生房奴', test:c=>c.house&&c.real<3e7&&c.share<.2,
+    text:c=>`你擁有一間房，也擁有它的房貸。股市幾乎沒碰（持股只佔 ${(c.share*100).toFixed(0)}%），不過至少下雨天有屋頂可以躲。` },
+  { id:'peace', icon:'🍵', title:'平淡是真', test:c=>c.health>=65&&c.mood>=65,
+    text:c=>`沒有大起大落：淨資產 ${fmt(c.real)}，健康 ${Math.round(c.health)}、心情 ${Math.round(c.mood)}。你泡一壺茶，看著別人在股海翻騰，笑而不語。` },
+  { id:'worker', icon:'🪫', title:'社畜終老', test:()=>true,
+    text:c=>`65 歲，淨資產 ${fmt(c.real)}（22 歲幣值）。你辛苦了一輩子，退休金能撐到哪裡只有天知道。下輩子，也許換一檔股票。` },
+];
+const SPECIAL_ENDS = [
+  { id:'bankrupt', icon:'🧾', title:'破產退場，龍巖漲停' },
+  { id:'death', icon:'🕯', title:'英年早逝' },
+];
+function endCtx(){
+  const nw=netWorth(), hv=holdValue(), m=G.holdings.MEME;
+  return { nw, real:nw/G.cpi, hv, share:hv/Math.max(1,Math.abs(nw)), health:G.health, mood:G.mood, calls:G.stats.marginCalls+G.stats.levLiquidations,
+           mp:G.stats.memeProfit+(m.qty*G.prices.MEME-m.cost), house:G.props.length>0, level:G.level, age:G.age };
+}
+const pickEnding = c => ENDINGS.find(e=>e.test(c));
+function endGame(kind){
+  G.over=true; G.busy=true; closeSheet();
+  try{ localStorage.removeItem(SAVE_KEY+'.auto'); }catch(e){}
+  checkAch();
+  const nw=netWorth(), real=nw/G.cpi;
+  const title={retire:`🎉 ${RETIRE_AGE} 歲退休！`,death:`🕯 ${G.age} 歲，健康歸零`,bankrupt:`🧾 ${G.age} 歲，宣告破產`}[kind];
+  let E;
+  if(kind==='retire') E=pickEnding(endCtx());
+  else if(kind==='bankrupt') E={id:'bankrupt',icon:'🧾',title:'破產退場，龍巖漲停',text:()=>`帳戶歸零，銀行與券商輪流打來「關心」。你默默關掉看盤軟體，決定搬到山上種菜、重新開始人生。\n📰 同一天的壓乎快訊：龍巖(5530)無預警漲停，收盤 $${px(G.prices.LYG*1.1)}！主播表示：「原因不明，但這很台股。」`};
+  else E={id:'death',icon:'🕯',title:'英年早逝',text:()=>'身體先一步宣告停損。健康是所有資產的底層，它歸零的時候，其他數字都沒有意義。'};
+  const newEnd=!META.endings[E.id];
+  META.endings[E.id]=true;
+  if(kind==='retire' && (META.best==null || real>META.best)) META.best=real;
+  saveMeta();
+  const got=ACHS.filter(a=>G.ach[a.id]);
+  $('#endCard').innerHTML=`
+    <h3>${title}</h3>
+    ${G.mode==='history'?`<p class="mut" style="margin:-4px 0 8px">歷史模式｜${G.startYear}–${calYear()} 年</p>`:''}
+    <div class="endbox"><div class="t">${E.icon} ${E.title}${newEnd?' <span class="chip gold">NEW</span>':''}</div><p style="margin:6px 0 0;white-space:pre-line">${E.text(endCtx())}</p></div>
+    <p style="margin:0 0 10px">財富評價：<b style="color:var(--gold)">${rankOf(real,kind)}</b></p>
+    <div class="kv">
+      <span>最終淨資產</span><b>${fmt(nw)}</b>
+      <span>換算 22 歲幣值</span><b>${fmt(real)}</b>
+      <span>現金 / 股票</span><b>${fmt(G.cash)} / ${fmt(holdValue())}</b>
+      <span>房產淨值</span><b>${fmt(houseEquity())}</b>
+      <span>職位</span><b>${JOBS[G.level].t}</b>
+      <span>健康 / 心情</span><b>${Math.round(G.health)} / ${Math.round(G.mood)}</b>
+      <span>黑天鵝 / 灰犀牛</span><b>${G.stats.swans} / ${G.stats.rhinos} 次</b>
+      <span>斷頭 / 強制平倉</span><b>${G.stats.marginCalls} / ${G.stats.levLiquidations} 次</b>
+      <span>累計實現虧損</span><b>${fmt(G.stats.realizedLoss)}</b>
+    </div>
+    <p style="margin:12px 0 6px"><b>本局成就</b>（${got.length}/${ACHS.length}）</p>
+    <div>${got.length?got.map(a=>`<span class="chip gold" style="margin:2px">${a.n}</span>`).join(''):'<span class="mut">這局沒有解鎖成就</span>'}</div>
+    <div class="btns"><button class="primary" id="btnAgain">再玩一次</button><button id="btnEndClose">看看我的人生</button></div>`;
+  $('#endOverlay').classList.remove('hidden');
+  $('#btnAgain').onclick=()=>showStart();
+  $('#btnEndClose').onclick=()=>{ $('#endOverlay').classList.add('hidden'); switchTab('life'); };
+  log(`—— 遊戲結束：${E.title}｜${rankOf(real,kind)}，淨資產 ${fmt(nw)} ——`,'head');
+  render();
+}
+
+/* =====================================================================
+ *  畫面：共用
+ * ===================================================================== */
+let curTab='stock', curSeg='quote', sheetId=null, newsUnread=true, curLev=5;
+function switchTab(t){
+  curTab=t;
+  document.querySelectorAll('#tabs button').forEach(b=>b.classList.toggle('on',b.dataset.tab===t));
+  $('#btnSaveTop').classList.toggle('on',t==='save');
+  document.querySelectorAll('.page').forEach(p=>p.classList.toggle('on',p.id==='pg-'+t));
+  if(t==='news') newsUnread=false;
+  $('#screen').scrollTop=0;
+  if(G) render();
+}
+function toast(t){ const el=$('#toast'); el.textContent=t; el.classList.add('show'); clearTimeout(toast._t); toast._t=setTimeout(()=>el.classList.remove('show'),2600); }
+function render(){
+  if(!G) return;
+  renderStatus();
+  if(curTab==='stock') renderStock();
+  if(curTab==='news') renderNews();
+  if(curTab==='life') renderLife();
+  if(curTab==='save') renderSave();
+  if(curTab==='shop') renderShop();
+  if(curTab==='estate') renderEstate();
+  if(sheetId) refreshSheet();
+  $('#newsDot').classList.toggle('show', newsUnread && curTab!=='news');
+  const b=$('#btnNext');
+  b.disabled=G.busy||G.over;
+  b.textContent=G.over?'遊戲已結束':`結束${G.mode==='history'?` ${calYear()} 年`:'今年'}（${G.age} 歲）▶`;
+}
+function renderStatus(){
+  const nw=netWorth();
+  $('#sAge').textContent=`${G.age} 歲`;
+  $('#sDate').textContent=G.mode==='history'?`${calYear()} 年`:`第 ${G.year}/${RETIRE_AGE-START_AGE} 年`;
+  $('#sJob').textContent=JOBS[G.level].t;
+  const tt=META.title && META.ach[META.title] ? ACHS.find(a=>a.id===META.title) : null;
+  $('#sTitle').classList.toggle('hidden',!tt); if(tt) $('#sTitle').textContent=tt.n;
+  $('#sNet').textContent=fmt(nw); $('#sNet').className=nw<0?'dn':'';
+  $('#sCash').textContent=fmt(G.cash); $('#sCash').className=G.cash<0?'dn':'';
+  const bh=$('#bHealth'); bh.style.width=G.health+'%'; bh.className=G.health<35?'low':'';
+  const bm=$('#bMood'); bm.style.width=G.mood+'%'; bm.className=G.mood<30?'low':'';
+  $('#sHealth').textContent=Math.round(G.health); $('#sMood').textContent=Math.round(G.mood);
+}
+
+/* ---------- 股票 App ---------- */
+function renderStock(){
+  $('#idxLabel').textContent=G.mode==='history'?`加權指數（${calYear()} 年初）`:'加權指數（擬）';
+  $('#idxVal').textContent=Math.round(G.idx).toLocaleString();
+  const c=G.lastIdxChg, ic=$('#idxChg');
+  ic.textContent=c==null?'開盤前':pct(c); ic.className='pill '+(c==null?'':upDn(c));
+  $('#idxNote').textContent=c==null?'':'去年漲跌';
+  drawChart($('#chart'), $('#selChart').value||'both');
+  const hv=holdValue(), mr=maintRatio();
+  $('#acct').innerHTML=`
+    <div><small>股票市值</small><b>${fmt(hv)}</b></div>
+    <div><small>融資</small><b>${G.margin>0?fmt(G.margin):'—'}</b>${G.margin>0?`<small class="${mr<1.5?'up':''}">維持率 ${(mr*100).toFixed(0)}%</small>`:''}</div>
+    <div><small>台指期</small><b class="${G.fut?upDn(G.fut.eq-G.fut.margin):''}">${G.fut?fmt(G.fut.eq):'—'}</b></div>`;
+  document.querySelectorAll('#seg button').forEach(b=>b.classList.toggle('on',b.dataset.seg===curSeg));
+  document.querySelectorAll('.segpg').forEach(p=>p.classList.toggle('hidden',p.id!=='seg-'+curSeg));
+  // 行情
+  $('#quoteList').innerHTML=ASSETS.map(a=>{
+    const L=isListed(a.id), ch=G.chg[a.id];
+    return `<div class="qrow" data-id="${a.id}">
+      <div class="qname"><b>${a.short}</b><span class="tag">${a.tag}</span><small>${a.code||'—'}${a.div?`｜殖利率 ${pct(a.div,false)}`:''}${G.holdings[a.id].qty>0?'｜💼持有':''}</small></div>
+      <div class="qprice">${L?px(G.prices[a.id]):'<small>未上市</small>'}</div>
+      <div class="pill ${L&&ch!=null?upDn(ch):''}">${!L?`${a.listed}上市`:ch==null?'—':pct(ch)}</div></div>`;
+  }).join('');
+  // 持股
+  const rows=ASSETS.filter(a=>G.holdings[a.id].qty>0).map(a=>{
+    const h=G.holdings[a.id], v=h.qty*G.prices[a.id], pl=v-h.cost;
+    const yrs=G.since[a.id]!=null?G.year-G.since[a.id]:0;
+    return `<div class="hrow" data-id="${a.id}">
+      <div><b>${a.short}</b> <small>${h.qty.toLocaleString()} 股｜均價 ${px(h.cost/h.qty)}${a.etf&&yrs>0?`｜連續持有 ${yrs} 年`:''}</small></div>
+      <div class="r"><b>${fmt(v)}</b></div>
+      <div><small>現價 ${px(G.prices[a.id])}</small></div>
+      <div class="r ${upDn(pl)}">${fmt(pl,1)}（${pct(pl/h.cost)}）</div></div>`;
+  });
+  $('#holdList').innerHTML=rows.length?rows.join(''):'<div class="empty">尚無持股，到「行情」點一檔股票開始投資吧。</div>';
+  // 槓桿
+  const f=G.fut;
+  $('#levStatus').innerHTML=f?`<div class="kv">
+      <span>投入保證金</span><b>${fmt(f.margin)}</b>
+      <span>目前權益</span><b class="${upDn(f.eq-f.margin)}">${fmt(f.eq)}（${pct(f.eq/f.margin-1)}）</b>
+      <span>曝險金額</span><b>${fmt(f.notional)}</b>
+      <span>強制平倉線</span><b>${fmt(f.margin*LEV_STOP)}</b></div>`:
+    '<p class="mut">目前沒有部位。</p>';
+  $('#levStatus').innerHTML+=`<small>單回合翻倍紀錄：${G.stats.levDoubles} / 3 次（🎰 槓桿天王）</small>`;
+  ['btnLevOpen','btnLevClose'].forEach(i=>$('#'+i).disabled=G.busy||G.over);
+  if(!D().levs.includes(curLev)) curLev=5;
+  document.querySelectorAll('#levSel button').forEach(b=>{ const L=+b.dataset.lev, ok=D().levs.includes(L);
+    b.classList.toggle('on',L===curLev); b.disabled=!ok; b.title=ok?'':'困難模式限定'; b.textContent=L===10?(ok?'10 倍 🔥':'10 倍（困難限定）'):'5 倍'; });
+  if(G.fut) $('#levStatus').querySelector('.kv').insertAdjacentHTML('beforeend',`<span>實際槓桿</span><b>${(G.fut.notional/G.fut.margin).toFixed(0)} 倍</b>`);
+}
+
+/* ---------- 交易面板（底部彈出）---------- */
+function openSheet(id){
+  sheetId=id; const a=AM[id];
+  $('#sheetCard').innerHTML=`
+    <div class="grab"></div>
+    <div class="idxrow"><div><b style="font-size:18px">${a.short}</b> <small>${a.code||''}</small><span class="tag">${a.tag}</span>
+      <div class="idxval" id="shPrice"></div></div><div id="shChg" class="pill" style="padding:4px 10px"></div></div>
+    <div class="chartbox"><canvas id="shChart"></canvas></div>
+    <div class="card2" id="shInfo"></div>
+    <div class="qtyrow"><span>股數</span><input type="number" id="shQty" min="1" step="1" value="100"><label style="white-space:nowrap"><input type="checkbox" id="shMargin"> 融資</label></div>
+    <div class="quick"><button data-q="10">10</button><button data-q="100">100</button><button data-q="1000">1張</button><button data-q="max">最大</button><button data-q="all">全部</button></div>
+    <div id="shPreview" class="mut" style="font-size:12px;margin-top:6px"></div>
+    <div class="tradebtns"><button class="buy" id="shBuy">買進</button><button class="sell" id="shSell">賣出</button></div>
+    <div class="msg" id="shMsg"></div>
+    <button class="ghost" id="shClose" style="width:100%;margin-top:6px">關閉</button>`;
+  $('#sheet').classList.remove('hidden');
+  $('#shQty').oninput=refreshSheet; $('#shMargin').onchange=refreshSheet;
+  document.querySelectorAll('#sheetCard [data-q]').forEach(b=>b.onclick=()=>{
+    const q=b.dataset.q, p=G.prices[id], mg=$('#shMargin').checked;
+    let n;
+    if(q==='max') n=Math.floor(Math.max(0,G.cash)/(p*(1+a.buyFee)-(mg?p*LTV:0)));
+    else if(q==='all') n=G.holdings[id].qty;
+    else n=+q;
+    $('#shQty').value=Math.max(0,n); refreshSheet();
+  });
+  const done=r=>{ $('#shMsg').textContent=(r.ok?'✅ ':'⚠ ')+r.msg; if(r.ok){ log('🛒 '+r.msg,'info'); checkAch(); } render(); };
+  $('#shBuy').onclick=()=>done(doBuy(id,+$('#shQty').value,$('#shMargin').checked));
+  $('#shSell').onclick=()=>done(doSell(id,+$('#shQty').value));
+  $('#shClose').onclick=closeSheet;
+  refreshSheet();
+}
+function closeSheet(){ sheetId=null; $('#sheet').classList.add('hidden'); }
+function refreshSheet(){
+  const id=sheetId; if(!id) return; const a=AM[id], h=G.holdings[id], L=isListed(id);
+  $('#shPrice').textContent=L?px(G.prices[id]):'未上市';
+  const ch=G.chg[id]; $('#shChg').textContent=ch==null||!L?'—':pct(ch); $('#shChg').className='pill '+(L&&ch!=null?upDn(ch):'');
+  drawChart($('#shChart'), id);
+  $('#shInfo').innerHTML=h.qty>0
+    ? `<div class="kv"><span>持有</span><b>${h.qty.toLocaleString()} 股</b><span>均價</span><b>${px(h.cost/h.qty)}</b>
+       <span>市值</span><b>${fmt(h.qty*G.prices[id])}</b><span>未實現損益</span><b class="${upDn(h.qty*G.prices[id]-h.cost)}">${fmt(h.qty*G.prices[id]-h.cost,1)}</b></div>`
+    : `<span class="mut">尚未持有｜可用現金 ${fmt(Math.max(0,G.cash))}</span>`;
+  const qty=Math.floor(+$('#shQty').value), mg=$('#shMargin').checked;
+  if(qty>0){ const c=calcBuy(id,qty,mg);
+    $('#shPreview').innerHTML=`買進約 ${fmt(c.gross)}${mg?`（融資 ${fmt(c.loan)}）`:''}，需現金 <b style="color:var(--txt)">${fmt(c.self)}</b>｜賣出手續費+稅 ${(a.sellFee*100).toFixed(2)}%`;
+  } else $('#shPreview').textContent='';
+  $('#shBuy').disabled=$('#shSell').disabled=G.busy||G.over||!L;
+}
+
+/* ---------- 壓乎新聞 ---------- */
+function renderNews(){
+  const m=G.market, lm=G.lastMarket;
+  const histTag = G.mode==='history' ? `${calYear()} 年` : `第 ${G.year} 年`;
+  let h=`<div class="colA"><div class="ybar"><div class="ylogo">壓乎<i>！</i>新聞</div><small style="color:#e6dcff">${histTag}｜${G.age} 歲的你今天該讀的財經頭條</small></div>`;
+  h+=`<div class="card"><h2>📰 今日頭條</h2>
+    <div class="news"><b>${esc(m.news)}</b><small>壓乎財經｜大盤現在 ${Math.round(G.idx).toLocaleString()} 點</small></div>
+    ${m.topics.map(t=>`<div class="news"><b>${t.dir>0?'🔥':'🧊'} ${esc(t.t)}</b><small>${t.src}｜相關個股：${t.ids.map(i=>AM[i].short).join('、')}｜消息真偽未經證實</small></div>`).join('')}</div>`;
+  if(m.warn){
+    const lv=m.warn.level;
+    h+=`<div class="card rhino"><h2>🦏 灰犀牛警訊：${esc(m.warn.name)}</h2>
+      <small>風險溫度計</small><div class="therm">${[1,2,3].map(i=>`<i class="${i<=lv?'on'+lv:''}"></i>`).join('')}</div>
+      ${m.warn.lines.map(l=>`<div class="news"><b>⚠️ ${esc(l[0])}</b>${l[1]?`<small>另一派觀點：「${esc(l[1])}」</small>`:''}</div>`).join('')}
+      <small>灰犀牛看得見、躲得掉，但沒人知道哪一年會撞上來。市場現在還在漲……要不要先下車？</small></div>`;
+  }
+  h+=`<div class="card"><h2>🎙 名嘴開講：今年大盤怎麼走？</h2>
+    ${ANALYSTS.map(a=>`<div class="an"><div class="face">${a.icon}</div><div><b>${a.name}</b><br><small>「${esc(m.quotes[a.id])}，今年${VIEW[m.hints[a.id]]}。」</small></div><span class="view ${m.hints[a.id]}">${REGIMES[m.hints[a.id]].icon} ${VIEW[m.hints[a.id]]}</span></div>`).join('')}
+    <small>三位分析師誰比較準？自己記下來，看幾年就知道了。</small></div></div><div class="colB">`;
+  if(!lm) h+=`<div class="card"><h2>⏪ 去年回顧</h2><p class="mut" style="margin:0">這是你的第一年，還沒有回顧可看。</p></div>`;
+  if(lm){
+    h+=`<div class="card"><h2>⏪ 去年回顧${lm.yr?`（${lm.yr} 年）`:''}</h2>
+      <div class="news"><b>大盤 <span class="${upDn(lm.idxChg)}">${pct(lm.idxChg)}</span>｜${esc(lm.label)}</b>
+        ${lm.swan?`<small>${esc(lm.swan.desc)}</small>`:lm.hist?`<small>${esc(lm.hist.desc)}</small>`:''}</div>
+      <div class="news"><b>分析師成績單</b><small>實際走勢：${VIEW[lm.truth]}｜${ANALYSTS.map(a=>`${a.icon}${lm.hints[a.id]===lm.truth?'✅':'❌'}`).join('　')}</small></div>
+      ${lm.topics.map(t=>`<div class="news"><b>${esc(t.t)}</b><small>結果：${t.ids.map(i=>`${AM[i].short} ${pct(G.chg[i])}`).join('、')}　<span class="hit ${t.hit?'ok':'no'}">${t.hit?'✅ 題材成真':'❌ 假消息'}</span></small></div>`).join('')}</div>`;
+    const flash=LOGS.filter(l=>l.y===G.year-1 && l.c==='market' && /🚀|💣|🦢|🦏|📰|🔔/.test(l.m));
+    if(flash.length) h+=`<div class="card"><h2>⚡ 市場快訊</h2>${flash.map(l=>`<div class="news"><b style="font-size:14px">${esc(l.m)}</b></div>`).join('')}</div>`;
+  }
+  $('#pg-news').innerHTML=h+'</div>';
+}
+
+/* ---------- 人生規劃 ---------- */
+function renderLife(){
+  const f=calcFinance();
+  $('#lifeProfile').innerHTML=`<h2>🧑‍💼 我的人生</h2><div class="kv">
+    <span>職位</span><b>${JOBS[G.level].t}</b>
+    <span>年薪（稅前）</span><b>${fmt(f.sal)}</b>
+    <span>預估年結餘</span><b class="${f.net>=0?'':'dn'}">${fmt(f.net,1)}</b>
+    <span>家庭</span><b>${G.married?'💍 已婚':'🧍 單身'}${G.kidYears>0?`・👶 育兒（剩 ${G.kidYears} 年）`:''}</b>
+    <span>住所</span><b>${hasSelf()?'🏠 自有住宅':'🏘 租屋'}</b>
+    ${G.props.length?`<span>房產</span><b>${G.props.length} 間｜淨值 ${fmt(houseEquity())}</b>`:''}
+    ${fx().venture?`<span>創業</span><b>🚀 進行中（剩 ${fx().venture.left} 年）</b>`:''}
+    ${fx().study>0?`<span>進修</span><b>🎓 在職進修（剩 ${fx().study} 年）</b>`:''}
+  </div>`;
+  document.querySelectorAll('#stances button').forEach(b=>b.classList.toggle('on',b.dataset.s===G.stance));
+  $('#stanceDesc').textContent=STANCES[G.stance].desc;
+  const hopP=clamp(.55-G.hopBonus*.5,.15,.55);
+  $('#btnHop').disabled=G.hopUsed||G.busy||G.over;
+  $('#hopInfo').textContent=G.hopUsed?'今年已投過履歷':`成功率約 ${(hopP*100).toFixed(0)}%，成功薪水 +12%，但有適應期`;
+  const recent=LOGS.slice(-220).reverse();
+  $('#lifeLog').innerHTML=recent.map(l=>`<div class="l ${l.c}">${esc(l.m)}</div>`).join('');
+}
+
+/* ---------- 存檔 / 成就 ---------- */
+function renderSave(){
+  const d=readSlot('manual');
+  $('#saveInfo').innerHTML=`<h2>🎮 目前這局</h2><div class="kv">
+    <span>模式</span><b>${G.mode==='history'?`📜 歷史模式（${G.startYear} 年出社會）`:`🎲 自由模式｜${D().icon}${D().name}`}</b>
+    <span>手動存檔</span><b>${d?`${d.G.age} 歲（${fmtTime(d.t)}）`:'無'}</b>
+    <span>累計遊玩</span><b>${META.plays||0} 局</b>
+    <span>最佳退休成績</span><b>${META.best!=null?fmt(META.best)+'（22 歲幣值）':'—'}</b></div>`;
+  const n=Object.keys(META.ach).filter(k=>ACHS.some(a=>a.id===k)).length;
+  $('#achCount').textContent=`${n}/${ACHS.length}`;
+  $('#achGrid').innerHTML=ACHS.map(a=>{ const on=!!META.ach[a.id];
+    return `<button class="ach ${on?'on':''} ${META.title===a.id?'eq':''}" data-ach="${a.id}"><b>${on?a.n:'🔒 '+a.n.replace(/^\S+\s/,'')}</b>${a.d}${G.ach[a.id]?'<br>✨ 本局已達成':''}</button>`; }).join('');
+  const allEnds=[...ENDINGS,...SPECIAL_ENDS];
+  $('#endCount').textContent=`${allEnds.filter(e=>META.endings[e.id]).length}/${allEnds.length}`;
+  $('#endGrid').innerHTML=allEnds.map(e=>`<div class="ach ${META.endings[e.id]?'on':''}"><b>${META.endings[e.id]?e.icon+' '+e.title:'🔒 ？？？'}</b>${META.endings[e.id]?'已解鎖':'尚未達成'}</div>`).join('');
+}
+
+/* ---------- 購物 ---------- */
+function renderShop(){
+  const cats=[...new Set(SHOP.map(i=>i.cat))];
+  const owned=Object.keys(G.owned);
+  const row=it=>{ const st=itemState(it), eff=[];
+    if(it.mood) eff.push(`心情 +${it.mood}`); if(it.health) eff.push(`健康 +${it.health}`);
+    if(it.keep){ if(it.keep.mood) eff.push(`持有中每年心情 +${it.keep.mood}`); if(it.keep.cost) eff.push(`每年保養／油錢 ${fmt(C(it.keep.cost))}`); }
+    if(!it.yearly) eff.push(`可用 ${it.life} 年`); else eff.push('每年限買一次');
+    return `<div class="shoprow"><div class="ic">${it.icon}</div><div><b>${it.name}</b><small>${eff.join('・')}</small></div>
+      <button class="${st.ok?'buy':''}" data-item="${it.id}" ${st.ok&&!G.over?'':'disabled'}>${st.ok?fmt(itemPrice(it)):st.why.replace(/（.*）/,'')}</button></div>`; };
+  const half=Math.ceil(cats.length/2);
+  const catCard=c=>`<div class="card"><h2>${{'3C':'💻 3C 科技','奢侈品':'💎 奢侈品','交通':'🚗 交通工具','健康':'🩺 健康管理','享受':'🎉 生活享受'}[c]||c}</h2>${SHOP.filter(i=>i.cat===c).map(row).join('')}</div>`;
+  $('#pg-shop').innerHTML=`<div class="colA">
+    <div class="card"><h2>🛍 購物中心</h2>
+      <div class="kv"><span>可用現金</span><b>${fmt(Math.max(0,G.cash))}</b><span>今年已花</span><b>${fmt(Y?Y.shop:0)}</b><span>累計花費</span><b>${fmt(G.stats.shopSpent)}</b></div>
+      <p class="mut" style="margin:8px 0 0;font-size:12px">花錢買快樂也買健康。耐久品擁有期間每年會小幅加心情，但交通工具有保養與油錢；健康類每年只能買一次。</p>
+      ${owned.length?`<div class="chips">${owned.map(id=>`<span class="chip">${SHOPM[id].icon} ${SHOPM[id].name}（剩 ${G.owned[id].left} 年）</span>`).join('')}</div>`:''}
+      <div class="msg" id="shopMsg"></div></div>
+    ${cats.slice(0,half).map(catCard).join('')}</div>
+    <div class="colB">${cats.slice(half).map(catCard).join('')}</div>`;
+  $('#pg-shop').querySelectorAll('[data-item]').forEach(b=>b.onclick=()=>{
+    const r=buyItem(b.dataset.item); if(r.ok){ log('🛍 '+r.msg,'info'); checkAch(); toast('🛍 '+r.msg.split('，')[0]); } render();
+    const m=$('#shopMsg'); if(m) m.textContent=(r.ok?'✅ ':'⚠ ')+r.msg; });
+}
+
+/* ---------- 房地產 ---------- */
+function renderEstate(){
+  $('#hpVal').textContent=(G.houseIdx*100).toFixed(1);
+  const hh=G.hist.house, hc=hh.length>1?hh[hh.length-1]/hh[hh.length-2]-1:null;
+  $('#hpChg').textContent=hc==null?'—':pct(hc); $('#hpChg').className='pill '+(hc==null?'':upDn(hc));
+  drawChart($('#reChart'),'house');
+  $('#propCount').textContent=`${G.props.length}/${MAX_PROPS} 間`;
+  const T=PROP_TYPES;
+  $('#propList').innerHTML=G.props.length?G.props.map((p,i)=>{
+    const v=propValue(p), eq=v-p.loan, pl=v-p.cost, rent=v*T[p.type].yld;
+    return `<div class="prop"><div class="top"><b>${p.icon} ${p.name}</b><span class="chip">持有 ${G.year-p.bought} 年</span></div>
+      <div class="kv" style="margin-top:6px"><span>市值</span><b>${fmt(v)}</b><span>房貸餘額</span><b>${fmt(p.loan)}${p.loan>0?`（年繳 ${fmt(p.pay)}）`:''}</b>
+      <span>淨值</span><b>${fmt(eq)}</b><span>相對成本</span><b class="${upDn(pl)}">${fmt(pl,1)}（${pct(pl/p.cost)}）</b>
+      <span>出租行情</span><b>${fmt(rent)}／年${p.use==='rent'&&p.vac?'（去年空租）':''}</b></div>
+      <div class="uses">${['self','rent','vacant'].map(u=>`<button data-use="${u}" data-i="${i}" class="${p.use===u?'on':''}">${{self:'🏠 自住',rent:'💰 出租',vacant:'🔒 空置'}[u]}</button>`).join('')}</div>
+      <div class="row"><label style="flex:1;font-size:13px"><input type="checkbox" data-ins="${i}" ${p.ins?'checked':''}> 🛡 住宅地震／火險（每年 ${fmt(v*.0015)}）</label>
+      <button class="sell" data-sell="${i}">賣出</button></div></div>`;
+  }).join(''):'<div class="empty">還沒有房子。右邊（或下方）有今年的待售物件。</div>';
+  $('#listingList').innerHTML=G.listings.length?G.listings.map(L=>{
+    const t=buyTerms(L.price), Ty=T[L.type];
+    return `<div class="prop"><div class="top"><b>${L.icon} ${L.name}</b><span class="chip">${L.deal<.95?'🔥 低於行情':L.deal>1.06?'⚠ 高於行情':'行情價'}</span></div>
+      <div class="kv" style="margin-top:6px"><span>總價</span><b>${fmt(L.price)}</b><span>頭期款＋稅費</span><b>${fmt(t.need)}</b>
+      <span>房貸年繳</span><b>${fmt(t.pay)}（${(t.rate*100).toFixed(1)}%，30 年）</b><span>租金報酬率</span><b>約 ${(Ty.yld*100).toFixed(1)}%</b></div>
+      <div class="tradebtns" style="margin-top:8px"><button class="buy" data-buy="${L.lid}" data-use="self" ${hasSelf()?'disabled':''}>買來自住</button><button class="buy" data-buy="${L.lid}" data-use="rent">買來出租</button></div></div>`;
+  }).join(''):'<div class="empty">今年的物件都被買走了，明年再來看看。</div>';
+  const msg=r=>{ $('#reMsg').textContent=(r.ok?'✅ ':'⚠ ')+r.msg; if(r.ok){ log('🏠 '+r.msg,'info'); checkAch(); toast('🏠 '+r.msg.split('，')[0]); } render(); };
+  const dis=G.busy||G.over;
+  $('#propList').querySelectorAll('[data-use]').forEach(b=>{ b.disabled=dis; b.onclick=()=>{ setUse(+b.dataset.i,b.dataset.use); render(); }; });
+  $('#propList').querySelectorAll('[data-ins]').forEach(c=>{ c.disabled=dis; c.onchange=()=>{ G.props[+c.dataset.ins].ins=c.checked; render(); }; });
+  $('#propList').querySelectorAll('[data-sell]').forEach(b=>{ b.disabled=dis; b.onclick=()=>{
+    const i=+b.dataset.sell, p=G.props[i], t=sellTerms(p);
+    askConfirm(`賣出${p.name}？`,`成交價 ${fmt(t.v)}\n仲介費 ${fmt(-t.fee)}\n房地合一稅 ${fmt(-t.tax)}（持有 ${t.yrs} 年，稅率 ${(t.rate*100).toFixed(0)}%）\n清償房貸 ${fmt(-p.loan)}\n實拿 ${fmt(t.net)}`,()=>msg(sellProp(i)),'確定賣出','再想想'); }; });
+  $('#listingList').querySelectorAll('[data-buy]').forEach(b=>{ if(dis) b.disabled=true; b.onclick=()=>{
+    const L=G.listings.find(x=>x.lid===b.dataset.buy); if(L) msg(buyProp(L,b.dataset.use)); }; });
+}
+
+/* ---------- 自製折線圖 ---------- */
+function drawChart(cv, mode){
+  if(!cv || !cv.getContext) return; const ctx=cv.getContext('2d'); if(!ctx) return;
+  const both=mode==='both';
+  let series;
+  if(both){
+    const net=G.hist.net.slice(); net[net.length-1]=netWorth();
+    series=[{name:'總資產',xs:G.hist.ages,ys:net,color:'#4da3ff',axis:'L',fill:true,f:v=>fmt(v)},
+            {name:'大盤',xs:G.mh.x,ys:G.mh.idx,color:'#ffb454',axis:'R',dash:true,f:v=>Math.round(v).toLocaleString()}];
+  } else if(mode==='house'){
+    const ys=G.hist.house.slice(); ys[ys.length-1]=G.houseIdx*100;
+    series=[{name:'房價指數',xs:G.hist.ages,ys,color:'#f4a261',axis:'L',fill:false,f:v=>v.toFixed(0)}];
+  } else {
+    const a=AM[mode]; let xs=G.mh.x, ys=G.mh[mode];
+    if(G.mode==='history' && a.listed && a.listed>G.startYear){        // 只畫上市後
+      const la=START_AGE+(a.listed-G.startYear); const i0=xs.findIndex(x=>x>=la);
+      if(i0<0){ xs=[G.age]; ys=[G.prices[mode]]; } else { xs=xs.slice(i0); ys=ys.slice(i0); }
+    }
+    series=[{name:a.short,xs,ys,color:a.color,axis:'L',f:v=>px(v)}];
+  }
+  const W=cv.clientWidth||360, H=cv.parentElement.clientHeight||190, dpr=window.devicePixelRatio||1;
+  cv.width=W*dpr; cv.height=H*dpr; cv.style.height=H+'px'; ctx.setTransform(dpr,0,0,dpr,0,0);
+  ctx.clearRect(0,0,W,H);
+  const hasR=series.some(s=>s.axis==='R');
+  const L=52,R=hasR?46:10,T=24,B=20;
+  const X=a=>L+(W-L-R)*((a-START_AGE)/(RETIRE_AGE-START_AGE));
+  const range=axis=>{ const all=series.filter(s=>s.axis===axis).flatMap(s=>s.ys);
+    let mn=Math.min(...all), mx=Math.max(...all); if(axis==='L'&&both) mn=Math.min(mn,0);
+    if(mx-mn<1e-9){ mx+=1; mn-=1; } const pad=(mx-mn)*.06; return {mn:mn<0||!both||axis==='R'?mn-pad:mn, mx:mx+pad}; };
+  const rg={L:range('L'),R:hasR?range('R'):null};
+  const Yp=(axis,v)=>T+(H-T-B)*(1-(v-rg[axis].mn)/(rg[axis].mx-rg[axis].mn));
+  ctx.font='10px system-ui'; ctx.lineWidth=1;
+  const sL=series.find(s=>s.axis==='L'), sR=series.find(s=>s.axis==='R');
+  for(let i=0;i<=3;i++){
+    const vL=rg.L.mn+(rg.L.mx-rg.L.mn)*i/3, y=Yp('L',vL);
+    ctx.strokeStyle='#1d2838'; ctx.beginPath(); ctx.moveTo(L,y); ctx.lineTo(W-R,y); ctx.stroke();
+    ctx.fillStyle=sL.color; ctx.textAlign='right'; ctx.fillText(sL.f(vL),L-4,y+3);
+    if(hasR){ const vR=rg.R.mn+(rg.R.mx-rg.R.mn)*i/3; ctx.fillStyle=sR.color; ctx.textAlign='left'; ctx.fillText(sR.f(vR),W-R+4,y+3); }
+  }
+  ctx.fillStyle='#6f7d92'; ctx.textAlign='center';
+  const ticks = G.mode==='history' ? [22,32,42,52,65].map(a=>[a,`${G.startYear+a-22}`]) : [22,30,40,50,65].map(a=>[a,a+'歲']);
+  ticks.forEach(([a,t])=>ctx.fillText(t,X(a),H-5));
+  if(both&&rg.L.mn<0){ ctx.strokeStyle='#55637a'; ctx.beginPath(); ctx.moveTo(L,Yp('L',0)); ctx.lineTo(W-R,Yp('L',0)); ctx.stroke(); }
+  series.forEach(s=>{
+    const path=()=>{ ctx.beginPath(); s.ys.forEach((v,i)=>{ const x=X(s.xs[i]), y=Yp(s.axis,v); i?ctx.lineTo(x,y):ctx.moveTo(x,y); }); };
+    path();
+    if(s.fill){ const base=Yp('L',Math.max(rg.L.mn,Math.min(0,rg.L.mx)));
+      ctx.save(); ctx.lineTo(X(s.xs[s.xs.length-1]),base); ctx.lineTo(X(s.xs[0]),base); ctx.closePath(); ctx.fillStyle=s.color+'22'; ctx.fill(); ctx.restore(); path(); }
+    ctx.strokeStyle=s.color; ctx.lineWidth=s.xs.length>60?1.5:2; ctx.lineJoin='round'; ctx.setLineDash(s.dash?[5,4]:[]); ctx.stroke(); ctx.setLineDash([]);
+    ctx.fillStyle=s.color; ctx.beginPath(); ctx.arc(X(s.xs[s.xs.length-1]),Yp(s.axis,s.ys[s.ys.length-1]),3.2,0,7); ctx.fill();
+  });
+  ctx.textAlign='left'; ctx.font='11px system-ui'; let lx=L;
+  series.forEach(s=>{
+    ctx.fillStyle=s.color; ctx.fillRect(lx,9,12,3);
+    const t=`${s.name} ${s.f(s.ys[s.ys.length-1])}`; ctx.fillStyle='#c9d3df'; ctx.fillText(t,lx+16,14); lx+=16+ctx.measureText(t).width+12;
+  });
+}
+
+/* =====================================================================
+ *  存檔
+ * ===================================================================== */
+const SAVE_KEY='stockLifeSim.v1';
+function snapshot(){ return {v:3,G,logs:LOGS,t:Date.now()}; }
+function saveTo(slot){
+  if(!G||G.over||G.busy) return false;
+  try{ localStorage.setItem(SAVE_KEY+'.'+slot, JSON.stringify(snapshot())); return true; }catch(e){ return false; }
+}
+function readSlot(slot){ try{ const t=localStorage.getItem(SAVE_KEY+'.'+slot); return t?JSON.parse(t):null; }catch(e){ return null; } }
+function migrate(g){                                   // 相容舊版存檔
+  if(!g.mh) g.mh={x:g.hist.ages.slice(), idx:g.hist.idx.slice()};
+  g.mode=g.mode||'free'; g.diff=g.diff||'normal'; g.owned=g.owned||{}; g.shopYear=g.shopYear||{}; g.listings=g.listings||[];
+  if(!g.props){ g.props=[];
+    if(g.house){ const h=g.house; g.props.push({uid:1,type:'family',name:'自住三房',icon:'🏘',base:HOUSE_BASE,mult:1,cost:HOUSE_BASE*g.houseIdx,loan:h.loan,pay:h.pay,rate:h.rate,yearsLeft:h.yearsLeft,use:'self',ins:false,vac:false,bought:Math.max(1,g.year-1)}); }
+    delete g.house; }
+  if(!g.hist.house) g.hist.house=g.hist.ages.map(()=>100*(g.houseIdx||1)); g.startYear=g.startYear||null; g.fut=g.fut||null; g.since=g.since||{};
+  g.rhino=g.rhino||null; g.rhinoPeak=g.rhinoPeak||0; g.lastMarket=g.lastMarket||null;
+  g.stats=Object.assign({realizedLoss:0,levDoubles:0,levLiquidations:0,rhinoEscape:false,rhinos:0,histCrises:0,shopSpent:0,propDeals:0,propProfit:0},g.stats);
+  ASSETS.forEach(a=>{
+    if(!g.holdings[a.id]) g.holdings[a.id]={qty:0,cost:0};
+    if(g.dca[a.id]==null) g.dca[a.id]=0;
+    if(g.prices[a.id]==null) g.prices[a.id]=a.price;
+    if(!(a.id in g.chg)) g.chg[a.id]=null;
+    if(!(a.id in g.since)) g.since[a.id]=g.holdings[a.id].qty>0?g.year:null;
+    if(!g.hist[a.id]) g.hist[a.id]=g.hist.ages.map(()=>a.price);
+    if(!g.mh[a.id]) g.mh[a.id]=g.hist[a.id].slice();
+  });
+  const m=g.market||{};
+  if(!m.hints) m.hints={zhe:m.hint||'side',ba:m.hint||'side',ai:m.hint||'side'};
+  m.quotes=m.quotes||{zhe:'我看',ba:'我看',ai:'我看'}; m.topics=m.topics||[]; m.truth=m.truth||m.regime||'side'; m.news=m.news||'';
+  g.market=m;
+  g.fx=g.fx||{}; g.mv=g.mv||1; g.busy=false; g.v=3; return g;
+}
+function applySave(d){
+  if(!d||![1,2,3].includes(d.v)||!d.G||!d.G.hist) return false;
+  G=migrate(d.G);
+  LOGS.length=0; (d.logs||[]).forEach(l=>LOGS.push({m:l.m,c:l.c,y:l.y!=null?l.y:G.year}));
+  ['#endOverlay','#modal','#sheet','#start','#dlg'].forEach(s=>$(s).classList.add('hidden')); sheetId=null;
+  document.querySelectorAll('[data-dca]').forEach(i=>i.value=(G.dca[i.dataset.dca]||0)/10000);
+  switchTab('stock'); render(); startYearLedger(); return true;
+}
+function fmtTime(t){ const d=new Date(t); return `${d.getMonth()+1}/${d.getDate()} ${String(d.getHours()).padStart(2,'0')}:${String(d.getMinutes()).padStart(2,'0')}`; }
+
+/* ---------- 對話框 ---------- */
+function showDialog({title,body='',buttons=[]}){
+  $('#dTitle').textContent=title; $('#dBody').innerHTML=body;
+  const box=$('#dBtns'); box.innerHTML='';
+  buttons.forEach(b=>{ const el=document.createElement('button'); el.textContent=b.label; if(b.primary) el.className='primary';
+    el.onclick=()=>{ if(b.keep!==true) $('#dlg').classList.add('hidden'); b.fn&&b.fn(); }; box.appendChild(el); });
+  $('#dlg').classList.remove('hidden');
+}
+const closeDialog=()=>$('#dlg').classList.add('hidden');
+function askConfirm(title,text,onYes,yesLabel='確定',noLabel='取消',onNo){
+  showDialog({title,body:`<p style="margin:0;white-space:pre-line">${text}</p>`,buttons:[{label:yesLabel,primary:true,fn:onYes},{label:noLabel,fn:onNo}]});
+}
+function saveCodeDialog(prefill){
+  const hint=prefill?'複製下方存檔代碼貼到記事本保存；日後在「匯入」貼回即可。':'貼上存檔代碼，或選擇之前存下的檔案。';
+  showDialog({title:prefill?'⬇ 匯出存檔':'⬆ 匯入存檔',
+    body:`<p style="margin:0 0 8px" class="mut">${hint}</p>
+      <textarea id="codeBox" rows="7" style="width:100%;font:12px monospace"></textarea>
+      ${prefill?'':'<input type="file" id="codeFile" accept=".json,.txt,application/json,text/plain" style="margin-top:8px;color:var(--mut);max-width:100%">'}
+      <div id="codeMsg" class="msg"></div>`,
+    buttons:[
+      prefill?{label:'📋 複製',primary:true,keep:true,fn:()=>{
+        const t=$('#codeBox'); t.select();
+        (navigator.clipboard?navigator.clipboard.writeText(t.value):Promise.reject()).then(()=>$('#codeMsg').textContent='✅ 已複製',()=>{ try{document.execCommand('copy');$('#codeMsg').textContent='✅ 已複製';}catch(e){$('#codeMsg').textContent='請手動全選複製';} }); }}
+            :{label:'載入',primary:true,keep:true,fn:()=>{
+        try{ if(applySave(JSON.parse($('#codeBox').value.trim()))){ closeDialog(); log('📂 已匯入存檔。','info'); render(); } else $('#codeMsg').textContent='⚠ 存檔格式不正確'; }
+        catch(e){ $('#codeMsg').textContent='⚠ 無法解析這段內容'; } }},
+      {label:'關閉'} ]});
+  const box=$('#codeBox');
+  if(prefill){ box.value=prefill; box.readOnly=true; box.onfocus=()=>box.select(); }
+  else { const f=$('#codeFile'); f.onchange=()=>{ const r=new FileReader(); r.onload=()=>{ box.value=r.result; $('#codeMsg').textContent='已讀入檔案，按「載入」'; }; if(f.files[0]) r.readAsText(f.files[0]); }; }
+}
+
+/* =====================================================================
+ *  開始畫面
+ * ===================================================================== */
+const ERAS = [
+  { y:1990, d:'開局就遇上台股萬點崩盤，接著台海危機、亞洲金融風暴、網路泡沫…' },
+  { y:2000, d:'網路泡沫破裂、SARS、金融海嘯，中年迎來 AI 浪潮' },
+  { y:2010, d:'歐債危機後的長多，疫情 V 轉、航海王、AI 狂潮' },
+  { y:2020, d:'疫情熔斷開局，經歷升息與 AI 狂潮，2026 年後的未來沒人知道' },
+];
+const HELP_HTML=`<ul>
+  <li><b>目標</b>：從 22 歲到 65 歲，讓資產最大化，解鎖結局與成就。</li>
+  <li><b>每一年</b>：在「股票App」買賣、在「人生規劃」選生活態度，再按下方「結束今年」。系統會逐月模擬股市，結算薪水與開銷，並隨機發生人生事件。</li>
+  <li><b>壓乎新聞</b>：三位分析師各說各話，熱門題材有真有假，誰準要靠你觀察。</li>
+  <li><b>🦢 黑天鵝</b>：戰爭、地緣危機、疫情……毫無前兆。</li>
+  <li><b>🦏 灰犀牛</b>：泡沫會先吹 2～4 年，新聞會出現警訊、市場還在漲。能不能在高點果斷下車？</li>
+  <li><b>購物</b>：花錢買心情與健康。<b>房地產</b>：可自住、出租或炒房，但有天災、氣爆、空租、社宅等風險。</li>
+  <li><b>融資</b>：自備 4 成，維持率低於 130% 會斷頭。<b>台指期</b>：5 倍槓桿，保證金剩一半就強制平倉。</li>
+  <li><b>健康與心情</b>：虧錢會傷心情，心情差會傷身體，健康歸零遊戲結束。</li>
+  <li>價格顏色為台股慣例：<span class="up">紅漲</span>、<span class="dn">綠跌</span>。成就會永久收藏在「存檔/讀檔」。</li>
+  <li class="mut">本遊戲為模擬娛樂，個股走勢與歷史數據皆為擬真重現，不構成投資建議。</li></ul>`;
+let startSel={mode:'free',year:2000,diff:'normal'};
+function showStart(){
+  $('#endOverlay').classList.add('hidden'); closeSheet();
+  const auto=readSlot('auto');
+  $('#startCard').innerHTML=`
+    <div class="logo">📈 股海人生模擬器</div>
+    <p class="mut" style="text-align:center;margin:0 0 14px">22 歲出社會，口袋只有 10 萬。<br>43 年後，你會是股神、韭菜，還是平淡是真？</p>
+    ${auto&&auto.G&&!auto.G.over?`<button class="big" id="btnContinue" style="margin:0 0 12px;background:#1f3a2c;border-color:#2fcf8a">▶ 繼續上次的人生（${auto.G.mode==='history'?(auto.G.startYear+auto.G.year-1)+' 年、':''}${auto.G.age} 歲）</button>`:''}
+    <h3>選擇模式</h3>
+    <div class="modes">
+      <button class="mode" data-mode="free"><b>🎲 自由模式</b><small>市場完全隨機，每局都是新的平行宇宙。</small></button>
+      <button class="mode" data-mode="history"><b>📜 歷史模式</b><small>回到真實年代，親歷金融海嘯、疫情與 AI 浪潮。</small></button>
+    </div>
+    <div id="diffBox">
+      <p style="margin:10px 0 6px">選擇難度：</p>
+      <div class="diffs">${Object.entries(DIFFS).map(([k,d])=>`<button class="diff" data-diff="${k}"><b>${d.icon} ${d.name}</b><small>${d.desc}</small></button>`).join('')}</div>
+    </div>
+    <div id="eraBox">
+      <p style="margin:10px 0 6px">選擇你 22 歲出社會的年份：</p>
+      <div class="eras">${ERAS.map(e=>`<button class="era" data-year="${e.y}"><b>${e.y}</b><small>${e.d}</small></button>`).join('')}</div>
+    </div>
+    <button class="primary big" id="btnBegin">開始人生</button>
+    <details><summary>怎麼玩？</summary>${HELP_HTML}</details>`;
+  const sync=()=>{
+    document.querySelectorAll('#startCard .mode').forEach(b=>b.classList.toggle('on',b.dataset.mode===startSel.mode));
+    document.querySelectorAll('#startCard .era').forEach(b=>b.classList.toggle('on',+b.dataset.year===startSel.year));
+    $('#eraBox').classList.toggle('hidden',startSel.mode!=='history');
+    $('#diffBox').classList.toggle('hidden',startSel.mode==='history');
+    document.querySelectorAll('#startCard .diff').forEach(b=>b.classList.toggle('on',b.dataset.diff===startSel.diff));
+    $('#btnBegin').textContent=startSel.mode==='history'?`從 ${startSel.year} 年開始人生`:`開始人生（${DIFFS[startSel.diff].name}）`;
+  };
+  document.querySelectorAll('#startCard .mode').forEach(b=>b.onclick=()=>{ startSel.mode=b.dataset.mode; sync(); });
+  document.querySelectorAll('#startCard .era').forEach(b=>b.onclick=()=>{ startSel.year=+b.dataset.year; sync(); });
+  document.querySelectorAll('#startCard .diff').forEach(b=>b.onclick=()=>{ startSel.diff=b.dataset.diff; sync(); });
+  $('#btnBegin').onclick=()=>{
+    const go=()=>newGame({mode:startSel.mode,startYear:startSel.year,diff:startSel.diff});
+    if(auto&&auto.G&&!auto.G.over) askConfirm('開始新的人生？','目前的自動存檔會在明年被覆蓋。\n（想保留可以先繼續遊戲並匯出存檔代碼）',go,'開始新遊戲','取消');
+    else go();
+  };
+  if($('#btnContinue')) $('#btnContinue').onclick=()=>{ applySave(auto); log(`📂 已繼續自動存檔（${G.age} 歲）。`,'info'); render(); };
+  sync();
+  $('#start').classList.remove('hidden');
+}
+
+/* =====================================================================
+ *  初始化
+ * ===================================================================== */
+function init(){
+  loadMeta();
+  $('#selChart').innerHTML=`<option value="both">總資產＋大盤指數</option>`+ASSETS.map(a=>`<option value="${a.id}">${a.short} 股價走勢</option>`).join('');
+  $('#dcaBox').innerHTML=ASSETS.map(a=>`<span>${a.short} <small>${a.tag}</small></span><span><input type="number" min="0" step="1" value="0" data-dca="${a.id}"> 萬</span>`).join('');
+  $('#stances').innerHTML=Object.entries(STANCES).map(([k,s])=>`<button data-s="${k}">${s.name}</button>`).join('');
+
+  document.querySelectorAll('#tabs button').forEach(b=>b.onclick=()=>switchTab(b.dataset.tab));
+  document.querySelectorAll('#seg button').forEach(b=>b.onclick=()=>{ curSeg=b.dataset.seg; render(); });
+  $('#quoteList').addEventListener('click',e=>{ const r=e.target.closest('[data-id]'); if(r && G && !G.over) openSheet(r.dataset.id); });
+  $('#holdList').addEventListener('click',e=>{ const r=e.target.closest('[data-id]'); if(r && G && !G.over) openSheet(r.dataset.id); });
+  $('#sheet').addEventListener('click',e=>{ if(e.target.id==='sheet') closeSheet(); });
+  document.querySelectorAll('[data-dca]').forEach(i=>i.addEventListener('change',()=>{
+    const v=Math.max(0,+i.value||0); i.value=v; G.dca[i.dataset.dca]=v*10000; }));
+  $('#selChart').addEventListener('change',()=>drawChart($('#chart'),$('#selChart').value));
+  window.addEventListener('resize',()=>{ if(G) render(); });
+
+  const levMsg=r=>{ $('#levMsg').textContent=(r.ok?'✅ ':'⚠ ')+r.msg; if(r.ok){ log('🎰 '+r.msg,'info'); checkAch(); } render(); };
+  $('#btnLevOpen').onclick=()=>levMsg(futOpen((+$('#levAmt').value||0)*10000, curLev));
+  document.querySelectorAll('#levSel button').forEach(b=>b.onclick=()=>{ curLev=+b.dataset.lev; render(); });
+  $('#btnSaveTop').onclick=()=>switchTab(curTab==='save'?'stock':'save');
+  $('#btnLevClose').onclick=()=>levMsg(futClose());
+
+  $('#stances').addEventListener('click',e=>{ const b=e.target.closest('button'); if(b&&!G.over){ G.stance=b.dataset.s; render(); } });
+  $('#btnHop').onclick=()=>{
+    if(G.hopUsed||G.busy||G.over) return; G.hopUsed=true;
+    const p=clamp(.55-G.hopBonus*.5,.15,.55);
+    if(chance(p)){
+      G.hopBonus=Math.min(.6,G.hopBonus+.12); G.justHopped=true; dM(-3);
+      let t='📨 跳槽成功！新公司薪水 +12%，但要適應新環境（心情 -3、今年升遷機率減半）。';
+      if(G.level<JOBS.length-1&&chance(.2)){ G.level++; t+=` 還順便升為「${JOBS[G.level].t}」！`; }
+      log(t,'good'); toast('📨 跳槽成功！');
+    } else { dM(-6); log('📨 面試連連失利，心情 -6。','bad'); toast('📨 面試失利…'); }
+    render();
+  };
+  $('#achGrid').addEventListener('click',e=>{ const b=e.target.closest('[data-ach]'); if(!b) return; const id=b.dataset.ach;
+    if(!META.ach[id]) return toast('🔒 尚未解鎖');
+    META.title = META.title===id ? null : id; saveMeta(); toast(META.title?`已設定稱號：${ACHS.find(a=>a.id===id).n}`:'已取消稱號'); render(); });
+
+  $('#btnNext').onclick=endYear;
+  $('#btnRestart').onclick=()=>askConfirm('重新開始？','會回到模式選擇畫面，目前未存檔的進度會消失。',showStart,'重新開始','取消');
+  $('#btnHelp').onclick=()=>showDialog({title:'❓ 遊戲說明',body:HELP_HTML,buttons:[{label:'知道了',primary:true}]});
+  $('#btnSave').onclick=()=>{
+    if(G.busy||G.over) return toast('⚠ 目前無法存檔');
+    const ok=saveTo('manual'); toast(ok?`💾 已存檔（${G.age} 歲）`:'⚠ 存檔失敗，請改用匯出'); if(ok) log(`💾 已手動存檔（${G.age} 歲）。`,'info'); render();
+  };
+  $('#btnLoad').onclick=()=>{
+    const d=readSlot('manual');
+    if(!d) return toast('⚠ 找不到手動存檔');
+    askConfirm('讀取存檔',`讀取 ${fmtTime(d.t)} 的存檔（${d.G.age} 歲）？\n目前進度會被取代。`,()=>{ applySave(d); log(`📂 已讀取存檔（${G.age} 歲）。`,'info'); toast('📂 已讀取存檔'); render(); },'讀取','取消');
+  };
+  $('#btnExport').onclick=()=>saveCodeDialog(JSON.stringify(snapshot()));
+  $('#btnImport').onclick=()=>saveCodeDialog('');
+
+  newGame();                 // 先建立一局當背景，再顯示開始畫面
+  META.plays--; saveMeta();  // 背景局不計入遊玩次數
+  showStart();
+}
+init();
+</script>
+</body>
+</html>
