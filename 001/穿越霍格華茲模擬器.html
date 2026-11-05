@@ -1,0 +1,2203 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="穿越霍格華茲模擬器：開學那天睜開眼，一個月一回合，七年學制。打敗佛地魔，或者學會時間魔法回家。">
+<meta property="og:type" content="website">
+<meta property="og:title" content="穿越霍格華茲模擬器">
+<meta property="og:description" content="選詞條、配點、隨機出身，一個月一回合，每半年一次大事件。打敗黑暗，或回家——兩個願望，一條命。">
+<meta property="og:image" content="https://rabbt0920-code.github.io/hogwarts-sim/og.png">
+<meta property="og:url" content="https://rabbt0920-code.github.io/hogwarts-sim/">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="穿越霍格華茲模擬器">
+<meta name="twitter:image" content="https://rabbt0920-code.github.io/hogwarts-sim/og.png">
+<meta name="theme-color" content="#0f1218">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Ccircle cx='16' cy='16' r='14' fill='%23f6e7ae'/%3E%3Cpath d='M4 28 L4 16 L9 16 L9 10 L12 6 L15 10 L15 16 L28 16 L28 28Z' fill='%23151b2b'/%3E%3C/svg%3E">
+<title>穿越霍格華茲模擬器</title>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700&family=Noto+Serif+TC:wght@600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#0f1218;--bg2:#161a23;--card:#1b202b;--card2:#222937;--line:#2d3546;
+  --text:#ece6d6;--mute:#9ba2b0;--gold:#d9b45b;--gold-d:#8a7036;--jade:#6cc1a6;--red:#e2674d;--blue:#7fa6e0;
+  --r:14px;
+}
+*{box-sizing:border-box}
+html{color-scheme:dark}
+body{margin:0;min-height:100vh;color:var(--text);
+  background:radial-gradient(1100px 520px at 50% -8%,#212a3d 0%,rgba(15,18,24,0) 70%),var(--bg);
+  font:16px/1.75 'Noto Sans TC','PingFang TC','Microsoft JhengHei',system-ui,-apple-system,sans-serif}
+h1,h2,h3{font-family:'Noto Serif TC','Songti TC','PMingLiU',serif;font-weight:700;letter-spacing:.05em;margin:0;line-height:1.35}
+p{margin:0 0 .7em}
+button{font:inherit;color:inherit;cursor:pointer}
+button:focus-visible,summary:focus-visible,[tabindex]:focus-visible{outline:2px solid var(--gold);outline-offset:3px}
+h2[tabindex]:focus{outline:none}
+#app{max-width:780px;margin:0 auto;padding:18px 16px 72px}
+.muted{color:var(--mute)}.small{font-size:.86rem}
+.card{background:var(--card);border:1px solid var(--line);border-radius:var(--r);padding:20px;margin:14px 0}
+.card h2{font-size:1.35rem;margin-bottom:.5em}
+
+/* 按鈕 */
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:.4em;min-height:46px;padding:10px 22px;border-radius:999px;
+  border:1px solid var(--line);background:var(--card2);transition:background .15s,border-color .15s,transform .1s}
+.btn:hover:not(:disabled){border-color:var(--gold-d);background:#29324a}
+.btn:active:not(:disabled){transform:translateY(1px)}
+.btn.primary{background:linear-gradient(180deg,#e5c570,#c49a3e);color:#1a1405;border-color:#e9cf85;font-weight:700}
+.btn.primary:hover:not(:disabled){background:linear-gradient(180deg,#efd283,#cfa648)}
+.btn.ghost{background:transparent}
+.btn:disabled{opacity:.45;cursor:not-allowed}
+.btnrow{display:flex;flex-wrap:wrap;gap:10px;margin-top:16px}
+
+/* 標題頁 */
+.title{text-align:center;padding:44px 0 8px}
+.kicker{letter-spacing:.4em;color:var(--gold);font-size:.85rem;margin-bottom:.8em}
+.title h1{font-size:clamp(2.1rem,8vw,3.2rem);margin-bottom:.4em}
+.lead{max-width:34em;margin:0 auto 1.6em;color:#cfc9b8}
+.goals{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:22px 0;text-align:left}
+.goal{background:var(--card);border:1px solid var(--line);border-radius:var(--r);padding:14px 16px}
+.goal b{font-family:'Noto Serif TC',serif;font-size:1.1rem;display:block}
+.goal.done{border-color:var(--gold-d);background:linear-gradient(180deg,#262313,var(--card))}
+.goal .tag{font-size:.8rem;color:var(--gold)}
+.stampline{display:flex;flex-wrap:wrap;gap:6px 18px;justify-content:center;font-size:.9rem;color:var(--mute);margin:16px 0}
+details.reset{margin-top:28px;font-size:.88rem;color:var(--mute)}
+details.reset summary{cursor:pointer;display:inline-block;padding:6px}
+
+/* 詞條與配點 */
+.sec-h{display:flex;justify-content:space-between;align-items:baseline;gap:10px;flex-wrap:wrap;margin:6px 0 10px}
+.sec-h h3{font-size:1.1rem}
+.counter{color:var(--gold);font-weight:700}
+.traits{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:10px}
+.trait{text-align:left;background:var(--card2);border:1px solid var(--line);border-radius:12px;padding:10px 12px;min-height:76px;transition:border-color .15s,background .15s}
+.trait b{display:block;font-family:'Noto Serif TC',serif}
+.trait span{font-size:.85rem;color:var(--mute);display:block;line-height:1.5}
+.trait:hover:not(:disabled){border-color:var(--gold-d)}
+.trait.on{border-color:var(--gold);background:#2b2a1f}
+.trait.on b::after{content:' ✓';color:var(--gold)}
+.trait.rare b{color:var(--gold)}
+.trait:disabled{opacity:.5;cursor:not-allowed}
+.trait.locked{border-style:dashed}
+.alloc{display:grid;gap:8px}
+.arow{display:grid;grid-template-columns:4.2em 1fr auto;align-items:center;gap:12px;background:var(--card2);border:1px solid var(--line);border-radius:12px;padding:8px 12px}
+.arow .nm{font-family:'Noto Serif TC',serif}
+.arow .pv{font-size:.82rem;color:var(--mute)}
+.stepper{display:flex;align-items:center;gap:8px}
+.stepper button{width:40px;height:40px;border-radius:50%;border:1px solid var(--line);background:var(--bg2);font-size:1.2rem;line-height:1}
+.stepper button:hover:not(:disabled){border-color:var(--gold)}
+.stepper button:disabled{opacity:.35;cursor:not-allowed}
+.stepper output{min-width:1.6em;text-align:center;font-weight:700}
+
+/* HUD */
+.hud{position:sticky;top:0;z-index:5;background:rgba(15,18,24,.94);backdrop-filter:blur(6px);border-bottom:1px solid var(--line);margin:-18px -16px 6px;padding:12px 16px}
+.hud-top{display:grid;grid-template-columns:auto 1fr auto;gap:14px;align-items:center}
+.age{font-family:'Noto Serif TC',serif;font-size:2rem;font-weight:700;color:var(--gold);line-height:1}
+.age-u{font-size:.8rem;color:var(--mute);margin-left:2px}
+.realm b{font-family:'Noto Serif TC',serif;font-size:1.1rem}
+.realm small{color:var(--mute);display:block;font-size:.78rem;line-height:1.4}
+.hud .meta{text-align:right;font-size:.78rem;color:var(--mute);line-height:1.5}
+.bar{display:block;height:6px;border-radius:99px;background:#2a3142;overflow:hidden}
+.bar u{display:block;height:100%;background:var(--jade);border-radius:99px;transition:width .5s}
+.bar.xp u{background:linear-gradient(90deg,var(--gold-d),var(--gold))}
+.stats{display:grid;grid-template-columns:repeat(5,1fr);gap:8px;margin-top:10px}
+.stat{font-size:.82rem;color:var(--mute);line-height:1.3}
+.stat b{display:block;font-size:1.15rem;color:var(--text)}
+.stat .bar{height:4px;margin-top:3px}
+.chips{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px}
+.chip{display:inline-block;font-size:.76rem;line-height:1.5;padding:1px 9px;border-radius:99px;border:1px solid var(--line);background:var(--bg2);color:var(--mute);white-space:nowrap}
+.chip.gold{color:var(--gold);border-color:var(--gold-d)}
+.chip.danger{color:#ff9a85;border-color:#7b3a2e;background:#2a1713}
+.chip.lock{color:#ffd48a;border-color:#6f5a2a}
+.chip.cost{color:#e8c46a}
+.chip.st-bold{color:#f0a48f}.chip.st-diligent{color:#8fc9ff}.chip.st-timid{color:#c6b4f0}.chip.st-careful{color:#9bdcbc}
+
+/* 事件 */
+.event .passive{color:var(--mute);font-size:.86rem;margin-bottom:.8em}
+.etext{font-size:1.04rem;color:#ddd7c6}
+.opts{display:grid;gap:10px;margin-top:16px}
+.opt{text-align:left;background:var(--card2);border:1px solid var(--line);border-radius:12px;padding:12px 14px;min-height:56px;transition:border-color .15s,background .15s,transform .1s}
+.opt:hover:not(:disabled){border-color:var(--gold-d);background:#283148}
+.opt:active:not(:disabled){transform:translateY(1px)}
+.opt:disabled{opacity:.55;cursor:not-allowed}
+.olabel{display:block;font-weight:500}
+.ometa{display:flex;flex-wrap:wrap;gap:6px;margin-top:6px}
+.result{margin-top:16px;border-top:1px dashed var(--line);padding-top:16px}
+.roll{font-size:.86rem;color:var(--mute);margin-bottom:.6em}
+.roll strong{color:var(--text)}
+.roll b{padding:1px 10px;border-radius:99px;margin-left:6px;font-weight:700}
+.band-g .roll b{background:#2d4a3d;color:#9df0cc}
+.band-k .roll b{background:#2c3f53;color:#a9d1ff}
+.band-f .roll b{background:#4a3f25;color:#ffd48a}
+.band-b .roll b{background:#4d2a22;color:#ffa391}
+.rtext{font-size:1.04rem}
+.pextra{color:var(--gold);border-left:3px solid var(--gold-d);padding-left:12px;margin:.8em 0}
+.survive{color:#9df0cc;border-left:3px solid #3b7a62;padding-left:12px}
+.fx{list-style:none;padding:0;margin:.6em 0 0;display:flex;flex-wrap:wrap;gap:6px}
+.fx li{font-size:.84rem;padding:2px 10px;border-radius:99px;border:1px solid}
+.fx li.up{color:#9df0cc;border-color:#2f6a55;background:#142a23}
+.fx li.down{color:#ffa391;border-color:#7b3a2e;background:#2a1713}
+.unlock{margin-top:12px;padding:10px 14px;border:1px solid var(--gold-d);border-radius:12px;background:#262313;color:var(--gold)}
+.dead{color:#ffa391;font-family:'Noto Serif TC',serif;font-size:1.1rem;margin-top:12px}
+
+/* 一般元件 */
+.pbox{display:grid;gap:12px;margin-top:14px}
+.pcard{text-align:left;background:var(--card2);border:1px solid var(--line);border-radius:12px;padding:14px 16px}
+.pcard:hover{border-color:var(--gold)}
+.pcard b{font-family:'Noto Serif TC',serif;font-size:1.2rem;color:var(--gold)}
+.birth-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.birth-grid .card{margin:0}
+.birth-grid h3{font-size:1.05rem;color:var(--gold);margin-bottom:.2em}
+.endtitle{font-size:clamp(1.8rem,6vw,2.6rem);color:var(--gold);margin:.2em 0}
+.sum{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:10px;margin:14px 0}
+.sum div{background:var(--card2);border:1px solid var(--line);border-radius:12px;padding:8px 12px;font-size:.84rem;color:var(--mute)}
+.sum b{display:block;color:var(--text);font-size:1.05rem}
+.story p{font-size:1.04rem;line-height:1.95}
+.story em{color:var(--gold);font-style:normal}
+details.log{margin-top:16px;background:var(--card);border:1px solid var(--line);border-radius:var(--r);padding:6px 16px}
+details.log summary{cursor:pointer;padding:10px 0;color:var(--mute)}
+.log ol{margin:0;padding:0 0 10px 0;list-style:none;display:grid;gap:10px}
+.log li{font-size:.9rem;color:var(--mute);border-left:2px solid var(--line);padding-left:12px}
+.log li b{color:var(--text)}
+.toast{color:var(--gold);font-size:.9rem}
+
+@media (max-width:560px){
+  .goals,.birth-grid{grid-template-columns:1fr}
+  .hud-top{grid-template-columns:auto 1fr}
+  .hud .meta{grid-column:1/3;text-align:left;display:flex;gap:12px;flex-wrap:wrap}
+  .stats{gap:4px}
+  .stat{font-size:.74rem}
+  .arow{grid-template-columns:3.6em 1fr auto}
+}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+
+.hero{max-width:560px;margin:0 auto 18px;border-radius:var(--r);overflow:hidden;border:1px solid var(--line);box-shadow:0 10px 40px rgba(0,0,0,.45)}
+.hero svg{display:block;width:100%;height:auto}
+.title{padding-top:20px}
+[data-focus]:focus:not(:focus-visible){outline:none}
+.title h1:focus{outline:none}
+
+.courses{margin:10px 0 4px;border:1px solid var(--line);border-radius:10px;padding:6px 12px;background:rgba(255,255,255,.02)}
+.courses summary{cursor:pointer;color:var(--gold);font-size:.9rem}
+.cgrid{display:grid;grid-template-columns:1fr;gap:4px;margin-top:8px}
+.crow{display:grid;grid-template-columns:7.5em 1fr 3em;align-items:center;gap:8px;font-size:.88rem}
+.crow small{margin-left:4px;color:var(--jade);font-size:.7rem}
+.crow b{text-align:right;color:var(--text)}
+.hrow{display:flex;flex-wrap:wrap;gap:6px}
+.hcell{font-size:.8rem;padding:2px 8px;border:1px solid var(--line);border-radius:999px;color:var(--mute)}
+.hcell.me{border-color:var(--gold);color:var(--gold)}
+
+.capnote{font-size:.74rem;color:var(--mute);margin:6px 0 0}
+.resume{margin:10px auto;max-width:420px}
+.stage{font-size:.78rem;letter-spacing:.08em;color:#ffcf7a;margin:0 0 6px;display:flex;align-items:center;gap:10px}
+.stage.fr{color:#ffa3c4}
+.pips{display:inline-flex;gap:4px}.pips i{width:18px;height:4px;border-radius:2px;background:var(--line)}.pips i.on{background:#ffcf7a}
+.event.major{border-color:#7a5a2a;box-shadow:0 0 0 1px #7a5a2a55,0 8px 30px #0006}
+.duel{margin:4px 0 10px;padding:10px 12px;border-radius:12px;background:#0003;border:1px solid var(--line)}
+.duel-h{display:flex;justify-content:space-between;align-items:center;font-size:.8rem;color:var(--mute);margin-bottom:6px}
+.duel-h b{color:#ffcf7a;letter-spacing:.15em}
+.dice{display:flex;justify-content:center;gap:14px;font-size:2.4rem;line-height:1;margin:2px 0 8px}
+.die{display:inline-block;animation:roll .75s cubic-bezier(.2,.8,.3,1.2) both}
+.die.d2{animation-delay:.08s}
+@keyframes roll{0%{transform:translateY(-18px) rotate(-540deg) scale(.6);opacity:0}70%{opacity:1}100%{transform:none}}
+.tug{position:relative;height:12px;border-radius:99px;background:#5a2a24;overflow:hidden}
+.tug i{position:absolute;left:0;top:0;bottom:0;width:var(--w);background:linear-gradient(90deg,#3d7bd6,#7fc4ff);animation:tug 1s .55s ease-out both;border-right:2px solid #fff}
+@keyframes tug{from{width:50%}to{width:var(--w)}}
+.tug-l{display:flex;justify-content:space-between;font-size:.76rem;color:var(--mute);margin-top:4px}
+.duel.big .tug{height:16px}
+.duel+.roll b,.duel ~ .rtext{animation:fadein .4s .9s both}
+@keyframes fadein{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:none}}
+.duel.big.db-g{animation:glow 1.4s 1s both}
+@keyframes glow{0%{box-shadow:0 0 0 #9df0cc00}40%{box-shadow:0 0 26px #9df0cc88}100%{box-shadow:0 0 0 #9df0cc00}}
+.duel.big.db-b,.duel.big.db-f{animation:shake .5s 1s both}
+@keyframes shake{20%{transform:translateX(-6px)}40%{transform:translateX(6px)}60%{transform:translateX(-4px)}80%{transform:translateX(3px)}}
+.tline{list-style:none;padding:0 0 0 14px;margin:6px 0 10px;border-left:2px solid var(--line)}
+.tline li{position:relative;padding:4px 0 8px 10px;display:flex;flex-direction:column;gap:1px;font-size:.88rem}
+.tline li::before{content:'';position:absolute;left:-21px;top:9px;width:10px;height:10px;border-radius:50%;background:var(--line)}
+.tline li.b-g::before{background:#9df0cc}.tline li.b-k::before{background:#a9d1ff}.tline li.b-f::before{background:#ffd48a}.tline li.b-b::before{background:#ffa391}
+.tl-m{font-size:.72rem;color:var(--mute)}
+.hist summary{cursor:pointer}.life{margin:8px 0;padding:6px 0;border-top:1px solid var(--line)}.life>summary{cursor:pointer;font-size:.9rem}
+@media (prefers-reduced-motion:reduce){.die,.tug i,.duel,.duel+.roll b,.duel ~ .rtext{animation:none!important}}
+
+</style>
+</head>
+<body>
+<main id="app"></main>
+<script>
+// ===== data.js：遊戲資料（詞條、出身、常數） =====
+const SK={悟:'魔法天賦',體:'體魄',人:'人緣',心:'意志',金:'家底'};
+const SKEYS=['悟','體','人','心','金'];
+const MONTHS=['九月','十月','十一月','十二月','一月','二月','三月','四月','五月','六月','七月','八月'];
+const YEARN=['','一年級','二年級','三年級','四年級','五年級','六年級','七年級'];
+const LAST_MONTH=84, POST_MAX=12;      // 七年學制；擊敗佛地魔後可再延長最多 12 個月
+const CLUE_NEED=5, CLUE_MAX=7, HX_MAX=4;
+const DEFTAG={悟:'learn',體:'fight',人:'social',心:'heart',金:'money'};
+const STYLE_FULL={bold:'勇敢',diligent:'求知',timid:'忠誠',careful:'狡黠'};
+const HOUSES=['葛來分多','雷文克勞','史萊哲林','赫夫帕夫'];
+const STYLE2P={bold:'葛來分多',diligent:'雷文克勞',careful:'史萊哲林',timid:'赫夫帕夫'};
+const PERS={
+  葛來分多:{style:'bold',opp:'careful',d:'勇氣與膽識。勇敢風格的選項檢定 +2，體魄檢定另 +1；狡黠風格 −1。'},
+  雷文克勞:{style:'diligent',opp:'timid',d:'智慧與求知。求知風格的選項檢定 +2，魔法天賦檢定另 +1；忠誠風格 −1。'},
+  史萊哲林:{style:'careful',opp:'bold',d:'野心與手腕。狡黠風格的選項檢定 +2，人緣檢定另 +1；勇敢風格 −1。'},
+  赫夫帕夫:{style:'timid',opp:'diligent',d:'忠誠與耐心。忠誠風格的選項檢定 +2；致命危機時有 25% 被朋友拉一把；求知風格 −1。'}
+};
+const HOUSE_STAT={葛來分多:'體',雷文克勞:'悟',史萊哲林:'人'};
+
+// 孤兒／麻瓜出身：不能出現「父母」字樣的替換表（顯示時套用）
+const ORPHAN_SUB=[
+  ['你爸媽','孤兒院的阿姨'],['爸媽','孤兒院的阿姨'],['你爸','孤兒院的院長'],['你媽','孤兒院的阿姨'],
+  ['家裡的長輩','孤兒院的阿姨'],['你家','孤兒院'],['回家','回到孤兒院'],['家人','朋友']
+];
+
+const FAMILIES=[
+  {id:'pure',n:'古老純血世家',mod:{金:2,人:1,心:-1},d:'祖宅有二十個房間、十八幅會罵人的畫像，和一條「純血至上」的家訓。'},
+  {id:'half',n:'混血巫師家庭',mod:{悟:1,心:1},d:'爸是巫師，媽是麻瓜（或反過來）。晚餐桌上常見的話題是「電視為什麼會動」。'},
+  {id:'muggle',like:'timid',dis:'careful',n:'麻瓜家庭',mod:{心:1,體:1},d:'你家沒人知道魔法的存在，直到那封貓頭鷹信把窗戶撞破。你的優勢是：知道電話亭怎麼用。'},
+  {id:'orphan',n:'孤兒院長大',mod:{體:1,心:1,金:-1,人:-1},d:'沒有父母，只有一張不太新的床。你很早就學會一件事：好東西得靠自己搶。'},
+  {id:'ministry',n:'魔法部官員之家',mod:{人:2,金:1,體:-1},d:'爸媽在魔法部上班，口頭禪是「這件事得先填表格」。你從小就懂辦公室政治。'},
+  {id:'shop',n:'對角巷店家',mod:{金:1,人:1},d:'家裡開魔法小店。你五歲就會分辨魔杖、坩堝和奸商。'}
+];
+
+const TRAITS=[
+  {id:'book',n:'圖書館幽靈',d:'魔法天賦 +2，人緣 −1',mod:{悟:2,人:-1}},
+  {id:'brawn',n:'皮糙肉厚',d:'體魄 +2，魔法天賦 −1',mod:{體:2,悟:-1}},
+  {id:'talk',n:'自來熟',d:'人緣 +2，意志 −1；人緣檢定 +1',mod:{人:2,心:-1},cb:{social:1}},
+  {id:'will',n:'鋼鐵意志',d:'意志 +2，家底 −1',mod:{心:2,金:-1}},
+  {id:'rich',n:'金庫有點滿',d:'家底 +3，意志 −1',mod:{金:3,心:-1}},
+  {id:'spoiler',n:'我讀過原著',d:'魔法天賦 +1；魂器與時間線索類事件更常出現',mod:{悟:1},earth:1.8,hxw:1.8},
+  {id:'koi',n:'錦鯉附體',d:'所有檢定 +1，體魄 −1',mod:{體:-1},luck:1},
+  {id:'trash',n:'廢柴開局',d:'魔法天賦 −1，體魄 −1；可分配點數 +3',mod:{悟:-1,體:-1},pts:3},
+  {id:'lone',n:'孤僻獨行',d:'人緣 −2，意志 +1；可分配點數 +2',mod:{人:-2,心:1},pts:2},
+  {id:'poor',n:'家徒四壁',d:'家底 −1；可分配點數 +2；出身只會落在孤兒院或麻瓜家庭',mod:{金:-1},pts:2},
+  {id:'sickly',n:'體弱多病',d:'體魄 −2；可分配點數 +2',mod:{體:-2},pts:2},
+  {id:'run',n:'溜之大吉',d:'致命危機時有 20% 機率逃過一劫（但會受傷）',flee:0.2},
+  {id:'amulet',n:'奶奶的護身符',d:'人緣 −1；擁有一次免死機會',mod:{人:-1},save:1},
+  {id:'mouth',n:'嘴砲達人',d:'人緣 +1；人緣檢定 +1',mod:{人:1},cb:{social:1}},
+  {id:'curse',n:'衰運纏身',d:'所有檢定 −1；可分配點數 +3',luck:-1,pts:3},
+  // ---- 強力詞條（需在輪迴中解鎖）----
+  {id:'u_patronus',n:'守護神的微光',lock:true,hint:'在催狂魔面前守住自己的心。',d:'意志 +2；致命危機時有 25% 機率逃過一劫',mod:{心:2},flee:0.25},
+  {id:'u_phoenix',n:'鳳凰的眷顧',lock:true,hint:'在最糟的處境，被一隻鳥選中。',d:'體魄 +1；擁有一次免死機會',mod:{體:1},save:1},
+  {id:'u_dumbledore',n:'校長的青睞',lock:true,hint:'在關鍵的夜晚，讓校長記住你。',d:'魔法天賦 +1，人緣 +2',mod:{悟:1,人:2}},
+  {id:'u_duelist',n:'決鬥俱樂部之星',lock:true,hint:'在決鬥臺上，贏得一場漂亮的仗。',d:'體魄 +2；體魄檢定 +1',mod:{體:2},cb:{fight:1}},
+  {id:'u_home',n:'時間旅人',lock:true,hint:'成功回到原本的世界之後，才會收到這份禮物。',d:'開局自帶 1 條時間線索；時間線索事件更常出現',clue:1,earth:1.5}
+];
+// ---- 課程與教授 ----
+const COURSES=[
+  {id:'charms',like:'diligent',dis:'careful',n:'符咒學',t:'弗利維教授',look:'身材嬌小得像個大孩子，得站在一疊書上才勉強高過講桌，嗓音又尖又細，一激動就從書堆上摔下來'},
+  {id:'transfig',like:'bold',dis:'careful',n:'變形學',t:'麥教授',look:'黑髮梳成一絲不苟的髮髻，方框眼鏡後面的目光像貓一樣銳利，翡翠綠長袍的領口扣到下巴'},
+  {id:'potions',like:'careful',dis:'bold',n:'魔藥學',t:'石內卜教授',look:'一頭油亮的黑長髮垂在肩上，鷹鉤鼻、蠟黃臉色，黑袍的下襬在地窖裡像蝙蝠翅膀一樣翻飛'},
+  {id:'dada',n:'黑魔法防禦術',t:'（每年換人）',look:''},
+  {id:'herbo',like:'timid',dis:'careful',n:'草藥學',t:'芽菜教授',look:'圓圓胖胖，戴著補了又補的舊帽子，長袍上永遠沾著泥巴，連指甲縫裡都是土'},
+  {id:'history',like:'diligent',dis:'bold',n:'魔法史',t:'賓斯教授',look:'一位半透明的老幽靈，飄在講桌後面，聲音單調得像一台壞掉的收音機，連他自己都常常忘了自己已經過世'},
+  {id:'astro',like:'diligent',dis:'bold',n:'天文學',t:'辛尼斯塔教授',look:'披著繡滿星圖的深藍斗篷，深夜在天文塔頂扶著銅製望遠鏡，說話輕得像怕驚醒星星'}
+];
+const ELECTIVES=[
+  {id:'creatures',like:'timid',dis:'careful',n:'奇獸飼育學',t:'海格教授',look:'高大得像一座小山，鬍子亂得像鳥窩，毛皮大衣的口袋裡裝著各種來路不明的小生物，一笑整間教室都在震'},
+  {id:'divination',like:'timid',dis:'diligent',n:'占卜學',t:'崔老妮教授',look:'瘦得像一隻大蜻蜓，眼鏡的鏡片厚得像瓶底，披著層層疊疊的亮片披巾，手鐲一動就叮噹作響'},
+  {id:'arith',like:'diligent',dis:'bold',n:'算命學',t:'向量教授',look:'身形瘦削，戴著銀框單片眼鏡，永遠抱著一疊畫滿表格的羊皮紙，講課的語速像在背乘法表'},
+  {id:'muggle',n:'麻瓜研究',t:'巴伯教授',look:'笑容溫和，愛穿麻瓜風格的毛衣，講桌上擺著老式收音機和一把雨傘，對電燈的原理比誰都好奇'},
+  {id:'runes',like:'diligent',dis:'bold',n:'古代魔文',t:'巴賓教授',look:'滿頭銀髮盤成鬆鬆的髻，眼神像在讀一本很舊的書，手指上永遠沾著墨水'}
+];
+const CORE=COURSES.map(c=>c.id);
+const HEAD={葛來分多:'transfig',雷文克勞:'charms',史萊哲林:'potions',赫夫帕夫:'herbo'};
+const SKNAME={};COURSES.concat(ELECTIVES).forEach(c=>SKNAME[c.id]=c.n);
+const DADA_T=['',
+  {like:'timid',dis:'bold',t:'奇洛教授',look:'頭上纏著一條紫色的大頭巾，說話結結巴巴，身上飄著一股濃濃的大蒜味'},
+  {like:'bold',dis:'diligent',t:'洛哈特教授',look:'一頭波浪金髮，牙齒白得發亮，每週換一種顏色的長袍，講課像在開簽名會'},
+  {like:'diligent',dis:'careful',t:'路平教授',look:'臉色蒼白，長袍上補丁疊著補丁，笑容很溫和，眼底卻有藏不住的疲憊'},
+  {like:'careful',dis:'timid',t:'穆敵教授',look:'一隻義眼轉個不停，一條木腿敲得地板咚咚響，滿臉舊疤，隨身水壺從不離手'},
+  {like:'careful',dis:'bold',t:'恩不里居教授',look:'一身粉紅開襟毛衣，臉像一隻寬寬的癩蛤蟆，聲音甜得發膩，牆上掛滿會喵喵叫的小貓盤子'},
+  {like:'careful',dis:'bold',t:'石內卜教授',look:'還是那件黑袍、那頭油亮的長髮，只是這一年，他的臉色比地窖還陰'},
+  {like:'bold',dis:'timid',t:'卡羅教授',look:'眼神凶惡，嘴角永遠掛著一抹殘忍的笑，把整個教室變成了刑場'}
+];
+const EVENTS=[];
+// 結果／選項建構子
+const R=(t,fx,x)=>Object.assign({t,fx:fx||{}},x||{});
+const O=(l,s,c,r,x)=>Object.assign({l,s,c,r:c?r:{k:r}},x||{});
+
+// ===== 特殊事件、七年大事件（每 6 個月一次：十二月與六月）=====
+EVENTS.push(
+{id:'sorting',t:'分類帽',text:'九月一日，你穿著嶄新（且有點大）的長袍，站在大廳中央。一頂破破爛爛的帽子被放上你的頭，在你耳邊嘀咕：「嗯……有意思，你的腦袋裡有些……不屬於這個世界的東西。不過沒關係，你想去哪裡？」',o:[
+  O('「勇氣，我要去能面對一切的地方。」','bold',null,R('帽子笑了：「葛來分多！」紅金色的歡呼聲幾乎要把屋頂掀掉。你被一堆陌生人拍著肩膀，心想：原來傳說中的熱情是真的。',{體:1,心:1},{house:'葛來分多'})),
+  O('「知識，我想知道這個世界是怎麼運作的。」','diligent',null,R('帽子嘀咕了一聲「有道理」，大聲宣布：「雷文克勞！」藍銅色的長桌傳來整齊的掌聲，有人已經在問你的生日和星座。',{悟:2},{house:'雷文克勞'})),
+  O('「野心，我要在這個世界混出名堂。」','careful',null,R('帽子停頓了一下：「……你確定？好吧，史萊哲林！」綠色的長桌傳來矜持的掌聲，有人上下打量了你一眼，露出「算你識相」的表情。',{人:1,金:1},{house:'史萊哲林'})),
+  O('「忠誠，我只想要有朋友的地方。」','timid',null,R('帽子溫柔地說：「赫夫帕夫！」黃黑色的長桌傳來最熱烈的歡呼，有人當場塞給你一塊還熱著的馬芬。你突然覺得，這裡可能是整個城堡裡最溫暖的地方。',{人:1,心:1},{house:'赫夫帕夫'}))
+]},
+{id:'e_quiet',t:'平淡的一個月',rep:true,w:0.5,text:'沒有怪物、沒有考試、沒有人想殺你。你在公共休息室的沙發上賴了一整個週末，覺得人生不過如此。',o:[
+  O('補眠','timid',null,R('你睡到太陽曬屁股，醒來時有人替你留了早餐。',{體:1})),
+  O('看書','diligent',['悟',8],{k:R('你啃完了一本書，多少記住了一些。',{悟:1}),f:R('書太厚，你看到一半睡著了。',{})}),
+  O('找人聊天','careful',['人',8],{k:R('你和幾個人聊了一晚，八卦的資訊量爆炸。',{人:1}),f:R('聊著聊著話題尷尬了。',{})})
+]},
+{id:'m_mirror',mm:4,t:'十二月・一面奇怪的鏡子',text:'耶誕假期，你在城堡深處的一間廢棄教室裡，發現一面高大的鏡子。鏡中的你，站在一個你再也回不去的地方——那間熟悉的客廳。鏡面上刻著一行倒過來的字，像是在說：你看見的，不是你擁有的，而是你想要的。',o:[
+  O('盯著鏡子看一整夜','diligent',['心',12],{
+    g:R('你看了一整夜，最後把它當成一面「很貴的情緒鏡」，揮揮手轉身離開。你的心比昨天更穩。',{心:2,悟:1}),
+    k:R('你看了很久，最後在天亮前離開。你的眼眶有點紅。',{心:1}),
+    f:R('你一連三晚都跑去看，睡眠嚴重不足。',{體:-1,心:-1})}),
+  O('把這件事告訴別人','timid',['人',11],{
+    g:R('一位溫和的老教授湊過來，對你笑了笑：「這鏡子，今晚會被搬走。別再找它了。」你覺得有人理解你。',{心:1,人:2}),
+    k:R('朋友聽完，什麼也沒說，只是默默陪你吃了頓夜宵。',{人:1}),
+    f:R('你說得太含糊，大家以為你在炫耀鏡子的稀有度。',{人:-1})}),
+  O('設法打破這面鏡子','bold',['體',12],{
+    g:R('你用凳子狠狠砸過去——鏡子嗡的一聲，竟然晃了晃，沒碎。但你覺得心裡輕了一點。',{體:1,心:1}),
+    k:R('你把鏡子推倒了，它自己沒碎，倒是你被反作用力彈得坐在地上。',{體:-1,心:1}),
+    f:R('你被費契當場抓獲，罰你刷了一個月的獎盃。',{體:-1,人:-1,金:-1})}),
+  O('偷偷告訴自己：我會想辦法回去的','careful',['悟',11],{
+    g:R('你在鏡前許了一個願。出乎意料，鏡面閃了一下，你看見了一本書的封面。你記下了它的樣子。',{悟:1,心:1},{clue:1}),
+    k:R('你許了願，鏡子沒有回應，但你的決心更堅定了。',{心:1}),
+    f:R('你站在鏡子前自言自語，被路過的幽靈聽到，成了城堡八卦的主角。',{人:-1})})
+]},
+{id:'m_stone',mm:10,t:'六月・保護魔法石',text:'期末前夕，有人要從城堡地下偷走一樣珍貴的東西。一路上有活樹根、巨大的西洋棋盤、會飛的鑰匙，以及一個你只在書上看過的名字。你站在入口，所有人都在看著你：「你要去，還是不去？」',o:[
+  O('衝進去，闖關','bold',['體',13],{
+    g:R('你在棋盤上硬生生闖了出去，看見了最後一間房。你不是第一個到的，但你站在了最關鍵的位置。',{體:2,心:2,人:2},{flag:'stoneHero'}),
+    k:R('你連滾帶爬闖過幾關，雖然狼狽，但總算沒拖後腿。',{體:1,心:1}),
+    f:R('你被活樹根纏住，花了半個鐘頭才脫身，錯過了最精彩的部分。',{體:-1})}),
+  O('用腦子破解謎題','diligent',['悟',13],{
+    g:R('你解開了關卡的邏輯，替隊友開了一條近路。教授事後誇你：「這孩子，前途無量。」',{悟:2,人:1,心:1},{flag:'stoneHero'}),
+    k:R('你解了一半，另一半靠運氣。反正過關了。',{悟:1}),
+    f:R('謎題比你想像的難，你卡在原地。',{心:-1})}),
+  O('設法聯絡教授求援','careful',['人',13],{
+    g:R('你在最關鍵的時刻，拉來了幾位老師。他們趕到的時候，事情正好結束在最漂亮的位置。',{人:2,心:1}),
+    k:R('援兵晚了一點，但還是來了。',{人:1}),
+    f:R('你找了半天找不到人，只好在原地乾著急。',{人:-1})}),
+  O('留在後方，替受傷的人包紮','timid',['心',12],{
+    g:R('你替一位被打傷的同學止了血，他後來一直記得你。',{人:2,心:2}),
+    k:R('你守在後方，也算幫上了忙。',{心:1}),
+    f:R('現場太混亂，你連紗布都沒找到。',{})})
+]},
+{id:'m_duel',mm:16,t:'十二月・決鬥俱樂部',text:'二年級，城堡裡忽然開了一間決鬥俱樂部，指導老師是一位笑得露出十六顆牙的金髮教授。你被拉上決鬥臺，對面是一個你不認識的高年級生。他的眼神說：「我要贏你。」',o:[
+  O('先下手為強，直接衝上去','bold',['體',14],{
+    g:R('你一個「繳械咒」打飛了對方的魔杖，全場靜了三秒，然後掌聲雷動。',{體:2,人:2},{unlock:'u_duelist'}),
+    k:R('你們你來我往，最後你以半步之差險勝。',{體:1,人:1}),
+    f:R('你被一道咒語擊中，頭髮瞬間變成粉紅色。',{體:-1,人:-1})}),
+  O('防守反擊，看清再出手','diligent',['悟',14],{
+    g:R('你一個「盔甲護身」擋下所有攻擊，再反手一擊，漂亮地結束了比賽。教授說：「這就是優雅！」',{悟:2,人:1}),
+    k:R('你守得穩，雖然沒贏，也沒輸。',{悟:1}),
+    f:R('你太保守，對手抓到空檔，一個咒語把你送下了臺。',{悟:-1})}),
+  O('拉對手聊天，找破綻','careful',['人',14],{
+    g:R('你一個彎折話題，對方分神，你順勢奪了他的魔杖。「兵不厭詐。」',{人:2,心:1}),
+    k:R('你用言語拖住對手，最終以平手收場。',{人:1}),
+    f:R('你的話術被看穿，對方冷笑一聲，一個咒語把你轟了出去。',{人:-1})}),
+  O('主動認輸，保全顏面','timid',null,R('你舉手認輸，臺下哄堂大笑，但你的朋友替你拍了拍背：「識時務者為俊傑。」',{人:1,心:-1}))
+]},
+{id:'m_chamber',mm:22,t:'六月・密室',text:'城堡裡的學生一個接一個變成了石頭。牆上用血寫著：「密室已經被打開。」你手裡捏著一本不起眼的舊日記，它似乎有自己的想法。地下深處，有一頭不該存在的東西在爬行。',o:[
+  O('帶著魔杖下去查探','bold',['體',16],{
+    g:R('你在黑暗中找到了通往密室的入口，並用一把不起眼的劍擊敗了那條巨蛇。日記在你面前化為灰燼——一個「魂器」的秘密，你已經記住了。',{體:2,心:2,人:2},{hx:1,flag:'chamberHero',unlock:'u_phoenix'}),
+    k:R('你與蛇搏鬥，雖然受傷，但成功銷毀了日記。',{體:-1,心:1},{hx:1}),
+    f:R('你被蛇的視線擊中，變成了一尊石像。幸好有人及時趕到，用曼德拉草把你救了回來。',{體:-2}),
+    b:R('巨蛇的毒牙，比你想像的更快。',{},{die:'死於密室的巨蛇之口'})}),
+  O('研究日記，找出幕後黑手','diligent',['悟',16],{
+    g:R('你一頁頁翻開日記，發現它會「回答」你的問題。你用一段咒語切斷了它與主人的聯繫，並將它封存。',{悟:2,心:1},{hx:1}),
+    k:R('你解了一半，也算把日記暫時控制住了。',{悟:1},{hx:1}),
+    f:R('日記在你腦中低聲說話，你差點被它的甜言蜜語帶走。',{心:-2})}),
+  O('聯絡教授，召集隊伍','careful',['人',15],{
+    g:R('你利用人脈，把教授們拉到同一條線上。一切雖然兵荒馬亂，但最終有驚無險。',{人:2,心:1}),
+    k:R('教授們來得有點晚，但還是趕上了。',{人:1}),
+    f:R('你的警告被當成惡作劇，等大家信了的時候，事情已經很嚴重了。',{人:-2})}),
+  O('留在安全的地方，替同學護航','timid',['心',14],{
+    g:R('你守在醫療翼，替每一個被送來的石像守夜。直到曼德拉草完成，你一個也沒讓人出事。',{心:2,人:2}),
+    k:R('你默默守著，也算盡了一份力。',{心:1}),
+    f:R('你怕得不敢出門，只能躲在床底。',{心:-1})})
+]},
+{id:'m_dementor',mm:28,t:'十二月・催狂魔',text:'三年級的冬天，監獄逃出了一個危險的人物，城堡周圍派來了一群飄浮的黑影。它們吸走快樂，只留下一個學生最不想回想的畫面。你在走廊上遇到一隻，它正朝你緩緩靠近。',o:[
+  O('回想一個最快樂的瞬間','diligent',['心',15],{
+    g:R('你想到了回家吃的第一頓火鍋。一道微弱的銀光從你的魔杖尖端迸出，催狂魔縮了回去。',{心:2,悟:1},{unlock:'u_patronus'}),
+    k:R('你勉強想起一個快樂的回憶，催狂魔緩緩後退，你虛脫地坐在地上。',{心:1}),
+    f:R('你的快樂回憶被它一口吞掉。你倒在地上，渾身冰冷。',{心:-2,體:-1}),
+    b:R('催狂魔的氣息纏上了你的心臟。',{心:-3,體:-2})}),
+  O('拔腿就跑','timid',['體',13],{
+    g:R('你一路狂奔，在拐角處撞上了一位熟悉的教授，他一個咒語把催狂魔驅散。',{體:1,人:1}),
+    k:R('你跑掉了，雖然狼狽，但保住了精神。',{體:1}),
+    f:R('你被追上了，在地上蜷縮了好久才恢復。',{心:-1,體:-1})}),
+  O('找朋友一起站著','careful',['人',14],{
+    g:R('你拉著朋友圍成一個圈，大家同時想起快樂的事。催狂魔在圈外轉了好幾圈，終於放棄。',{人:2,心:1}),
+    k:R('朋友的陪伴讓你稍稍安穩。',{人:1}),
+    f:R('朋友被嚇得當場跑掉，留你一個人面對。',{人:-1,心:-1})}),
+  O('硬著頭皮用咒語對抗','bold',['悟',15],{
+    g:R('你硬是用一個咒語把它轟了出去。傳說中的「正面剛」，你體驗到了。',{悟:1,體:1,心:1}),
+    k:R('咒語把它逼退了一點，但你的魔力也見底了。',{悟:1}),
+    f:R('咒語沒起作用，你被它吸走了一大塊精神。',{心:-2})})
+]},
+{id:'m_shack',mm:34,t:'六月・尖叫屋與時間轉換器',text:'三年級的期末，一個長髮的男人出現在尖叫屋。事情比你想的更複雜：有人被冤枉，有人需要被救，而你的朋友手上，恰好有一個能把時間倒回幾個小時的小玩意兒。',o:[
+  O('跟著主角團一起去尖叫屋','bold',['體',15],{
+    g:R('你在尖叫屋裡冒死擋住了狼人，替大家爭取了寶貴的幾秒。事後，你多了一個從不認識的朋友。',{體:2,心:2,人:2},{flag:'shackHero'}),
+    k:R('你跟著一起行動，雖然沒幫上大忙，但也沒添亂。',{體:1,心:1}),
+    f:R('你被狼人的爪子擦傷，躺在醫療翼好幾天。',{體:-2}),
+    b:R('狼人的下一擊，比你預期的更近。',{},{die:'死於尖叫屋的月圓之夜'})}),
+  O('研究那個時間轉換器','diligent',['悟',15],{
+    g:R('你研究了一個晚上，大致摸清了原理。「原來時間不是直線，而是很多條線在同一個點交叉。」你覺得，回家的路，也許就在這裡。',{悟:2},{clue:1}),
+    k:R('你看懂了一部分，也記下了幾個重要的筆記。',{悟:1},{clue:1}),
+    f:R('你太投入，差點把自己的記憶弄混。',{心:-1})}),
+  O('設法讓所有人平安離開','careful',['人',14],{
+    g:R('你在關鍵時刻，說服各方暫時休戰。這是你這輩子說過最有分量的一句話。',{人:3,心:1}),
+    k:R('你調停了一部分，沒有人受重傷。',{人:1}),
+    f:R('你的調停被所有人無視。',{人:-1})}),
+  O('留在城堡，替他們掩護','timid',['心',13],{
+    g:R('你替他們掩護了一整晚，費契找不到任何破綻。',{心:2,人:1}),
+    k:R('你守住了城堡的後方。',{心:1}),
+    f:R('你被抓到「睡過頭」，罰寫了十頁悔過書。',{心:-1})})
+]},
+{id:'m_ball',mm:40,t:'十二月・耶誕舞會',text:'四年級的聖誕舞會，整個城堡掛滿了彩帶，連費契都被迫打了領結。你需要一個舞伴、一件像樣的長袍，以及一個讓自己不丟臉的計畫。',o:[
+  O('邀請你喜歡的人','bold',['人',16],{
+    g:R('對方愣了三秒，然後笑著點頭。這支舞跳完，你的名字被整個城堡記住了。',{人:3,心:1}),
+    k:R('對方猶豫了一下，但還是答應了。',{人:1}),
+    f:R('對方客氣地婉拒，你在走廊上站了十分鐘。',{人:-1,心:-1})}),
+  O('一個人去，帶著甜點','careful',['金',12],{
+    g:R('你抱著一整盤小蛋糕，成了整個舞會的團寵。',{人:2,金:-1}),
+    k:R('你吃得很開心，也認識了不少人。',{人:1}),
+    f:R('甜點被搶光，你尷尬地站在牆邊。',{人:-1})}),
+  O('留在公共休息室，讀書','diligent',['悟',14],{
+    g:R('你讀完一本厚書，書裡夾著一張紙條，上面寫著幾個你看不懂的符號。你把它收了起來。',{悟:2}),
+    k:R('你讀得很專心，魔法天賦有所長進。',{悟:1}),
+    f:R('你看到一半睡著了。',{})}),
+  O('陪朋友一起去，當他的後援','timid',['心',13],{
+    g:R('你替朋友解圍，替他擋掉一個尷尬的瞬間。朋友後來送了你一份厚禮。',{人:2,金:1}),
+    k:R('你默默陪著，沒有人注意到你，但你很開心。',{心:1}),
+    f:R('你比朋友更緊張。',{})})
+]},
+{id:'m_grave',mm:46,t:'六月・第三項任務',text:'四年級的終點是一座迷宮。有人在裡面設了陷阱，一個你不認識的聲音說：「這次的獎盃，被動了手腳。」當你們同時伸手握住它，世界變成了一片暗綠色的墓園。',o:[
+  O('立刻抓住同伴，一起逃','bold',['體',17],{
+    g:R('你拖著同伴往獎盃的方向狂奔，在最後一秒把兩個人一起帶了回去。這一次，沒有人死。',{體:2,心:2,人:3},{flag:'cedricLives'}),
+    k:R('你們逃出來了，但你的同伴受了重傷。',{體:-1,人:1}),
+    f:R('你被咒語擊中，倒在地上，眼睜睜看著事情發生。',{體:-2,心:-2}),
+    b:R('殺人咒的綠光擦過你的頭頂。',{},{die:'在墓園中被索命咒擊中'})}),
+  O('設法擊倒敵人','diligent',['悟',17],{
+    g:R('你一個「昏昏倒地」擊中了對方，替兩個人爭取了逃跑的時間。',{悟:2,心:1,人:1}),
+    k:R('你擊退了對方，但他很快恢復。',{悟:1}),
+    f:R('你的咒語被反彈，自己倒在地上。',{體:-1,悟:-1}),
+    b:R('對方的魔力遠超你想像。',{},{die:'在墓園中被敵人擊殺'})}),
+  O('冷靜觀察，找脫身機會','careful',['心',16],{
+    g:R('你一直沒出手，等到對方分神的那一瞬間，才拉著同伴衝向獎盃。',{心:2,人:1}),
+    k:R('你找到機會逃了出來，驚魂未定。',{心:1}),
+    f:R('你判斷錯了時機，被抓了個正著。',{體:-2})}),
+  O('把獎盃遞給對方，換取性命','timid',null,R('你舉起雙手，把獎盃放在地上。對方沒有立刻動手，你們被允許離開。這次的選擇，沒有人會誇你，但你活下來了。',{心:-1,人:-1}))
+]},
+{id:'m_da',mm:52,t:'十二月・鄧不利多軍',text:'五年級，魔法部派來了一位穿粉紅色開襟毛衣的新老師，她的口頭禪是「請保持安靜」。學校裡的魔法課變成了朗讀課本。有人在偷偷組織地下社團，帶頭的人看著你：「你要不要來？」',o:[
+  O('立刻加入，擔任教官','bold',['悟',17],{
+    g:R('你在密室裡把大家教得服服貼貼，一年後，全員的咒語水準都提升了一個層級。',{悟:2,人:3,心:1},{flag:'daLeader'}),
+    k:R('你加入了，雖然只是中層幹部，但很開心。',{悟:1,人:1}),
+    f:R('你的教學被當成笑話，大家一邊笑一邊練。',{人:-1})}),
+  O('偷偷幫忙，不暴露身份','careful',['人',16],{
+    g:R('你在暗處幫了大忙，沒有人知道是你，但你自己清楚。',{人:2,心:1}),
+    k:R('你默默做事，沒有被發現。',{人:1}),
+    f:R('你太低調，差點被當成臥底。',{人:-2})}),
+  O('留在教室裡，繼續讀課本','diligent',['悟',15],{
+    g:R('你一個人把整本課本讀完，還額外做了筆記。考試時，你的卷子成了範本。',{悟:2}),
+    k:R('你的成績穩定，沒有出錯。',{悟:1}),
+    f:R('你沒能抓住重點，成績不理想。',{悟:-1})}),
+  O('向那位老師告密，換取好處','careful',['人',16],{
+    g:R('你拿到了老師給的獎賞，但也失去了一些朋友。',{金:3,人:-3,心:-1}),
+    k:R('你的消息讓老師很滿意，但你被所有人側目。',{金:1,人:-2}),
+    f:R('老師不信你，反而罰你抄了一個月的書。',{人:-3,心:-2})})
+]},
+{id:'m_ministry',mm:58,t:'六月・神秘事務司',text:'五年級的期末，幾個朋友衝進魔法部深處，說有人被困。那裡有一個放著預言球的大廳、一間只有時間流動的房間，以及一道沒人敢碰的石拱門。你站在入口，所有人都在等你做決定。',o:[
+  O('跟著衝進去，一起救人','bold',['體',18],{
+    g:R('你在無數咒語中保護了幾個同伴。關鍵時刻，一位熟悉的長輩趕到，替大家擋下最後一擊。',{體:2,心:2,人:2},{flag:'ministryHero'}),
+    k:R('你和同伴們一起撐了下來，雖然傷痕累累。',{體:-1,心:1,人:1}),
+    f:R('你被敵人的咒語擊中，暈了過去。',{體:-2}),
+    b:R('一道綠光擦身而過，你沒能躲開。',{},{die:'死於神秘事務司的混戰'})}),
+  O('溜進時間之室，查看那些時鐘','diligent',['悟',17],{
+    g:R('你在那個滿是時鐘的房間裡，看見了一個巨大的玻璃罩，裡面時間在倒流。你拓下了符文的樣子，這是回家的最重要線索。',{悟:2,心:1},{clue:1}),
+    k:R('你研究了幾分鐘，記下了一些符文。',{悟:1},{clue:1}),
+    f:R('你的手臂被時間咒語擦過，一瞬間老了十歲。',{體:-1,悟:-1}),
+    b:R('時間之室的力量，遠比你想像的危險。',{},{die:'迷失在時間之室，被時間徹底吞噬'})}),
+  O('留在外面，替大家望風','timid',['心',15],{
+    g:R('你守在入口，替朋友擋掉了好幾波追兵。',{心:2,人:2}),
+    k:R('你守住了出口，也算盡力了。',{心:1}),
+    f:R('你被追兵發現，狼狽地逃了出來。',{心:-1})}),
+  O('聯絡外面的援軍','careful',['人',17],{
+    g:R('你用最快的速度把消息送出去，援軍趕到的時機，剛剛好。',{人:3,心:1}),
+    k:R('援軍來得稍晚，但還是來了。',{人:1}),
+    f:R('你的求援被擱置，一切只能靠自己。',{人:-1})})
+]},
+{id:'m_memory',mm:64,t:'十二月・記憶的碎片',text:'六年級的冬天，新來的魔藥學教授正在收集「有趣的學生」，他每週辦一次小型晚宴。校長悄悄把你拉到一旁：「有一段記憶，我需要你幫我拿到。」那不是一件容易的事。',o:[
+  O('靠社交手腕，套出記憶','careful',['人',18],{
+    g:R('你把那位教授哄得心花怒放，順利拿到了關鍵的記憶。裡面藏著一個魂器的秘密。',{人:2,悟:1,心:1},{hx:1}),
+    k:R('你花了一個晚上，拿到了記憶的一部分。',{人:1},{hx:1}),
+    f:R('教授看穿了你的目的，委婉地把你請了出去。',{人:-1})}),
+  O('偷偷潛入他的辦公室','bold',['悟',18],{
+    g:R('你用隱形咒溜進辦公室，在抽屜深處找到了那段記憶。',{悟:2,心:1},{hx:1}),
+    k:R('你找到了一部分，但留下了一點痕跡。',{悟:1},{hx:1}),
+    f:R('你被發現了，禁閉兩週。',{人:-2,心:-1})}),
+  O('向教授坦白，請求幫助','timid',['心',16],{
+    g:R('教授沉默良久，最終點了點頭，主動把記憶交給了你。',{心:2,人:1},{hx:1}),
+    k:R('教授猶豫了一下，給了你一部分記憶。',{心:1},{hx:1}),
+    f:R('教授拒絕了你，但沒有責罰。',{})}),
+  O('找藥水解開他的心防','diligent',['悟',17],{
+    g:R('你調出了一瓶完美的「幸運藥水」。教授心情大好，主動把記憶交給了你。',{悟:2,金:-1},{hx:1}),
+    k:R('藥水效果一般，但還是讓他鬆了口。',{悟:1},{hx:1}),
+    f:R('藥水調錯了，教授拉了三天肚子。',{人:-2})})
+]},
+{id:'m_tower',mm:70,t:'六月・天文塔之夜',text:'六年級的最後一夜，城堡被黑暗的印記籠罩。有人站在高塔上，等一個你熟悉的人。你知道這個夜晚，在原本的故事裡，是個誰也不願面對的結局。',o:[
+  O('衝上塔頂，試圖改變結局','bold',['體',19],{
+    g:R('你在最後一秒趕到，替老校長擋下了那道咒語。這一次，結局被改寫了。',{體:2,心:2,人:3},{flag:'towerSaved',unlock:'u_dumbledore'}),
+    k:R('你趕到了，但還是慢了半步。你抱住受傷的老人，一起從塔頂摔下。',{體:-2,心:1}),
+    f:R('你被沿途的敵人攔住，什麼也沒能改變。',{心:-2}),
+    b:R('敵人的咒語，直接擊中了你。',{},{die:'死於天文塔下的黑暗之夜'})}),
+  O('留在下面，阻止敵人入侵','diligent',['悟',18],{
+    g:R('你在城堡的長廊上布下了最強的屏障，把追兵一個個擋了出去。',{悟:2,心:1,人:1}),
+    k:R('你擋住了一部分敵人，剩下的交給其他人。',{悟:1}),
+    f:R('屏障被攻破，你狼狽撤退。',{悟:-1}),
+    b:R('敵人的咒語穿過屏障。',{},{die:'死於天文塔下的伏擊'})}),
+  O('召集同伴，守住大門','careful',['人',18],{
+    g:R('你把所有能叫來的朋友都叫來了，大家一起守住了城堡的入口。',{人:3,心:1}),
+    k:R('你叫來了幾個人，勉強守住了陣線。',{人:1}),
+    f:R('沒有人回應你的召集。',{人:-2})}),
+  O('留在安全的地方，等一切結束','timid',null,R('你縮在被窩裡，一整夜沒睡。第二天，整個城堡都在哭。你什麼都沒做，但你也活了下來。',{心:-2}))
+]},
+{id:'m_hunt',mm:76,t:'十二月・逃亡',text:'七年級，沒有人再去上課。你和幾個朋友流亡在外，背包裡裝著帳篷、乾糧，和一個沉重的項鍊。你們在尋找最後的魂器，也躲避無處不在的追兵。某個深夜，營地外傳來了腳步聲。',o:[
+  O('悄悄出去查看','bold',['體',20],{
+    g:R('你無聲地解決了追兵，帶回了關鍵的情報：下一個魂器的位置。',{體:2,心:1},{hx:1}),
+    k:R('你擊退了追兵，雖然驚動了周圍。',{體:1},{hx:1}),
+    f:R('你被追兵發現，只好帶著朋友連夜搬家。',{體:-1,心:-1}),
+    b:R('一道咒語從背後擊中了你。',{},{die:'死於逃亡路上的伏擊'})}),
+  O('研究那條項鍊的來歷','diligent',['悟',20],{
+    g:R('你解開了項鍊的秘密，順利摧毀了它。心裡的陰霾，也一起散了。',{悟:2,心:2},{hx:1}),
+    k:R('你解出了一部分，項鍊的力量被削弱。',{悟:1,心:-1},{hx:1}),
+    f:R('項鍊的黑暗力量侵蝕了你的情緒，你整整三天睡不著。',{心:-2})}),
+  O('召集朋友，討論下一步','careful',['人',19],{
+    g:R('你們圍著營火討論了一個晚上，終於釐清下一個魂器的線索。',{人:2,心:1},{hx:1}),
+    k:R('大家有了共識，雖然只是一個模糊的方向。',{人:1}),
+    f:R('討論變成了爭吵，朋友們各自帶著情緒離開。',{人:-2})}),
+  O('原地不動，等待風頭過去','timid',['心',18],{
+    g:R('你們躲了三天三夜，追兵終於走遠。你覺得，活著本身就是勝利。',{心:2}),
+    k:R('你們躲了一陣，雖然糧食見底，但安全了。',{體:-1}),
+    f:R('你們被追兵包圍，狼狽逃出。',{體:-2,心:-1})})
+]},
+{id:'m_final',mm:82,fin:true,t:'六月・霍格華茲之戰',text:'黎明前，城堡的圍牆被炸開了一個大洞。無數的黑影衝進大廳，空氣中充滿了咒語的味道。你的朋友們站在你身邊，每個人手裡都握著魔杖，眼神裡寫著一句話：「今晚，我們不退。」佛地魔的聲音在大廳裡迴響：「交出那個孩子，我可以放過你們。」你握緊了魔杖。這一場戰鬥，沒有任何一條退路。',o:[
+  O('正面迎擊佛地魔','bold',['體',24],{
+    g:R('你一道光束迎上那道綠光，兩股力量在空中對撞，整個大廳為之震動。最後，你贏了。佛地魔倒在地上，再沒有起來。',{體:3,心:3,人:3},{goal:'voldemort'}),
+    k:R('你與佛地魔纏鬥了很久，最終在最後一刻，用盡全力把他擊倒。你累得連手指都抬不起來。',{體:-1,心:2},{goal:'voldemort'}),
+    f:R('你的咒語被擋了回來。佛地魔冷笑一聲，伸出魔杖。大廳裡一片死寂。',{},{end:'dark'}),
+    b:R('綠光擊中了你。',{},{die:'在霍格華茲之戰中倒下'})}),
+  O('用魔法天賦與魂器知識，破解他的不死','diligent',['悟',24],{
+    g:R('你一個個點出了他的弱點，讓所有人明白「他並非無敵」。你親手給了他最後一擊。',{悟:3,心:2,人:2},{goal:'voldemort'}),
+    k:R('你的推演雖然不完美，但足以讓大家抓到最後的機會。',{悟:1,心:1},{goal:'voldemort'}),
+    f:R('你的推演被他當場打斷，局面一邊倒。',{},{end:'dark'}),
+    b:R('他的咒語，直接擊穿了你的防禦。',{},{die:'在霍格華茲之戰中倒下'})}),
+  O('召集所有朋友，一起並肩作戰','careful',['人',24],{
+    g:R('你一聲令下，所有人從四面八方湧來，彷彿整個城堡都站在你這一邊。佛地魔在眾人的咒語下，終究倒下了。',{人:4,心:2},{goal:'voldemort'}),
+    k:R('朋友們拼了命撐住了陣線，雖然傷亡慘重，但最終贏了。',{人:2,心:1},{goal:'voldemort'}),
+    f:R('朋友們被對方的黑暗軍團擊潰，你一個人面對他。',{},{end:'dark'}),
+    b:R('混戰中，一道咒語擊中了你。',{},{die:'在霍格華茲之戰中被流彈擊中'})}),
+  O('把自己當誘餌，替大家爭取時間','timid',['心',23],{
+    g:R('你一個人站在大廳中央，吸引了他所有的注意力。其他人趁機完成了最後的佈置。這一擊，由你完成。',{心:3,人:2},{goal:'voldemort'}),
+    k:R('你撐了很久，最後由朋友補上了最後一擊。',{心:1,人:1},{goal:'voldemort'}),
+    f:R('你的犧牲沒能爭取到足夠的時間。',{},{end:'dark'}),
+    b:R('他的咒語，擊中了你。',{},{die:'為了爭取時間，倒在了霍格華茲的大廳'})})
+]},
+{id:'ef_home',co:true,t:'回家的鑰匙',text:'你整理了所有的線索：時間轉換器、神秘事務司的符文、禁書區的古籍、幽靈的證言……它們終於拼成了一個完整的法陣。在城堡深處的某個房間，你站在法陣的邊緣，口袋裡是你最珍貴的幾樣東西。只要踏進去，你就能回到原本的世界。',o:[
+  O('踏入法陣，回家','bold',null,R('你深吸一口氣，一腳踏入光芒之中。時鐘的指針瘋狂倒轉，你聽見很多人在遠處喊你的名字。下一秒，你睜開眼，是熟悉的天花板。',{},{home:1})),
+  O('再留一陣子，等事情告一段落','careful',null,R('你把法陣仔細封存起來，決定先把眼前的事做完。畢竟，故事還沒有結束。',{心:1},{flag:'homeSkip'}))
+]}
+);
+
+// ===== 每月事件（非大事件月份）=====
+EVENTS.push(
+// ---------- 一般學院生活 ----------
+{id:'e_library',rep:true,t:'圖書館的深夜',y:[1,7],w:1.2,text:'期末前的圖書館永遠擠滿了人。你搶到最後一個靠窗的位子，旁邊堆著三本比你的臉還厚的書。',o:[
+  O('通宵苦讀','diligent',['悟',9],{k:R('你啃完了半本書，雖然黑眼圈很重。',{悟:1}),f:R('你睡著了，書頁黏在臉上。',{體:-1})}),
+  O('找人組讀書會','careful',['人',9],{k:R('大家分工，效率驚人。你還多交了兩個朋友。',{人:1,悟:1}),f:R('讀書會變成了八卦大會。',{人:1})}),
+  O('偷看別人的筆記','bold',['人',10],{k:R('你「借閱」成功，輕鬆過關。',{悟:1}),f:R('被抓到了，被圖書館管理員瞪了一個月。',{人:-1})})
+]},
+{id:'e_quidditch',rep:true,t:'魁地奇',y:[1,7],w:1.2,text:'球場上的氣氛熱得快要燒起來，學院的隊長正在招人。你站在場邊，被一堆期待的目光盯著。',o:[
+  O('報名試試','bold',['體',10],{k:R('你被選進後備隊，每天一身泥。但你的體魄顯然比去年好多了。',{體:1,人:1}),f:R('試鑽時你被球擊中，在醫療翼躺了一天。',{體:-1})}),
+  O('當觀眾，替隊伍加油','timid',null,R('你喊得嗓子都啞了，整個學院都記得你的聲音。',{人:1})),
+  O('研究球隊的戰術，當編外教練','diligent',['悟',10],{k:R('你給的幾個建議，意外讓隊伍贏了一場。',{悟:1,人:1}),f:R('你的建議被當成笑話。',{人:-1})})
+]},
+{id:'e_curfew',rep:true,t:'夜遊',y:[1,4],w:1.2,text:'午夜十二點，你和幾個朋友溜出宿舍，想去廚房找點宵夜。走廊上，傳來了管理員那隻貓的腳步聲。',o:[
+  O('躲進盔甲後面','careful',['心',9],{k:R('你屏住呼吸，貓路過了。你覺得自己是潛行大師。',{心:1}),f:R('貓盯著你，發出了一聲長鳴，管理員從遠處衝來。你被逮個正著。',{人:-1,金:-1})}),
+  O('撒腿狂奔','bold',['體',9],{k:R('你一口氣衝回宿舍，氣喘吁吁。',{體:1}),f:R('你撞翻了一個花瓶，在眾目睽睽下被抓。',{人:-1})}),
+  O('主動認錯，求從輕發落','timid',['人',9],{k:R('管理員聽完，居然嘆了口氣放你走。',{人:1}),f:R('管理員一臉嫌棄，罰你擦了一週的獎盃。',{體:-1})})
+]},
+{id:'e_potions',rep:true,t:'魔藥課',y:[1,6],w:1.2,text:'地窖裡永遠陰森森的。教授的口頭禪是「這麼簡單的事，竟然有人做不到」。今天的任務：熬一鍋「縮身藥水」。',o:[
+  O('照著書一步一步來','diligent',['悟',10],{k:R('你的藥水呈現完美的淺綠色，教授冷冷地說：「還行。」你覺得這是史上最高的稱讚。',{悟:1}),f:R('藥水冒起一團黑煙，你被罰重做。',{悟:-1})}),
+  O('憑感覺加一點料','bold',['悟',12],{g:R('你的「小創新」讓藥水效果翻倍，教授皺了皺眉，卻沒有批評。',{悟:2,人:1}),k:R('你的藥水勉強合格。',{悟:1}),f:R('藥水爆炸，你的眉毛沒了。',{體:-1,人:-1})}),
+  O('和同學分工，各自熬一部分','careful',['人',10],{k:R('分工合作很順利，你們組拿了最高分。',{人:1,悟:1}),f:R('分工變成互相推卸。',{人:-1})})
+]},
+{id:'e_homework',rep:true,t:'論文通宵',y:[1,7],w:1,text:'明早要交的論文，你連標題都還沒寫。窗外的天，已經濛濛亮了。',o:[
+  O('熬夜寫完','diligent',['心',9],{k:R('你寫完最後一個字，剛好聽到雞叫。你覺得自己是社畜之王。',{悟:1,體:-1}),f:R('你睡過頭，論文只寫了三行。',{悟:-1})}),
+  O('找朋友借抄','careful',['人',10],{k:R('朋友讓你抄，只要你欠他一頓飯。',{人:1,金:-1}),f:R('朋友笑著把你的名字貼在公告欄上。',{人:-2})}),
+  O('乾脆不交，賭教授不會查','bold',['心',11],{k:R('教授居然沒發現。',{心:1}),f:R('教授親自來找你，你被罰寫兩篇。',{悟:-1,人:-1})})
+]},
+{id:'e_forest',t:'禁忌森林的處罰',y:[1,3],w:1,text:'因為深夜閒逛，你被罰到禁忌森林「協助」一位巨人尋找失蹤的小生物。巨人拍拍你的肩膀：「別怕，這裡很安全的。」你不太相信。',o:[
+  O('跟緊巨人，一步不離','timid',['心',9],{k:R('你一路跟著，什麼事都沒發生。巨人誇你：「勇敢得很！」',{心:1,人:1}),f:R('你被樹根絆倒，嚇得慘叫。',{心:-1})}),
+  O('主動探路','bold',['體',10],{k:R('你找到了一隻受傷的小獨角獸，輕輕把它帶了回去。',{體:1,心:1}),f:R('你被一隻巨蜘蛛盯上，狼狽逃跑。',{體:-1})}),
+  O('用魔杖照亮周圍，觀察環境','diligent',['悟',10],{k:R('你辨認出了幾種神奇生物，筆記又多了一頁。',{悟:1}),f:R('你的光吸引了不該來的東西。',{體:-1})})
+]},
+{id:'e_prank',rep:true,t:'惡作劇',y:[1,5],w:1,text:'一對紅頭髮的雙胞胎在走廊盡頭向你招手：「新生，要不要參加一場偉大的實驗？」你覺得這句話十分可疑。',o:[
+  O('參加','bold',['心',9],{g:R('實驗成功，整個城堡都沸騰了，你成了他們的「編外成員」。',{人:2}),k:R('實驗成功了，雖然你被罰了一點。',{人:1}),f:R('實驗失敗，你的頭髮變成了彩虹色，持續一週。',{人:-1})}),
+  O('勸他們收手','timid',['人',10],{k:R('他們笑著說「好吧好吧」，轉身去了別的地方。',{人:1}),f:R('他們以為你在逗他們，繼續了計畫。',{})}),
+  O('偷偷告訴老師','careful',['人',10],{k:R('老師表揚了你，但雙胞胎從此看你的眼神不太友善。',{金:1,人:-1}),f:R('老師不信，你被當成愛告狀的人。',{人:-2})})
+]},
+{id:'e_hogsmeade',rep:true,t:'霍格莫德週末',y:[3,7],w:1.2,text:'週末，大家成群結隊去霍格莫德。糖果店、玩笑店、酒吧，每個地方都擠滿了人。',o:[
+  O('逛街買零食','careful',['金',9],{k:R('你買了一大袋糖果，分給朋友，人緣漲了一波。',{人:1,金:-1}),f:R('你的錢包被扒了。',{金:-1})}),
+  O('去書店淘舊書','diligent',['悟',10],{k:R('你在角落裡淘到一本沒人要的舊書，內容出乎意料有料。',{悟:1}),f:R('書店只有假冒的暢銷書。',{})}),
+  O('和朋友在酒吧聊天','timid',['人',9],{k:R('你們聊了一整個下午，友情更深了。',{人:2}),f:R('你被一個酒鬼纏上，花了半小時才脫身。',{心:-1})})
+]},
+{id:'e_feud',rep:true,t:'和對面學院的口角',y:[1,6],w:1.2,text:'走廊上，另一個學院的幾個人堵住了你：「就是你們這種人，才讓學校越來越……」你覺得這是一場即將爆發的口水戰。',o:[
+  O('針鋒相對','bold',['人',10],{g:R('你把對方懟得啞口無言，周圍的人鼓掌。',{人:2,心:1}),k:R('你和對方吵了一輪，勉強平手。',{人:1}),f:R('你被對方的嘴砲打得體無完膚。',{人:-1,心:-1})}),
+  O('冷靜以對，一笑置之','timid',['心',10],{k:R('你什麼也沒說，轉身離開。對方愣在原地。',{心:1}),f:R('你的沉默被當成軟弱。',{人:-1})}),
+  O('找老師主持公道','careful',['人',10],{k:R('老師出面調停，事情平息。你得到了一個公正的名聲。',{人:1,心:1}),f:R('老師各打五十大板，你被一起扣分。',{人:-1})})
+]},
+{id:'e_creature',rep:true,t:'神奇生物課',y:[1,6],w:1,text:'課堂上，教授牽出一隻會噴火的蜥蜴：「今天，我們學習和火蜥蜴相處。」',o:[
+  O('主動上前，輕輕撫摸','bold',['心',10],{k:R('火蜥蜴蹭了蹭你的手心，你覺得自己是個動物之友。',{心:1,體:1}),f:R('火蜥蜴在你手上留下了一個小小的灼痕。',{體:-1})}),
+  O('在遠處記筆記','diligent',['悟',9],{k:R('你畫了一幅漂亮的素描，教授額外加了分。',{悟:1}),f:R('你畫得太抽象，被教授批評。',{})}),
+  O('找隊友一起互相照應','timid',['人',9],{k:R('你們分工合作，順利完成任務。',{人:1}),f:R('你們被火蜥蜴追得滿場跑。',{體:-1})})
+]},
+{id:'e_ghost',rep:true,t:'走廊上的幽靈',y:[1,7],w:1,text:'你在走廊轉角差點撞上一位半透明的先生，他正在抱怨自己的頭又掉下來了。',o:[
+  O('熱情打招呼，和他聊天','careful',['人',9],{k:R('他和你聊了一整個下午，把這座城堡的八卦全告訴了你。',{人:1,悟:1}),f:R('他一句話也不想和你說。',{})}),
+  O('嚇得愣在原地','timid',null,R('你在走廊上愣了三分鐘，他飄走時還友善地揮手。',{心:-1})),
+  O('請教他一些歷史','diligent',['悟',10],{k:R('他講了好幾個你在書上找不到的歷史細節。',{悟:1}),f:R('他說得顛三倒四，你什麼也沒聽懂。',{})})
+]},
+{id:'e_exam',rep:true,t:'期中小考',y:[1,7],w:1.3,text:'這是一場「不用太緊張」的測驗，但整座城堡都在緊張。你的同桌正在念咒語，聲音大到快把你的筆都震掉。',o:[
+  O('穩紮穩打，按部就班','diligent',['悟',10],{g:R('你考出了前三名，被教授點名表揚。',{悟:2,人:1}),k:R('成績不錯，沒有失誤。',{悟:1}),f:R('你粗心大意，丟了不該丟的分。',{悟:-1})}),
+  O('憑直覺亂答','bold',['心',11],{k:R('居然蒙對了不少題。',{悟:1}),f:R('你的答案一片慘不忍睹。',{悟:-1,人:-1})}),
+  O('找老師討要筆記重點','careful',['人',10],{k:R('老師看了你一眼，給了你一些暗示。',{悟:1,人:1}),f:R('老師說：「自己看書。」',{人:-1})})
+]},
+{id:'e_stairs',t:'會移動的樓梯',y:[1,2],w:1.3,text:'樓梯又換了方向。你站在半空中的平台上，旁邊的畫像笑嘻嘻地看著你：「年輕人，需要幫忙嗎？」',o:[
+  O('請畫像指路','careful',['人',8],{k:R('畫像把你送到了目的地，還順便八卦了幾句。',{人:1}),f:R('畫像故意指了錯誤方向。',{})}),
+  O('憑感覺跳向下一個平台','bold',['體',9],{k:R('你跳過去了，心跳得像擂鼓。',{體:1,心:1}),f:R('你摔了個屁股墩，樓梯還在你腳下動來動去。',{體:-1})}),
+  O('等樓梯自己轉回來','timid',null,R('你在平台上坐了半小時，終於等到了回程的樓梯。',{心:1}))
+]},
+{id:'e_friend',t:'新朋友',y:[1,2],w:1.5,nf:['trio'],text:'你在餐桌上，遇見了三個很特別的新生：一個戴眼鏡的男孩、一個紅頭髮的男孩、一個一直在背課本的女孩。他們正在討論某個禁止進入的走廊。你很熟悉這個畫面。',o:[
+  O('主動加入他們的談話','bold',['人',10],{g:R('你自然地融入了他們的小圈子。之後的日子，你多了三個一起闖禍的朋友。',{人:2,心:1},{flag:'trio'}),k:R('他們對你不算冷淡，你成了這個小團體的邊緣成員。',{人:1},{flag:'trio'}),f:R('你說錯了一句話，氣氛瞬間尷尬。',{人:-1})}),
+  O('遠遠觀察','careful',['心',9],{k:R('你看了一會兒，發現這個故事和你記憶裡的差不多。你默默收起了好奇心。',{心:1}),f:R('你被發現了，被當成偷窺狂。',{人:-1})}),
+  O('走開，不想捲入主線','timid',null,R('你選擇了「路人甲」的生活，這讓你輕鬆很多。',{心:1}))
+]},
+{id:'e_detention',t:'禁閉室的故事',y:[2,6],w:1,text:'你因為一次小失誤被罰留校。教授給了你一堆羊皮卷，要你一份份分類。',o:[
+  O('老老實實做完','diligent',['心',10],{k:R('你分類得整整齊齊，教授在清單上留下一個「還行」。',{悟:1,心:1}),f:R('你搞混了一半，整個下午白做。',{})}),
+  O('偷偷看羊皮卷的內容','careful',['悟',11],{k:R('你在羊皮卷裡發現了一個很有意思的故事。',{悟:1}),f:R('你被抓到偷看，被罰多留一週。',{人:-1})}),
+  O('找朋友幫忙','timid',['人',10],{k:R('朋友們來陪你，一起做完了。',{人:2}),f:R('朋友嫌麻煩，沒人來。',{人:-1})})
+]},
+{id:'e_rumor',rep:true,t:'城堡的八卦',y:[2,7],w:1,text:'整座城堡都在傳一個消息：有人看見了不該看的東西。每個人說的版本都不太一樣，但都非常精彩。',o:[
+  O('加入八卦，繪聲繪影','careful',['人',10],{k:R('你的版本最精彩，被大家傳了一圈。',{人:2}),f:R('你傳錯了人，鬧出一場誤會。',{人:-2})}),
+  O('追查真相','diligent',['悟',11],{k:R('你查出來了，八卦是假的。你在朋友圈裡多了一個「靠譜」的稱號。',{悟:1,人:1}),f:R('你查了很久，什麼也沒查到。',{})}),
+  O('不管，專心做自己的事','timid',null,R('你什麼也沒說，一個月後，大家早就換了新八卦。',{心:1}))
+]},
+{id:'e_dada',rep:true,t:'黑魔法防禦課',y:[1,7],w:1.3,text:'這堂課的老師，好像每年都不一樣，而且每一個都有點不對勁。今天要練習的咒語是「繳械咒」。',o:[
+  O('主動示範','bold',['悟',11],{g:R('你一次成功，教授帶頭鼓掌。',{悟:2,人:1}),k:R('你示範得不錯，雖然有點慌張。',{悟:1}),f:R('你的咒語打偏了，砸到了天花板的吊燈。',{人:-1})}),
+  O('認真記筆記，等別人先試','diligent',['悟',10],{k:R('你的筆記又整齊又全面，成了同學們爭相借閱的對象。',{悟:1,人:1}),f:R('輪到你的時候，你的緊張壓過了一切。',{悟:-1})}),
+  O('和同伴互相練習','timid',['人',10],{k:R('你們練了一個下午，最後都學會了。',{人:1,悟:1}),f:R('同伴把你的魔杖打飛了。',{人:-1})})
+]},
+{id:'e_broom',t:'飛行課',y:[1,3],w:1.2,text:'一把看起來隨時會散架的掃帚躺在你腳邊。教練說：「手掌向下，大聲喊『起來』！」',o:[
+  O('用盡全力大喊','bold',['體',9],{g:R('掃帚瞬間跳到你手上，你成了全班第一。',{體:2,人:1}),k:R('掃帚跳了兩下，最終乖乖到了你手裡。',{體:1}),f:R('掃帚滾到了旁邊，一直沒反應。',{人:-1})}),
+  O('輕聲細語，溫柔地叫它','diligent',['心',9],{k:R('掃帚慢慢飄到你手上。你覺得它大概也有尊嚴。',{心:1}),f:R('它假裝沒聽見。',{})}),
+  O('偷偷看旁邊同學怎麼做','careful',['人',9],{k:R('你學到了訣竅，順利完成。',{人:1}),f:R('同學也在看你，結果兩個人都失敗了。',{})})
+]},
+{id:'e_rival',t:'金髮少爺的挑釁',y:[1,5],w:1.6,text:'一個金髮、一臉「我是這裡最了不起的人」的少爺，擋住了你的路：「喂，你知道我是誰嗎？」',o:[
+  O('反唇相譏','bold',['人',10],{g:R('你一句話把他嗆得面紅耳赤，周圍的人偷笑。',{人:2,心:1},{flag:'rival'}),k:R('你和他鬥了幾句，不分勝負。',{人:1},{flag:'rival'}),f:R('他的跟班們一擁而上，你吃了點小虧。',{體:-1,人:-1},{flag:'rival'})}),
+  O('客氣回答，保持距離','careful',['人',9],{k:R('他愣了一下，擺擺手放你走。他看你的眼神裡多了幾分好奇。',{人:1},{flag:'rival'}),f:R('他以為你怕他，更囂張了。',{人:-1},{flag:'rival'})}),
+  O('無視他，繼續走','timid',['心',9],{k:R('你頭也不回地離開，他被晾在原地。',{心:1},{flag:'rival'}),f:R('他在背後大聲嘲笑你。',{人:-1},{flag:'rival'})})
+]},
+{id:'x_rival1',fr:true,t:'少爺的另一面',hs:'史萊哲林',fl:['rival'],nf:['rf1'],y:[1,6],w:2.2,text:'同在史萊哲林，他想裝作不認識你也不行。公共休息室裡，他一個人坐在壁爐邊，手裡捏著一封剛拆開的家書，臉色難看得很。',o:[
+  O('遞一杯熱茶，什麼都不問','timid',['人',9],{k:R('他盯著那杯茶看了很久，小聲說了句「……多謝」。這大概是他第一次對人說這兩個字。',{人:1,心:1},{flag:'rf1'}),f:R('他把茶推開：「我不需要你可憐。」但眼神軟了一下。',{},{flag:'rf1'})}),
+  O('開口問怎麼了','bold',['人',10],{k:R('他嘴硬了幾句，最後還是吐出幾句：父親對他期望太高，每封信都是責備。',{人:1,心:1},{flag:'rf1'}),f:R('他惱羞成怒地瞪你：「關你什麼事！」但沒有走開。',{人:-1},{flag:'rf1'})}),
+  O('假裝沒看見，在旁邊讀書','careful',['心',9],{k:R('你們各自安靜待著。他後來默默把位子往你這邊挪了一點。',{心:1},{flag:'rf1'}),f:R('他以為你在偷看信，狠狠地把信收了起來。',{},{flag:'rf1'})})
+]},
+{id:'x_rival2',fr:true,t:'少爺的麻煩',hs:'史萊哲林',fl:['rf1'],nf:['rf2'],y:[2,7],w:2.2,text:'他在走廊上被幾個別院的學生堵住，他們笑話他的家世，他卻嘴硬得發抖。你剛好路過。',o:[
+  O('站到他身邊','bold',['體',11],{g:R('你一句話都沒多說，只是站在那裡。對方識趣地散了。他別過臉：「……我沒有要你幫忙。」嘴角卻在抖。',{人:2,心:1},{flag:'rf2',pts:2}),k:R('場面僵持了一會，對方悻悻離開。',{人:1},{flag:'rf2'}),f:R('你們雙雙吃了虧，卻在狼狽中第一次相視而笑。',{體:-1,人:1},{flag:'rf2'})}),
+  O('找老師來解圍','careful',['人',11],{k:R('老師及時趕到。他不爽被人救，卻在隔天默默替你留了位子。',{人:1},{flag:'rf2'}),f:R('老師來晚了一步，他因此對你有點埋怨。',{},{flag:'rf2'})}),
+  O('裝作路過，走開','timid',null,R('你走開了。他沒看你，也沒說話。有些東西，就這樣錯過了。',{人:-1},{flag:'rfx',unflag:'rf1'}))
+]},
+{id:'x_rival3',fr:true,key:true,t:'少爺的決定',hs:'史萊哲林',fl:['rf2'],nf:['rf3'],y:[3,7],w:2.2,text:'學年末，他把你叫到湖邊。「我父親要我選邊站。」他看著湖面，聲音很輕，「……你覺得，我該聽他的嗎？」',o:[
+  O('說「做你自己認為對的」','bold',['心',12],{g:R('他沉默了很久，終於笑了：「你這個傢伙，真麻煩。」從那天起，他不再只是你的『同學』，而是真正的朋友。',{心:2,人:2},{flag:'rf3'}),k:R('他點了點頭，雖然還沒下定決心，卻說：「謝謝你聽我說。」',{心:1,人:1},{flag:'rf3'}),f:R('他苦笑：「說得容易。」但仍記著你的話。',{心:-1},{flag:'rf3'})}),
+  O('說「不管你怎麼選，我都在」','timid',['人',11],{k:R('他別過頭去，肩膀輕輕抖了一下。這句話，他大概等了很久。',{人:2,心:1},{flag:'rf3'}),f:R('他似乎想說什麼，最後只擠出一個笑。',{人:1},{flag:'rf3'})}),
+  O('說「這是你自己的事」','careful',null,R('他愣了一下，點頭：「也是。」你們之間隔了一道看不見的牆。',{},{flag:'rf3'}))
+]},
+// ---------- 時間線索（回家用）----------
+{id:'t_rune',t:'古代如尼文課',y:[3,7],earth:true,w:1,text:'你選修了「古代如尼文」。老師在黑板上寫下一組奇怪的符文，你越看越覺得眼熟——它們很像你在某個故事裡見過的時間魔法。',o:[
+  O('課後留下來研究','diligent',['悟',11],{g:R('你破譯了其中一段，它描述了一種能讓「過去與現在重疊」的儀式。',{悟:2},{clue:1}),k:R('你記下了符文的樣子，雖然只看懂一半。',{悟:1}),f:R('你看得頭暈眼花。',{悟:-1})}),
+  O('向老師請教','timid',['人',11],{k:R('老師說：「有意思的問題。」並借了你一本書。',{人:1}),f:R('老師說：「這不在大綱範圍內。」',{})}),
+  O('不理它，繼續上課','careful',null,R('你把符文當成普通的課堂內容，筆記照記，沒有深入。',{悟:1}))
+]},
+{id:'t_dial',t:'閣樓的古怪日晷',y:[2,7],earth:true,w:1,text:'你在城堡的閣樓角落裡，發現了一座被灰塵蓋住的日晷。指針明明沒有太陽，卻在轉動。',o:[
+  O('伸手摸一下','bold',['心',11],{g:R('指針忽然倒轉了一圈，你看見了一個一閃而過的畫面：你的家。',{心:1},{clue:1}),k:R('日晷微微發燙，你的腦海中閃過一段陌生的文字。',{悟:1}),f:R('日晷突然發光，你被彈了出去。',{體:-1})}),
+  O('拍下它的樣子，帶去問老師','careful',['人',10],{k:R('老師看了一眼，表情有些奇怪：「這個東西……別亂碰。」',{人:1}),f:R('老師說那只是普通的裝飾。',{})}),
+  O('用咒語解析','diligent',['悟',12],{g:R('你找到了日晷的運作邏輯，筆記多了一頁寶貴的資料。',{悟:2},{clue:1}),k:R('你解開了一部分。',{悟:1}),f:R('咒語被反彈。',{體:-1})})
+]},
+{id:'t_book',t:'禁書區的時間之書',y:[4,7],earth:true,w:1,text:'你在禁書區的最深處，發現了一本沒有書名的舊書，書頁邊緣微微發光。',o:[
+  O('偷偷帶出去讀','bold',['人',12],{k:R('你在被窩裡讀了一個通宵，了解了不少時間魔法的基礎。',{悟:1}),f:R('管理員發現了書不見了，你被逮個正著。',{人:-2})}),
+  O('留在原地抄錄','diligent',['悟',12],{g:R('你抄下了最重要的三頁，筆跡工整。',{悟:2},{clue:1}),k:R('你抄了一半，但記下了關鍵的部分。',{悟:1}),f:R('手酸得快斷了，只抄到半頁。',{體:-1})}),
+  O('把書放回去，當作沒看見','timid',null,R('你放回書，心裡卻一直在想：這本書到底是什麼？',{心:-1}))
+]},
+{id:'t_prof',t:'校長的問題',y:[4,7],earth:true,w:0.9,text:'老校長在走廊上叫住了你，眼睛藏在半月形的眼鏡後面：「你最近，似乎對『時間』很有興趣？」',o:[
+  O('坦白告訴他一切','timid',['心',12],{g:R('老校長沉默了很久：「我想，我知道你要找什麼。」他遞給你一張泛黃的紙。',{心:1,人:1},{clue:1}),k:R('他點了點頭：「明白了。」他沒有多說，但給了你一個提示。',{人:1}),f:R('他笑了笑：「年輕人，有些事情要靠自己找。」',{})}),
+  O('裝傻，說只是好奇','careful',['人',12],{k:R('他半信半疑地放過了你，但眼神很深。',{人:1}),f:R('他看穿了你的謊，只是嘆了口氣。',{人:-1})}),
+  O('反過來問他的看法','bold',['悟',12],{g:R('他被你的問題逗樂了，很認真地給了你一個啟發。',{悟:1,人:1},{clue:1}),k:R('他給了你一個意味深長的微笑。',{悟:1}),f:R('他說：「你還太年輕。」',{})})
+]},
+{id:'t_ghostsage',t:'老幽靈的證言',y:[3,7],earth:true,w:0.9,text:'一位已經在城堡裡待了五百年的老幽靈，漂到了你旁邊：「年輕人，你身上有『外面』的味道。」',o:[
+  O('請他說說這個世界的傳說','careful',['人',11],{k:R('他講了一個關於「迷路的旅人」的老故事。你的心跳漏了半拍。',{人:1}),f:R('他講到一半睡著了。',{})}),
+  O('追問他知道什麼','bold',['心',12],{g:R('他壓低聲音：「六百年前，也有人像你一樣。他最後……找到了出口。」',{心:1},{clue:1}),k:R('他給了你一些模糊的線索。',{心:1}),f:R('他沉默地飄走了。',{})}),
+  O('敷衍幾句，走開','timid',null,R('你點點頭，禮貌地離開。',{}))
+]},
+{id:'t_diary',t:'前人留下的筆記',y:[1,7],earth:true,w:0.7,text:'你在一本舊魔藥課本的夾頁裡，發現了一張泛黃的紙，上面用你熟悉的語言寫著：「如果你也看得懂這行字，那你也是從那邊來的。」',o:[
+  O('仔細研究，找出作者','diligent',['悟',12],{g:R('你把筆記中的暗號全部破譯，上面記錄了這位前輩的回家嘗試。',{悟:2,心:1},{clue:1}),k:R('你讀懂了一部分，上面有一個很重要的地名。',{悟:1}),f:R('字跡太模糊，你只認出了幾個詞。',{})}),
+  O('把筆記藏好，不告訴任何人','careful',['心',10],{k:R('你把紙條夾回課本，鎖進箱子裡。你覺得這件事，需要慎重。',{心:1}),f:R('你太緊張，反而把紙條弄丟了。',{心:-1})})
+]},
+// ---------- 魂器線索 ----------
+{id:'h_ring',t:'被詛咒的戒指',y:[3,7],hx:true,w:1,text:'你在舊物店裡看見一枚黑色的戒指，標價出奇便宜。店主神色緊張：「別碰它，上一個碰它的人……」',o:[
+  O('用咒語檢測戒指','diligent',['悟',12],{g:R('你確認了這枚戒指帶有強烈的黑魔法，並在不觸碰的情況下將它封存。',{悟:2},{hx:1}),k:R('你識別出了戒指的來歷，但選擇不去碰它。',{悟:1}),f:R('檢測咒語失敗，你被輕輕灼傷。',{體:-1})}),
+  O('請教授處理','timid',['人',11],{k:R('教授接手了戒指，並表示會妥善處理。',{人:1}),f:R('教授說你只是想太多。',{})}),
+  O('買下來，自己研究','bold',['心',13],{g:R('你硬生生壓下了戒指裡的低語，並找到了封印它的方法。',{心:2,悟:1},{hx:1}),k:R('你成功控制住戒指的影響，但整個人有些疲憊。',{心:-1}),f:R('戒指的力量侵蝕了你，你昏睡了三天。',{體:-2,心:-2}),b:R('戒指的詛咒過於強大。',{體:-2,心:-3}),})
+]},
+{id:'h_cup',t:'金庫裡的杯子',y:[4,7],hx:true,w:0.9,text:'一位老同學邀請你去古靈閣的某間金庫看看，說有一件東西「不太對勁」。你站在一堆金幣中間，面前是一個金色的杯子。',o:[
+  O('用探測咒語檢查','diligent',['悟',13],{g:R('你確定這就是魂器之一，並在不驚動守衛的情況下記錄了它的位置。',{悟:2},{hx:1}),k:R('你確認了杯子的異常，但沒能帶走。',{悟:1}),f:R('探測咒觸發了陷阱，你被逮個正著。',{體:-1,金:-1})}),
+  O('偷偷拍下杯子的樣子','careful',['人',13],{k:R('你畫下了杯子的外型與地點，這是寶貴的線索。',{人:1}),f:R('你被守衛發現，罰了一筆錢。',{金:-2})}),
+  O('請妖精幫忙','timid',['金',12],{k:R('妖精收了你的錢，給了你一份簡短的報告。',{金:-1}),f:R('妖精說這是機密。',{})})
+]},
+{id:'h_room',t:'必要室',y:[5,7],hx:true,w:1,text:'在一條原本不存在的走廊裡，有一扇你從沒見過的門。門後是一座堆滿雜物的巨大倉庫，一頂古老的頭冠靜靜躺在最高的架子上。',o:[
+  O('爬上去拿','bold',['體',14],{g:R('你小心翼翼地爬上去，頭冠就在你手邊。你確認了它的來歷，並把它藏在安全的地方。',{體:1,心:1},{hx:1}),k:R('你拿到了頭冠，雖然被雜物砸了一下。',{體:-1}),f:R('架子崩塌，你被埋在雜物裡。',{體:-2})}),
+  O('用漂浮咒把它取下來','diligent',['悟',14],{g:R('頭冠平穩地飄到你手上，你一眼認出了它的黑暗氣息。',{悟:2},{hx:1}),k:R('頭冠晃了晃，最終落在你手上。',{悟:1}),f:R('頭冠掉下去，砸壞了旁邊的東西。',{人:-1})}),
+  O('和朋友一起找','timid',['人',13],{k:R('你們輪流嘗試，終於合力拿到了頭冠。',{人:2}),f:R('大家意見不一，吵了一晚。',{人:-1})})
+]},
+// ---------- 稀有事件 ----------
+{id:'r_patronus',t:'一個不尋常的夜晚',y:[3,7],rare:'u_patronus',w:2,text:'月光下，一隻銀色的鹿從你面前飄過。它似乎在引導你走向某個地方。',o:[
+  O('跟上去','bold',['心',14],{g:R('銀鹿帶你到了一個隱蔽的角落。那裡，一個你從沒見過的守護神咒語在你腦海裡浮現。',{心:2},{unlock:'u_patronus'}),k:R('你跟了一段路，但失去了它的蹤影。',{心:1}),f:R('你被一陣迷霧包圍，失去了方向。',{心:-1})}),
+  O('留在原地觀察','diligent',['悟',14],{k:R('你看著銀鹿漸行漸遠，記下了它的形態。',{悟:1}),f:R('什麼也沒有發生。',{})})
+]},
+{id:'r_phoenix',t:'一根紅色的羽毛',y:[2,7],rare:'u_phoenix',w:2,text:'你在走廊上拾到一根紅得發光的羽毛。它在你手中微微發燙，像是在回應你的心跳。',o:[
+  O('握緊它，閉上眼睛','timid',['心',14],{g:R('一聲清亮的鳴叫在你耳邊響起。你感到有什麼東西，永遠地陪伴著你。',{體:1,心:1},{unlock:'u_phoenix'}),k:R('羽毛暖暖的，你覺得好受多了。',{心:1}),f:R('羽毛忽然變涼，你不確定它是不是在拒絕你。',{})}),
+  O('帶去給教授檢查','careful',['人',12],{k:R('教授看了很久：「這是個好兆頭。」',{人:1}),f:R('教授說那只是普通的羽毛。',{})})
+]},
+{id:'r_dumbledore',t:'一場深夜的談話',y:[4,7],rare:'u_dumbledore',w:2,text:'午夜，一位白鬍子的老先生坐在你的床邊：「我只是想知道，你覺得，什麼是最重要的魔法？」',o:[
+  O('「愛，無論哪一種。」','timid',['心',14],{g:R('老校長微笑，沒有說話。第二天，他在大廳裡對你點了點頭。從此，你多了一份特別的信任。',{心:1,人:2},{unlock:'u_dumbledore'}),k:R('他笑著說：「很棒的答案。」',{心:1}),f:R('他沉默了一會兒，轉身離開。',{})}),
+  O('「知識，沒有它什麼都做不了。」','diligent',['悟',14],{k:R('他點了點頭：「嗯，也是一種答案。」',{悟:1}),f:R('他笑了笑：「你還需要時間。」',{})})
+]},
+{id:'r_duel',t:'走廊上的決鬥',y:[2,7],rare:'u_duelist',w:2,text:'走廊盡頭，一個高年級生挑釁地看著你：「我聽說你很強。要不要證明一下？」',o:[
+  O('接受挑戰','bold',['體',14],{g:R('一場漂亮的戰鬥，你贏了。圍觀的人群爆發出一陣歡呼。',{體:2,人:1},{unlock:'u_duelist'}),k:R('你們打成了平手，彼此心照不宣。',{體:1}),f:R('你輸了，但輸得很有骨氣。',{體:-1})}),
+  O('婉拒，不想惹事','timid',null,R('你搖搖頭離開。對方嗤笑了一聲，你什麼也沒說。',{心:1}))
+]},
+// ---------- 暑假 ----------
+{id:'s_diagon',rep:true,t:'暑假・對角巷',su:true,y:[1,6],w:1.2,text:'暑假的對角巷，每個店鋪都擠滿了採購新學期用品的家庭。你抱著一長串書單，在店鋪之間穿梭。',o:[
+  O('買最划算的二手書','careful',['金',9],{k:R('你省了一筆錢，還多買了幾本有意思的舊書。',{金:1,悟:1}),f:R('你買到了一堆缺頁的書。',{金:-1})}),
+  O('去魔杖店逛逛','bold',['心',9],{k:R('老闆笑著說：「這根魔杖，似乎在等你。」你覺得有點神奇。',{心:1,悟:1}),f:R('你被一堆魔杖搞得眼花繚亂，什麼也沒買。',{})}),
+  O('找老同學聊天','timid',['人',9],{k:R('你們聊了一個下午，友情升溫。',{人:2}),f:R('你找不到人，只好一個人吃冰淇淋。',{})})
+]},
+{id:'s_work',rep:true,t:'暑假・打工',su:true,y:[1,7],w:1.2,text:'暑假你需要打點零工，補貼一下學費。你在一張告示欄前，看到三份工作。',o:[
+  O('去魔法寵物店幫忙','bold',['體',9],{k:R('你和一群貓頭鷹混得很熟。',{體:1,金:1}),f:R('你被一隻貓頭鷹啄了一下。',{體:-1})}),
+  O('在魔藥店當助手','diligent',['悟',10],{k:R('你學了不少藥草知識，還賺了一點小錢。',{悟:1,金:1}),f:R('你把一瓶貴重的藥水打翻了。',{金:-1})}),
+  O('在書店整理舊書','timid',['心',9],{k:R('你整整三週都泡在書堆裡，意外挖出一些好東西。',{悟:1,金:1}),f:R('你被灰塵嗆得打了三天噴嚏。',{體:-1})})
+]},
+{id:'s_rest',rep:true,t:'暑假・悠閒的日子',su:true,y:[1,7],w:1,text:'暑假，沒有作業、沒有考試、沒有老師。你躺在草地上，看著雲慢慢飄過。',o:[
+  O('練習魔法咒語','diligent',['悟',9],{k:R('你每天練習一點點，等到開學，你的咒語流暢多了。',{悟:1}),f:R('你練到一半，睡著了。',{})}),
+  O('鍛鍊身體','bold',['體',9],{k:R('你每天跑步，覺得自己壯了一圈。',{體:1}),f:R('你扭到了腳。',{體:-1})}),
+  O('和朋友通信','timid',['人',9],{k:R('你和朋友的信件往來十分頻繁，友情增溫。',{人:1}),f:R('朋友太忙，沒回你的信。',{})})
+]},
+{id:'s_cup',t:'暑假・魁地奇世界盃',su:true,y:[4,4],w:3,text:'今年暑假的魁地奇世界盃，在一個臨時搭起來的巨大營地舉行。四面八方湧來的巫師們，穿著奇形怪狀的長袍，空氣裡滿是焰火和麥芽酒的味道。',o:[
+  O('擠進球場，看現場','bold',['體',12],{k:R('你看完了整場比賽，興奮得整夜沒睡。',{體:1,人:1}),f:R('人太多，你被擠到邊角，什麼也沒看到。',{})}),
+  O('在營地和陌生人聊天','careful',['人',12],{k:R('你認識了來自不同國家的巫師，收集了好幾個奇怪的故事。',{人:2}),f:R('你被一個醉漢纏上。',{人:-1})}),
+  O('留在帳篷裡看書','diligent',['悟',11],{k:R('你完成了整個暑假最有效率的一天。',{悟:1}),f:R('隔壁太吵，你什麼也沒看進去。',{})})
+]},
+// ---------- 戰後（擊敗佛地魔後的延長月份）----------
+{id:'p_dept',t:'戰後・魔法部的檔案室',po:true,earth:true,w:2,text:'戰後的魔法部一片混亂，你獲准進入部門的舊檔案室，裡面堆滿了沒人整理的資料。',o:[
+  O('逐頁翻閱','diligent',['悟',12],{g:R('你找到了一份記載時間魔法實驗的舊報告，終於補上了拼圖。',{悟:2},{clue:1}),k:R('你找到了一些有用的記錄。',{悟:1},{clue:1}),f:R('資料多得驚人，你什麼也沒找到。',{})}),
+  O('拜託舊識幫忙','careful',['人',12],{k:R('朋友替你找到了好幾份舊檔案。',{人:1},{clue:1}),f:R('朋友太忙，沒空理你。',{})})
+]},
+{id:'p_lab',t:'戰後・時間研究室',po:true,earth:true,w:2,text:'魔法部決定重啟時間魔法的研究，你被邀請參與。這是一個難得的機會。',o:[
+  O('主動參與實驗','bold',['心',13],{g:R('你參與了一次安全的小型實驗，意外發現回家的法陣只差最後一塊。',{心:1,悟:1},{clue:1}),k:R('你在實驗中學到了不少東西。',{悟:1},{clue:1}),f:R('實驗出了點小差錯，你被時間咒語擦傷。',{體:-1})}),
+  O('在外圍整理資料','timid',['悟',12],{k:R('你整理的資料，成了研究的重要參考。',{悟:1},{clue:1}),f:R('資料雜亂，你整理得精疲力盡。',{})})
+]},
+{id:'p_quiet',t:'戰後・平靜的日子',po:true,rep:true,w:1,text:'戰後的魔法世界一片祥和。你在湖邊散步，看著孩子們在草地上玩耍。',o:[
+  O('找朋友喝一杯','timid',null,R('你們聊了很多往事，很多人已經不在了，但你們都還在。',{人:1,心:1})),
+  O('一個人靜靜地待著','careful',null,R('你坐在湖邊，看著夕陽。這一刻，你覺得很平靜。',{心:1}))
+]}
+);
+
+// ===== 出身專屬事件 =====
+EVENTS.push(
+// ---------- 古老純血世家 ----------
+{id:'f_pure1',fm:['pure'],y:[1,4],w:6,t:'家書：祖訓第一條',text:'一隻黑色的貓頭鷹叼來一封燙金邊的信：「期待你在學院中，為家族爭光。順帶一提，離某些人遠一點。你知道是哪些人。」',o:[
+  O('照做，保持距離','careful',['人',9],{k:R('你在公共場合保持得體，家裡很滿意，寄來了一份點心。',{人:1,金:1}),f:R('你太刻意，被同學當成高傲的人。',{人:-1})}),
+  O('不理會，照自己的想法交朋友','bold',['心',10],{g:R('你偷偷回信：「我自己會看人。」家裡的長輩氣得鬍子發抖，你卻覺得痛快。',{心:2,人:1}),k:R('你保持沉默，繼續自己的生活。',{心:1}),f:R('家裡發現後停了你一個月的零用錢。',{金:-1,心:1})}),
+  O('回信解釋，委婉表達','timid',['人',10],{k:R('你寫了一封得體的回信，雙方各退一步。',{人:1}),f:R('家裡覺得你在頂嘴。',{人:-1})})
+]},
+{id:'f_pure2',fm:['pure'],su:true,y:[2,6],w:6,t:'暑假・純血晚宴',text:'暑假，祖宅裡擺了一桌十八道菜的晚宴，客人都是和你家「門當戶對」的人。你坐在長桌的尾端，聽著他們評論某些「不入流」的人。',o:[
+  O('保持沉默，微笑點頭','careful',['心',10],{k:R('你什麼也沒說，大人們反而覺得你「穩重」。',{人:1,金:1}),f:R('你被點名發言，緊張得碰翻了酒杯。',{人:-1})}),
+  O('溫和地反駁','bold',['人',12],{g:R('你一句話讓全桌愣住，旁邊一位年輕的客人偷偷對你比了個大拇指。',{人:2,心:1}),k:R('氣氛有點冷，但沒人敢罵你。',{心:1}),f:R('長輩當場把你罵了一頓。',{人:-1,心:-1})}),
+  O('找藉口離席，躲到後院','timid',null,R('你在後院的樹上坐了一整個晚上，覺得比餐桌輕鬆多了。',{心:1}))
+]},
+// ---------- 混血巫師家庭 ----------
+{id:'f_half1',fm:['half'],y:[1,4],w:6,t:'家書：兩個世界的問題',text:'家裡寄來一封信，一半用羽毛筆寫、一半用原子筆寫。信裡問你：「學校的伙食還習慣嗎？順帶一提，你爸說他想試試那個叫『飛天掃帚』的東西。」',o:[
+  O('寫一封長信，詳細描述學校','diligent',['悟',9],{k:R('你寫了整整三頁，家裡人看完後，更想親眼來看看了。',{悟:1,人:1}),f:R('你寫到一半，墨水打翻了。',{})}),
+  O('寄一些魔法小禮物回家','careful',['金',9],{k:R('家人收到後非常高興，你覺得這幾個銅板花得很值。',{人:1,金:-1}),f:R('禮物在途中被貓頭鷹啄壞了。',{金:-1})}),
+  O('簡單回幾句報平安','timid',null,R('你寫了兩行字，家人看完後說：「這孩子，還是這麼酷。」',{心:1}))
+]},
+{id:'f_half2',fm:['half'],su:true,y:[1,6],w:6,t:'暑假・兩個世界之間',text:'暑假回到家，你發現客廳多了一個「電視機」和一個「魔法收音機」。你的家人正為了「要先看哪個節目」爭論不休。',o:[
+  O('充當調停人','careful',['人',10],{k:R('你提出輪流使用的方案，一家人終於皆大歡喜。',{人:2}),f:R('你被兩邊同時罵了一頓。',{人:-1})}),
+  O('偷偷研究兩邊的運作','diligent',['悟',10],{g:R('你發現麻瓜的電和魔法的能量有某種相似之處，覺得很有意思。',{悟:2}),k:R('你拆開收音機，拼回去之後居然還能響。',{悟:1}),f:R('你把電視機弄壞了。',{金:-1})}),
+  O('跑出去玩','bold',null,R('你一個人在鄉間小路跑了一整天，覺得自由極了。',{體:1}))
+]},
+// ---------- 麻瓜家庭 ----------
+{id:'f_mug1',fm:['muggle'],y:[1,4],w:6,t:'手機在魔法世界',text:'你偷偷帶了一支手機進學校，沒想到它在城堡裡居然會顯示「無服務」。同學們圍過來，好奇地盯著那塊會發光的小板子。',o:[
+  O('大方展示給大家看','bold',['人',10],{g:R('你用手機放了一首歌，整間公共休息室瞬間沸騰。你成了城堡的新聞人物。',{人:3}),k:R('大家驚嘆了一陣，你覺得很有面子。',{人:1}),f:R('手機的電池很快耗光，大家失望地散了。',{人:-1})}),
+  O('解釋麻瓜科技的原理','diligent',['悟',10],{k:R('你講得條理清晰，幾位同學聽得入迷。',{悟:1,人:1}),f:R('你越講越複雜，大家都聽睡著了。',{})}),
+  O('藏起來，不讓人看到','timid',null,R('你把手機鎖進箱子裡，決定保持低調。',{心:1}))
+]},
+{id:'f_mug2',fm:['muggle'],su:true,y:[1,6],w:6,t:'暑假・爸媽的疑問',text:'暑假回到家，家人好奇地問起學校的事。你需要在不洩漏魔法世界的前提下，編出一個合理的說法。',o:[
+  O('編一個「寄宿制特殊學校」的故事','careful',['人',10],{k:R('家人信了，還替你準備了更多的零食。',{人:1,金:1}),f:R('你的故事漏洞百出，家人更好奇了。',{人:-1})}),
+  O('找機會，慢慢透露一點真相','bold',['心',11],{g:R('家人聽完雖然震驚，卻出乎意料地接受了。你覺得輕鬆了許多。',{心:2,人:2}),k:R('你只說了一半，家人將信將疑。',{心:1}),f:R('家人嚇壞了，叫你「別開玩笑」。',{心:-1})}),
+  O('盡量少說，多吃飯','timid',null,R('你埋頭吃飯，家人也沒再追問。',{體:1}))
+]},
+// ---------- 孤兒院長大 ----------
+{id:'f_orp1',fm:['orphan'],y:[1,5],w:6,t:'沒有家書的耶誕',text:'耶誕節，整個宿舍的人都收到了來自家裡的包裹，只有你的床頭，空空蕩蕩。有人偷偷看了你一眼，沒說話。',o:[
+  O('笑著說「我不缺這個」','bold',['心',10],{g:R('你笑著打開了自己買的小零食，分給宿舍的人。有人突然覺得，你比任何人都堅強。',{心:2,人:2}),k:R('你笑得有點勉強，但氣氛沒有尷尬。',{心:1}),f:R('你一個人在窗邊坐了很久。',{心:-1})}),
+  O('主動幫別人拆包裹','careful',['人',10],{k:R('你幫大家拆禮物，成了氣氛擔當，也收到了幾份分享。',{人:2}),f:R('你不太適應熱鬧的氣氛，早早溜走了。',{})}),
+  O('一個人去圖書館','diligent',['悟',9],{k:R('圖書館很安靜，你在那裡讀了一整個下午。',{悟:1}),f:R('圖書館也沒什麼人，你覺得更孤單了。',{心:-1})})
+]},
+{id:'f_orp2',fm:['orphan'],su:true,y:[1,7],w:6,t:'暑假・留在城堡',text:'暑假，大多數人都回家了，你選擇留在城堡。整座學校安靜得像一座空城，只有幾位老教授和費契的貓在走廊裡晃蕩。',o:[
+  O('在圖書館自學','diligent',['悟',9],{g:R('你整個暑假泡在圖書館，讀完了一整層書架。',{悟:2}),k:R('你讀了不少書。',{悟:1}),f:R('你看著看著，覺得有點無聊。',{})}),
+  O('在城堡裡四處探險','bold',['體',10],{k:R('你找到了好幾個沒人知道的房間。',{體:1,心:1}),f:R('你不小心觸發了一個陷阱。',{體:-1})}),
+  O('幫老師打雜，換取零花錢','careful',['人',9],{k:R('老師們給了你一些小禮物，也漸漸熟悉了你。',{金:1,人:1}),f:R('活兒太累，你沒賺多少。',{體:-1})})
+]},
+// ---------- 魔法部官員之家 ----------
+{id:'f_min1',fm:['ministry'],y:[2,7],w:6,t:'家裡的人脈',text:'家裡一個遠房親戚在魔法部身居要職，今天他親自來學校「看望」你。你敏銳地發現：他其實是有事相求。',o:[
+  O('熱情接待，探他口風','careful',['人',11],{g:R('你憑著三寸不爛之舌，套出了一條關於魔法部內部的重要情報，也賣了他一個人情。',{人:2,金:1}),k:R('他很滿意，你也有了一點收穫。',{人:1}),f:R('你太急切，被他看出了你的意圖。',{人:-1})}),
+  O('客氣疏離，婉拒幫忙','timid',['心',10],{k:R('你婉拒得很得體，對方也沒覺得被冒犯。',{心:1}),f:R('他覺得你不給面子。',{人:-1})}),
+  O('乾脆接下這個人情，以後備用','bold',['人',12],{k:R('你把這個人情存著，說不定哪天用得上。',{人:1,金:1}),f:R('這個人情後來變成了麻煩。',{人:-1})})
+]},
+{id:'f_min2',fm:['ministry'],su:true,y:[3,7],w:6,t:'暑假・魔法部實習',text:'暑假，你被安排到魔法部「體驗職場」。你被分到一個看起來快要倒閉的小部門，辦公室裡的人，個個都一臉疲憊。',o:[
+  O('認真學習各項流程','diligent',['悟',11],{k:R('你學會了如何在最短時間內填完二十份表格，覺得自己離成為「官」更近了一步。',{悟:1,人:1}),f:R('你被表格淹沒，整個暑假只剩下過勞。',{體:-1})}),
+  O('結交同事，建立人脈','careful',['人',11],{g:R('你跟每個同事都混熟了，甚至拿到了好幾個內部消息。',{人:3,金:1}),k:R('你認識了幾個有用的朋友。',{人:1}),f:R('你社交過度，被當成了「愛打聽」的人。',{人:-1})}),
+  O('找機會溜進檔案室','bold',['悟',12],{g:R('你在檔案室找到了一份舊資料，與時間魔法有關。',{悟:1},{clue:1}),k:R('你翻了一些舊資料，雖然沒什麼收穫。',{悟:1}),f:R('你被抓到闖入禁區，被罰了一週的打掃。',{人:-1})})
+]},
+// ---------- 對角巷店家 ----------
+{id:'f_shop1',fm:['shop'],y:[1,5],w:6,t:'家裡的店來信',text:'家裡的小店寄來一封信：「最近生意不太好，有一批滯銷的貨品，想請你試試能不能在學校賣掉。」',o:[
+  O('在宿舍擺攤','bold',['人',10],{g:R('你在公共休息室擺了個小攤，一下午就賣光了。你覺得自己有經商天分。',{金:3,人:1}),k:R('賣出去一半，也算不錯。',{金:1}),f:R('被教授發現，沒收了所有貨品。',{金:-1,人:-1})}),
+  O('找朋友幫忙推銷','careful',['人',11],{k:R('朋友們熱心幫忙，你們分了成。',{金:1,人:2}),f:R('朋友們也賣不動。',{人:-1})}),
+  O('回信婉拒，專心讀書','diligent',['心',9],{k:R('你寫了一封得體的回信，家裡也理解。',{悟:1}),f:R('家裡有些失望。',{人:-1})})
+]},
+{id:'f_shop2',fm:['shop'],su:true,y:[1,7],w:6,t:'暑假・幫忙看店',text:'暑假，家裡忙不過來，你被抓去顧店。每天都有形形色色的客人：有人想買魔杖、有人想退貨、有人只是來問路。',o:[
+  O('熱情招呼，儘量成交','careful',['人',10],{g:R('你的笑容與口才讓店裡的營業額創下新高。',{金:2,人:1}),k:R('生意不錯，家人很滿意。',{金:1}),f:R('你被一位難纏的客人纏了一整天。',{人:-1})}),
+  O('偷偷研究商品','diligent',['悟',10],{k:R('你摸清了每一款貨品的魔法原理，覺得受益匪淺。',{悟:1}),f:R('你不小心弄壞了一件貨品。',{金:-1})}),
+  O('偷懶，躲在後面看書','timid',null,R('你整整一個暑假都在櫃台後面看書，居然還讀了不少。',{悟:1}))
+]}
+);
+
+// ===== 出身專屬事件（續）=====
+EVENTS.push(
+// ---------- 古老純血世家 ----------
+{id:'f_pure3',fm:['pure'],y:[2,7],w:5,t:'祖宅的畫像',text:'一幅會說話的祖先畫像被寄到了學校，掛在你的床頭。畫裡的老先生穿著十七世紀的長袍，一看見你就皺眉：「你的坐姿！你的站姿！我們家的人不是這樣的！」',o:[
+  O('耐心聽他講祖訓','timid',['心',10],{k:R('老先生講了一小時家族的榮耀史，你意外聽到不少老魔法的小竅門。',{悟:1,心:1}),f:R('他講到一半睡著了，你也睡著了。',{})}),
+  O('跟他爭論，說時代變了','bold',['人',11],{g:R('你把老先生辯得啞口無言，最後他哼了一聲：「……倒有幾分膽識。」',{心:2,人:1}),k:R('你們吵了一下午，最後不歡而散。',{心:1}),f:R('他氣得把整面牆的畫像都吵醒了，全宿舍的人都聽見了。',{人:-1})}),
+  O('把畫像轉過去面向牆壁','careful',null,R('世界瞬間清靜了。不過隔天，畫裡傳來細碎的碎碎唸。',{心:1}))
+]},
+{id:'f_pure4',fm:['pure'],su:true,y:[3,7],w:5,t:'暑假・家族的收藏室',text:'暑假，祖宅的老管家神秘兮兮地領你走進地下收藏室：「少爺（小姐），老爺說，您該看看家裡傳了幾百年的東西了。」滿牆的珍寶和灰塵中，有一口沒上鎖的舊箱子。',o:[
+  O('打開舊箱子','bold',['悟',11],{g:R('箱子裡是一本家族先祖的魔法筆記，上面記載了好幾個失傳的咒語。',{悟:2},{sk:{charms:1,transfig:1}}),k:R('箱子裡有一些舊信件，記錄著家族的往事。',{悟:1}),f:R('箱子裡跳出一隻腐朽的小東西，嚇得你連退三步。',{心:-1})}),
+  O('請教老管家這些東西的來歷','careful',['人',10],{k:R('管家講了一個下午的故事，你覺得自己對這個家更了解了。',{人:1,心:1}),f:R('管家說：「這些事，不方便說。」',{})}),
+  O('不碰，免得惹麻煩','timid',null,R('你什麼也沒動，只是在收藏室裡坐了一會兒。',{心:1}))
+]},
+// ---------- 混血巫師家庭 ----------
+{id:'f_half3',fm:['half'],y:[2,6],w:5,t:'家書：兩邊的外公外婆',text:'兩封信同時寄到：一封來自巫師外公，一封來自麻瓜外婆。他們各自希望你下次回家時，先去拜訪自己。字裡行間，都藏著一點小小的較勁。',o:[
+  O('分別寫回信，答應兩邊都去','careful',['人',10],{k:R('你排好了行程，兩位老人家都笑呵呵。',{人:2}),f:R('兩邊的行程撞期，你被追著問了一整晚。',{人:-1})}),
+  O('邀請兩人一起來吃飯','bold',['人',12],{g:R('兩位老人家一見如故，聊起各自世界的故事聊了整夜。你覺得這是這輩子最溫暖的一頓飯。',{人:3,心:2}),k:R('氣氛有點尷尬，但最後大家還是笑了。',{人:1}),f:R('兩位老人家為了「魔杖和手機誰比較方便」吵了起來。',{人:-1})}),
+  O('等等再說，先專心讀書','diligent',['心',9],{k:R('你把這事擱在一邊，沉浸在書本裡。',{悟:1}),f:R('兩位老人家各自生了悶氣。',{人:-1})})
+]},
+{id:'f_half4',fm:['half'],su:true,y:[2,7],w:5,t:'暑假・麻瓜的朋友',text:'暑假，隔壁的麻瓜鄰居小孩約你去公園玩。你必須在「不能說自己是巫師」的前提下，和他們一起度過一整個下午。',o:[
+  O('玩得很瘋，把魔法忘掉','bold',['體',9],{k:R('你和小孩們瘋玩了一整天，覺得做一個普通人也不錯。',{體:1,人:1}),f:R('你在玩的時候差點用魔法打飛了球。',{心:-1})}),
+  O('偷偷用魔法幫一個小孩撿風箏','careful',['悟',11],{g:R('你悄悄念了一個漂浮咒，風箏穩穩落進小孩懷裡。他驚喜得跳起來，卻完全沒發現你做了什麼。',{悟:1,人:1},{sk:{charms:0.6}}),k:R('風箏回來了，但有人看你的眼神有點奇怪。',{人:1}),f:R('魔法失控，風箏著了火。',{人:-1})}),
+  O('留在家裡，不出門','timid',null,R('你在客廳看了一下午的電視，覺得這大概是最平靜的一天。',{心:1}))
+]},
+// ---------- 麻瓜家庭 ----------
+{id:'f_mug3',fm:['muggle'],y:[1,5],w:5,t:'你們家的麻瓜智慧',text:'同學們聽說你來自麻瓜家庭，都好奇地圍過來問：「你們那邊怎麼不用魔法也能活？」你發現，這是個把「麻瓜常識」變成人氣資本的好機會。',o:[
+  O('現場展示用電鍋煮飯','bold',['人',10],{g:R('你把一台小電鍋展示得像魔術，同學們驚嘆連連，還排隊借你的鍋。',{人:3}),k:R('大家半信半疑，但很有興趣。',{人:1}),f:R('電鍋連不上電，只好用想像的。',{人:-1})}),
+  O('講一個麻瓜世界的冷知識','diligent',['悟',9],{k:R('你說了一個「汽車為什麼能跑」的故事，聽得大家目瞪口呆。',{人:1,悟:1}),f:R('你講得太複雜，大家聽得一臉茫然。',{})}),
+  O('低調，只回答幾句','timid',null,R('你簡短回答了幾個問題，沒再多說。',{心:1}))
+]},
+{id:'f_mug4',fm:['muggle'],su:true,y:[2,7],w:5,t:'暑假・爸媽的擔心',text:'暑假，家人看著你的成績單（魔法世界那份，居然是用貓頭鷹送的），皺著眉頭問：「這些課，將來能找到工作嗎？」',o:[
+  O('認真解釋魔法世界的職業','diligent',['悟',10],{k:R('你列了一整份職業清單，家人聽完，嘴角漸漸放鬆。',{人:1,悟:1}),f:R('你講得太天馬行空，家人更擔心了。',{})}),
+  O('讓他們看你的魔法示範','bold',['心',11],{g:R('你用漂浮咒把整桌的菜飄了起來，家人驚得合不攏嘴，後來竟然笑了。',{人:2,心:2}),k:R('你小小展示了一個咒語，家人又驚訝又安心。',{人:1}),f:R('魔法失控，湯灑了一桌。',{人:-1})}),
+  O('敷衍幾句，轉移話題','careful',['人',9],{k:R('你岔開話題，家人也沒再追問。',{人:1}),f:R('家人看出你在迴避，氣氛有點尷尬。',{心:-1})})
+]},
+// ---------- 孤兒院長大 ----------
+{id:'f_orp3',fm:['orphan'],y:[1,5],w:5,t:'院長寄來的包裹',text:'在孤兒院陪你長大的院長，寄來了一個小包裹。裡面有一條織得歪歪扭扭的圍巾，還有一張紙條：「天冷，別著涼。」你很久沒有收到過包裹了。',o:[
+  O('立刻回信，寫得很長','diligent',['心',9],{k:R('你寫了整整三頁，把學校的故事都寫了進去。你覺得心裡暖暖的。',{心:1,人:1}),f:R('你寫了又擦，最後只剩短短幾行。',{})}),
+  O('把圍巾戴上，一整個冬天都沒摘','timid',null,R('同學們都說你的圍巾很醜，但你一點也不在意。',{心:2,人:1})),
+  O('把圍巾收起來，不讓別人看見','careful',null,R('你小心翼翼地收進箱子。那是你擁有的第一件別人送的東西。',{心:1}))
+]},
+{id:'f_orp4',fm:['orphan'],su:true,y:[2,7],w:5,t:'暑假・老孤兒院',text:'暑假，你回到孤兒院，發現院裡多了一個新來的小孩，縮在角落一句話也不說。你想起了自己剛來的樣子。',o:[
+  O('坐到他旁邊，什麼也不說','timid',['心',9],{g:R('你陪他坐了一個下午。傍晚，他拉了拉你的袖子，輕輕說了一聲：「謝謝。」',{心:2,人:2}),k:R('他沒說話，但沒有躲開。',{心:1,人:1}),f:R('他一直沒抬頭，你默默離開。',{})}),
+  O('給他看一個簡單的魔法','bold',['悟',10],{g:R('你用發光咒變出一團小小的光，小孩的眼睛一下子亮了。這是他來之後第一次笑。',{悟:1,人:2,心:1}),k:R('他好奇地看著光，眼神有了一點生氣。',{人:1}),f:R('光一閃就滅了，他有點失望。',{})}),
+  O('把自己的零食分給他','careful',null,R('你把糖果塞到他手裡。他握得很緊，像握住了什麼寶貝。',{人:1,金:-1}))
+]},
+// ---------- 魔法部官員之家 ----------
+{id:'f_min3',fm:['ministry'],y:[2,7],w:5,t:'家裡的內部消息',text:'吃晚飯時，家人隨口提到魔法部最近在祕密調查一件事，你敏銳地察覺到，這件事和學校有關。他們似乎不願意多談。',o:[
+  O('不動聲色，旁敲側擊','careful',['人',12],{g:R('你一邊吃飯一邊套話，最終拼出了一條重要的情報。',{人:2,悟:1}),k:R('你得到了一點零碎的線索。',{人:1}),f:R('家人察覺了你的企圖，換了話題。',{人:-1})}),
+  O('直接問，不拐彎','bold',['心',11],{k:R('家人猶豫了一下，簡單告訴了你一部分。',{心:1,人:1}),f:R('家人嚴肅地說：「這不是你該問的事。」',{人:-1})}),
+  O('假裝沒聽見，專心吃飯','timid',null,R('你低頭吃完晚餐，把這件事收進心底。',{心:1}))
+]},
+{id:'f_min4',fm:['ministry'],su:true,y:[3,7],w:5,t:'暑假・魔法部的晚宴',text:'暑假，家人帶你去參加一場魔法部的晚宴。滿廳都是穿著華麗長袍的官員和他們的孩子，每個人都在觀察每一個人。',o:[
+  O('主動結識同齡人，建立人脈','careful',['人',11],{g:R('你結識了好幾位未來的「同事」，名片收了一疊。',{人:3,金:1}),k:R('你認識了幾個還算有趣的人。',{人:1}),f:R('你說錯話，被當成「愛攀關係」。',{人:-1})}),
+  O('躲在角落，偷聽大人談話','bold',['悟',11],{g:R('你聽到了一段關於魔法部內部鬥爭的對話，覺得這是個危險又珍貴的情報。',{悟:1,人:1}),k:R('你聽到了一些模糊的消息。',{悟:1}),f:R('你被一位官員抓到偷聽，場面尷尬。',{人:-2})}),
+  O('找個藉口早早離場','timid',null,R('你躲進花園，一個人看了一晚上的星星。',{心:1}))
+]},
+// ---------- 對角巷店家 ----------
+{id:'f_shop3',fm:['shop'],y:[1,6],w:5,t:'家裡的老顧客',text:'一位老顧客在開學前，特地託貓頭鷹給你送來一封信：「聽說你在霍格華茲，能不能幫我找一本絕版的書？」你覺得這是個賺錢的好機會，也有點麻煩。',o:[
+  O('在圖書館翻遍書架','diligent',['悟',11],{g:R('你找到了那本書，老顧客高興得多給了你一份大禮。',{悟:1,金:2}),k:R('你找到了一個影本，雙方都能接受。',{金:1}),f:R('你找了好幾天，一無所獲。',{})}),
+  O('向同學打聽','careful',['人',10],{k:R('一位同學剛好有一本，你用合理的價格換了過來。',{人:1,金:1}),f:R('沒人知道，你只能道歉。',{人:-1})}),
+  O('婉拒，專心讀書','timid',null,R('你回信婉拒了老顧客，雖然有點可惜，但你心裡踏實多了。',{悟:1}))
+]},
+{id:'f_shop4',fm:['shop'],su:true,y:[2,7],w:5,t:'暑假・小偷上門',text:'暑假的一個深夜，店裡傳來奇怪的聲響。你悄悄從樓梯探頭，看見一個蒙面人影正在翻找櫃子。這是你家的店，你不能坐視不管。',o:[
+  O('悄悄叫醒家人','careful',['人',10],{k:R('家人一擁而上，小偷落荒而逃，店裡損失不大。',{人:1,心:1}),f:R('家人睡得太沉，叫了半天也叫不醒。',{})}),
+  O('自己出手，用咒語制伏他','bold',['悟',12],{g:R('你一個「昏昏倒地」把小偷放倒在櫃台前。家人起床後嚇了一跳，卻也相當自豪。',{悟:1,心:2,人:2},{sk:{dada:1}}),k:R('你和小偷僵持，最後他逃走了。',{心:1}),f:R('咒語打偏了，把一排貨架打翻。',{金:-2})}),
+  O('躲起來等他走','timid',null,R('你屏住呼吸躲在樓梯口，直到小偷離開。事後，你覺得有點羞愧。',{心:-1}))
+]}
+);
+
+// ===== 學院專屬事件（hs：只在該學院出現）=====
+EVENTS.push(
+// ---------- 葛來分多 ----------
+{id:'hg_1',hs:['葛來分多'],y:[1,3],w:5,t:'塔樓的新口令',text:'葛來分多塔樓的入口，是一幅畫著胖胖貴婦人的肖像。她今晚心情不太好：「口令？我不認識你這張臉，沒有口令，不准進。」你剛好把口令忘了。',o:[
+  O('好聲好氣地和她聊天','careful',['人',9],{k:R('你一路誇她的裙子顏色，她笑著放你進去。',{人:1}),f:R('她哼了一聲，說今晚不想開門。你在走廊上蹲了一小時。',{人:-1},{pts:-3})}),
+  O('大聲報出一堆猜測的口令','bold',['心',9],{g:R('你亂猜的第三個就中了，貴婦人掩嘴而笑：「算你運氣好。」',{心:1,人:1}),k:R('你猜了五次，她終於不耐煩地放你進去。',{心:1}),f:R('她被你吵得頭痛，罰你在門外站到天亮。',{體:-1},{pts:-4})}),
+  O('等同學回來一起進去','timid',null,R('你縮在牆角等，不一會兒來了一位同學帶你進去。',{人:1}))
+]},
+{id:'hg_2',hs:['葛來分多'],y:[2,6],w:5,t:'魁地奇隊長的邀請',text:'魁地奇隊長一個箭步攔住你：「你！對，就是你。我們缺一個隊員，球技我不管，膽子夠大就行。」他的眼睛閃著不容拒絕的光。',o:[
+  O('一口答應，立刻上場','bold',['體',11],{g:R('你第一次上場就抓住了一個關鍵球，全場歡聲雷動。',{體:2,人:2},{pts:8}),k:R('你在場上跌跌撞撞，但沒有拖後腿。',{體:1,人:1},{pts:3}),f:R('你被球擊中，從掃帚上摔了下來。',{體:-2},{pts:-2})}),
+  O('答應，但要求先練一個月','diligent',['體',9],{k:R('你練了一個月，終於站穩了腳跟。',{體:1,悟:1}),f:R('練習累得你連飯都吃不下。',{體:-1})}),
+  O('婉拒，說自己更適合當啦啦隊','timid',null,R('隊長嘆了口氣，拍拍你的肩：「也行，嗓門夠大就好。」',{人:1}))
+]},
+{id:'hg_3',hs:['葛來分多'],y:[3,7],w:5,t:'午夜的挑戰',text:'幾個高年級生在公共休息室攔住你，賭你不敢在午夜獨自走進禁忌森林邊緣，拿回一面旗子。「葛來分多的人，不會認慫吧？」',o:[
+  O('接受挑戰，直接去','bold',['心',12],{g:R('你一個人走進夜色，在樹下拔了旗子，順便被一隻螢火蟲跟了一路。回來時，所有人都鼓起掌來。',{心:2,人:2},{pts:8}),k:R('你拿到旗子，雖然腿一直在抖。',{心:1,人:1},{pts:3}),f:R('你被一隻不明生物追得連滾帶爬。',{體:-1,心:-1},{pts:-4})}),
+  O('拉個朋友一起去','careful',['人',10],{k:R('你們手牽手，一路壯膽，順利完成。',{人:2}),f:R('朋友嚇得先跑了，你只好一個人撐完。',{人:-1})}),
+  O('拒絕，並指出這很蠢','diligent',['心',10],{k:R('你冷靜地分析了風險，大家居然被你說服，轉而去吃宵夜。',{心:1,人:1}),f:R('有人嘲笑你認慫，但你依然不後悔。',{心:1,人:-1})})
+]},
+// ---------- 雷文克勞 ----------
+{id:'hr_1',hs:['雷文克勞'],y:[1,7],w:5,t:'門環的謎題',text:'雷文克勞塔樓的門環是一隻銅鷹，沒有口令，只有問題。今晚的問題是：「什麼東西，越用越多？」',o:[
+  O('仔細思考，慢慢作答','diligent',['悟',10],{g:R('你答出「知識」，門環滿意地打開。你覺得這才是進門的正確方式。',{悟:2},{pts:3}),k:R('你答出了一個勉強可接受的答案。',{悟:1}),f:R('你答錯了，門環要你再想一遍。',{心:-1})}),
+  O('找路過的同學一起討論','careful',['人',10],{k:R('你們討論了十分鐘，順利進門，還認識了新朋友。',{人:1,悟:1}),f:R('大家吵成一團，最後答案還是你自己想出來的。',{})}),
+  O('乾脆等別人答對，再跟著進去','timid',null,R('你默默站在牆邊，等一位高年級生答出來，然後溜了進去。',{心:-1}))
+]},
+{id:'hr_2',hs:['雷文克勞'],y:[2,7],w:5,t:'圖書館的珍本',text:'你在圖書館最角落的書架上，發現一本被厚厚灰塵覆蓋的珍本。書頁邊緣發黃，封面上用褪色的墨水寫著一個你不認識的名字。',o:[
+  O('帶去辦公室請教教授','careful',['人',10],{k:R('教授接過書，神情複雜：「這本書，我找了很多年。」他送你一個感謝的微笑。',{人:1,悟:1},{pts:5}),f:R('教授說只是普通的舊書。',{})}),
+  O('自己動手研究','diligent',['悟',12],{g:R('你讀出了書中一個失傳的小咒語，並實驗成功。',{悟:2},{sk:{charms:1},pts:6}),k:R('你讀了一部分，收穫頗豐。',{悟:1}),f:R('書頁一碰就碎，你什麼也沒留下。',{})}),
+  O('偷偷把書藏起來，之後再看','careful',['心',11],{k:R('你把書藏在床板下，每晚偷偷讀一點。',{悟:1}),f:R('被室友撞見，你只好交出去。',{人:-1})})
+]},
+{id:'hr_3',hs:['雷文克勞'],y:[3,7],w:5,t:'失蹤冠冕的傳說',text:'雷文克勞的塔樓裡，有一位灰色的幽靈總在窗邊徘徊。據說她知道一個關於失蹤冠冕的秘密——那是創始人留下的傳說之物。',o:[
+  O('找機會，委婉地和她聊','careful',['人',12],{g:R('她終於開口，說起了冠冕的下落與一位少年的故事。你把這份線索默默記下。',{人:1,心:1},{hx:1}),k:R('她講了一些模糊的往事，你聽得入神。',{人:1}),f:R('她沉默著飄走了。',{})}),
+  O('翻閱古籍，找尋冠冕的記載','diligent',['悟',12],{g:R('你在一本舊書裡找到了冠冕的圖樣與一段詛咒的注解。',{悟:2},{hx:1}),k:R('你找到了一些零星的記載。',{悟:1}),f:R('古籍太多，你找不到關鍵。',{})}),
+  O('把傳說當成睡前故事，笑笑就好','timid',null,R('你聽完後，心滿意足地睡著了。',{心:1}))
+]},
+// ---------- 史萊哲林 ----------
+{id:'hs_1',hs:['史萊哲林'],y:[1,7],w:5,t:'地窖裡的聚會',text:'史萊哲林的公共休息室在湖底，牆上映著搖晃的綠色水光。今晚，高年級的學長姐辦了一場小型聚會，邀請函只發給「值得認識的人」。你收到了一張。',o:[
+  O('盛裝出席，主動社交','careful',['人',11],{g:R('你和幾位關鍵人物相談甚歡，後來他們都成了你的人脈。',{人:3,金:1},{pts:3}),k:R('你認識了幾個有用的人。',{人:1}),f:R('你說錯一句話，空氣冷了三度。',{人:-1})}),
+  O('低調出席，只聽不說','timid',['心',10],{k:R('你什麼也沒說，卻把每個人的底細都記進了腦袋。',{心:1,人:1}),f:R('你被當成隱形人。',{})}),
+  O('不去，這種場合沒意義','bold',['心',10],{k:R('你關起門來練了一晚上咒語。',{悟:1}),f:R('有人說你高傲，你不置可否。',{人:-1})})
+]},
+{id:'hs_2',hs:['史萊哲林'],y:[2,6],w:5,t:'純血派的拉攏',text:'一位氣質高傲的學長把你叫到角落：「你有潛力。如果你願意站在我們這邊，很多事會變得容易許多。條件嘛……只是一點小小的態度。」',o:[
+  O('假意答應，套取情報','careful',['人',12],{g:R('你一邊點頭，一邊把他們的計畫記得清清楚楚。你知道，這些情報遲早能派上用場。',{人:2,心:1}),k:R('你套出了一點消息，但也被盯上了。',{人:1,心:-1}),f:R('他看出你在演戲，臉色一沉。',{人:-2})}),
+  O('婉拒，保持中立','timid',['心',11],{k:R('你客氣地婉拒，對方雖然不悅，卻沒有為難你。',{心:1}),f:R('他笑了笑：「你會後悔的。」',{人:-1})}),
+  O('直接頂回去，不留情面','bold',['人',12],{k:R('你一句話把他嗆得說不出話。四周的人偷偷看你，眼神複雜。',{心:2,人:-1}),f:R('他的跟班們圍了上來，你吃了點小虧。',{體:-1,人:-1})})
+]},
+{id:'hs_3',hs:['史萊哲林'],y:[3,7],w:5,t:'「蛇」的名聲',text:'走廊上，不同學院的人看你的眼神總帶著三分戒備：「史萊哲林的人，都是壞蛋吧？」你面前正好有個機會，可以讓大家對這個學院改觀。',o:[
+  O('主動幫一個陌生人解圍','bold',['人',11],{g:R('你出手相助，對方愣愣地看著你，說：「我以為你們都是……」你笑了笑。從此多了一個朋友。',{人:2,心:1},{pts:6}),k:R('對方道了謝，態度也緩和了一點。',{人:1}),f:R('對方以為你另有所圖，更加防備。',{人:-1})}),
+  O('用行動證明：參加學院外的活動','diligent',['心',10],{k:R('你參加了跨學院的活動，慢慢融入了。',{人:1}),f:R('大家對你敬而遠之。',{})}),
+  O('不理會，這種標籤不值得一提','timid',null,R('你聳聳肩，繼續走自己的路。',{心:1}))
+]},
+// ---------- 赫夫帕夫 ----------
+{id:'hh_1',hs:['赫夫帕夫'],y:[1,7],w:5,t:'廚房的入口',text:'赫夫帕夫的公共休息室就在廚房旁邊。據說，只要對著一幅畫滿水果的畫，輕輕搔那顆梨子，就能走進城堡最溫暖的角落。你終於鼓起勇氣，今晚試試看。',o:[
+  O('輕輕搔梨子，走進廚房','timid',['心',9],{g:R('一群家庭小精靈熱情地招呼你，給你端來熱可可和剛出爐的蛋糕。你覺得這是整座城堡最好的地方。',{心:1,人:2,體:1},{pts:2}),k:R('小精靈們給了你一杯熱牛奶，你心滿意足地走了。',{體:1}),f:R('梨子一搔就咯咯笑，你嚇得縮回手。',{})}),
+  O('請老同學帶路','careful',['人',9],{k:R('同學帶你認識了每個小精靈，你多了一群朋友。',{人:2}),f:R('同學忘了怎麼進去，你們在走廊轉了半小時。',{})}),
+  O('大聲嚷嚷，吸引大家一起去','bold',['人',10],{k:R('你帶了一群人湧進廚房，小精靈們又驚又喜。',{人:2,金:-1}),f:R('聲音太大被費契逮住，記了一筆。',{人:-1},{pts:-5})})
+]},
+{id:'hh_2',hs:['赫夫帕夫'],y:[1,7],w:5,t:'公共休息室的植物角',text:'赫夫帕夫的公共休息室牆邊擺滿了盆栽，連天花板上都垂著藤蔓。學長們說，這些植物是一代代學生輪流照顧的。今年，輪到你負責一株特別嬌貴的花。',o:[
+  O('每天按時澆水施肥','diligent',['心',9],{g:R('花在你的照顧下開得燦爛，所有人都來合照。',{心:1,人:1},{sk:{herbo:0.6},pts:4}),k:R('花安穩地活了下來。',{心:1},{sk:{herbo:0.3}}),f:R('你忘了澆水，花有點萎靡。',{心:-1})}),
+  O('請教草藥學教授','careful',['人',10],{k:R('教授欣然指點，花也長得很好。',{人:1,悟:1},{sk:{herbo:0.4}}),f:R('教授太忙，沒空理你。',{})}),
+  O('找同學輪流照顧','timid',['人',9],{k:R('大家輪流照顧，花開得很好，大家都有成就感。',{人:2}),f:R('每個人都以為別人澆過了。',{人:-1})})
+]},
+{id:'hh_3',hs:['赫夫帕夫'],y:[2,7],w:5,t:'朋友有難',text:'你的一位朋友最近越來越沉默，成績下滑，人也瘦了一圈。大家都在傳他得罪了誰，但沒有人敢問。你坐在他旁邊，不知道該不該開口。',o:[
+  O('直接問他發生了什麼','bold',['人',11],{g:R('他沉默了很久，才終於哽咽著把一切說出來。你陪著他，一起想了辦法。',{人:3,心:2},{pts:5}),k:R('他不太想說，但謝謝你的關心。',{人:1,心:1}),f:R('他說「我沒事」，匆匆走開了。',{人:-1})}),
+  O('默默陪著，不問原因','timid',['心',10],{k:R('你什麼也沒問，只是陪他吃了三天的飯。第四天，他自己開口了。',{人:2,心:1}),f:R('你陪了很久，他還是什麼都不說。',{心:-1})}),
+  O('把事情告訴老師','careful',['人',10],{k:R('老師出面處理，事情逐漸有了轉機。',{人:1,心:1}),f:R('朋友怪你多管閒事。',{人:-1})})
+]}
+);
+
+// ===== 課程、選修、活米村、學院盃相關事件 =====
+(function(){
+// 移除舊版課堂事件（改由下方課程事件取代）
+['e_potions','e_dada','e_creature','e_hogsmeade'].forEach(id=>{const i=EVENTS.findIndex(e=>e.id===id);if(i>=0)EVENTS.splice(i,1);});
+})();
+const SN={bold:'勇敢',diligent:'求知',timid:'忠誠',careful:'狡黠'};
+const prefLine=c=>c.like?`（欣賞「${SN[c.like]}」、不喜歡「${SN[c.dis]}」）`:'';
+const lookLines=()=>COURSES.filter(c=>c.id!=='dada').map(c=>`${c.n}：${c.t}——${c.look}${prefLine(c)}。`).join('\n');
+EVENTS.push(
+{id:'e_timetable',fx0:true,t:'第一份課表',text:()=>'開學第二個月，你終於搞懂了課表。七門主課，七位風格迥異的老師：\n'+lookLines()+'\n黑魔法防禦術的老師每年都不一樣，據說是因為這個職位……不太吉利。每位教授都有自己偏愛的學生類型：做法合他的意，檢定會更順；踩到他的地雷，就得小心。院長對自己學院的學生也會多一分寬容。你該怎麼度過第一個月？',o:[
+  O('從黑魔法防禦術開始，先搞清楚怎麼自保','bold',null,R('你在第一堂課就舉手發問，老師看了你一眼，露出「這孩子有前途」的表情。',{心:1},{sk:{dada:1.5},pts:3})),
+  O('把變形學和符咒學當成重點科目','diligent',null,R('你把筆記整理得整整齊齊，這兩門課的基礎打得比誰都穩。',{悟:1},{sk:{transfig:1,charms:1},pts:3})),
+  O('先摸清每位老師的脾氣','careful',null,R('你默默觀察，記下每位教授的口頭禪和地雷。你覺得這比任何一門課都有用。',{人:1},{sk:{charms:0.4,transfig:0.4,potions:0.4,herbo:0.4,history:0.4,astro:0.4,dada:0.4}})),
+  O('和同學互相抄筆記，一起複習','timid',null,R('你們組成了一個小小的讀書會，每個人都貢獻了自己最強的一科。',{人:2},{sk:{herbo:0.6,history:0.6,astro:0.6}}))
+]},
+{id:'e_elect1',fx0:true,t:'選修課登記',text:()=>'三年級開始，你可以選修課程。選修課只要選上，這門課就會直接達到「滿值」，不用再慢慢累積。教授們都在走廊排隊招生：\n'+ELECTIVES.map(c=>`${c.n}：${c.t}——${c.look}${prefLine(c)}。`).join('\n')+'\n你要選哪一門？（還有一次機會再選另一門）',o:ELECTIVES.map((c,i)=>O(`選修「${c.n}」`,['bold','careful','diligent','timid','diligent'][i],null,R(`你在登記表上簽下名字。${c.t}笑著說：「歡迎。」從今天起，這門課對你來說已是滿值。`,{},{elect:c.id,pts:2}))).concat([O('這個學期先不選','timid',null,R('你覺得課表夠滿了，決定先不選。',{心:1}))])},
+{id:'e_elect2',fx0:true,t:'選修課登記（第二次機會）',cond:r=>r.elect.length<ELECTIVES.length,text:()=>'學期剛開始，登記處還開著，你可以再挑一門選修課。同樣是選一次就滿值。',o:ELECTIVES.map((c,i)=>O(`選修「${c.n}」`,['bold','careful','diligent','timid','diligent'][i],null,R(`你補登了「${c.n}」。${c.t}把你的名字寫進名單，點了點頭。`,{},{elect:c.id,pts:2}),{ne:c.id})).concat([O('一門就夠了','timid',null,R('你決定把時間留給其他事情。',{心:1}))])},
+// ---------- 七門主課 ----------
+{id:'c_charms',cls:true,rep:true,y:[1,7],w:1.3,t:'符咒學：今天練的是漂浮咒',text:()=>{const c=COURSES[0];return `${c.t}（${c.look}）宣布今天要練習漂浮咒：「記住，手腕要輕，口音要準，千萬別把羽毛喊成河馬！」`;},o:[
+  O('照著口訣一遍遍練','diligent',['悟',9],{g:R('羽毛輕輕飄起，在你頭上轉了一圈。教授拍手：「漂亮！」',{悟:1}),k:R('羽毛晃晃悠悠飄了起來。',{悟:1}),f:R('羽毛紋絲不動，你的手腕痠得要命。',{})},{sk:'charms'}),
+  O('跟鄰座比賽誰飄得高','bold',['悟',11],{g:R('你的羽毛一路衝上天花板，贏得全班喝采。',{悟:1,人:1}),k:R('你們飄得差不多高，平手。',{人:1}),f:R('你用力過猛，把鄰座的帽子也飄走了。',{人:-1})},{sk:'charms'}),
+  O('先觀察教授的手勢再動手','timid',['悟',8],{k:R('你看懂了訣竅，一次就成功。',{悟:1}),f:R('你看得太久，輪到你時已經下課。',{})},{sk:'charms'}),
+  O('挑戰進階咒語：讓整張桌子飄起來','bold',['悟',12],{g:R('整張桌子穩穩升起，教授瞪大了眼睛，給了你額外的十分。',{悟:2,人:2},{pts:12}),k:R('桌子顫顫巍巍升了起來，勉強過關。',{悟:1}),f:R('桌子砸在地上，把你的腳砸腫了。',{體:-1})},{sk:'charms',needSk:{charms:4}})
+]},
+{id:'c_transfig',cls:true,rep:true,y:[1,7],w:1.3,t:'變形學：火柴變成針',text:()=>{const c=COURSES[1];return `${c.t}（${c.look}）把一盒火柴放在每個人面前：「變形學是一門精密的學問，不是你們想怎麼玩就怎麼玩。誰先把火柴變成針，我給誰加分。」`;},o:[
+  O('專心默念咒語，一步一步來','diligent',['悟',9],{g:R('火柴一閃，變成一根銀光閃閃的針。教授點頭：「可以。」',{悟:1}),k:R('火柴變成了一根有點彎的針。',{悟:1}),f:R('火柴只變得尖尖的，像牙籤。',{})},{sk:'transfig'}),
+  O('想像針的樣子，用直覺變','bold',['心',10],{g:R('你一次成功，連針尖都亮晶晶的。',{心:1,悟:1}),k:R('你的針有點歪，但確實是針。',{心:1}),f:R('火柴縮成一團，像個奇怪的毛球。',{})},{sk:'transfig'}),
+  O('偷偷看隔壁怎麼變','careful',['人',9],{k:R('你看懂了隔壁同學的手勢，也成功了。',{人:1}),f:R('被教授一個眼神瞪回來，你嚇得不敢動。',{人:-1,心:-1})},{sk:'transfig'}),
+  O('挑戰進階變形：把杯子變成小動物','diligent',['悟',12],{g:R('杯子變成一隻胖嘟嘟的刺蝟，在你手心滾了一圈。教授難得微微一笑。',{悟:2,心:1},{pts:12}),k:R('杯子變成一隻有點像刺蝟的東西。',{悟:1}),f:R('杯子變成一個長著腳的怪物，追著你滿教室跑。',{人:-1})},{sk:'transfig',needSk:{transfig:4}})
+]},
+{id:'c_potions',cls:true,rep:true,y:[1,7],w:1.3,t:'魔藥學：地窖裡的大鍋',text:()=>{const c=COURSES[2];return `地窖又冷又濕，${c.t}（${c.look}）在鍋與鍋之間穿梭：「今天，你們要熬一鍋像樣的藥。如果有人把它炸了，就自己負責擦乾淨。」`;},o:[
+  O('照著書一步一步熬','diligent',['悟',10],{g:R('藥水呈完美的淺綠色，教授冷冷地說：「……還行。」你覺得這是史上最高的稱讚。',{悟:1}),k:R('藥水合格，沒出什麼大錯。',{悟:1}),f:R('藥水冒起一團黑煙，你被罰重做。',{悟:-1})},{sk:'potions'}),
+  O('憑感覺加一點料','bold',['悟',12],{g:R('你的「小創新」讓藥水效果翻倍。教授皺了皺眉，卻沒有批評。',{悟:2,人:1}),k:R('藥水勉強合格。',{悟:1}),f:R('藥水爆炸，你的眉毛沒了。',{體:-1,人:-1})},{sk:'potions'}),
+  O('和同學分工合作','careful',['人',10],{k:R('分工合作很順利，你們這組成績不錯。',{人:1,悟:1}),f:R('分工變成互相推卸。',{人:-1})},{sk:'potions'}),
+  O('挑戰進階配方：調一小瓶幸運藥水','diligent',['悟',13],{g:R('一小瓶金色的液體在鍋底閃閃發亮。教授盯了它很久，終於吐出兩個字：「不錯。」',{悟:2,金:1},{pts:12}),k:R('藥水顏色有點偏，但效果勉強。',{悟:1}),f:R('藥水冒出奇怪的氣泡，整個地窖都是味道。',{體:-1})},{sk:'potions',needSk:{potions:5}})
+]},
+{id:'c_dada',cls:true,rep:true,y:[1,7],w:1.3,t:'黑魔法防禦術',text:run=>{const d=DADA_T[yearOf(run)];return `這一年的黑魔法防禦術教授，是${d.t}。${d.look}。今天要練習的是一個保命用的咒語。`;},o:[
+  O('主動示範給大家看','bold',['悟',11],{g:R('你一次成功，全班鴉雀無聲，隨後掌聲四起。',{悟:1,人:1}),k:R('你示範得不錯，雖然有點慌張。',{悟:1}),f:R('你的咒語打偏了，砸到了天花板的吊燈。',{人:-1})},{sk:'dada'}),
+  O('認真記筆記，等別人先試','diligent',['悟',10],{k:R('你的筆記整齊又全面，成了同學爭相借閱的對象。',{悟:1,人:1}),f:R('輪到你時，緊張壓過了一切。',{悟:-1})},{sk:'dada'}),
+  O('和同伴互相練習','timid',['人',10],{k:R('你們練了一個下午，最後都學會了。',{人:1,悟:1}),f:R('同伴把你的魔杖打飛了。',{人:-1})},{sk:'dada'}),
+  O('挑戰高階防禦：模擬對抗','bold',['體',13],{g:R('你一個「盔甲護身」擋住所有咒語，反手一擊，漂亮地結束了對練。',{體:1,悟:1,人:2},{pts:12}),k:R('你擋下大部分攻擊，雖然被擦傷了。',{體:1}),f:R('你被一個咒語轟飛，在地上滾了三圈。',{體:-1})},{sk:'dada',needSk:{dada:4}})
+]},
+{id:'c_herbo',cls:true,rep:true,y:[1,7],w:1.3,t:'草藥學：溫室裡的植物',text:()=>{const c=COURSES[4];return `溫室裡又悶又潮，${c.t}（${c.look}）拍了拍手：「今天要換盆的是『咬咬花』，記得戴龍皮手套！別問我上次那個同學的手指去哪了。」`;},o:[
+  O('老老實實戴好手套，慢慢換盆','diligent',['心',9],{k:R('你把花盆換得整整齊齊，教授點頭：「穩當。」',{悟:1}),f:R('花突然反咬，你的袖子被扯破。',{體:-1})},{sk:'herbo'}),
+  O('趁花不注意，一把拔出','bold',['體',10],{g:R('你一把拔起，花盆還沒反應過來就換好了。',{體:1,人:1}),k:R('你被花咬了一口，但還是換好了。',{體:-1}),f:R('花反撲，你被甩到溫室牆上。',{體:-2})},{sk:'herbo'}),
+  O('請教同學怎麼處理','timid',['人',9],{k:R('同學教你一個小訣竅，你學得很快。',{人:1,悟:1}),f:R('同學自己也沒學會。',{})},{sk:'herbo'}),
+  O('挑戰進階：培育一株魔鬼網','diligent',['悟',12],{g:R('你的魔鬼網長得生機勃勃，卻乖乖地沒纏任何人。教授連連稱讚。',{悟:2,心:1},{pts:12}),k:R('魔鬼網長出來了，只是有點亂。',{悟:1}),f:R('魔鬼網一長出來就纏住了你的腳踝。',{體:-1})},{sk:'herbo',needSk:{herbo:4}})
+]},
+{id:'c_history',cls:true,rep:true,y:[1,7],w:1.1,t:'魔法史：催眠般的課堂',text:()=>{const c=COURSES[5];return `${c.t}（${c.look}）從黑板裡飄了出來，開始講一場一千年前的妖精叛亂。教室裡，已經有三分之二的人趴在桌上。`;},o:[
+  O('強打精神，認真做筆記','diligent',['心',9],{g:R('你在昏昏欲睡的氣氛中，記下了一個很有意思的細節，後來考試派上了用場。',{悟:1,心:1}),k:R('你撐到下課，筆記有一半是有效的。',{悟:1}),f:R('你不知不覺睡著了，口水滴在筆記上。',{})},{sk:'history'}),
+  O('拿出別的書偷看','careful',['悟',10],{k:R('你一邊翻書一邊聽，居然都沒漏掉。',{悟:1}),f:R('你被教授飄過來盯著看了三秒，嚇出一身冷汗。',{人:-1})},{sk:'history'}),
+  O('和鄰座傳紙條','bold',['人',9],{k:R('紙條傳了十幾張，你們的友誼一飛沖天。',{人:1}),f:R('紙條掉在教授的臉上（穿了過去）。',{人:-1})},{sk:'history'}),
+  O('向教授請教一個冷門的問題','diligent',['悟',12],{g:R('教授愣了三秒，這是他死後第一次有人主動提問。他興奮得把整堂課的內容都改了，你學到了書上沒有的故事。',{悟:2,人:1},{pts:12}),k:R('教授給了你一個簡短但有趣的回答。',{悟:1}),f:R('教授記錯年份，講了半天，你更糊塗了。',{})},{sk:'history',needSk:{history:3}})
+]},
+{id:'c_astro',cls:true,rep:true,y:[1,7],w:1.1,t:'天文學：深夜的天文塔',text:()=>{const c=COURSES[6];return `午夜，你裹著毯子爬上天文塔頂。${c.t}（${c.look}）指著夜空：「今晚，我們要找的是木星的四顆衛星。誰先找到，我給誰加分。」`;},o:[
+  O('用星圖一顆顆對照','diligent',['悟',10],{g:R('你一次就找齊了四顆，教授輕聲說：「很好。」',{悟:1}),k:R('你找到了三顆，另一顆被雲擋住了。',{悟:1}),f:R('你把一顆路過的流星當成了衛星。',{})},{sk:'astro'}),
+  O('憑感覺指一個方向','bold',['心',11],{g:R('你一指，就是正確方向。教授挑了挑眉。',{心:1,悟:1}),k:R('你猜對了一半。',{心:1}),f:R('你指到了月亮。',{人:-1})},{sk:'astro'}),
+  O('一邊看星星一邊發呆','timid',['心',8],{k:R('夜風很涼，你默默記下了天空的樣子。',{心:1}),f:R('你睡著了，被同學用毯子蓋住。',{})},{sk:'astro'}),
+  O('挑戰進階：推算下一次月蝕','diligent',['悟',13],{g:R('你算出了月蝕的時間，只差十分鐘。教授難得地笑了：「有天賦。」',{悟:2,心:1},{pts:12}),k:R('你的推算有點誤差，但方向對了。',{悟:1}),f:R('你算錯了一個小數點，教授委婉地說：「繼續努力。」',{})},{sk:'astro',needSk:{astro:5}})
+]},
+// ---------- 選修課 ----------
+{id:'v_creatures',cls:true,rep:true,el:'creatures',y:[3,7],w:1.2,t:'奇獸飼育學：森林邊的課堂',text:()=>{const c=ELECTIVES[0];return `${c.t}（${c.look}）牽出一頭半鷹半馬的生物：「今天要認識鷹馬。記住，要先鞠躬，等牠回禮才能靠近！」`;},o:[
+  O('恭恭敬敬鞠躬，等牠回禮','timid',['心',9],{g:R('鷹馬低下頭回禮，你輕輕撫摸牠的羽毛，還被載著飛了一圈。',{心:2,體:1}),k:R('鷹馬回禮了，你的心狂跳不已。',{心:1}),f:R('鷹馬打了個響鼻，你嚇得往後退。',{})},{sk:'creatures'}),
+  O('大膽走上前，直視牠','bold',['體',10],{g:R('鷹馬欣賞你的膽量，主動靠了過來。',{體:1,心:1,人:1}),k:R('鷹馬猶豫了一下，勉強接受了你。',{心:1}),f:R('鷹馬不悅，用翅膀把你拍出三公尺。',{體:-1})},{sk:'creatures'}),
+  O('一邊觀察一邊畫圖','diligent',['悟',9],{k:R('你畫出了鷹馬的每一根羽毛，教授大加讚賞。',{悟:1}),f:R('鷹馬動來動去，你的畫一團亂。',{})},{sk:'creatures'})
+]},
+{id:'v_divination',cls:true,rep:true,el:'divination',y:[3,7],w:1.2,t:'占卜學：悶熱的塔樓',text:()=>{const c=ELECTIVES[1];return `塔樓裡燃著香，窗簾全拉上了。${c.t}（${c.look}）拿起你的茶杯，倒過來研究了很久：「噢……我看見了……一隻黑色的……不祥的……」`;},o:[
+  O('配合她，一臉嚴肅地點頭','careful',['人',9],{k:R('教授對你的「悟性」讚不絕口，你默默把這份讚美收了下來。',{人:1}),f:R('你忍不住笑場，被請出了教室。',{人:-1})},{sk:'divination'}),
+  O('認真研究茶葉的紋路','diligent',['悟',10],{k:R('你發現茶葉的紋路真的有一套邏輯，筆記寫了好幾頁。',{悟:1}),f:R('怎麼看都像一坨泥巴。',{})},{sk:'divination'}),
+  O('偷偷用日記記下她的預言，之後比對','careful',['心',10],{g:R('你發現，她十個預言裡有一個說對了。你不確定那是巧合還是天賦。',{悟:1,心:1}),k:R('你的記錄越來越厚，成了一份有趣的研究。',{悟:1}),f:R('被她發現你在做紀錄，她很不高興。',{人:-1})},{sk:'divination'})
+]},
+{id:'v_arith',cls:true,rep:true,el:'arith',y:[3,7],w:1.2,t:'算命學：滿黑板的數字',text:()=>{const c=ELECTIVES[2];return `${c.t}（${c.look}）在黑板上寫滿了公式：「數字不會說謊。今天要用你們的出生日期，算出你們的『魔法共振頻率』。」`;},o:[
+  O('認真算，一步一步檢查','diligent',['悟',10],{g:R('你算出了正確的答案，教授推了推單片眼鏡：「令人滿意。」',{悟:2}),k:R('答案對了，過程有點亂。',{悟:1}),f:R('你在第三步算錯了符號。',{})},{sk:'arith'}),
+  O('用直覺猜一個答案','bold',['心',11],{k:R('你猜對了，但教授要求寫出過程，你只好補寫。',{心:1}),f:R('猜錯了，還被叫起來罰站。',{人:-1})},{sk:'arith'}),
+  O('和同學對答案','timid',['人',9],{k:R('你們分工檢查，兩個人都拿了高分。',{人:1,悟:1}),f:R('兩個人的答案都錯了。',{})},{sk:'arith'})
+]},
+{id:'v_muggle',cls:true,rep:true,el:'muggle',y:[3,7],w:1.2,t:'麻瓜研究：電是什麼？',text:()=>{const c=ELECTIVES[3];return `${c.t}（${c.look}）舉起一個插頭，一臉虔誠：「同學們，這叫做『插座』。有人知道它為什麼能讓東西亮起來嗎？」教室裡一片茫然。`;},o:[
+  O('舉手回答：電的原理','diligent',['悟',9],{g:R('你一口氣講完了電流的基本概念，全班鴉雀無聲，教授感動得眼眶發紅。',{悟:1,人:2}),k:R('你講了個大概，教授頻頻點頭。',{悟:1}),f:R('你講到一半，發現自己也忘了。',{})},{sk:'muggle'}),
+  O('帶來一個麻瓜小物件當示範','careful',['人',9],{k:R('你帶來的手電筒讓全班驚呼連連。',{人:2}),f:R('電池沒電了。',{})},{sk:'muggle'}),
+  O('什麼也不說，專心聽','timid',null,R('你默默聽完整堂課，覺得這門課比想像中有意思。',{悟:1}))
+]},
+{id:'v_runes',cls:true,rep:true,el:'runes',y:[3,7],w:1.2,t:'古代魔文：一張古老的羊皮紙',text:()=>{const c=ELECTIVES[4];return `${c.t}（${c.look}）展開一張泛黃的羊皮紙：「這是一段殘缺的古代銘文。能翻出一半，今天就算你們及格。」`;},o:[
+  O('逐字對照字典，慢慢翻','diligent',['悟',10],{g:R('你翻出了整段的意思，內容是一則關於「時間的守門人」的古老寓言。',{悟:2},{sk:{astro:0.3}}),k:R('你翻出了大半，足以及格。',{悟:1}),f:R('字典翻到快散架，只翻出三個詞。',{})},{sk:'runes'}),
+  O('找規律猜意思','bold',['悟',11],{k:R('你靠規律猜出了大概，教授點頭：「有想像力。」',{悟:1}),f:R('猜得離譜，整段翻成了一道菜譜。',{人:-1})},{sk:'runes'}),
+  O('和同學分工翻譯','careful',['人',9],{k:R('你們分工完成，成績不錯。',{人:1,悟:1}),f:R('分段拼起來完全對不上。',{})},{sk:'runes'})
+]},
+// ---------- 家長同意書與活米村之旅 ----------
+{id:'e_slip',y:[3,7],nf:['slip'],t:'家長同意書',w:3,text:'三年級的秋天，佈告欄上貼出了霍格莫德週末的通知：「持有家長（或監護人）同意書的三年級以上學生，可前往英國唯一的純巫師村落。」大家都在互相問：「你的簽好了嗎？」你的那張，還是空白的。',o:[
+  O('寫信請家長簽名','careful',['人',9],{k:R('貓頭鷹一來一回，簽好的同意書回到了你手上。',{人:1},{flag:'slip'}),f:R('回信說：「這個週末還是留在學校比較安全。」',{心:-1})}),
+  O('請老師出面說明情況','timid',['人',10],{k:R('老師看了看你的情況，嘆了口氣，替你想了辦法。同意書補齊了。',{人:1},{flag:'slip'}),f:R('老師說：「這件事，我沒有辦法。」',{})}),
+  O('偷偷模仿簽名','bold',['心',11],{g:R('你的簽名一模一樣，騙過了所有人。你有點心虛，但也有點得意。',{心:1},{flag:'slip'}),k:R('簽名有點歪，但居然過關了。',{},{flag:'slip'}),f:R('被管理員一眼看穿，罰了你一週的掃地。',{人:-1,心:-1},{pts:-8}),b:R('被當場拆穿，你被記了大過。',{人:-2},{pts:-15})})
+]},
+{id:'e_hogsmeade',rep:true,fl:['slip'],y:[3,7],w:2,t:'霍格莫德週末：蜂蜜公爵',text:'週末的霍格莫德，街道兩旁堆滿了雪。蜂蜜公爵糖果店裡人頭攢動，櫃台上擺著會爆炸的糖、會打嗝的巧克力和一種「吃了會讓頭髮變成彩虹色」的軟糖。',o:[
+  O('大包小包買糖果，分給朋友','careful',['金',9],{k:R('你分發糖果，人緣大漲。口袋雖然癟了，心情卻很好。',{人:2,金:-1}),f:R('你被一種會吐火的糖嚇到，把一整袋都灑了。',{金:-1})}),
+  O('偷偷試吃免費樣品','bold',['人',10],{k:R('你吃遍了所有樣品，老闆微笑著假裝沒看見。',{體:1}),f:R('你被老闆發現，提著衣領送出門。',{人:-1})}),
+  O('研究糖果的魔法配方','diligent',['悟',10],{g:R('你分析出幾款糖果背後的咒語原理，覺得這是意外的收穫。',{悟:1},{sk:{charms:0.4}}),k:R('你記下了幾個有趣的配方。',{悟:1}),f:R('你看了半天，什麼也沒看出來。',{})})
+]},
+{id:'e_hogsmeade2',rep:true,fl:['slip'],y:[3,7],w:2,t:'霍格莫德週末：三把掃帚',text:'酒吧裡暖烘烘的，空氣裡是奶油啤酒和烤肉的香氣。老闆娘端著十幾杯酒在人群中穿梭，牆角的壁爐劈啪作響。',o:[
+  O('點一杯奶油啤酒，和朋友聊天','timid',['人',9],{g:R('你和朋友們聊了一整個下午，友情更深了。你的鬍子……是奶油泡沫。',{人:2,心:1}),k:R('你們聊得很開心。',{人:1}),f:R('你把酒灑在隔壁桌的客人身上，賠了點錢。',{金:-1})}),
+  O('偷聽隔壁桌的談話','careful',['心',11],{g:R('你聽到了魔法部官員的談話，有一條關於黑暗勢力的線索。',{悟:1,心:1},{flag:'heardRumor'}),k:R('你聽到了一些零碎的消息。',{人:1}),f:R('隔壁桌的人察覺你在偷聽，狠狠瞪了你一眼。',{人:-1})}),
+  O('在角落看書，享受安靜','diligent',['心',9],{k:R('你點了一杯熱飲，在角落看完了半本書。',{悟:1}),f:R('吵到你什麼都看不進去。',{})})
+]},
+{id:'e_hogsmeade3',rep:true,fl:['slip'],y:[3,7],w:2,t:'霍格莫德週末：笑話店',text:'一家塞滿了惡作劇道具的店：噴墨水的糞彈、會逃跑的鞋子、一盒「吃了就流鼻血」的糖。店員擠眉弄眼：「新貨剛到，要不要試試？」',o:[
+  O('買一堆道具，準備整人','bold',['金',10],{g:R('你用一個「迷你煙火」讓整座城堡熱鬧了一晚，卻沒人抓到你。',{人:2,金:-1},{pts:5}),k:R('道具效果不錯，只是被費契盯上了。',{人:1,金:-1},{pts:-3}),f:R('你在公共休息室試用，不小心炸了自己的床。',{人:-1,金:-1},{pts:-8})}),
+  O('只買一點小道具送朋友','careful',['金',9],{k:R('朋友收到禮物都很開心。',{人:1,金:-1}),f:R('朋友嫌棄你的品味。',{金:-1})}),
+  O('逛逛就走，不買','timid',null,R('你把每一款道具都試玩了一遍，一個銅板也沒花。',{心:1}))
+]},
+{id:'e_hogsmeade4',rep:true,fl:['slip'],y:[3,7],w:1.5,t:'霍格莫德週末：尖叫屋與郵局',text:'村子的盡頭，有一棟據說鬧鬼的木屋，窗戶被木板釘死，偶爾傳出奇怪的聲響。郵局裡則停滿了貓頭鷹，空氣中混雜著羽毛和墨水味。',o:[
+  O('走到尖叫屋外面看看','bold',['心',10],{g:R('你在屋外繞了一圈，聽見裡面傳來沉重的腳步聲，嚇得你一身冷汗，但也有點興奮。',{心:2}),k:R('你什麼也沒看到，但滿足了好奇心。',{心:1}),f:R('窗板突然發出巨響，你嚇得摔了一跤。',{體:-1})}),
+  O('去郵局寄信，順便逛逛','timid',['人',9],{k:R('你寄了信，還幫一隻迷路的貓頭鷹找到了主人。',{人:1}),f:R('郵局人太多，排了整整一下午。',{})}),
+  O('向村民打聽傳聞','careful',['人',11],{g:R('一位老村民低聲告訴你一個古老的傳說：「在很久以前，有人從『另一個世界』走出了這座村子。」',{人:1},{clue:1}),k:R('你聽到了一些有趣的八卦。',{人:1}),f:R('村民不太想理你。',{})})
+]},
+// ---------- 課業落後：補考 ----------
+{id:'e_makeup',rep:true,y:[2,7],w:3,cond:r=>CORE.some(c=>lvl(r,c)<Math.floor(yearOf(r)*0.8)),t:'補考通知',text:'公佈欄上貼出了一張名單，你的名字赫然在列：某一門課，你的進度落後了。教授把你叫進辦公室，眼神複雜：「還有補救的機會，你看著辦。」',o:[
+  O('通宵補課，把落後的趕回來','diligent',['心',10],{k:R('你熬了三個通宵，把落後的進度硬生生補了回來。',{悟:1,體:-1},{sk:Object.fromEntries(CORE.map(c=>[c,0.5]))}),f:R('你熬夜熬到頭昏腦脹，什麼也沒記住。',{體:-1},{pts:-3})}),
+  O('找同學借筆記','careful',['人',10],{k:R('同學慷慨解囊，你勉強跟上了進度。',{人:1},{sk:Object.fromEntries(CORE.map(c=>[c,0.3]))}),f:R('同學的筆記字跡潦草，你看不懂。',{人:-1})}),
+  O('向教授求情，延後考試','timid',['人',11],{k:R('教授嘆了口氣，同意延後一個月。',{心:1}),f:R('教授說：「規矩就是規矩。」',{心:-1},{pts:-4})})
+]}
+);
+// ---- 為大事件與月度事件的選項加上課程標籤（影響檢定加成）----
+(function(){
+const TAGS={
+  m_stone:['transfig','potions','charms','herbo'],
+  m_duel:['dada','charms',null,null],
+  m_chamber:['dada','history',null,'herbo'],
+  m_dementor:['dada',null,null,'dada'],
+  m_shack:['dada','astro',null,null],
+  m_grave:['dada','charms',null,null],
+  m_da:['dada',null,'charms',null],
+  m_ministry:['dada','astro',null,null],
+  m_memory:[null,'charms',null,'potions'],
+  m_tower:['dada','charms',null,null],
+  m_hunt:['dada','history',null,null],
+  m_final:['dada','history',null,null],
+  e_forest:[null,'creatures',null],
+  t_rune:['runes',null,null],
+  t_book:[null,'runes',null],
+  t_dial:[null,null,'astro'],
+  h_ring:['potions',null,null],
+  h_cup:['charms',null,null],
+  h_room:[null,'charms',null],
+  e_library:[null,null,null],
+  e_exam:['history',null,null]
+};
+for(const id in TAGS){const ev=EVENTS.find(e=>e.id===id);if(!ev)continue;TAGS[id].forEach((s,i)=>{if(s&&ev.o[i])ev.o[i].sk=s;});}
+// 部分月度事件也算「課堂表現」，可贏得或失去學院分數
+['e_exam'].forEach(id=>{const ev=EVENTS.find(e=>e.id===id);if(ev)ev.cls=true;});
+})();
+
+// ===== 高年級與戰後補充劇情 =====
+EVENTS.push(
+{id:'l_owl',rep:true,t:'O.W.L. 考前週',y:[5,5],w:2,text:'五年級的期末，整座城堡瀰漫著焦慮的氣味。走廊上到處是自言自語背咒語的人，連畫像都開始替你們出題。',o:[
+  O('排出讀書進度表，按表操課','diligent',['悟',11],{g:R('你的進度表漂亮得像藝術品，考試時每一題都似曾相識。',{悟:2,心:1},{pts:3}),k:R('雖然有些章節來不及，但大致順利。',{悟:1}),f:R('你把表排得太滿，第三天就崩潰了。',{心:-1})}),
+  O('相信臨場發揮','bold',['心',11],{k:R('你在考場上靈光乍現，居然都蒙過去了。',{心:1,悟:1}),f:R('你的魔杖在實作考試中噴出一串火花，考官默默記了一筆。',{悟:-1})}),
+  O('拉朋友互相模擬考','timid',['人',10],{k:R('互相出題讓大家都進步不少，你還多了個讀書夥伴。',{人:1,悟:1}),f:R('模擬考變成互相比慘大會。',{人:1})}),
+  O('研究考官的出題習慣','careful',['悟',11],{k:R('你摸清了考官的偏好，答題像是在對答案。',{悟:1,心:1}),f:R('你押錯了題，白白浪費一晚。',{})})
+]},
+{id:'l_career',t:'職業諮詢',y:[5,5],w:2,text:'院長把你叫進辦公室，桌上攤著一份寫滿問號的職業表。「所以，」他推了推眼鏡，「畢業以後，你打算做什麼？」',o:[
+  O('誠實說出你也不確定','timid',null,R('院長沉默了一會，遞給你一杯熱茶：「不確定，也沒關係。」你覺得肩膀輕了一點。',{心:1})),
+  O('宣稱要成為傲羅','bold',['心',11],{k:R('院長挑了挑眉，但還是寫下了你的名字。你突然覺得，責任重了起來。',{心:1,體:1}),f:R('他列出了一份你需要的成績單，你看完臉都綠了。',{心:-1})}),
+  O('提出一個奇怪但有趣的計畫','careful',['人',11],{k:R('院長聽完，居然點頭：「有意思。我認識一個人。」',{人:1,悟:1}),f:R('院長只是微笑，說：「再想想。」',{})}),
+  O('請教他當年是怎麼選的','diligent',['悟',10],{k:R('他說了一個很長很長的故事。你記住了其中一句。',{悟:1,心:1}),f:R('故事太長，你聽到一半睡著了。',{})})
+]},
+{id:'l_da',t:'祕密練習',y:[5,6],w:2,text:'有人在必要室辦了一個祕密練習會，不為成績，只為「真正學會保護自己」。入口的暗號，是在走廊上來回走三次。',o:[
+  O('加入並認真練習','bold',['體',11],{g:R('你的咒語越來越穩，夥伴們都叫你「小教官」。',{體:2,人:1},{pts:2}),k:R('你學會了好幾個實用的防禦咒。',{體:1,悟:1}),f:R('你練過頭，隔天手臂痠得舉不起來。',{體:-1})}),
+  O('幫忙望風與整理場地','timid',null,R('你默默把一切整理得井井有條。大家都記得有你在的練習會特別順利。',{人:2})),
+  O('站在遠處觀察，不加入','careful',['悟',10],{k:R('你看出了誰的招式最扎實，順手學了幾招。',{悟:1}),f:R('你被發現了，場面有些尷尬。',{人:-1})})
+]},
+{id:'l_hall',t:'城堡裡的氣氛',y:[6,6],w:1.5,rep:true,text:'今年的城堡不太一樣。窗外的雲壓得很低，走廊上的低語比去年更輕、更短。連畫像都不太說話了。',o:[
+  O('主動關心身邊的人','timid',['人',10],{k:R('你不問原因，只是遞了杯熱可可。有些人眼眶紅了。',{人:2,心:1}),f:R('你說錯了話，對方沉默地走開。',{人:-1})}),
+  O('更努力地練習','diligent',['悟',11],{k:R('你把不安化成練習的動力。',{悟:1,體:1}),f:R('你練到失眠。',{心:-1})}),
+  O('偷偷打探消息','careful',['悟',11],{k:R('你拼湊出一些零碎的情報，雖然不全，但足夠讓你多一分準備。',{悟:1,心:1}),f:R('你的好奇心引來了不必要的注意。',{人:-1})}),
+  O('開個玩笑緩和氣氛','bold',['人',11],{k:R('大廳裡終於有了一點笑聲。',{人:2}),f:R('時機不對，有人瞪了你一眼。',{人:-1})})
+]},
+{id:'l_newt',t:'N.E.W.T. 的壓力',y:[6,7],w:1.5,text:'高年級的課程難得像是要把人壓扁。教授的作業量，足以讓一般學生放棄睡眠、夢想與社交生活。',o:[
+  O('排出優先順序，捨棄次要的','careful',['悟',12],{k:R('你果斷放棄了兩個作業，把時間花在最重要的科目。成績意外地漂亮。',{悟:2,心:1}),f:R('你選錯了科目，後悔不已。',{悟:-1})}),
+  O('全部都做，硬撐','diligent',['心',12],{k:R('你像一台機器一樣完成了所有作業。',{悟:1,心:1,體:-1}),f:R('你撐不下去，在課堂上睡著。',{體:-1,人:-1})}),
+  O('求助於同學','timid',['人',11],{k:R('大家互相支援，你們熬過了這個學期。',{人:1,悟:1}),f:R('同學們自顧不暇。',{})})
+]},
+{id:'l_carrow',t:'新的規矩',y:[7,7],w:2.5,rep:true,text:'新學年，學校換了一批不太友善的老師。他們的規矩多得可怕，笑容卻少得可憐。有學生已經被罰到禁閉室，一整晚沒回來。',o:[
+  O('低調做事，不惹事','careful',['心',12],{k:R('你像一滴水融進了人群。這是在這個時期最聰明的保命方式。',{心:1}),f:R('你還是被盯上了，被罰擦了整晚的獎盃。',{體:-1})}),
+  O('在宿舍牆上偷偷寫反抗的標語','bold',['體',13],{g:R('隔天早上，整座城堡都在悄悄議論。你的眼神與幾個陌生的同學交會了一瞬，沒人說話，但你們都懂了。',{人:2,心:1},{pts:4}),k:R('標語被擦掉了，但看過的人都記得。',{人:1}),f:R('你被逮個正著，在禁閉室待了一整晚。',{體:-2,心:-1},{pts:-4})}),
+  O('偷偷替被罰的同學送食物','timid',['人',12],{k:R('你在深夜溜進禁閉室附近，塞了一個麵包給他。他握住你的手，說不出話。',{人:2,心:1}),f:R('你差點被巡邏的人發現，狼狽逃回。',{心:-1})}),
+  O('蒐集證據，記錄這些人做的事','diligent',['悟',12],{k:R('你悄悄寫下了一本筆記。總有一天，這本筆記會派上用場。',{悟:1,心:1}),f:R('筆記差點被搜出來。',{心:-1})})
+]},
+{id:'l_passage',t:'密道',y:[7,7],w:2,text:'有人在深夜敲了你宿舍的窗，遞給你一張手繪的地圖，上面標出一條通往城外的祕密通道。「有需要的時候，就走這裡。」',o:[
+  O('記下路線，把地圖燒掉','careful',['悟',11],{k:R('地圖化成灰，路線卻清楚地留在你的腦海裡。',{悟:1,心:1}),f:R('你只記住了一半。',{})}),
+  O('立刻去探探路','bold',['體',12],{k:R('通道又窄又濕，但你順利走到了盡頭，看見了星空。',{體:1,心:1}),f:R('你在黑暗中摔了一跤。',{體:-1})}),
+  O('把地圖交給更需要的人','timid',null,R('你把地圖交給了年紀更小的同學。他們的眼睛亮了，像是看見了希望。',{人:2,心:1}))
+]},
+{id:'l_photo',t:'畢業合照',y:[7,7],su:true,w:1,text:'即使在這樣的時局，攝影師還是帶著老式相機來了。大家擠在一起，笑得有些勉強，卻誰也不想少站一個位置。',o:[
+  O('站在最邊邊','timid',null,R('你被朋友硬拉到中間，笑得比誰都燦爛。',{人:1,心:1})),
+  O('做個鬼臉','bold',['人',9],{k:R('整張照片都被你毀了，但大家都很喜歡。',{人:2}),f:R('只有你一個人做了鬼臉，顯得有些尷尬。',{})}),
+  O('記下每個人的樣子','diligent',null,R('你默默把每張臉都記在心裡。以後不論去哪，你都會想起這一天。',{心:2}))
+]},
+{id:'p_memorial',t:'戰後・追思',po:true,w:1.5,text:'學校在湖邊立了一座沒有名字的石碑，旁邊堆滿了花。你站在那裡很久，才發現身邊的人都沒有說話。',o:[
+  O('獻上一朵花','timid',null,R('你把花輕輕放下。風吹過湖面，像是有人在回應。',{心:2})),
+  O('對石碑說一些話','diligent',null,R('你把想說的話都說完了，心裡輕了不少。',{心:1,人:1})),
+  O('陪著身邊哭泣的人','careful',null,R('你沒說什麼，只是靜靜陪著。有時候，這就是最好的安慰。',{人:2}))
+]},
+{id:'p_rebuild',t:'戰後・重建城堡',po:true,rep:true,w:1.5,text:'倒塌的牆、破碎的窗、被燒焦的走廊，需要很多雙手。教授們捲起袖子，學生們排成一列傳遞石塊。',o:[
+  O('扛石頭，做體力活','bold',['體',10],{k:R('你滿頭大汗地搬了一整天，卻覺得很踏實。',{體:1,人:1}),f:R('你扭到腰，躺了兩天。',{體:-1})}),
+  O('用魔法修復窗戶','diligent',['悟',11],{k:R('一片片玻璃回到窗框上，像是時間倒流。',{悟:1,人:1}),f:R('玻璃拼歪了，被教授溫和地提醒重做。',{})}),
+  O('負責分配工作與調度人手','careful',['人',11],{k:R('你把大家安排得井井有條，效率高得驚人。',{人:2}),f:R('分配亂了套，大家各做各的。',{})})
+]}
+);
+
+// ===== 重要冒險的後續段落（每個重要冒險至少三段）=====
+// S(id,標題,文字,[[選項,風格,屬性,難度,成功文字,失敗文字,獎勵屬性,懲罰屬性],...])
+const S=(id,t,text,opts)=>({id,t,stg:true,co:true,text,o:opts.map(a=>O(a[0],a[1],[a[2],a[3]],{
+  g:R(a[4]+'一切比預期更順利。',{[a[6]]:2}),k:R(a[4],{[a[6]]:1}),f:R(a[5],{[a[7]]:-1})}))});
+const CH={
+m_mirror:['m_mirror_2','m_mirror_3'],m_stone:['m_stone_2','m_stone_3'],m_duel:['m_duel_2','m_duel_3'],
+m_chamber:['m_chamber_2','m_chamber_3'],m_dementor:['m_dementor_2','m_dementor_3'],m_shack:['m_shack_2','m_shack_3'],
+m_ball:['m_ball_2','m_ball_3'],m_grave:['m_grave_2','m_grave_3'],m_da:['m_da_2','m_da_3'],
+m_ministry:['m_ministry_2','m_ministry_3'],m_memory:['m_memory_2','m_memory_3'],m_tower:['m_tower_2','m_tower_3'],
+m_hunt:['m_hunt_2','m_hunt_3']};
+for(const id in CH){const ev=EVENTS.find(e=>e.id===id);if(ev)ev.chain=CH[id];}
+// 最終戰：拆成三段
+const fin=EVENTS.find(e=>e.id==='m_final');
+if(fin){fin.mm=undefined;fin.co=true;fin.t='六月・霍格華茲之戰（決戰）';}
+EVENTS.push(
+S('m_mirror_2','鏡子之後・走廊的低語','隔天清晨，你在走廊上聽見兩個高年級生在討論昨晚那面鏡子，語氣像在談論一個不能說的祕密。',[
+ ['湊過去偷聽','careful','悟',10,'你聽到鏡子是被一位老校長悄悄移走的，而且「只有不想要它的人，才能拿到它想藏的東西」。','你被發現了，兩人冷冷看了你一眼。','悟','人'],
+ ['直接上前問','bold','人',10,'他們被你的直率逗笑了，把知道的都告訴了你。','他們說「小孩子別多問」，你碰了一鼻子灰。','人','心'],
+ ['回宿舍，把想法寫下來','diligent','心',9,'你把情緒一條條寫下來，發現原來自己最怕的是忘記家人的樣子。','你寫著寫著鼻酸，一夜沒睡好。','心','體']]),
+S('m_mirror_3','鏡子之後・新的決心','幾天後，你又在窗邊坐了很久。這個世界雖然陌生，但窗外的星空，跟家裡看到的一模一樣。',[
+ ['替自己訂下一個小目標','diligent','心',10,'你決定先把今年的課程學好。一個小小的目標，讓你踏實了許多。','你的目標訂得太大，兩天就洩了氣。','心','悟'],
+ ['找朋友一起去湖邊散步','timid','人',9,'大家在湖邊聊到天黑，你第一次覺得這裡也有「家」的味道。','朋友們都在忙，湖邊只有你一個人。','人','心'],
+ ['翻翻圖書館的時間魔法書','careful','悟',11,'你找到了一本殘缺的舊書，上面有一段關於「時間」的筆記。','這一區的書被上了鎖，你一無所獲。','悟','人']]),
+S('m_stone_2','魔法石之後・棋盤','通往地下的路被一座巨大的棋盤擋住，棋子們一動不動，卻讓人覺得下一秒就會動手。',[
+ ['冷靜推演棋局','diligent','悟',11,'你一步步算出了破局的辦法，棋子紛紛退開。','你算錯一步，被棋子推了一把。','悟','體'],
+ ['親自當一枚棋子','bold','心',11,'你踏上棋盤，咬牙走出關鍵一步，同伴也跟著贏了。','你被一粒碎石打中了腳踝。','心','體'],
+ ['請同伴分頭行動','timid','人',10,'大家各司其職，一路順暢。','配合不上，亂成一團。','人','心']]),
+S('m_stone_3','魔法石之後・最後一道門','最後的房間很安靜。一面鏡子、一個火爐，以及一個你從未想像過會出現在這裡的人。',[
+ ['直視對方，不退讓','bold','心',12,'你的眼神沒有閃躲，對方終究先低下了頭。','你的聲音在發抖，對方笑了。','心','體'],
+ ['拖延時間，等待救援','careful','悟',11,'你一邊說話一邊拖延，終於等到了援手。','拖延的把戲被看穿了。','悟','心'],
+ ['利用鏡子的特性','diligent','悟',12,'你想起前不久那面鏡子的規則，靈機一動，找出了真正的關鍵。','你想錯了方向，白白浪費了時間。','悟','人']]),
+S('m_duel_2','決鬥之後・對手的來意','決鬥結束後，那位高年級生攔住了你。他看起來既不服氣，又有點好奇。',[
+ ['請教他剛剛那招','diligent','悟',10,'他不情願地示範了一遍，你偷學到了精髓。','他說「想學？沒門」，揚長而去。','悟','人'],
+ ['伸手致意','timid','人',10,'他愣了愣，握住了你的手，從此你多了一個朋友。','他看了你的手一眼，沒握。','人','心'],
+ ['約下次再比','bold','體',11,'他笑著答應，從此你們成了彼此最尷尬的好對手。','你被他擺了一道，輸得更難看。','體','人']]),
+S('m_duel_3','決鬥之後・傳言','決鬥的事情在學院裡傳開，每個人版本不同，有人說你一腳踢飛了他，有人說你睡著了。',[
+ ['順勢編故事','careful','人',10,'你編的故事比原版精彩，大家笑成一團。','你編得太離譜，被當場戳穿。','人','心'],
+ ['低調否認','timid','心',9,'傳言漸漸平息，你的名字也沒被亂傳。','你越否認越像真的，傳得更凶。','心','人'],
+ ['用實力證明','bold','體',11,'你在公開練習中露了一手，大家閉上了嘴。','你練習失手，被笑了好幾天。','體','人']]),
+S('m_chamber_2','密室之後・管道','地下管道又濕又暗，空氣裡有股詭異的甜味。遠處傳來某種東西拖行的聲音。',[
+ ['仔細辨認痕跡','diligent','悟',12,'你從地面的痕跡判斷出怪物的移動路線，避開了最危險的一段。','你判斷錯誤，差點踩進死胡同。','悟','體'],
+ ['緊貼牆壁慢慢前進','careful','心',12,'你像影子一樣穿過了危險地帶。','你的靴子踢到一塊石頭，聲響在管道中迴盪。','心','體'],
+ ['大聲唱歌壯膽','bold','體',11,'你的歌聲難聽得連怪物都皺眉，竟然拖住了它一會兒。','你的歌聲引來了麻煩。','體','心']]),
+S('m_chamber_3','密室之後・日記','事情結束後，那本舊日記還在你手裡。它安靜得像是睡著了，卻讓人不敢輕易翻開。',[
+ ['把它交給老師','timid','心',10,'你把日記交給了信任的老師，鬆了一口氣。','老師忙著處理事故，日記在你手上又留了好幾天。','心','悟'],
+ ['親手燒掉它','bold','體',11,'日記在火中發出尖叫，化為灰燼。你覺得空氣乾淨了許多。','火焰出乎意料地難滅，你的手被燙傷。','體','心'],
+ ['記下上面的內容再處理','diligent','悟',12,'你抄下了關鍵段落，這些資訊或許以後會派上用場。','日記上的字開始自己重新排列，嚇得你立刻闔上。','悟','心']]),
+S('m_dementor_2','催狂魔之後・空蕩蕩的胸口','催狂魔離開了，但那股寒意還留在你身體裡。你發現自己很難提起勁，連笑都覺得吃力。',[
+ ['去找巧克力','timid','人',9,'一位老師遞給你一大塊巧克力，你慢慢暖和了起來。','巧克力吃完了，寒意還在。','人','體'],
+ ['練習快樂的回憶','diligent','心',11,'你把最溫暖的畫面一遍遍在腦海裡過，內心漸漸有了光。','你越回想越想念家，眼眶發熱。','心','悟'],
+ ['乾脆跑去操場跑步','bold','體',10,'你跑了十圈，汗水帶走了陰霾。','你跑到一半就岔氣了。','體','心']]),
+S('m_dementor_3','催狂魔之後・訓練','你下定決心要學會對付這些東西。一位經驗豐富的老師答應私下指導你。',[
+ ['全心投入練習','diligent','心',12,'幾週的訓練讓你更能掌握自己的情緒。','你太心急，反而讓情緒更混亂。','心','悟'],
+ ['找朋友輪流當模擬對手','timid','人',11,'朋友們不惜扮鬼臉扮黑影，讓你笑場，也讓你變強。','朋友們扮得太像，你嚇得跌坐在地。','人','心'],
+ ['挑戰更高難度','bold','體',13,'你用盡全力，成功招來一縷銀白的微光。','你耗盡了體力，倒在地上。','體','心']]),
+S('m_shack_2','尖叫屋之後・真相','你們重新聚在一起，要把這件事的真相攤開來。每個人的記憶都有些出入。',[
+ ['整理每個人的說法','diligent','悟',11,'你把零碎的片段拼成完整的時間線。','你整理得一團亂，反而更混淆。','悟','人'],
+ ['站出來為被冤枉的人說話','bold','心',12,'你的話有份量，讓幾位大人願意重新聽一次。','沒人願意聽一個學生的話。','心','人'],
+ ['悄悄蒐集旁證','careful','悟',11,'你找到了一個關鍵的物證。','你被人發現在翻東西。','悟','心']]),
+S('m_shack_3','尖叫屋之後・時間的重量','時間轉換器在你的口袋裡發燙。你清楚地知道：這玩意兒不能亂用，但它也許就是你回家的線索之一。',[
+ ['仔細研究結構','diligent','悟',12,'你偷偷畫下了它的構造，並在心裡默默記下一個疑點。','你一不小心撥錯了一格，周圍的景象晃了一下。','悟','心'],
+ ['把它交還給負責人','timid','心',10,'你把它交了出去，心底有一絲不捨，也有一絲輕鬆。','負責人皺著眉，似乎對你起了疑。','心','人'],
+ ['試著追問時間魔法的規則','careful','人',12,'一位老師被你問得無奈，終於透露了幾句關鍵。','老師搖搖頭：「這不是小孩子該問的。」','人','悟']]),
+S('m_ball_2','舞會之後・舞池','音樂響起，大廳中央的舞池擠滿了人。你被推到了人群的最前面。',[
+ ['大方邀請別人跳舞','bold','人',10,'你帶著笑意邁出第一步，大廳為你讓出了一個圈。','你踩到了對方的腳。','人','心'],
+ ['在角落看別人跳','timid','心',9,'你在角落看了整個晚上，意外覺得這樣也很好。','你被角落的柱子絆了一下。','心','人'],
+ ['幫忙調度舞會的音樂','diligent','悟',10,'你的音樂安排讓氣氛從頭熱到尾，大家都在問是誰挑的歌。','你放錯了曲子，場面一度尷尬。','悟','人']]),
+S('m_ball_3','舞會之後・散場','舞會散場，大家三三兩兩地走在回宿舍的路上。有人在哭，有人在笑，也有人在吵架。',[
+ ['陪哭泣的朋友走一段','timid','人',10,'你什麼都沒說，只是遞了手帕。對方說了聲謝謝。','你說錯了話，對方走得更快了。','人','心'],
+ ['勸架','bold','心',11,'你兩邊勸，居然把吵架的兩個人逗笑了。','你被兩邊同時瞪了一眼。','心','人'],
+ ['回宿舍，好好睡一覺','careful','體',9,'你睡得很沉，隔天精神煥發。','你睡不著，翻來覆去。','體','心']]),
+S('m_grave_2','第三項任務之後・墓園','墓園的空氣潮濕又寒冷。黑暗中有人在笑，而你手上握著的那個東西，正在發出刺眼的光。',[
+ ['拚命逃離','bold','體',12,'你一口氣衝出了陰影，心跳到現在還沒平復。','你被絆倒在地，膝蓋流血。','體','心'],
+ ['躲在墓碑後面觀察','careful','悟',12,'你看清了對方的施法方式，記在心裡。','墓碑後的暗處有東西動了一下，你差點叫出聲。','悟','體'],
+ ['大聲呼救','timid','人',11,'你的呼喊傳了出去，遠處有人立刻回應。','聲音被風吞沒，沒人回應。','人','心']]),
+S('m_grave_3','第三項任務之後・歸來','你回到了迷宮的出口，周圍的歡呼聲像是另一個世界。你的手還在發抖。',[
+ ['說出看到的一切','bold','心',12,'你把一切原原本本地說了出來。雖然大家一時難以置信，但有人開始認真聽。','沒人相信你的話，還有人說你嚇壞了。','心','人'],
+ ['先讓自己冷靜下來','timid','心',10,'你坐在長椅上喝了一杯熱茶，慢慢把事情理清楚。','你越想越害怕，手抖得杯子都拿不穩。','心','體'],
+ ['找信任的老師單獨談','careful','人',11,'老師靜靜聽完，說：「你做得很好。」','老師忙著處理別的事，沒空見你。','人','心']]),
+S('m_da_2','鄧不利多軍之後・暗號','練習會開始之後，成員們之間有了一種微妙的默契。你們用一枚硬幣傳遞集合的時間。',[
+ ['設計更安全的集合方式','careful','悟',11,'你想出了一個不易被發現的暗號系統，大家連連稱讚。','你的暗號太複雜，連自己都記不住。','悟','人'],
+ ['幫新成員打氣','timid','人',10,'新人在你的鼓勵下漸漸找回了信心。','新人太緊張，把魔杖弄斷了。','人','心'],
+ ['親自示範高難度咒語','bold','體',12,'你的示範贏得一片掌聲。','咒語反噴，你被自己的魔法彈開。','體','人']]),
+S('m_da_3','鄧不利多軍之後・風聲','學校裡的新管理者似乎察覺到了什麼，走廊裡到處是巡邏的腳步聲。',[
+ ['轉移注意力','bold','人',12,'你故意製造了一場小騷動，引開了巡邏的人。','你的把戲被識破了。','人','體'],
+ ['把練習改到更隱蔽的地方','careful','悟',12,'你找到一間幾乎沒人知道的空房，大家都鬆了一口氣。','你選的房間有個愛八卦的畫像。','悟','人'],
+ ['暫時停止活動','timid','心',10,'你做出了痛苦但正確的決定，大家都理解。','有人責怪你太膽小。','心','人']]),
+S('m_ministry_2','神秘事務司之後・預言廳','一排排玻璃球閃著微光，像是整個世界的耳語。你知道有一顆和自己有關。',[
+ ['小心地移動，避免碰撞','careful','心',12,'你像走鋼索一樣穿越了整座大廳。','你的衣角碰到一顆球，嘩啦一聲碎了一排。','心','體'],
+ ['催促同伴快速前進','bold','體',12,'同伴們被你帶著一路衝，居然都沒出事。','你跑得太急，撞翻了架子。','體','人'],
+ ['試著辨認哪顆球最重要','diligent','悟',13,'你憑著標籤和直覺，鎖定了真正的目標。','你猜錯了，拿到一顆無關緊要的球。','悟','心']]),
+S('m_ministry_3','神秘事務司之後・撤退','敵人來了。你們必須在被包圍前找到出口，而身後的聲音越來越近。',[
+ ['用咒語封住通道','diligent','悟',13,'你連續幾道咒語，把追兵擋在了門外。','咒語歪了，擋住了自己人。','悟','體'],
+ ['帶頭衝出重圍','bold','體',13,'你衝在最前面，一路殺出血路。','你被截住，受了點傷。','體','心'],
+ ['利用地形混淆敵人','careful','心',13,'你帶大家繞進一座旋轉迷宮，敵人跟丟了。','你帶錯了路，反而繞回了原地。','心','人']]),
+S('m_memory_2','記憶之後・晚宴','教授的晚宴上，每一位學生都被刻意安排了座位，每一道菜都有深意。你的對面坐著一位氣質不凡的訪客。',[
+ ['主動與訪客交談','bold','人',12,'訪客對你印象深刻，留下一張寫著住址的名片。','你話說多了，露出了破綻。','人','心'],
+ ['靜靜觀察整個餐桌','careful','悟',12,'你看出了每個人的立場，心中有了判斷。','你看得太專心，被教授點名。','悟','人'],
+ ['幫忙端菜，順便偷聽','timid','人',11,'你聽到了幾句關鍵的對話。','你差點打翻湯盤。','人','心']]),
+S('m_memory_3','記憶之後・取得','你終於有機會接近那段記憶了。教授的警覺沒有放鬆過，他的眼神像是在秤你的份量。',[
+ ['用誠懇的語氣請求','timid','人',12,'教授被你的誠意打動，鬆開了口風。','他笑著說：「不夠。」','人','心'],
+ ['用一個小把戲分散他的注意力','careful','悟',13,'你抓住了一個短暫的空隙，順利取得關鍵片段。','把戲被識破，他似乎有些失望。','悟','人'],
+ ['坦白自己的目的','bold','心',13,'你坦率的態度讓他沉默了很久，最終點了點頭。','他一口回絕了你。','心','人']]),
+S('m_tower_2','天文塔之後・葬禮','消息傳開後，整個城堡陷入沉默。人們穿著黑衣，聚在湖邊，連風都停了。',[
+ ['站在最前面，為他致意','bold','心',12,'你的眼眶紅了，卻沒有退縮。許多人看見了你的勇氣。','你泣不成聲，沒能說出準備好的話。','心','人'],
+ ['安靜站在後排','timid','心',9,'你在後排默默獻上一朵花，風吹起了你的衣角。','你被人群擠到了最後。','心','人'],
+ ['陪伴身邊哭泣的朋友','careful','人',10,'你什麼都沒說，只是一直在。','朋友把你推開：「我想一個人。」','人','心']]),
+S('m_tower_3','天文塔之後・新的決定','葬禮結束的夜晚，你一個人坐在天文塔下。有一個念頭越來越清晰：不能再等了。',[
+ ['寫下接下來的計畫','diligent','悟',12,'你把線索、人脈、可能的路線寫成一份清單。','你寫到一半，突然不知道該寫什麼。','悟','心'],
+ ['去找夥伴談','timid','人',11,'夥伴們沒有多說，只是一個個點了頭。','夥伴們各有各的難處。','人','心'],
+ ['獨自去外頭走走','bold','體',11,'夜風吹散了你心頭的沉重。','你在黑暗中迷了路。','體','心']]),
+S('m_hunt_2','逃亡之後・營地','你打開營地外的門簾，看見一張熟悉又疲憊的臉。對方也看著你，一時之間誰也沒說話。',[
+ ['先問對方的近況','timid','人',11,'你們坐下聊了一夜，彼此都有了依靠。','對方沒有回應，轉身消失在夜色裡。','人','心'],
+ ['舉起魔杖，保持警戒','careful','心',12,'你的警覺救了大家一次——來人只是誤闖，並無惡意。','你過度緊張，差點誤傷了人。','心','人'],
+ ['交換情報','diligent','悟',12,'對方知道一個關於魂器的消息，你們互換了訊息。','對方一臉防備，什麼都沒說。','悟','人']]),
+S('m_hunt_3','逃亡之後・補給','乾糧快吃完了，天氣也變冷了。你們需要在不暴露行蹤的情況下，找到補給。',[
+ ['潛入附近的小鎮','careful','悟',12,'你順利帶回了食物和一份舊報紙，上面有重要的消息。','你被巡邏的人盯上，狼狽逃回。','悟','體'],
+ ['用魔法變出簡單的食物','diligent','悟',12,'雖然味道一般，但勝在能吃。大家吃得很滿足。','你變出來的東西只能叫它「不明物體」。','悟','心'],
+ ['打獵或採集野果','bold','體',11,'你滿載而歸，營地有了久違的歡笑。','你空手而歸，還被樹枝劃破了手。','體','心']]),
+S('m_final_b','霍格華茲之戰・前線','牆壁被轟開，煙塵中，你和同伴們守住了城堡的西側走廊。每一秒都有人倒下，也有人站起。',[
+ ['帶頭守住走廊','bold','體',14,'你的堅持換來了寶貴的幾分鐘，後方趕上來的援軍站穩了陣腳。','防線被衝破，你被迫後退。','體','人'],
+ ['指揮同伴輪流休整','careful','人',14,'你的調度讓大家撐了下來。','調度出現混亂，有人受了傷。','人','心'],
+ ['用魔法搭建臨時屏障','diligent','悟',14,'一面閃爍的魔法牆立了起來，擋下了大部分的攻擊。','屏障很快被打破，你的魔力耗盡。','悟','體']])
+);
+// 最終戰第一段（取代原本的 82 月大事件）
+EVENTS.push({id:'m_final_a',mm:82,t:'六月・霍格華茲之戰（序幕）',chain:['m_final_b','m_final'],
+ text:'黎明前，城堡的鐘聲被敲響了三次。所有人都知道，這一刻終於來了。大廳裡擠滿了人，每個人都有不同的表情，卻都看著你。',o:[
+ O('在大廳發表一段簡短的演說','bold',['人',14],{g:R('你的話不長，卻讓人群的眼神重新亮了起來。',{人:2,心:1}),k:R('你的演說笨拙卻真誠，大家都聽進去了。',{人:1}),f:R('你說到一半卡住了，場面有些尷尬。',{心:-1})}),
+ O('默默檢查每個人的狀況，分發補給','timid',['人',13],{g:R('你的細心讓不少人重拾了信心，也找回了狀態。',{人:2,體:1}),k:R('你確保大家都帶上了該帶的東西。',{人:1}),f:R('你漏了幾個人，有人沒領到補給。',{人:-1})}),
+ O('獨自查看地圖，規劃防線','diligent',['悟',14],{g:R('你找到了城堡最脆弱的三處，並提前佈好了人手。',{悟:2,心:1}),k:R('你的規劃雖然簡陋，但管用。',{悟:1}),f:R('你漏看了一處，那裡成為了後來最危險的缺口。',{心:-1})})
+]});
+
+// ===== 各學院好友路線（每院一條，三段；完成後最終決戰 +1）=====
+// FR(學院代碼,學院,段數,年級,標題,文字,[選項...])；選項：[文字,風格,屬性,難度,大成功,成功,失敗,{brk:true}]
+function FR(c,hs,n,y,t,text,opts){
+  const me='fr_'+c+n,need=n>1?['fr_'+c+(n-1)]:[];
+  return{id:me+'_ev',t,hs,fr:true,key:n===3,y,w:2.6,fl:need,nf:[me,'fr_'+c+'x'],text,o:opts.map(a=>{
+    if(a[7]&&a[7].brk)return O(a[0],a[1],null,R(a[4],{人:-1},{flag:'fr_'+c+'x'}));
+    return O(a[0],a[1],[a[2],a[3]],{g:R(a[4],{[a[2]]:2,人:1},{flag:me}),k:R(a[5],{[a[2]]:1},{flag:me}),f:R(a[6],{心:-1},{flag:me})});
+  })};
+}
+EVENTS.push(
+// --- 葛來分多：歐文 ---
+FR('g','葛來分多',1,[1,3],'怕高的獅子','同寢的歐文是個嗓門很大、膽子更大的麻瓜出身男孩——除了一件事：他怕高。魁地奇選拔前一晚，你撞見他蹲在塔樓樓梯口，臉色發白。',[
+ ['陪他半夜偷偷練飛行','bold','體',10,'你們在月光下繞著球場飛了一圈又一圈。隔天選拔，他在半空中朝你比了個大拇指。','他總算敢離地兩公尺了，還說要請你吃一整年的巧克力蛙。','你們被管理員逮到，雙雙罰勞動。但他笑得很開心。'],
+ ['教他一個讓自己冷靜的呼吸法','diligent','悟',10,'他照做三次，手不抖了。「你哪學的？」「……老家。」','他半信半疑，但確實好多了。','呼吸法沒用，他喘得更厲害了。你們只好一起笑出來。'],
+ ['跟他說「怕高又不丟臉」','timid','人',9,'他愣了很久，說：「你是第一個這樣說的人。」','他嘟囔著「才不怕」，但肩膀放鬆了。','他惱羞成怒地走了，但第二天跟你道了歉。']]),
+FR('g','葛來分多',2,[2,5],'禁林邊緣','歐文為了找一個走失的一年級生，一個人衝進了禁林邊緣。天快黑了，他還沒回來。',[
+ ['拿起魔杖去找他','bold','體',11,'你在樹根間找到了他和那個哭花臉的小鬼。三個人狼狽地走回城堡，他一路都在笑。','你們在入夜前回來了，雖然一身泥。','你們迷了路，到半夜才被找到，被扣了不少分。'],
+ ['先去通報老師，再帶人去','careful','人',11,'老師們很快找到了他們。歐文嘴上抱怨你「太謹慎」，卻把你的名字寫進了他的日記。','人找到了，一切平安。','通報花了太多時間，他已經自己回來了，還有點生你的氣。'],
+ ['覺得他太衝動，不想管','timid',null,0,'你沒去。他回來後什麼都沒說，只是從那以後，早餐不再幫你留位子。','','',{brk:true}]]),
+FR('g','葛來分多',3,[5,7],'獅子的承諾','戰爭的陰影越來越近。歐文收到家裡的信：他的麻瓜父母被人盯上了。他握著信，說要退學回家保護他們。',[
+ ['跟他一起想辦法保護家人','diligent','悟',12,'你們找到一個可靠的藏身咒語，把他的家人安置好了。他抱住你：「最後那一戰，我會站在你旁邊。」','你們想出了一個勉強可行的辦法，他鬆了口氣。','計畫不夠周全，但至少他不再一個人扛。'],
+ ['陪他回家一趟','bold','體',12,'你們連夜趕回去，在敵人到來前把他的家人送走了。他說這筆帳，要在戰場上一起討回來。','你們順利接走了他的家人。','路上出了點意外，但大家都平安。'],
+ ['告訴他「留下來，也是一種保護」','timid','心',11,'他想了一整夜，選擇留下。「為了讓他們以後不用再躲。」','他點點頭，眼神堅定了許多。','他還是很掙扎，但答應你會再撐一陣子。']]),
+// --- 雷文克勞：艾莉絲 ---
+FR('r','雷文克勞',1,[1,3],'被藏起來的書','雷文克勞的艾莉絲總是一個人坐在窗邊看星圖。今天她的書包被人倒空了，書不知道被藏到哪裡去。她沒哭，只是一本一本地在走廊上找。',[
+ ['幫她一起找','timid','人',9,'你們在一座盔甲的頭盔裡找到了最後一本。她第一次對你笑了。','找回了大半，她說剩下的她會再找。','你們什麼都沒找到，但她說：「謝謝你沒有走開。」'],
+ ['用推理找出藏書的人','diligent','悟',10,'你從腳印和墨水漬鎖定了兇手，書全數歸還。艾莉絲看你的眼神像在看一道有趣的題目。','你找到了大部分的書。','推理錯了方向，但艾莉絲幫你補完了邏輯。'],
+ ['去質問那群惡作劇的人','bold','人',10,'對方被你嚇得把書全吐了出來，還道了歉。','他們悻悻地交出了書。','你們吵了一架，書是拿回來了，你的分數也被扣了。']]),
+FR('r','雷文克勞',2,[3,5],'星圖上的時間','艾莉絲神祕地把你拉進天文塔：「我在算星星的位置時，發現一個奇怪的現象——好像有人曾經『改過』時間。」她攤開一疊寫滿算式的羊皮紙。',[
+ ['一起驗算','diligent','悟',12,'你們算到天亮，終於找到一個規律。那或許就是回家的路的一部分。','你們推出了一半的結論。','算式太難，但你記住了幾個關鍵的數字。'],
+ ['告訴她你來自別的世界','bold','心',12,'她沉默了很久，然後說：「難怪。那我們得算得更快一點。」從此你有了一個知道祕密的人。','她半信半疑，但答應幫你。','她以為你在開玩笑，但還是記下了。'],
+ ['覺得太危險，叫她別再研究','careful',null,0,'她看了你一眼，把羊皮紙收了起來，從此不再跟你提這件事。','','',{brk:true}]]),
+FR('r','雷文克勞',3,[5,7],'渡鴉的答案','艾莉絲被新上任的管理者盯上了——她的研究筆記太「危險」。她把一本小筆記本塞給你：「如果我出事，這個交給你。」',[
+ ['幫她把筆記藏起來','careful','悟',12,'你們把筆記藏進一面只有你們知道的牆裡。她說：「決戰的那天，我會帶著答案來找你。」','筆記安全了。','藏得不太妥當，但總算躲過一次搜查。'],
+ ['站出來替她擋下搜查','bold','體',12,'你一肩扛下了所有的質問。她紅著眼眶說：「你這笨蛋。」','搜查草草結束了。','你被罰禁閉一晚，但筆記保住了。'],
+ ['一起把研究做完','diligent','悟',13,'最後一道算式解開的那一刻，你們相視而笑。','研究完成了大半。','差一步，但你們約好戰後再一起完成。']]),
+// --- 史萊哲林：薇拉 ---
+FR('s','史萊哲林',1,[1,3],'藏起來的出身','你無意間看見同院的薇拉在寫信——收件人的地址在一座麻瓜城鎮。她察覺到你的視線，臉色一下子變得蒼白。在這個學院，這種事最好不要被別人知道。',[
+ ['發誓替她保密','timid','心',9,'她盯著你很久，最後輕聲說：「……那我們就是同一條船上的人了。」','她勉強點頭，但戒心還在。','她不相信你，但你始終沒說出去。'],
+ ['也說一個自己的祕密作交換','careful','人',10,'交換祕密之後，你們之間多了一種奇妙的默契。','她收下了你的祕密，算是扯平。','她覺得你的祕密太無聊，但還是笑了。'],
+ ['裝作什麼都沒看到','bold','心',9,'你淡定地走開。隔天，她在你的桌上留了一顆糖。','她鬆了口氣。','她以為你在打什麼主意，提防了你好幾天。']]),
+FR('s','史萊哲林',2,[3,5],'休息室的流言','有人在公共休息室散布薇拉「血統不純」的流言。幾個純血家族的學生開始對她指指點點，她卻只是抬著下巴，裝作沒聽見。',[
+ ['用更大的八卦蓋過去','careful','人',11,'你放出一個更勁爆的消息，所有人都轉移了焦點。薇拉低聲說：「你比我想的還狡猾。」','流言漸漸被淡忘了。','你的八卦太假，反而讓大家更注意她。'],
+ ['當眾站在她旁邊','bold','心',12,'你一句話都沒說，只是坐到她旁邊。幾個人悻悻地閉了嘴。','場面尷尬地結束了。','你也被冷落了一陣子，但她記住了。'],
+ ['跟她保持距離，免得被牽連','timid',null,0,'你選擇了沉默。她看了你一眼，那之後再也沒在你桌上留過糖。','','',{brk:true}]]),
+FR('s','史萊哲林',3,[5,7],'蛇的退路','薇拉收到家裡的消息：她的麻瓜祖父母被列入了名單。她需要在不被任何人察覺的情況下，把他們送出國。',[
+ ['動用你的人脈安排門鑰','careful','人',12,'一切都安排得天衣無縫。她握著你的手：「欠你一條命。決戰那天，我會在。」','祖父母安全離開了。','過程驚險，但總算成功。'],
+ ['陪她親自護送','bold','體',12,'你們在月台上甩掉了跟蹤的人。分別時她說：「下次見面，就是並肩作戰了。」','你們平安完成了任務。','你們差點被發現，狼狽地逃回城堡。'],
+ ['研究一個混淆追蹤的咒語','diligent','悟',13,'你的咒語讓所有追蹤都撲了空。','咒語起了作用。','咒語只撐了一半的時間，但夠用了。']]),
+// --- 赫夫帕夫：湯米 ---
+FR('h','赫夫帕夫',1,[1,3],'溫室裡的小麻煩','同院的湯米家裡開農場，是溫室裡最會照顧植物的人。今天他的曼德拉草幼苗突然集體尖叫，整間溫室的人都摀著耳朵逃了出去，只剩他一個人手忙腳亂。',[
+ ['戴上耳罩衝進去幫忙','bold','體',10,'你們一盆一盆把幼苗重新種好。湯米滿臉泥巴地說：「你是我見過最勇敢的人。」','你們總算讓它們安靜下來了。','你的耳罩掉了，暈了一下午。湯米每節課都來看你。'],
+ ['查書找安撫的方法','diligent','悟',9,'你找到一首能讓幼苗入睡的搖籃曲。湯米驚呆了。','你找到的方法有點用。','書上的方法反而讓它們叫得更大聲。'],
+ ['在門口幫他遞工具','timid','人',9,'你們配合得很好，事後他堅持把最好的一盆送給你。','事情順利解決了。','你遞錯了好幾次工具，但他一點也不介意。']]),
+FR('h','赫夫帕夫',2,[3,5],'「沒用的學院」','學院盃結算那天，別院的人笑赫夫帕夫「只會種菜」。湯米笑著說沒關係，晚上卻一個人躲在溫室裡。',[
+ ['陪他在溫室待一晚','timid','人',10,'你們聊了一整夜。他說：「其實我很喜歡我們學院。」你說：「我也是。」','他好多了。','你們都沒說什麼話，但他記得你在。'],
+ ['一起準備一個讓大家刮目相看的計畫','diligent','悟',11,'你們在下一次草藥課上做出了全校最漂亮的成果，連教授都鼓起了掌。','你們的努力被看見了一些。','計畫失敗了，但你們笑著約好下次再來。'],
+ ['覺得他想太多','careful',null,0,'你說「別在意就好」。他點點頭，但從那以後，溫室的門不再為你留著。','','',{brk:true}]]),
+FR('h','赫夫帕夫',3,[5,7],'獾的堅守','戰爭將至，許多學生被家人接走。湯米收到父母的信，要他立刻回家。他卻把信折好，放進口袋。「如果大家都走了，誰來守這裡？」',[
+ ['和他約定一起留下','bold','心',12,'你們在溫室裡種下一排「戰後再一起看開花」的種子。他說：「到時候，我會站在你身後。」','你們決定一起留下來。','你們都很害怕，但誰也沒有離開。'],
+ ['幫他寫信說服家人','diligent','人',11,'你們的信寫得真摯又周全，他的父母回信說：「我們以你為榮。」','家人勉強同意了。','家人很生氣，但沒有再逼他。'],
+ ['準備一批能在戰場上用的藥草','careful','悟',12,'你們備好了一整箱止血草與提神藥，後來救了很多人。','藥草準備好了一些。','準備得不太夠，但總比沒有好。']])
+);
+
+// ===== 事件變化：同一事件依年級、學院、旗標換開場 =====
+const CLS_PRE=[
+ {y:[1,1],pre:'你還是會在走廊上迷路，好不容易才趕在鐘響前溜進教室。'},
+ {y:[2,3],pre:'上課這件事你已經駕輕就熟，還有空跟同學交換一下眼神。'},
+ {y:[4,5],pre:'考試越來越近，教室裡的空氣都帶著一股焦慮。'},
+ {y:[6,7],pre:'窗外不時有陌生的身影掠過，連老師講課都比平常快了一點。'},
+ {hs:'葛來分多',pre:'坐在你旁邊的獅子們已經在比誰的魔杖揮得最大力。'},
+ {hs:'雷文克勞',pre:'同院的人早就把筆記攤開，還在頁邊畫了三層的註解。'},
+ {hs:'史萊哲林',pre:'同院的人慢條斯理地整理袖口，等著看其他學院出糗。'},
+ {hs:'赫夫帕夫',pre:'同院的同學分了你一塊餅乾，說是上課前補充體力用的。'},
+ {fl:['fr_g1'],pre:'歐文在後排朝你揮手，壓低聲音：「等等借我抄。」'},
+ {fl:['fr_r1'],pre:'艾莉絲把一張寫滿重點的小紙條推到你面前。'},
+ {fl:['fr_s1'],pre:'薇拉坐在你斜前方，若無其事地把一瓶墨水推給你。'},
+ {fl:['fr_h1'],pre:'湯米塞給你一顆薄荷糖：「提神用。」'}
+].map(v=>Object.assign(v,{pre:v.pre+'\n'}));
+const VARS={
+ e_library:[
+  {y:[1,2],text:'圖書館大得像一座迷宮，書架高到要搭梯子。你抱著一張書單，在「禁書區」的告示牌前停下腳步，又默默退了回去。'},
+  {y:[5,7],text:'考試季的圖書館安靜得能聽見羽毛筆的沙沙聲。管理員的眼神像老鷹一樣掃過每一張桌子，你身邊堆的書已經比去年高了一倍。'},
+  {fl:['fr_r1'],text:'艾莉絲替你佔了一個靠窗的位子，桌上已經攤開了三本書和一壺偷渡進來的熱茶：「快點，我們只剩一個晚上。」'}],
+ e_quidditch:[
+  {y:[1,1],text:'第一次看魁地奇比賽，你差點被看台上的歡呼聲震聾。比賽結束後，隊長在場邊招手：「新生，有沒有興趣？」'},
+  {y:[5,7],text:'這可能是你在學校的最後幾場比賽了。學院隊長拍拍你的肩：「今年少一個人，你要不要上？」'},
+  {fl:['fr_g1'],text:'歐文硬是把你拖到球場：「我克服懼高了！但我需要一個陪練的人。」隊長在一旁笑著說：「兩個一起來吧。」'}],
+ e_homework:[
+  {y:[1,2],text:'第一次寫十二吋長的論文，你寫到第三吋就詞窮了。窗外的貓頭鷹都睡了，你還在跟羊皮紙大眼瞪小眼。'},
+  {y:[6,7],text:'高年級的論文長得像卷軸，教授還要求「附上三本參考書目」。你看著窗外漸亮的天色，嘆了口氣。'}],
+ e_curfew:[
+  {y:[3,4],text:'你已經是夜遊的老手了，熟悉每一條暗道和每一塊會嘎吱作響的地板。但今晚，那隻貓的腳步聲來得特別快。'},
+  {fl:['fr_h1'],text:'湯米說廚房的家庭小精靈今晚做了蘋果派，拉著你半夜溜出去。走廊上，傳來了管理員那隻貓的腳步聲。'}],
+ e_feud:[
+  {hs:'史萊哲林',text:'幾個別院的學生在走廊上攔住你：「又是一條小蛇。你們學院的人，沒一個好東西。」'},
+  {hs:'赫夫帕夫',text:'有人在走廊上大聲說：「赫夫帕夫？那是給沒地方去的人讀的吧？」周圍響起一陣笑聲。'},
+  {y:[6,7],text:'時局越來越緊張，學院之間的摩擦也越來越多。走廊上，另一個學院的幾個人堵住了你，眼神不太友善。'}],
+ e_ghost:[
+  {y:[1,1],text:'一位半透明的先生從牆裡飄出來，把你嚇得把書撒了一地。他很有禮貌地道歉，然後抱怨起自己的頭又掉了。'},
+  {hs:'雷文克勞',text:'塔樓的灰衣女士罕見地在你面前停下，似乎想說什麼，又飄走了。轉角處，那位頭快掉下來的先生正在等你。'}],
+ e_exam:[
+  {y:[5,5],text:'O.W.L. 之前的模擬測驗，每個人都把它當成真的。考場安靜得可怕，你的同桌在桌下偷偷畫十字。'},
+  {y:[7,7],text:'即使在這種時局，學校還是照常考試。你的同桌小聲說：「都什麼時候了，還考這個……」然後把咒語念得比誰都認真。'}],
+ e_rumor:[
+  {y:[6,7],text:'城堡裡的八卦不再是誰跟誰約會，而是誰的家人失蹤了、誰被帶去問話。每個人說話時都會先看看身後。'},
+  {fl:['rf3'],text:'金髮少爺在公共休息室朝你招手，壓低聲音：「我聽到一個消息，你應該會想知道。」整座城堡似乎都在傳同一件事。'}],
+ s_diagon:[
+  {y:[4,7],text:'對角巷的生意冷清了不少，好幾家店的櫥窗被木板釘了起來。你抱著書單，加快腳步在剩下的店鋪間穿梭。'}],
+ s_rest:[
+  {y:[5,7],text:'難得的暑假。你躺在草地上看雲，卻總忍不住想起報紙上越來越多的壞消息。'}],
+ e_quiet:[
+  {y:[6,7],text:'這個月出奇地平靜，平靜得讓人不安。你在公共休息室的沙發上坐了一整個週末，聽著壁爐裡柴火的聲音。'}]
+};
+['c_charms','c_transfig','c_potions','c_dada','c_herbo','c_history','c_astro'].forEach(id=>VARS[id]=CLS_PRE);
+
+// ===== engine.js：遊戲規則（不依賴 DOM，可在 Node 測試） =====
+let RNG=Math.random;
+const setRng=f=>{RNG=f;};
+const rnd=(a,b)=>a+Math.floor(RNG()*(b-a+1));
+const d6=()=>rnd(1,6);
+const clamp=(v,a,b)=>Math.max(a,Math.min(b,v));
+const pick=a=>a[Math.floor(RNG()*a.length)];
+const traitOf=id=>TRAITS.find(t=>t.id===id);
+const WAYS=[0,0,1,2,3,4,5,6,5,4,3,2,1];
+function pLt(k){let c=0;for(let s=2;s<=12;s++)if(s<k)c+=WAYS[s];return c/36;}
+
+// ---- 開局 ----
+const slots=meta=>meta.runs>=1?5:3;
+const basePts=meta=>meta.runs>=1?12:10;
+const extraPts=sel=>Math.min(5,sel.reduce((a,id)=>a+(traitOf(id).pts||0),0));
+const MAX_ALLOC=8;
+function offerTraits(meta){
+  const pool=TRAITS.filter(t=>!t.lock||meta.unlocked.includes(t.id));
+  const a=pool.slice();
+  for(let i=a.length-1;i>0;i--){const j=Math.floor(RNG()*(i+1));[a[i],a[j]]=[a[j],a[i]];}
+  return a.slice(0,meta.runs>=1?7:5).map(t=>t.id);
+}
+function createRun(sel,alloc,legacy,gender){
+  const stats={};
+  SKEYS.forEach(k=>stats[k]=1+(alloc[k]||0));
+  sel.forEach(id=>{const t=traitOf(id);for(const k in(t.mod||{}))stats[k]+=t.mod[k];});
+  const fpool=sel.includes('poor')?FAMILIES.filter(f=>f.id==='orphan'||f.id==='muggle'):FAMILIES;
+  const family=pick(fpool);
+  for(const k in family.mod)stats[k]+=family.mod[k];
+  SKEYS.forEach(k=>stats[k]=Math.max(0,stats[k]));
+  const run={gender:gender||'男',stats,traits:sel.slice(),family,month:0,persona:null,mood:{v:0},flags:[],done:[],clue:0,hx:0,skill:{},elect:[],hp:{葛來分多:0,雷文克勞:0,史萊哲林:0,赫夫帕夫:0},cups:0,
+    keys:[],goals:{voldemort:false,home:false},save:0,log:[],newUnlocks:[],post:null,ended:null};
+  sel.forEach(id=>{const t=traitOf(id);if(t.save)run.save+=t.save;if(t.clue)run.clue+=t.clue;});
+  if(legacy&&legacy.list){run.legacy=legacy;legacy.list.forEach(l=>{for(const k in(l.mod||{}))run.stats[k]+=l.mod[k];if(l.save)run.save+=l.save;});}
+  return run;
+}
+const has=(run,f)=>run.flags.includes(f);
+const lvl=(run,id)=>Math.min(10,Math.floor(run.skill[id]||0));
+const skBonus=(run,id)=>{const l=lvl(run,id);return l>=9?3:l>=6?2:l>=3?1:0;};
+function teacherOf(run,sk){
+  if(sk==='dada')return DADA_T[yearOf(run)];
+  return COURSES.concat(ELECTIVES).find(c=>c.id===sk);
+}
+function prefOf(run,ev,o){
+  if(!ev||!ev.cls||!o.sk)return null;
+  const t=teacherOf(run,o.sk);if(!t||!t.like)return null;
+  return o.s===t.like?'like':o.s===t.dis?'dis':null;
+}
+const evText0=(run,ev)=>typeof ev.text==='function'?ev.text(run):ev.text;
+// 事件變化：VAR[id]=[{y:[a,b],hs,fl,text}...]，符合條件者隨月份輪替
+const VAR=typeof VARS!=='undefined'?VARS:{};
+function evText(run,ev){
+  const vs=(VAR[ev.id]||[]).filter(v=>(!v.y||(yearOf(run)>=v.y[0]&&yearOf(run)<=v.y[1]))&&(!v.hs||v.hs===run.persona)&&(!v.fl||v.fl.every(f=>has(run,f))));
+  if(!vs.length)return evText0(run,ev);
+  const all=[null].concat(vs),v=all[(run.month*7+ev.id.length)%all.length];
+  return v?(v.pre?v.pre+evText0(run,ev):v.text):evText0(run,ev);
+}
+// 一般事件的屬性上限（每年級 +2），特殊事件不受限
+const capOf=run=>8+2*yearOf(run);
+const isSp=ev=>!!(ev.mm||ev.fin||ev.stg||ev.rare||ev.fr||ev.hs||ev.fm||ev.key);
+const FRIENDS={rf3:'金髮少爺',fr_g3:'歐文',fr_r3:'艾莉絲',fr_s3:'薇拉',fr_h3:'湯米'};
+const friendsOf=run=>Object.keys(FRIENDS).filter(f=>has(run,f)).map(f=>FRIENDS[f]);
+function gainSk(run,id,v,lines){
+  if(run.elect.includes(id)||v<=0)return;
+  const b=lvl(run,id);run.skill[id]=Math.min(10,(run.skill[id]||0)+v);
+  if(lvl(run,id)>b)lines.push({txt:`${SKNAME[id]} 進度提升：Lv${lvl(run,id)}`,up:true});
+}
+const yearOf=run=>Math.min(7,Math.max(1,Math.ceil(run.month/12)));
+const mInYear=run=>((run.month-1)%12)+1;
+const isSummer=run=>mInYear(run)>=11;
+const calLabel=run=>run.month>LAST_MONTH?`畢業後第 ${run.month-LAST_MONTH} 個月`:`${YEARN[yearOf(run)]}・${MONTHS[mInYear(run)-1]}`;
+
+// ---- 屬性變化 ----
+function applyFx(run,fx,lines){
+  for(const k in fx){
+    const v=fx[k];if(!v)continue;
+    const before=run.stats[k];
+    run.stats[k]=Math.max(0,before+v);
+    const real=run.stats[k]-before;
+    if(real)lines.push({txt:`${SK[k]} ${real>0?'+':''}${real}`,up:real>0});
+  }
+}
+
+// ---- 回合推進（一回合 = 一個月）----
+function advance(run){
+  run.month++;
+  const lines=[calLabel(run)];
+  const tmp=[];
+  if(run.month>1&&run.month<=LAST_MONTH&&mInYear(run)===1){
+    applyFx(run,TUNE.yearGain>1?{悟:1,[pick(SKEYS.filter(k=>k!=='悟'))]:1}:{悟:1},tmp);
+    lines.push('新學年開始，你又長大了一點');
+  }
+  if(run.month<=LAST_MONTH&&mInYear(run)<=10){
+    // 日常上課：每月各科自然進步
+    const g=TUNE.studyBase+TUNE.studyPer*run.stats.悟;
+    CORE.forEach(id=>{run.skill[id]=Math.min(10,(run.skill[id]||0)+g);});
+    // 學院盃：各院每月自然增減
+    HOUSES.forEach(h=>{run.hp[h]+=rnd(TUNE.hpMin,TUNE.hpMax);});
+  }
+  if(run.month<=LAST_MONTH&&mInYear(run)===11&&run.persona){
+    const best=HOUSES.slice().sort((a,b)=>run.hp[b]-run.hp[a])[0];
+    const mine=run.persona===best;
+    lines.push(`學院盃結算：${best} 以 ${run.hp[best]} 分奪冠（你的學院 ${run.hp[run.persona]} 分）`);
+    if(mine){run.cups++;(run.keys=run.keys||[]).push({m:run.month,t:'學院盃',s:'你的學院贏得了學院盃',b:'g'});applyFx(run,{人:1,心:1},tmp);lines.push('你的學院贏得了學院盃！');if(!has(run,'cup'))run.flags.push('cup');}
+    HOUSES.forEach(h=>{run.hp[h]=0;});
+  }
+  tmp.forEach(l=>lines.push(l.txt));
+  if(run.post!==null)run.post++;
+  return lines;
+}
+
+// ---- 事件篩選 ----
+function eligible(run,e,meta){
+  const y=yearOf(run);
+  const[ymin,ymax]=e.y||[1,7];
+  if(y<ymin||y>ymax)return false;
+  if(run.month>LAST_MONTH){if(!e.po)return false;}
+  else{
+    if(e.po)return false;
+    if(!!e.su!==isSummer(run))return false;
+  }
+  if(e.fm&&!e.fm.includes(run.family.id))return false;
+  if(e.hs&&!e.hs.includes(run.persona))return false;
+  if(e.el&&!run.elect.includes(e.el))return false;
+  if(e.cond&&!e.cond(run))return false;
+  if(e.fl&&!e.fl.every(f=>has(run,f)))return false;
+  if(e.nf&&e.nf.some(f=>has(run,f)))return false;
+  if(e.n)for(const k in e.n)if(run.stats[k]<e.n[k])return false;
+  if(e.cl&&run.clue<e.cl)return false;
+  if(e.rare&&meta.unlocked.includes(e.rare))return false;
+  if(e.earth&&(run.goals.home||run.clue>=CLUE_MAX))return false;
+  if(e.hx&&run.hx>=HX_MAX)return false;
+  if(!e.rep&&run.done.includes(e.id))return false;
+  return true;
+}
+function weight(run,e){
+  let w=e.w!==undefined?e.w:(e.rare?3:1);
+  if(e.earth){w*=TUNE.earthW;run.traits.forEach(id=>{const m=traitOf(id).earth;if(m)w*=m;});}
+  if(e.hx){run.traits.forEach(id=>{const m=traitOf(id).hxw;if(m)w*=m;});}
+  return w;
+}
+function pickEvent(run,meta){
+  if(run.month===1)return EVENTS.find(e=>e.id==='sorting');
+  if(run.month===2)return EVENTS.find(e=>e.id==='e_timetable');
+  if(run.month===25)return EVENTS.find(e=>e.id==='e_elect1');
+  if(run.month===26)return EVENTS.find(e=>e.id==='e_elect2');
+  if(run.month<=LAST_MONTH){const mj=EVENTS.find(e=>e.mm===run.month);if(mj)return mj;}
+  if(run.clue>=CLUE_NEED&&!run.goals.home&&(!has(run,'homeSkip')||run.month>=LAST_MONTH-1))
+    return EVENTS.find(e=>e.id==='ef_home');
+  const pool=EVENTS.filter(e=>!e.co&&!e.mm&&!e.fx0&&e.id!=='sorting'&&e.id!==run.last&&eligible(run,e,meta));
+  if(!pool.length)return EVENTS.find(e=>e.id==='e_quiet');
+  const ws=pool.map(e=>weight(run,e));
+  let r=RNG()*ws.reduce((a,b)=>a+b,0);
+  for(let i=0;i<pool.length;i++){r-=ws[i];if(r<=0)return pool[i];}
+  return pool[pool.length-1];
+}
+
+// ---- 檢定 ----
+const TUNE={skG:0.6,skK:0.3,studyBase:0.05,studyPer:0.004,hpMin:6,hpMax:14,softFrom:4,softSpan:14,softMin:0.1,gainP:0.5,dcYear:1.0,majorAdd:3,majorYear:2.6,earthW:0.45,yearGain:1};
+const dcOf=(run,ev,o)=>o.c[1]+((ev.mm||ev.stg||ev.fin)?TUNE.majorAdd+Math.floor((yearOf(run)-1)*TUNE.majorYear):Math.floor((yearOf(run)-1)*TUNE.dcYear));
+const fzOf=ev=>3;
+function bonusFor(run,ev,o){
+  let b=0;
+  if(run.persona){
+    const P=PERS[run.persona];
+    if(o.s===P.style)b+=2;else if(o.s===P.opp)b-=1;
+    if(o.c&&HOUSE_STAT[run.persona]===o.c[0])b+=1;
+  }
+  if(o.c){
+    const tag=DEFTAG[o.c[0]];
+    run.traits.forEach(id=>{const t=traitOf(id);if(t.cb&&t.cb[tag])b+=t.cb[tag];});
+  }
+  run.traits.forEach(id=>{const t=traitOf(id);if(t.luck)b+=t.luck;});
+  if(o.sk)b+=skBonus(run,o.sk);
+  if(ev&&ev.cls&&o.sk){
+    const pf=prefOf(run,ev,o);if(pf==='like')b+=1;else if(pf==='dis')b-=1;
+    if(run.mood)b+=run.mood.v;
+    if(run.persona&&HEAD[run.persona]===o.sk)b+=1;
+    if(run.persona==='葛來分多'&&o.sk==='potions')b-=1;
+  }
+  if(ev&&ev.fin)b+=run.hx+Math.min(2,friendsOf(run).length);
+  if(has(run,'trio'))b+=1;
+  return b;
+}
+function optInfo(run,ev,i){
+  const o=ev.o[i];
+  const info={locked:false,reason:'',chance:null,pDie:0,deadly:false,bonus:0};
+  if(o.only&&!o.only.includes(run.persona)){info.locked=true;info.reason=`需要學院：${o.only.join('／')}`;}
+  if(o.needSk)for(const k in o.needSk)if(lvl(run,k)<o.needSk[k]){info.locked=true;info.reason=`${SKNAME[k]}需達 Lv${o.needSk[k]}`;}
+  if(o.ne&&run.elect.includes(o.ne)){info.locked=true;info.reason='已經選修了';}
+  if(o.need)for(const k in o.need)if(run.stats[k]<o.need[k]){info.locked=true;info.reason=`${SK[k]}需達 ${o.need[k]}`;}
+  if(o.cost)for(const k in o.cost)if(run.stats[k]<o.cost[k]){info.locked=true;info.reason=`${SK[k]}不足（需 ${o.cost[k]}）`;}
+  if(o.c){
+    const k=o.c[0],dc=dcOf(run,ev,o);
+    const sv=run.stats[k],b=bonusFor(run,ev,o);
+    info.bonus=b;info.dc=dc;info.pref=prefOf(run,ev,o);if(o.sk)info.sk={id:o.sk,lvl:lvl(run,o.sk),bonus:skBonus(run,o.sk)};
+    info.chance=Math.round((1-pLt(dc-sv-b))*100);
+    const pB=pLt(dc-fzOf(ev)-sv-b);
+    const pF=pLt(dc-sv-b)-pB;
+    const rf=o.r.f,rb=o.r.b||o.r.f;
+    info.pDie=(rf&&rf.die?pF:0)+(rb&&rb.die?pB:0);
+    info.deadly=!!((rf&&rf.die)||(o.r.b&&o.r.b.die));
+  }
+  return info;
+}
+
+// ---- 結算 ----
+function resolve(run,ev,i,meta){
+  const o=ev.o[i];
+  const out={lines:[],notes:[],text:'',extra:'',band:null,roll:null,die:null,end:null,goal:null,unlock:null,survive:''};
+  if(o.cost)for(const k in o.cost){run.stats[k]-=o.cost[k];out.lines.push({txt:`${SK[k]} −${o.cost[k]}（花費）`,up:false});}
+  let band='k';
+  if(o.c){
+    const k=o.c[0],dc=dcOf(run,ev,o);
+    const b=bonusFor(run,ev,o),d1=d6(),d2=d6();
+    const total=run.stats[k]+b+d1+d2,diff=total-dc;
+    band=diff>=5?'g':diff>=0?'k':diff>=-fzOf(ev)?'f':'b';
+    out.roll={k,dc,b,d1,d2,total,sv:run.stats[k]};
+  }
+  const res=o.r[band]||(band==='g'?o.r.k:band==='b'?o.r.f:null)||o.r.k;
+  out.band=o.c?band:null;
+  out.text=res.t;
+  if(res.die){
+    const fleeP=1-(1-(run.persona==='赫夫帕夫'?0.25:0))*(1-run.traits.reduce((a,id)=>Math.max(a,traitOf(id).flee||0),0));
+    if(fleeP>0&&RNG()<fleeP){
+      out.survive=run.persona==='赫夫帕夫'&&RNG()<0.5?'千鈞一髮之際，有個朋友把你一把拽了回來。':'千鈞一髮之際，你憑著一股「溜」的本能躲開了致命一擊。';
+      applyFx(run,{體:-2},out.lines);
+    }else if(run.save>0){
+      run.save--;
+      out.survive='一道溫暖的光擋下了致命一擊（「免死機會」已消耗）。';
+      applyFx(run,{體:-1},out.lines);
+    }else{
+      out.die=res.die;
+      run.log.push({m:run.month,t:ev.t,s:o.l,r:res.die});
+      (run.keys=run.keys||[]).push({m:run.month,t:ev.t,s:o.l+'・'+res.die,b:band});
+      return out;
+    }
+  }else{
+    let fx=res.fx;
+    if(!ev.mm&&!ev.fin){fx={};for(const k in res.fx){const v=res.fx[k];fx[k]=(v>0&&RNG()>clamp(1-(run.stats[k]-TUNE.softFrom)/TUNE.softSpan,TUNE.softMin,1))?0:v;}}
+    if(!isSp(ev)){const cap=capOf(run);const fx2={};for(const k in fx){let v=fx[k];if(v>0){const room=Math.max(0,cap-run.stats[k]);if(room<v){v=room;out.lines.push({txt:`${SK[k]}已達${run.month>LAST_MONTH?'':YEARN[yearOf(run)]}日常上限 ${cap}，需靠特殊事件突破`,up:false});}}fx2[k]=v;}fx=fx2;}
+    applyFx(run,fx,out.lines);
+  }
+  if(ev.cls&&o.sk){
+    const pf=prefOf(run,ev,o),t=teacherOf(run,o.sk);
+    if(pf==='like'&&t){out.notes.push(`${t.t}欣賞你這種做法，滿意地點了點頭。`);if(run.persona){run.hp[run.persona]+=2;out.lines.push({txt:'學院分數 +2（教授欣賞）',up:true});}}
+    else if(pf==='dis'&&t&&(band==='f'||band==='b')){out.notes.push(`${t.t}皺起眉頭，顯然不太喜歡你這種做法。`);if(run.persona){run.hp[run.persona]-=2;out.lines.push({txt:'學院分數 −2（教授不悅）',up:false});}}
+    if(run.persona&&HEAD[run.persona]===o.sk&&t)out.notes.push(`身為你的院長，${t.t}對自己學院的學生總是多一分寬容。`);
+  }
+  if(o.sk&&(band==='g'||band==='k')){gainSk(run,o.sk,band==='g'?TUNE.skG:TUNE.skK,out.lines);}
+  if(res.sk)for(const k in res.sk)gainSk(run,k,res.sk[k],out.lines);
+  if(res.elect&&!run.elect.includes(res.elect)){run.elect.push(res.elect);run.skill[res.elect]=10;out.lines.push({txt:`選修「${SKNAME[res.elect]}」：滿值（Lv10）`,up:true});}
+  {let p=res.pts;
+   if(p===undefined&&(ev.cls||ev.mm||ev.stg||ev.fin))p=ev.stg?({g:4,k:2,f:0,b:-2})[band]:(ev.mm||ev.fin)?({g:12,k:6,f:0,b:-6})[band]:({g:6,k:3,f:-2,b:-4})[band];
+   if(p&&run.persona){run.hp[run.persona]+=p;out.lines.push({txt:`學院分數 ${p>0?'+':''}${p}`,up:p>0});}}
+  if(res.house){run.persona=res.house;out.lines.push({txt:`分入學院：${res.house}`,up:true});}
+  if(res.flag)[].concat(res.flag).forEach(f=>{if(!has(run,f))run.flags.push(f)});
+  if(res.unflag){const u=[].concat(res.unflag);run.flags=run.flags.filter(f=>!u.includes(f))}
+  if(res.clue){
+    run.clue=Math.max(0,run.clue+res.clue);
+    out.lines.push({txt:`時間線索 ${res.clue>0?'+':''}${res.clue}（${run.clue}/${CLUE_NEED}）`,up:res.clue>0});
+  }
+  if(res.hx){
+    run.hx=clamp(run.hx+res.hx,0,HX_MAX);
+    out.lines.push({txt:`魂器線索 ${res.hx>0?'+':''}${res.hx}（${run.hx}/${HX_MAX}）`,up:res.hx>0});
+  }
+  if(res.unlock&&!meta.unlocked.includes(res.unlock)){
+    meta.unlocked.push(res.unlock);run.newUnlocks.push(res.unlock);out.unlock=res.unlock;
+  }
+  if(res.home){run.goals.home=true;out.end=run.goals.voldemort?'perfect':'home';}
+  if(res.goal){run.goals[res.goal]=true;out.goal=res.goal;}
+  if(res.end)out.end=res.end;
+  if(res.cont&&run.goals.voldemort&&run.post===null)run.post=0;
+  if(!run.done.includes(ev.id))run.done.push(ev.id);
+  run.last=ev.id;
+  if(ev.mm||ev.fin||ev.key||ev.id==='sorting'||res.unlock||res.goal||res.home)(run.keys=run.keys||[]).push({m:run.month,t:ev.t,s:o.l,b:o.c?band:null});
+  run.log.push({m:run.month,t:ev.t,s:o.l,r:res.t});
+  return out;
+}
+
+// ---- 目標事件 ----
+function goalEvent(run){
+  const o=[O('留在魔法世界，繼續你的人生','careful',null,R('你把魔杖插回腰間，在霍格華茲的湖邊坐了一整個下午。後來有人問你「英雄是什麼感覺」，你說：「睏。」',{心:1},{end:'victory'}))];
+  if(run.clue>=CLUE_NEED)
+    o.push(O('施展時間魔法，回到原本的世界','bold',null,R('你站在魔法陣中央，最後看了一眼這座城堡。時針倒轉，光芒吞沒了一切——你睜開眼，是熟悉的天花板和手機的鬧鐘聲。',{},{home:1})));
+  else
+    o.push(O('再留一陣子，繼續尋找回家的方法','diligent',null,R('你決定再待一陣子，把還沒查完的線索一條一條查下去。畢竟，家不會自己長腿跑過來。',{心:1},{cont:1})));
+  return{id:'g_voldemort',t:'黑暗退去',text:'魔杖落地，佛地魔的身影在晨光中化為灰燼。大廳裡先是一片死寂，然後爆發出幾乎要掀翻天花板的歡呼。有人哭，有人笑，有人抱著不認識的人轉圈。你站在人群中央，忽然覺得：這個世界，好像也沒那麼陌生了。',o};
+}
+
+// ---- 流程 ----
+function startTurn(run,meta){
+  const lines=advance(run);
+  if(run.post!==null&&run.post>=POST_MAX)return{end:{type:'victory'}};
+  if(run.post===null&&run.month>LAST_MONTH)return{end:{type:'graduate'}};
+  const ev=pickEvent(run,meta);
+  run.mood={v:0};
+  if(ev&&ev.cls){
+    const sk=(ev.o.find(o=>o.sk)||{}).sk,t=sk&&teacherOf(run,sk),r=RNG();
+    if(t&&r<0.2){run.mood={v:-1};lines.push(`${t.t}今天臉色臭得像剛喝了苦藥（本堂檢定 −1）`);}
+    else if(t&&r>0.85){run.mood={v:1};lines.push(`${t.t}今天心情特別好（本堂檢定 +1）`);}
+  }
+  return{ev,passive:lines};
+}
+function afterEvent(run,out,ev){
+  if(out.die)return{end:{type:'died',cause:out.die}};
+  if(out.end)return{end:{type:out.end}};
+  if(out.goal==='voldemort')return{ev:goalEvent(run),passive:[]};
+  if(ev&&ev.chain)run.q=ev.chain.slice();
+  if(run.q&&run.q.length){const id=run.q.shift(),nx=EVENTS.find(x=>x.id===id),ps=[''];
+    if(nx&&(nx.fin||nx.id==='m_final_b')){const fs=friendsOf(run);if(fs.length)ps.push(`${fs.join('、')}站在你身邊${nx.fin?`（決戰檢定 +${Math.min(2,fs.length)}）`:''}`);}
+    return{ev:nx,passive:ps};}
+  return{next:true};
+}
+
+const ENDINGS={
+  perfect:{n:'英雄歸鄉',t:'你擊敗了黑暗，也找到了回家的路。後來某個普通的早晨，你在公司茶水間排隊接咖啡，同事隨口問你週末做了什麼。你笑了笑說：「沒什麼，就是打了一場小仗。」口袋裡，一根不知名的魔杖輕輕發燙。'},
+  victory:{n:'倖存者的傳說',t:'你留在了這個世界。霍格華茲的畢業合照裡，你站在最邊邊笑得很開心。很多年後，孩子們在課堂上念著那場大戰的故事，沒人知道，故事裡那個從未被寫進名單的人，其實就坐在最後一排旁聽。'},
+  home:{n:'歸去來兮',t:'時針倒轉，你回到了原本的世界。那個世界依舊平凡，只是你再也不覺得「平凡」是個壞詞。偶爾夜裡，你會對著窗外的月亮想：不知道那個世界裡，黑暗最後有沒有被打敗。'},
+  graduate:{n:'畢業快樂',t:'七年過去，你拿著畢業證書站在月台上。魔法世界的故事還在繼續，只是你得先想想：下一站，去哪裡？'},
+  died:{n:'隕落',t:'魔法世界從來不是童話，你只是踩到了其中最危險的一塊。好消息是：下一世，你可以多帶些行李。'},
+  dark:{n:'黑暗時代',t:'佛地魔的笑聲響徹城堡。魔法部倒台，霍格華茲換了校長，連天空都像被蓋上了一層灰。你在某個陰暗的角落想：如果當初多修一門課，結果會不會不一樣。'}
+};
+
+// 顯示用文字：孤兒替換
+function T(run,s){
+  if(!run||!s)return s;
+  if(run.family.id==='orphan'){for(const[a,b]of ORPHAN_SUB)s=s.split(a).join(b);}
+  return s;
+}
+
+// ===== 遺澤（前世死於非命） =====
+const LEGACIES=[
+  {id:'l_body',n:'不甘的魂魄',d:'體魄 +2',mod:{體:2}},
+  {id:'l_mind',n:'殘留的記憶',d:'魔法天賦 +1，意志 +1',mod:{悟:1,心:1}},
+  {id:'l_friend',n:'舊日人脈',d:'人緣 +2，家底 +1',mod:{人:2,金:1}},
+  {id:'l_gold',n:'古靈閣退款',d:'家底 +3',mod:{金:3}},
+  {id:'l_save',n:'死不瞑目的執念',d:'一次免死',save:1,minYear:3}
+];
+function makeLegacyRecord(run,cause){return{year:yearOf(run),month:run.month,cause:cause||'死於非命'};}
+function rollLegacy(meta,rng){
+  const rec=meta.legacy;if(!rec)return null;
+  const r=rng||RNG;
+  if(r()>=0.75)return{missed:true,rec};
+  const pool=LEGACIES.filter(l=>!l.minYear||rec.year>=l.minYear);
+  for(let i=pool.length-1;i>0;i--){const j=Math.floor(r()*(i+1));[pool[i],pool[j]]=[pool[j],pool[i]];}
+  return{rec,list:pool.slice(0,rec.year>=5?2:1)};
+}
+
+// ===== 成就（第二世起開始記錄） =====
+const ACH=[
+  {id:'a_y3',n:'三年級了',d:'活到三年級',t:(r)=>r.month>=25},
+  {id:'a_y5',n:'O.W.L. 倖存者',d:'活到五年級',t:(r)=>r.month>=49},
+  {id:'a_y7',n:'最後一年',d:'活到七年級',t:(r)=>r.month>=73},
+  {id:'a_grad',n:'準時畢業',d:'撐過七年學制',t:(r)=>r.month>LAST_MONTH},
+  {id:'a_vol',n:'打敗黑魔王',d:'擊敗佛地魔',t:(r)=>r.goals.voldemort},
+  {id:'a_home',n:'回家了',d:'回到原本的世界',t:(r)=>r.goals.home},
+  {id:'a_both',n:'既要又要',d:'同一世完成兩個目標',t:(r)=>r.goals.voldemort&&r.goals.home},
+  {id:'a_hx',n:'魂器獵人',d:'集滿四條魂器線索',t:(r)=>r.hx>=HX_MAX},
+  {id:'a_time',n:'時間研究所',d:'集滿四條時間線索',t:(r)=>r.clue>=CLUE_NEED},
+  {id:'a_trio',n:'三人行',d:'和主角團成為朋友',t:(r)=>r.flags.includes('trio')},
+  {id:'a_gry',n:'勇氣可嘉',d:'分入葛來分多並活到畢業',t:(r)=>r.persona==='葛來分多'&&r.month>LAST_MONTH},
+  {id:'a_sly',n:'野心家',d:'分入史萊哲林並擊敗佛地魔',t:(r)=>r.persona==='史萊哲林'&&r.goals.voldemort},
+  {id:'a_rav',n:'智慧超群',d:'分入雷文克勞並集滿時間線索',t:(r)=>r.persona==='雷文克勞'&&r.clue>=CLUE_NEED},
+  {id:'a_huf',n:'忠誠到底',d:'分入赫夫帕夫並擊敗佛地魔',t:(r)=>r.persona==='赫夫帕夫'&&r.goals.voldemort},
+  {id:'a_orphan',n:'英雄不問出處',d:'孤兒院出身，擊敗佛地魔',t:(r)=>r.family.id==='orphan'&&r.goals.voldemort},
+  {id:'a_legacy',n:'前世的饋贈',d:'帶著遺澤降生',t:(r)=>!!(r.legacy&&r.legacy.list)},
+  {id:'a_hex',n:'五邊形戰士',d:'五項屬性都達到 8',t:(r)=>SKEYS.every(k=>r.stats[k]>=8)},
+  {id:'a_cup',n:'學院之光',d:'為學院贏得學院盃',t:(r)=>r.cups>=1},
+  {id:'a_cup3',n:'連霸之星',d:'同一世贏得三次學院盃',t:(r)=>r.cups>=3},
+  {id:'a_scholar',n:'全科優等',d:'七門主課全部達到 Lv5',t:(r)=>CORE.every(c=>lvl(r,c)>=5)},
+  {id:'a_master',n:'術業有專攻',d:'任一主課達到 Lv10',t:(r)=>CORE.some(c=>lvl(r,c)>=10)},
+  {id:'a_elect',n:'選修達人',d:'選修兩門以上選修課',t:(r)=>r.elect.length>=2},
+  {id:'a_young',n:'還沒開學就出局',d:'一年級就死去',t:(r,t)=>t==='died'&&r.month<=12},
+  {id:'a_dark',n:'黑暗時代',d:'見證黑魔王的勝利',t:(r,t)=>t==='dark'}
+];
+function checkAch(run,meta,type){
+  if(meta.runs<1)return[];
+  meta.ach=meta.ach||[];
+  const got=[];
+  ACH.forEach(a=>{if(!meta.ach.includes(a.id)&&a.t(run,type)){meta.ach.push(a.id);got.push(a.id);}});
+  return got;
+}
+
+// ===== ui.js：介面與流程 =====
+const HERO="<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 800 420\" role=\"img\" aria-label=\"月夜下的古老城堡，湖面倒映著燈火，遠處有一列蒸汽火車\"><defs><linearGradient id=\"sk\" x1=\"0\" y1=\"0\" x2=\"0\" y2=\"1\"><stop offset=\"0\" stop-color=\"#090b17\"/><stop offset=\".7\" stop-color=\"#1f2a4a\"/><stop offset=\"1\" stop-color=\"#3a3560\"/></linearGradient><radialGradient id=\"mn\" cx=\".5\" cy=\".5\" r=\".5\"><stop offset=\"0\" stop-color=\"#fff6d8\"/><stop offset=\".55\" stop-color=\"#f1d98b\" stop-opacity=\".6\"/><stop offset=\"1\" stop-color=\"#d9b45b\" stop-opacity=\"0\"/></radialGradient><linearGradient id=\"lk\" x1=\"0\" y1=\"0\" x2=\"0\" y2=\"1\"><stop offset=\"0\" stop-color=\"#26335a\"/><stop offset=\"1\" stop-color=\"#0d1226\"/></linearGradient></defs><rect width=\"800\" height=\"420\" fill=\"url(#sk)\"/><g fill=\"#fff\" opacity=\".85\"><circle cx=\"60\" cy=\"40\" r=\"1.5\"/><circle cx=\"140\" cy=\"100\" r=\"1.1\"/><circle cx=\"230\" cy=\"30\" r=\"1.4\"/><circle cx=\"320\" cy=\"80\" r=\"1\"/><circle cx=\"560\" cy=\"35\" r=\"1.5\"/><circle cx=\"660\" cy=\"105\" r=\"1.2\"/><circle cx=\"730\" cy=\"55\" r=\"1.6\"/><circle cx=\"470\" cy=\"25\" r=\"1\"/><circle cx=\"30\" cy=\"150\" r=\"1\"/><circle cx=\"770\" cy=\"160\" r=\"1\"/><circle cx=\"610\" cy=\"70\" r=\"1\"/><circle cx=\"190\" cy=\"60\" r=\"1\"/></g><circle cx=\"610\" cy=\"100\" r=\"95\" fill=\"url(#mn)\"/><circle cx=\"610\" cy=\"100\" r=\"52\" fill=\"#f6e7ae\"/><circle cx=\"594\" cy=\"88\" r=\"9\" fill=\"#e6d08a\" opacity=\".6\"/><circle cx=\"628\" cy=\"116\" r=\"12\" fill=\"#e6d08a\" opacity=\".5\"/><path d=\"M0 270 Q120 215 240 245 Q330 190 430 235 Q560 205 680 245 Q760 225 800 250 L800 420 L0 420Z\" fill=\"#10152b\"/><g fill=\"#070a14\"><path d=\"M250 300 L250 215 L262 215 L262 190 L270 168 L278 190 L278 215 L300 215 L300 175 L308 150 L316 175 L316 205 L350 205 L350 150 L360 120 L370 150 L370 205 L400 205 L400 165 L410 135 L420 165 L420 205 L450 205 L450 185 L462 185 L462 160 L470 138 L478 160 L478 185 L496 185 L496 300Z\"/><rect x=\"228\" y=\"235\" width=\"22\" height=\"65\"/><rect x=\"496\" y=\"215\" width=\"26\" height=\"85\"/><path d=\"M232 235 L239 205 L246 235Z\"/><path d=\"M500 215 L509 182 L518 215Z\"/></g><g fill=\"#ffd36b\" opacity=\".9\"><rect x=\"266\" y=\"225\" width=\"4\" height=\"8\"/><rect x=\"304\" y=\"190\" width=\"4\" height=\"8\"/><rect x=\"354\" y=\"160\" width=\"4\" height=\"9\"/><rect x=\"364\" y=\"160\" width=\"4\" height=\"9\"/><rect x=\"354\" y=\"182\" width=\"4\" height=\"9\"/><rect x=\"404\" y=\"172\" width=\"4\" height=\"9\"/><rect x=\"414\" y=\"172\" width=\"4\" height=\"9\"/><rect x=\"466\" y=\"170\" width=\"4\" height=\"9\"/><rect x=\"330\" y=\"230\" width=\"4\" height=\"9\"/><rect x=\"380\" y=\"230\" width=\"4\" height=\"9\"/><rect x=\"430\" y=\"230\" width=\"4\" height=\"9\"/><rect x=\"278\" y=\"262\" width=\"4\" height=\"9\"/><rect x=\"460\" y=\"250\" width=\"4\" height=\"9\"/><rect x=\"236\" y=\"262\" width=\"3\" height=\"8\"/><rect x=\"506\" y=\"245\" width=\"3\" height=\"8\"/></g><path d=\"M0 305 Q200 280 400 300 Q600 280 800 305 L800 420 L0 420Z\" fill=\"url(#lk)\"/><g stroke=\"#ffd36b\" stroke-width=\"2\" opacity=\".4\"><path d=\"M300 316 h24 M345 322 h50 M410 316 h30 M460 324 h22\"/></g><g fill=\"none\" stroke=\"#fff\" opacity=\".25\"><path d=\"M100 345 q20 -6 40 0 M520 360 q30 -8 60 0 M640 340 q14 -4 28 0\"/></g><g fill=\"#05070e\"><rect x=\"30\" y=\"268\" width=\"120\" height=\"14\" rx=\"3\"/><rect x=\"42\" y=\"256\" width=\"22\" height=\"14\"/><rect x=\"132\" y=\"244\" width=\"8\" height=\"26\"/><circle cx=\"136\" cy=\"238\" r=\"7\"/><rect x=\"66\" y=\"274\" width=\"76\" height=\"3\" fill=\"#ffd36b\" opacity=\".7\"/></g><g fill=\"#fff\" opacity=\".35\"><circle cx=\"146\" cy=\"226\" r=\"6\"/><circle cx=\"158\" cy=\"214\" r=\"8\"/><circle cx=\"174\" cy=\"200\" r=\"10\"/></g><g fill=\"#05070e\" transform=\"translate(110 150)\"><path d=\"M0 8 Q8 -2 14 6 Q22 -2 30 8 Q22 4 15 10 Q8 4 0 8Z\"/></g></svg>";
+const KEY='hogwarts-sim-v1';
+const defaultMeta=()=>({hist:[],runs:0,unlocked:[],endings:[],best:0,introSeen:false,ach:[],legacy:null});
+function loadMeta(){try{const s=localStorage.getItem(KEY);if(s)return Object.assign(defaultMeta(),JSON.parse(s));}catch(e){}return defaultMeta();}
+function saveMeta(){try{localStorage.setItem(KEY,JSON.stringify(meta));}catch(e){}}
+const RKEY='hogwarts-sim-run-v1';
+function saveRun(){try{if(!run||run.ended||ui.screen!=='play'||!ui.cur)return;const c=ui.cur;
+  localStorage.setItem(RKEY,JSON.stringify({run,cur:{id:c.ev.id,passive:c.passive,out:c.out,pick:c.pick},at:Date.now()}));}catch(e){}}
+function clearRun(){try{localStorage.removeItem(RKEY);}catch(e){}}
+function loadRun(){try{const s=localStorage.getItem(RKEY);return s?JSON.parse(s):null;}catch(e){return null;}}
+function evById(r,id){return id==='g_voldemort'?goalEvent(r):EVENTS.find(e=>e.id===id);}
+function resumeRun(){const s=loadRun();if(!s)return;const ev=evById(s.run,s.cur.id);if(!ev){clearRun();return render();}
+  run=s.run;ui.cur={ev,passive:s.cur.passive||[''],out:s.cur.out,pick:s.cur.pick};ui.screen='play';render();}
+let meta=loadMeta(),run=null;
+const ui={screen:'title',sel:[],alloc:{},offer:[],cur:null,pchoices:[],flash:'',gender:'男'};
+const app=document.getElementById('app');
+const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const FLAGNAME={rf3:'金髮少爺的摯友',fr_g3:'歐文的摯友',fr_r3:'艾莉絲的摯友',fr_s3:'薇拉的摯友',fr_h3:'湯米的摯友',trio:'主角團的朋友',stoneHero:'魔法石之夜的功臣',chamberHero:'密室英雄',shackHero:'尖叫屋的勇者',cedricLives:'墓園裡救了同伴',daLeader:'鄧不利多軍教官',ministryHero:'神秘事務司的戰士',towerSaved:'天文塔的改寫者'};
+const BAND={g:'大成功',k:'成功',f:'失敗',b:'大失敗'};
+
+// ---------- 標題 ----------
+function endingsHtml(){
+  const keys=Object.keys(ENDINGS);
+  const got=keys.filter(k=>meta.endings.includes(k)).length;
+  return `<div class="card" style="text-align:left"><div class="sec-h"><h3>結局收集</h3><span class="counter">${got} / ${keys.length}</span></div>
+    <div class="chips" style="margin:0">${keys.map(k=>meta.endings.includes(k)?`<span class="chip gold">${ENDINGS[k].n}${ENDINGS[k].hidden?'（隱藏）':''}</span>`:`<span class="chip">${ENDINGS[k].hidden?'？？？（隱藏）':'？？？'}</span>`).join('')}</div></div>`;
+}
+function achHtml(){
+  const got=ACH.filter(a=>(meta.ach||[]).includes(a.id)).length;
+  return `<div class="card" style="text-align:left"><div class="sec-h"><h3>成就清單</h3><span class="counter">${got} / ${ACH.length}</span></div>
+    <div class="chips" style="margin:0">${ACH.map(a=>(meta.ach||[]).includes(a.id)?`<span class="chip gold" title="${esc(a.d)}">${esc(a.n)}・${esc(a.d)}</span>`:`<span class="chip" title="${esc(a.d)}">？？？・${esc(a.d)}</span>`).join('')}</div></div>`;
+}
+const BANDC={g:'g',k:'k',f:'f',b:'b'};
+function keysHtml(keys){
+  if(!keys||!keys.length)return '<p class="small muted">這一世沒有留下什麼關鍵時刻。</p>';
+  return `<ol class="tline">${keys.map(k=>`<li class="b-${k.b||'n'}"><span class="tl-m">${logLabel(k.m)}</span><b>${tx(k.t)}</b><span class="small muted">${tx(k.s)}${k.b?`・${BAND[k.b]}`:''}</span></li>`).join('')}</ol>`;
+}
+function histHtml(){
+  const h=meta.hist||[];if(!h.length)return '';
+  return `<details class="card hist" style="text-align:left"><summary><h3 style="display:inline">前世回顧</h3> <span class="counter">最近 ${h.length} 世</span></summary>
+    ${h.slice().reverse().map(x=>`<details class="life"><summary><b>第 ${x.n} 世</b>・${esc(ENDINGS[x.type]?ENDINGS[x.type].n:x.type)}<span class="small muted">　${esc(x.house||'未分院')}・${esc(x.fam)}・走到${esc(x.at)}${x.friends&&x.friends.length?'・好友 '+esc(x.friends.join('、')):''}</span></summary>${keysHtml(x.keys)}</details>`).join('')}
+  </details>`;
+}
+function vTitle(){
+  const first=meta.runs===0;
+  const g1=meta.endings.includes('victory')||meta.endings.includes('perfect');
+  const g2=meta.endings.includes('home')||meta.endings.includes('perfect');
+  const total=TRAITS.filter(t=>t.lock).length;
+  return `<section class="title">
+    <div class="hero">${HERO}</div>
+    <p class="kicker">人生模擬・魔法學院篇</p>
+    <h1 data-focus tabindex="-1">穿越霍格華茲模擬器</h1>
+    <p class="lead">${first?'一個月一回合，每半年一次大事件。選詞條、配點、隨機出身，在開學的那一天睜開眼睛，然後賭上這七年。':'一個月一回合，每半年一次大事件。選詞條、配點、隨機出身，打敗黑暗，或者，回家。'}</p>
+    ${first?'':`<div class="goals">
+      <div class="goal ${g1?'done':''}"><b>打敗佛地魔</b><span class="muted small">收集魂器線索，撐到最後一戰。</span>${g1?'<div class="tag">已達成</div>':''}</div>
+      <div class="goal ${g2?'done':''}"><b>回到原本的世界</b><span class="muted small">集齊時間線索，施展時間魔法。</span>${g2?'<div class="tag">已達成</div>':''}</div>
+    </div>`}
+    ${(()=>{const s=loadRun();if(!s||!s.run)return `<button class="btn primary" data-act="new">${first?'開始穿越':'再次穿越'}</button>`;
+      const r=s.run;return `<div class="resume"><p class="small muted" style="margin:0 0 8px">有一世還沒走完：第 ${meta.runs+1} 世・${esc(calLabel(r))}・${esc(r.persona||'尚未分院')}・${esc(r.family.n)}</p>
+      <div class="btnrow" style="justify-content:center"><button class="btn primary" data-act="resume" data-focus>繼續這一世</button><button class="btn ghost" data-act="new">放棄，重新穿越</button></div></div>`;})()}
+    ${first?'':`<div class="stampline"><span>已輪迴 ${meta.runs} 世</span><span>強力詞條 ${meta.unlocked.length}/${total}</span><span>最遠走到：${meta.best?YEARN[meta.best]:'一年級'}</span></div>${endingsHtml()}${achHtml()}`}
+    ${histHtml()}
+    ${first?'':`<details class="reset"><summary>重置存檔</summary>
+      <p>這會清除輪迴次數、已解鎖的詞條與結局紀錄（只存在這個瀏覽器）。</p>
+      <button class="btn ghost" data-act="reset">確定清除</button>
+    </details>`}
+    <p class="muted small" style="margin-top:28px">非官方同人遊戲，與 J.K. 羅琳、華納兄弟及相關權利人無關；僅供交流娛樂，不作商業用途。</p>
+  </section>`;
+}
+
+// ---------- 創角 ----------
+const allocSum=()=>SKEYS.reduce((a,k)=>a+ui.alloc[k],0);
+const modSum=k=>ui.sel.reduce((a,id)=>a+((traitOf(id).mod||{})[k]||0),0);
+function trimAlloc(){
+  const b=basePts(meta)+extraPts(ui.sel);
+  while(allocSum()>b){let m=SKEYS[0];SKEYS.forEach(k=>{if(ui.alloc[k]>ui.alloc[m])m=k;});ui.alloc[m]--;}
+}
+function vCreate(){
+  const sl=slots(meta),bud=basePts(meta)+extraPts(ui.sel),left=bud-allocSum();
+  const tr=ui.offer.map(id=>{
+    const t=traitOf(id),on=ui.sel.includes(id),full=!on&&ui.sel.length>=sl;
+    return `<button class="trait ${on?'on':''} ${t.lock?'rare':''}" data-act="trait" data-id="${t.id}" aria-pressed="${on}" ${full?'disabled':''}><b>${esc(t.n)}${t.lock?'　（強力）':''}</b><span>${esc(t.d)}</span></button>`;
+  }).join('');
+  const lockedList=TRAITS.filter(t=>t.lock&&!meta.unlocked.includes(t.id));
+  const hints=(meta.runs>=1&&lockedList.length)?`<details class="reset" style="margin-top:12px"><summary>尚未解鎖的強力詞條（${lockedList.length}）</summary><ul class="small">${lockedList.map(t=>`<li>${esc(t.hint)}</li>`).join('')}</ul></details>`:'';
+  const rows=SKEYS.map(k=>{
+    const a=ui.alloc[k],m=modSum(k),tot=Math.max(0,1+a+m);
+    return `<div class="arow"><span class="nm">${SK[k]}</span>
+      <span class="pv">基礎 1 + 配點 ${a}${m?` ${m>0?'+':'−'} 詞條 ${Math.abs(m)}`:''} → <b style="color:var(--text)">${tot}</b></span>
+      <span class="stepper"><button data-act="alloc" data-k="${k}" data-d="-1" aria-label="${SK[k]}減少" ${a<=0?'disabled':''}>−</button><output>${a}</output><button data-act="alloc" data-k="${k}" data-d="1" aria-label="${SK[k]}增加" ${(a>=MAX_ALLOC||left<=0)?'disabled':''}>＋</button></span></div>`;
+  }).join('');
+  return `<section class="card"><h2 data-focus tabindex="-1">投胎前的準備</h2>
+    <p class="muted small">出身（家庭與地方）會在你投胎後隨機決定。${meta.runs>=1?'輪迴之後，你能帶的行李變多了。':''}</p>
+    <div class="sec-h"><h3>性別</h3></div>
+    <div class="btnrow" style="margin:0 0 6px"><button class="btn ${ui.gender==='男'?'primary':''}" data-act="gender" data-g="男" aria-pressed="${ui.gender==='男'}">男</button><button class="btn ${ui.gender==='女'?'primary':''}" data-act="gender" data-g="女" aria-pressed="${ui.gender==='女'}">女</button></div>
+    <div class="sec-h"><h3>命運給你的詞條</h3><span class="counter">從 ${ui.offer.length} 個中選 ${sl} 個　${ui.sel.length} / ${sl}</span></div>
+    <div class="traits">${tr}</div>${hints}
+    <div class="sec-h" style="margin-top:22px"><h3>配點</h3><span class="counter">剩餘 ${left} 點　<span class="muted small">（共 ${bud} 點${extraPts(ui.sel)?`，詞條加成 +${extraPts(ui.sel)}`:''}；單項上限 ${MAX_ALLOC}）</span></span></div>
+    <div class="alloc">${rows}</div>
+    <div class="btnrow">
+      <button class="btn primary" data-act="born" ${left!==0?'disabled':''}>投胎！</button>
+      <button class="btn" data-act="rand">隨機配點</button>
+      <button class="btn ghost" data-act="home">返回</button>
+    </div>
+    ${left!==0?'<p class="muted small" style="margin-top:10px">需要把所有點數分配完，才能投胎。</p>':''}
+  </section>`;
+}
+
+// ---------- 出生 ----------
+function vBirth(){
+  return `<section class="card"><h2 data-focus tabindex="-1">你睜開了眼睛</h2>
+    <p class="muted">上一秒你還在熬夜趕報告，下一秒，一股蒸汽撲面而來。你站在一座擠滿行李車與貓頭鷹籠的月台上，身上是一件嶄新的黑色長袍，手裡握著一張寫著「九又四分之三」的車票。你是個十一歲的${run.gender==='女'?'女孩':'男孩'}，今天是九月一日。</p>
+    <div class="card"><h3>${esc(run.family.n)}</h3><p class="small muted">${esc(run.family.d)}</p></div>
+    <div class="stats" style="margin-top:16px">${SKEYS.map(statCell).join('')}</div>
+    <div class="chips">${run.traits.map(id=>`<span class="chip gold">${esc(traitOf(id).n)}</span>`).join('')||'<span class="chip">無詞條</span>'}</div>
+    ${run.legacy?`<div class="card"><h3>遺澤・前世的餘蔭</h3><p class="small muted">上一世：${esc(run.legacy.rec.cause)}。校長看不下去，補償了你。</p><div class="chips">${run.legacy.list.map(l=>`<span class="chip gold">${esc(l.n)}：${esc(l.d)}</span>`).join('')}</div></div>`:(run.legacyMiss?`<p class="small muted">上一世死得很冤，可惜表單遞晚了——沒有遺澤。</p>`:'')}
+    <div class="btnrow"><button class="btn primary" data-act="live">登上列車</button></div>
+  </section>`;
+}
+
+// ---------- 遊戲 ----------
+function statCell(k){
+  const v=run.stats[k];
+  return `<div class="stat"><span>${SK[k]}</span><b>${v}</b></div>`;
+}
+function courseHtml(){
+  const rows=CORE.concat(run.elect).map(id=>{const l=lvl(run,id),el=run.elect.includes(id);
+    return `<div class="crow"><span>${esc(SKNAME[id])}${el?'<small>選修</small>':''}</span><i class="bar"><u style="width:${l*10}%"></u></i><b>Lv${l}</b></div>`;}).join('');
+  const hs=run.persona?HOUSES.slice().sort((a,b)=>run.hp[b]-run.hp[a]).map(h=>`<span class="hcell ${h===run.persona?'me':''}">${h} <b>${run.hp[h]}</b></span>`).join(''):'';
+  return `<details class="courses"><summary>課程進度${run.persona?`・學院盃${run.cups?`（本世 ${run.cups} 座）`:''}`:''}</summary>
+    <div class="cgrid">${rows}</div>${hs?`<p class="small muted" style="margin:.6em 0 .3em">本學年學院分數（六月結算）</p><div class="hrow">${hs}</div>`:''}
+    <p class="small muted" style="margin:.6em 0 0">課程等級每 3 級為相關檢定多一點加成；部分進階選項需要達到指定等級。</p></details>`;
+}
+function hud(){
+  const showClue=meta.runs>=1||run.clue>0||run.goals.home,showHx=meta.runs>=1||run.hx>0;
+  const pct=clamp(run.month/LAST_MONTH,0,1)*100;
+  return `<header class="hud">
+    <div class="hud-top">
+      <div><span class="age">${run.month>LAST_MONTH?'畢業後':YEARN[yearOf(run)]}</span></div>
+      <div class="realm"><b>${run.month>LAST_MONTH?`第 ${run.month-LAST_MONTH} 個月`:MONTHS[mInYear(run)-1]}</b><i class="bar xp"><u style="width:${pct}%"></u></i><small>${run.month>LAST_MONTH?'戰後的日子':`第 ${Math.max(run.month,1)} / ${LAST_MONTH} 個月`}</small></div>
+      <div class="meta"><span>${esc(run.family.n)}</span><span>學院：${run.persona||'尚未分院'}</span>${showClue?`<span>時間線索 ${run.clue}/${CLUE_NEED}</span>`:''}${showHx?`<span>魂器線索 ${run.hx}/${HX_MAX}</span>`:''}</div>
+    </div>
+    <div class="stats">${SKEYS.map(statCell).join('')}</div>
+    <p class="capnote">日常事件屬性上限 ${capOf(run)}（每升一年級 +2）；重大冒險、學院／家庭事件與好友路線不受限。</p>
+    ${courseHtml()}
+    <div class="chips">${run.traits.map(id=>`<span class="chip gold">${esc(traitOf(id).n)}</span>`).join('')}${run.save>0?'<span class="chip">免死 ×'+run.save+'</span>':''}${run.legacy?run.legacy.list.map(l=>`<span class="chip gold">遺澤：${esc(l.n)}</span>`).join(''):''}</div>
+  </header>`;
+}
+const tx=s=>esc(T(run,s));
+const logLabel=m=>m>LAST_MONTH?`畢業後 ${m-LAST_MONTH} 月`:`${YEARN[Math.min(7,Math.ceil(m/12))]}${MONTHS[(m-1)%12]}`;
+function optBtn(ev,o,i){
+  const f=optInfo(run,ev,i);
+  const chips=[`<span class="chip st-${o.s}">${STYLE_FULL[o.s]}</span>`];
+  if(o.c)chips.push(`<span class="chip">${SK[o.c[0]]}檢定・成功率 ${f.chance}%</span>`);
+  if(f.pref)chips.push(`<span class="chip ${f.pref==='like'?'gold':'danger'}">${f.pref==='like'?'教授欣賞這種做法':'教授不喜歡這種做法'}</span>`);
+  if(f.sk)chips.push(`<span class="chip gold">${esc(SKNAME[f.sk.id])} Lv${f.sk.lvl}${f.sk.bonus?`（+${f.sk.bonus}）`:''}</span>`);
+  if(!o.c)chips.push('<span class="chip">無需檢定</span>');
+  if(o.cost)for(const k in o.cost)chips.push(`<span class="chip cost">花費 ${SK[k]} ${o.cost[k]}</span>`);
+  if(f.pDie>=0.005)chips.push(`<span class="chip danger">致死風險 ${Math.round(f.pDie*100)}%</span>`);
+  else if(f.deadly)chips.push('<span class="chip danger">致死風險 &lt;1%</span>');
+  if(f.locked)chips.push(`<span class="chip lock">${esc(f.reason)}</span>`);
+  return `<button class="opt" data-act="pick" data-i="${i}" ${f.locked?'disabled':''}><span class="olabel">${tx(o.l)}</span><span class="ometa">${chips.join('')}</span></button>`;
+}
+function vResult(c){
+  const out=c.out,r=out.roll;
+  const ev=c.ev,big=ev.mm||ev.stg||ev.fin;
+  const DIE='⚀⚁⚂⚃⚄⚅';
+  const me=r?Math.max(8,Math.min(92,50+(r.total-r.dc)*4)):50;
+  const duel=r?`<div class="duel ${big?'big':''} db-${out.band}" style="--w:${me}%">
+      ${big?`<div class="duel-h"><span>你</span><b>⚔ 對決</b><span>${ev.fin?'佛地魔':'險境'}</span></div>`:''}
+      <div class="dice"><span class="die">${DIE[r.d1-1]}</span><span class="die d2">${DIE[r.d2-1]}</span></div>
+      <div class="tug"><i></i></div>
+      <div class="tug-l"><span>${SK[r.k]} ${r.total}</span><span>難度 ${r.dc}</span></div>
+    </div>`:'';
+  const rollLine=r?`${duel}<p class="roll">${SK[r.k]}檢定：${r.sv}${r.b?(r.b>0?' + ':' − ')+Math.abs(r.b):''} + 骰子 ${r.d1}+${r.d2} = <strong>${r.total}</strong>（難度 ${r.dc}）<b>${BAND[out.band]}</b></p>`:'';
+  return `<div class="result band-${out.band||'k'}">
+    ${rollLine}
+    <p class="rtext">${tx(out.text)}</p>
+    ${(out.notes||[]).map(n=>`<p class="pextra">${tx(n)}</p>`).join('')}
+    ${out.extra?`<p class="pextra">〔${run.persona}〕${tx(out.extra)}</p>`:''}
+    ${out.survive?`<p class="survive">${esc(out.survive)}</p>`:''}
+    ${out.lines.length?`<ul class="fx">${out.lines.map(l=>`<li class="${l.up?'up':'down'}">${esc(l.txt)}</li>`).join('')}</ul>`:''}
+    ${out.unlock?`<p class="unlock">解鎖新詞條：<b>${esc(traitOf(out.unlock).n)}</b>　下次投胎就能選了。</p>`:''}
+    ${out.die?`<p class="dead">${tx(out.die)}</p>`:''}
+    <div class="btnrow"><button class="btn primary" data-act="cont" data-focus>${out.die?'魂歸輪迴':'繼續'}</button></div>
+  </div>`;
+}
+function logHtml(){
+  if(!run.log.length)return '';
+  return `<details class="log"><summary>人生記事（${run.log.length}）</summary><ol>${run.log.slice().reverse().map(l=>`<li><b>${logLabel(l.m)}・${tx(l.t)}</b><br>${tx(l.s)}</li>`).join('')}</ol></details>`;
+}
+function stageTag(ev){
+  let i=0,n=0;
+  if(ev.chain){i=1;n=ev.chain.length+1;}
+  else{const P=EVENTS.find(e=>e.chain&&e.chain.includes(ev.id));if(P){i=P.chain.indexOf(ev.id)+2;n=P.chain.length+1;}}
+  if(!n)return ev.fr?'<p class="stage fr">♥ 好友路線</p>':'';
+  return `<p class="stage">⚔ 重大冒險・第 ${i} / ${n} 段<span class="pips">${Array.from({length:n},(_,k)=>`<i class="${k<i?'on':''}"></i>`).join('')}</span></p>`;
+}
+function vPlay(){
+  const c=ui.cur,ev=c.ev;
+  const body=c.out?vResult(c):`<div class="opts">${ev.o.map((o,i)=>optBtn(ev,o,i)).join('')}</div>`;
+  return `${hud()}
+    <article class="card event ${(ev.mm||ev.stg||ev.fin)?'major':''}" aria-live="polite">${stageTag(ev)}
+      <p class="passive">【${calLabel(run)}】${c.passive.slice(1).map(tx).join('・')}</p>
+      <h2 data-focus tabindex="-1">${tx(ev.t)}</h2>
+      <p class="etext" style="white-space:pre-line">${tx(evText(run,ev))}</p>
+      ${body}
+    </article>${logHtml()}`;
+}
+
+// ---------- 結局 ----------
+function vEnd(){
+  const e=run.ended,E=ENDINGS[e.type];
+  const flags=run.flags.filter(f=>FLAGNAME[f]).map(f=>`<span class="chip">${FLAGNAME[f]}</span>`).join('');
+  const unl=run.newUnlocks.map(id=>`<p class="unlock">本世解鎖：<b>${esc(traitOf(id).n)}</b>（${esc(traitOf(id).d)}）</p>`).join('');
+  return `<section class="card"><p class="kicker" style="margin:0">${calLabel(run)}・${run.persona||'尚未分院'}</p>
+    <h2 class="endtitle" data-focus tabindex="-1">${E.n}</h2>
+    ${E.hidden?'<p class="toast">✦ 隱藏結局</p>':''}${e.cause?`<p style="color:#ffa391">${tx(e.cause)}</p>`:''}
+    <p>${tx(E.t)}</p>
+    <div class="sum">
+      <div>打敗佛地魔<b>${run.goals.voldemort?'✓ 達成':'未達成'}</b></div>
+      <div>回到原本的世界<b>${run.goals.home?'✓ 達成':'未達成'}</b></div>
+      <div>時間線索<b>${run.clue} / ${CLUE_NEED}</b></div>
+      <div>魂器線索<b>${run.hx} / ${HX_MAX}</b></div>
+      <div>學院<b>${run.persona||'尚未分院'}</b></div>
+      <div>性別<b>${run.gender}</b></div>
+      <div>出身<b>${esc(run.family.n)}</b></div>
+      <div>走到<b>${calLabel(run)}</b></div>
+    </div>
+    <div class="stats" style="margin:8px 0">${SKEYS.map(statCell).join('')}</div>
+    <div class="chips">${CORE.concat(run.elect).map(id=>`<span class="chip">${esc(SKNAME[id])} Lv${lvl(run,id)}</span>`).join('')}${run.cups?`<span class="chip gold">學院盃 ×${run.cups}</span>`:''}</div>
+    <div class="chips">${run.traits.map(id=>`<span class="chip gold">${esc(traitOf(id).n)}</span>`).join('')}${flags}</div>
+    ${unl}
+    ${(run.newAch||[]).map(id=>{const a=ACH.find(x=>x.id===id);return `<p class="unlock">成就達成：<b>${esc(a.n)}</b>（${esc(a.d)}）</p>`}).join('')}
+    <h3 style="margin:18px 0 6px">關鍵時刻</h3>${keysHtml(run.keys)}
+    ${friendsOf(run).length?`<p class="unlock">這一世的好友：<b>${esc(friendsOf(run).join('、'))}</b></p>`:''}
+    ${(()=>{const h=meta.hist||[],p=h[h.length-2];if(!p)return '';return `<p class="small muted">上一世（第 ${p.n} 世）：${esc(ENDINGS[p.type]?ENDINGS[p.type].n:p.type)}・${esc(p.house||'未分院')}・走到${esc(p.at)}</p>`;})()}
+    <details class="log"><summary>這一世的記事（${run.log.length}）</summary><ol>${run.log.map(l=>`<li><b>${logLabel(l.m)}・${tx(l.t)}</b><br>${tx(l.s)}</li>`).join('')}</ol></details>
+    <div class="btnrow"><button class="btn primary" data-act="new">再投胎一次</button><button class="btn ghost" data-act="home">回到首頁</button></div>
+  </section>`;
+}
+
+// ---------- 首死劇情 ----------
+function vStory(){
+  return `<section class="card story"><h2 data-focus tabindex="-1">時間的盡頭</h2>
+    <p>黑暗中，一個懶洋洋的聲音響起：「喲，又一個。你這一世，死得挺有創意。」</p>
+    <p>你面前出現一座老舊的月台，鐵軌兩側是無數條交錯的時間線，有些亮著，有些熄了。月台邊坐著一位戴著半月形眼鏡的老人，正在剝一顆糖。</p>
+    <p>「別擔心，」他笑瞇瞇地說，「失敗是一種資料。你這個孩子身上帶著不屬於這裡的東西，也許這是一次能做得更好的機會。」</p>
+    <p>他彈了彈手指，一道光落在你額頭。你忽然覺得，自己能多帶幾個<em>詞條</em>，也多了一點可以支配的<em>潛力</em>。</p>
+    <p>「去吧，再試一次。這次，多帶點行李。」</p>
+    <p class="muted small">詞條欄位 3 → 5，配點 10 → 12。從這一世起，會記錄成就；若死於非命，下一世有機會獲得遺澤。</p>
+    <div class="btnrow"><button class="btn primary" data-act="create">再次穿越</button></div>
+  </section>`;
+}
+
+// ---------- 流程 ----------
+function render(scroll=true){
+  const v={title:vTitle,create:vCreate,birth:vBirth,play:vPlay,end:vEnd,story:vStory}[ui.screen]();
+  app.innerHTML=v;
+  saveRun();
+  if(scroll){
+    window.scrollTo(0,0);
+    const f=app.querySelector('[data-focus]');
+    if(f)f.focus({preventScroll:true});
+  }
+}
+function startCreate(){if(meta.gender)ui.gender=meta.gender;ui.offer=offerTraits(meta);ui.sel=[];ui.alloc={悟:0,體:0,人:0,心:0,金:0};ui.screen='create';render();}
+function enterTurn(s,flash){
+  if(s.end)return endRun(s.end.type,s.end.cause);
+  ui.cur={ev:s.ev,passive:s.passive.slice(),out:null};
+  if(flash)ui.cur.passive.unshift(flash);
+  ui.screen='play';render();
+}
+function nextTurn(flash){enterTurn(startTurn(run,meta),flash);}
+function endRun(type,cause){
+  run.ended={type,cause};
+  run.newAch=checkAch(run,meta,type);
+  meta.legacy=(type==='died'||type==='worldend')?makeLegacyRecord(run,cause):null;
+  meta.hist=(meta.hist||[]).concat([{n:meta.runs+1,type,house:run.persona,fam:run.family.n,at:calLabel(run),friends:friendsOf(run),keys:(run.keys||[]).slice(-16)}]).slice(-12);
+  clearRun();
+  meta.runs++;
+  [type].forEach(t=>{if(!meta.endings.includes(t))meta.endings.push(t);});
+  meta.best=Math.max(meta.best||0,yearOf(run));
+  if(run.goals.home&&!meta.unlocked.includes('u_home')){meta.unlocked.push('u_home');run.newUnlocks.push('u_home');}
+  saveMeta();
+  ui.screen='end';render();
+}
+function afterContinue(){
+  const nx=afterEvent(run,ui.cur.out,ui.cur.ev);
+  if(nx.end)return endRun(nx.end.type,nx.end.cause);
+  if(nx.ev){ui.cur={ev:nx.ev,passive:nx.passive,out:null};return render();}
+  nextTurn(ui.flash);ui.flash='';
+}
+
+app.addEventListener('click',e=>{
+  const b=e.target.closest('[data-act]');
+  if(!b||b.disabled)return;
+  const a=b.dataset.act;
+  switch(a){
+    case 'new':
+      if(meta.runs===1&&!meta.introSeen){meta.introSeen=true;saveMeta();ui.screen='story';render();}
+      else startCreate();
+      break;
+    case 'create':startCreate();break;
+    case 'home':ui.screen='title';render();break;
+    case 'reset':
+      meta=defaultMeta();saveMeta();ui.screen='title';render();break;
+    case 'gender':ui.gender=b.dataset.g;meta.gender=ui.gender;saveMeta();render(false);break;
+    case 'trait':{
+      const id=b.dataset.id,i=ui.sel.indexOf(id);
+      if(i>=0)ui.sel.splice(i,1);else if(ui.sel.length<slots(meta))ui.sel.push(id);
+      trimAlloc();render(false);
+      const again=app.querySelector(`[data-id="${id}"]`);if(again)again.focus({preventScroll:true});
+      break;}
+    case 'alloc':{
+      const k=b.dataset.k,d=+b.dataset.d;
+      const bud=basePts(meta)+extraPts(ui.sel);
+      if(d>0&&(ui.alloc[k]>=MAX_ALLOC||allocSum()>=bud))break;
+      if(d<0&&ui.alloc[k]<=0)break;
+      ui.alloc[k]+=d;render(false);
+      const sel=`[data-act="alloc"][data-k="${k}"][data-d="${d}"]`;
+      const n=app.querySelector(sel);if(n&&!n.disabled)n.focus({preventScroll:true});
+      break;}
+    case 'rand':{
+      const bud=basePts(meta)+extraPts(ui.sel);
+      SKEYS.forEach(k=>ui.alloc[k]=0);
+      let left=bud;while(left>0){const k=SKEYS[Math.floor(Math.random()*5)];if(ui.alloc[k]<MAX_ALLOC){ui.alloc[k]++;left--;}}
+      render(false);break;}
+    case 'resume':resumeRun();break;
+    case 'born':clearRun();
+      {const lg=rollLegacy(meta);meta.legacy=null;saveMeta();run=createRun(ui.sel,ui.alloc,lg&&lg.list?lg:null,ui.gender);run.legacyMiss=lg&&lg.missed?lg.rec:null;}ui.screen='birth';render();break;
+    case 'live':
+      run.month=0;nextTurn();break;
+    case 'pick':{
+      const c=ui.cur;if(c.out)break;
+      const i=+b.dataset.i;
+      if(optInfo(run,c.ev,i).locked)break;
+      c.pick=i;c.out=resolve(run,c.ev,i,meta);
+      if(c.out.unlock)saveMeta();
+      render(false);
+      const nb=app.querySelector('[data-act="cont"]');if(nb)nb.focus({preventScroll:true});
+      break;}
+    case 'cont':afterContinue();break;
+  }
+});
+render();
+
+</script>
+</body>
+</html>
