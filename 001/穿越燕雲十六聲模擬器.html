@@ -1,0 +1,1360 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>穿越燕雲十六聲模擬器</title>
+<style>
+:root{--bg:#12100e;--paper:#1c1814;--paper2:#262019;--ink:#eadfc6;--dim:#a39679;--red:#c8453a;--gold:#d8ad5e;--jade:#6fae8c;--line:#3b3329;--blue:#6f9bd1}
+*{box-sizing:border-box}
+html,body{margin:0;background:var(--bg);color:var(--ink);font-family:"Noto Serif TC","Songti TC","PMingLiU","Source Han Serif TC",serif;line-height:1.75;font-size:16px}
+#bg{position:fixed;inset:0;z-index:0;width:100%;height:100%}
+#app{position:relative;z-index:1;max-width:1180px;margin:0 auto;padding:14px}
+.hidden{display:none!important}
+button{font:inherit;color:inherit;cursor:pointer}
+.btn{background:linear-gradient(#3a2a1f,#2a1f17);border:1px solid #6b5230;color:var(--gold);padding:10px 22px;border-radius:4px;letter-spacing:.2em;transition:.15s}
+.btn:hover:not(:disabled){background:linear-gradient(#4b3524,#352719);box-shadow:0 0 12px #d8ad5e44}
+.btn:disabled{opacity:.4;cursor:not-allowed}
+.btn.red{border-color:#7b2f28;color:#e9a39b;background:linear-gradient(#3c1d1a,#2a1411)}
+.btn.sm{padding:5px 12px;font-size:13px;letter-spacing:.05em}
+.card{background:rgba(28,24,20,.92);border:1px solid var(--line);border-radius:6px;padding:18px 20px;backdrop-filter:blur(2px)}
+/* title */
+#title{min-height:86vh;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;gap:14px}
+#title h1{font-size:clamp(34px,7vw,64px);letter-spacing:.18em;margin:0;color:var(--gold);text-shadow:0 0 24px #d8ad5e55,2px 2px 0 #000}
+#title .sub{color:var(--dim);letter-spacing:.3em}
+#title .seal{display:inline-block;border:2px solid var(--red);color:var(--red);padding:2px 10px;transform:rotate(-6deg);font-size:14px;letter-spacing:.2em}
+#title p.intro{max-width:560px;color:#cdbf9f}
+.menu{display:flex;gap:12px;flex-wrap:wrap;justify-content:center;margin-top:10px}
+/* create */
+#create h2{color:var(--gold);letter-spacing:.2em;margin:.2em 0}
+.arow{display:grid;grid-template-columns:110px 1fr auto;gap:10px;align-items:center;padding:7px 0;border-bottom:1px dashed var(--line)}
+.arow .d{color:var(--dim);font-size:13px}
+.stepper{display:flex;align-items:center;gap:8px}
+.stepper button{width:30px;height:30px;border-radius:50%;border:1px solid #6b5230;background:#2a1f17;color:var(--gold);font-size:18px;line-height:1}
+.stepper b{min-width:24px;text-align:center;font-size:20px;color:var(--gold)}
+.traits{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:10px;margin-top:8px}
+.trait{border:1px solid var(--line);background:var(--paper2);border-radius:6px;padding:10px 12px;cursor:pointer;transition:.15s}
+.trait.on{border-color:var(--gold);box-shadow:0 0 10px #d8ad5e44 inset}
+.trait b{color:var(--gold)}.trait .pro{color:var(--jade);font-size:13px}.trait .con{color:#d98a82;font-size:13px}
+.row{display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin:10px 0}
+input[type=text]{background:#14110e;border:1px solid var(--line);color:var(--ink);padding:9px 12px;border-radius:4px;font:inherit;min-width:0}
+/* game */
+#top{display:flex;gap:14px;flex-wrap:wrap;align-items:center;justify-content:space-between;padding:10px 16px;margin-bottom:12px}
+#top .t1{color:var(--gold);letter-spacing:.1em}
+.hpbar{width:150px;height:10px;background:#000;border:1px solid var(--line);border-radius:5px;overflow:hidden;display:inline-block;vertical-align:middle}
+.hpbar i{display:block;height:100%;background:linear-gradient(90deg,#8e2b25,#d9534a)}
+.layout{display:grid;grid-template-columns:minmax(0,1fr) 310px;gap:14px;align-items:start}
+@media(max-width:860px){.layout{grid-template-columns:1fr}#side{order:2}}
+.scene h3{margin:0 0 2px;color:var(--gold);letter-spacing:.12em;font-size:21px}
+.scene .place{color:var(--dim);font-size:13px;margin-bottom:10px;letter-spacing:.1em}
+.scene .txt p{margin:.55em 0;text-indent:0;animation:fade .5s both}
+@keyframes fade{from{opacity:0;transform:translateY(4px)}to{opacity:1}}
+.omen{margin-top:12px;border-left:3px solid var(--red);padding:2px 10px;color:#e2b3ad;font-size:14px}
+.goal{margin-top:10px;font-size:14px;color:var(--jade)}
+.opts{display:flex;flex-direction:column;gap:9px;margin-top:16px}
+.opt{text-align:left;background:var(--paper2);border:1px solid var(--line);border-radius:5px;padding:11px 14px;transition:.15s;display:flex;gap:10px;align-items:flex-start}
+.opt:hover:not(:disabled){border-color:var(--gold);background:#31281f;transform:translateX(3px)}
+.opt:disabled{opacity:.42;cursor:not-allowed}
+.opt .k{color:var(--gold);font-weight:bold;min-width:26px}
+.opt small{display:block;color:var(--dim);font-size:12.5px}
+.tg{font-size:12px;border:1px solid #5a4a31;border-radius:3px;padding:0 5px;margin-left:6px;color:var(--dim);white-space:nowrap}
+.free{display:flex;gap:8px;margin-top:14px}
+.free input{flex:1}
+.badge{display:inline-block;padding:1px 14px;border-radius:3px;letter-spacing:.3em;font-weight:bold;margin-bottom:6px}
+.b-cs{background:#d8ad5e;color:#2a1c05}.b-s{background:#3c6b53;color:#dff3e8}.b-f{background:#6b3b2a;color:#f3d8cc}.b-cf{background:#8e2b25;color:#fff}
+.chips{display:flex;flex-wrap:wrap;gap:6px;margin-top:12px}
+.chip{font-size:13px;padding:1px 9px;border-radius:12px;border:1px solid}
+.chip.g{color:#9fd8b9;border-color:#3e6e55}.chip.b{color:#e5a39b;border-color:#7b3a33}
+#side .card{padding:12px 14px;margin-bottom:12px}
+#side h4{margin:0 0 6px;color:var(--gold);letter-spacing:.2em;font-size:14px;border-bottom:1px solid var(--line);padding-bottom:3px}
+.stat{display:grid;grid-template-columns:62px 1fr 22px;gap:6px;align-items:center;font-size:14px}
+.bar{height:7px;background:#000;border-radius:4px;overflow:hidden;position:relative}
+.bar i{display:block;height:100%;background:linear-gradient(90deg,#6b5230,var(--gold))}
+.fbar{height:7px;background:#000;border-radius:4px;position:relative}
+.fbar:after{content:"";position:absolute;left:50%;top:-2px;width:1px;height:11px;background:#6b5d45}
+.fbar i{position:absolute;top:0;height:100%}
+.res{display:flex;flex-wrap:wrap;gap:6px}
+.res span{background:var(--paper2);border:1px solid var(--line);border-radius:3px;padding:0 8px;font-size:13px}
+.tag{display:inline-block;margin:2px 4px 2px 0;padding:0 8px;border:1px solid #5a4a31;border-radius:3px;font-size:13px;color:#d9c9a3;cursor:help}
+.tag.use{cursor:pointer;border-color:var(--jade);color:var(--jade)}
+.fr{display:grid;grid-template-columns:78px 1fr 44px;gap:6px;align-items:center;font-size:13px;margin:3px 0}
+.dim{color:var(--dim)}
+/* modal */
+#modal{position:fixed;inset:0;z-index:5;background:#000a;display:flex;align-items:center;justify-content:center;padding:16px}
+#modal .card{max-width:640px;width:100%;max-height:85vh;overflow:auto}
+.logline{border-bottom:1px dashed var(--line);padding:4px 0;font-size:14px}
+/* ending */
+#ending{max-width:760px;margin:30px auto}
+#ending h1{color:var(--gold);letter-spacing:.2em;text-align:center;font-size:clamp(28px,5vw,44px);margin:.2em 0}
+.rank{text-align:center;font-size:56px;color:var(--red);font-weight:bold;transform:rotate(-5deg)}
+table.sum{width:100%;border-collapse:collapse;margin:12px 0}
+table.sum td{border-bottom:1px dashed var(--line);padding:4px 6px}
+table.sum td:last-child{text-align:right;color:var(--gold)}
+</style>
+</head>
+<body>
+<canvas id="bg"></canvas>
+<div id="app">
+  <section id="title" class="screen">
+    <span class="seal">單機文字武俠</span>
+    <h1>穿越燕雲十六聲<br>模擬器</h1>
+    <div class="sub">亂世如棋 · 江湖如酒</div>
+    <p class="intro">建隆三年，五代的戰火剛熄，燕雲十六州仍在北境之外。你帶著前世玩過這個故事的記憶，醒在清河神仙渡，成了少東家。你知道繡金樓的火光，知道那個叫紅線的姑娘本該死去。這一次，你想改寫結局。</p>
+    <div class="menu">
+      <button class="btn" id="btnNew">踏入亂世</button>
+      <button class="btn" id="btnCont">繼續舊夢</button>
+    </div>
+    <div class="dim" style="font-size:13px;margin-top:16px">每次抉擇都有隱藏判定，屬性、詞條與天命都會左右生死。</div>
+  </section>
+
+  <section id="create" class="screen hidden">
+    <div class="card">
+      <h2>少東家 · 命格</h2>
+      <div class="row"><span>姓名</span><input type="text" id="pname" value="江舟" maxlength="6" style="width:140px"></div>
+      <div class="row"><b>配點：</b>共 10 點，每項至少 1，至多 10。剩餘 <b id="left" style="color:var(--gold);font-size:22px">0</b> 點
+        <span style="flex:1"></span>
+        <span class="dim">快速配點：</span>
+        <button class="btn sm" data-pre="bal">均衡</button><button class="btn sm" data-pre="war">武人</button><button class="btn sm" data-pre="mind">謀士</button><button class="btn sm" data-pre="biz">商賈</button><button class="btn sm" data-pre="rnd">隨機</button>
+      </div>
+      <div id="alloc"></div>
+      <div class="arow"><div>🌀 天命</div><div class="d">？？？（隱藏屬性，只有天知道）</div><div class="stepper"><b>？</b></div></div>
+      <h2 style="margin-top:20px">詞條 · 五選三 <span id="tcount" class="dim" style="font-size:15px;letter-spacing:0">(0/3)</span></h2>
+      <div class="traits" id="traits"></div>
+      <div class="row" style="justify-content:space-between;margin-top:18px">
+        <button class="btn sm" id="btnBack">返回</button>
+        <button class="btn" id="btnStart" disabled>睜開雙眼</button>
+      </div>
+    </div>
+  </section>
+
+  <section id="game" class="screen hidden">
+    <header id="top" class="card"></header>
+    <div class="layout">
+      <div id="main"></div>
+      <aside id="side"></aside>
+    </div>
+  </section>
+
+  <section id="ending" class="screen hidden"></section>
+</div>
+<div id="modal" class="hidden"></div>
+
+<script>
+'use strict';
+/* ============================================================
+   《穿越燕雲十六聲模擬器》
+   一、資料庫（DB）
+   ============================================================ */
+const $=s=>document.querySelector(s);
+const rnd=(a,b)=>Math.floor(Math.random()*(b-a+1))+a;
+const pick=a=>a[Math.floor(Math.random()*a.length)];
+const clamp=(v,a,b)=>Math.max(a,Math.min(b,v));
+const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const fmt=n=>(n>0?'+':'')+n;
+const SAVE_KEY='yy16_save_v2';
+
+const ATTR={
+  body:{n:'體魄',i:'💪',d:'戰鬥、生存、武功修練'},
+  mind:{n:'悟性',i:'🧠',d:'武功解讀、江湖謀略、解謎'},
+  charm:{n:'魅力',i:'🌸',d:'NPC 好感、招募夥伴、社交談判'},
+  wealth:{n:'家資',i:'💰',d:'金錢、物資、莊園與商業營運'},
+  fame:{n:'聲望',i:'👑',d:'各方勢力對你的態度與威望'}
+};
+const AK=['body','mind','charm','wealth','fame'];
+const TAGS={force:'⚔️武',wit:'🧠智',biz:'💰商',charm:'🗣️交涉',explore:'🧭探索',auto:'🍵調養'};
+
+const TRAITS={
+  modern:{n:'前世殘卷',pro:'謀略、經營判定 +，記得部分劇情走向',con:'逆天而行：連續大成功會招致「天機反噬」',bonus:{wit:6,biz:5},d:'你曾在螢幕前玩過這個故事，記憶殘缺卻很寶貴。'},
+  photo:{n:'過目不忘',pro:'謀略、探索判定 +',con:'心緒不寧：健康低於 50 時謀略判定下降',bonus:{wit:4,explore:5},d:'秘籍與機關圖譜一看即懂。'},
+  merchant:{n:'商賈血脈',pro:'經營判定 +，起始多一筆暗帳',con:'銅臭纏身：聲望成長較慢',bonus:{biz:8},d:'買賣、談判、查帳是你的本能。'},
+  martial:{n:'習武胚子',pro:'武力判定 +，修練更快',con:'易被激將：交涉判定下降',bonus:{force:7},d:'筋骨奇佳，是天生的練武材料。'},
+  tongue:{n:'三寸之舌',pro:'交涉判定 ++',con:'言多必失：交涉大失敗時損及聲望',bonus:{charm:8},d:'說服、離間、結盟都難不倒你。'}
+};
+
+const FAC={
+  court:{n:'朝廷',i:'🏛️',v:0},
+  qian:{n:'千面人',i:'🎭',v:-20},
+  north:{n:'北境勢力',i:'🏹',v:-10},
+  jianghu:{n:'英雄會群雄',i:'⚔️',v:0},
+  yinshi:{n:'隱世門派',i:'🏯',v:0},
+  qinghe:{n:'清河鄉里',i:'🛶',v:20}
+};
+
+const NPCS={
+  hong:{n:'紅線',role:'鄰家妹妹・繡金樓',aff:50,met:true},
+  han:{n:'寒香尋',role:'養母・神仙渡主人',aff:70,met:true},
+  jiang:{n:'江無浪',role:'養父・離家多年',aff:50,met:true},
+  si:{n:'死人刀',role:'孤身刀客',aff:0,met:false},
+  guest:{n:'神秘女客',role:'來歷不明的遠客',aff:-10,met:false},
+  tian:{n:'田英',role:'傳奇刺客',aff:0,met:false},
+  yun:{n:'雲中老人',role:'隱世高人',aff:0,met:false},
+  ying:{n:'鶯鶯',role:'開封的騙局女子',aff:0,met:false},
+  wen:{n:'溫無缺',role:'開封商人',aff:0,met:false},
+  wei:{n:'魏先生',role:'前朝遺老',aff:0,met:false},
+  shi:{n:'史大人',role:'朝廷大員',aff:0,met:false}
+};
+
+const ITEMS={
+  jade:{n:'來歷不明的玉佩',d:'自幼貼身，寒香尋叮囑你別讓人看見。'},
+  hcharm:{n:'紅線的護身符',d:'她一針一線繡的，針腳歪歪扭扭。交涉判定 +2。',bonus:{charm:2}},
+  yao:{n:'金創藥',d:'使用：恢復 30 點健康。',use:{hp:30}},
+  hanletter:{n:'寒香尋的信',d:'離開神仙渡前，她留給你的信。謀略判定 +1。',bonus:{wit:1}},
+  sirendao:{n:'死人刀的舊刀',d:'刀客臨終所贈，刀鞘上全是舊痕。武力判定 +4。',bonus:{force:4}},
+  invite:{n:'英雄帖',d:'出入英雄會的憑證。交涉判定 +2。',bonus:{charm:2}},
+  fakecoin:{n:'一枚偽幣',d:'金造器騙局的物證。謀略判定 +2。',bonus:{wit:2}},
+  yanmap:{n:'燕雲舊輿圖',d:'魏先生所贈，標著十六州舊關隘。探索判定 +3。',bonus:{explore:3}},
+  duanshuang:{n:'斷霜刀',d:'寒鐵劍冢所得，鋒銳無匹。武力判定 +8。',bonus:{force:8}}
+};
+
+const ARTS={
+  basic:{n:'渡口拳腳',d:'神仙渡的少年人都會的幾下粗淺功夫。武力判定 +2。',bonus:{force:2}},
+  sidao:{n:'死人刀法',d:'死人刀傳下的刀法，招招只求殺敵。武力判定 +6。',bonus:{force:6}},
+  xinjing:{n:'十六聲心經',d:'雲中老人所傳，內息綿長。武力、謀略判定 +。',bonus:{force:4,wit:5}},
+  yunshui:{n:'雲水步',d:'輕身功夫。武力、探索判定 +。',bonus:{force:3,explore:5}},
+  jinzhong:{n:'金鐘罩',d:'枯禪僧的橫練功夫。健康上限 +20。',bonus:{force:2}},
+  yinglv:{n:'應律',d:'盲琴師所傳的聽音辨位之術。謀略、交涉判定 +。',bonus:{wit:4,charm:3}},
+  suodi:{n:'縮地成寸',d:'鬼市奇人的步法，來去無蹤。探索判定 ++。',bonus:{explore:6,force:2}}
+};
+
+function attWord(v){return v<=-60?'死敵':v<=-25?'敵視':v<=-8?'冷淡':v<8?'中立':v<30?'友善':v<60?'親近':'盟友'}
+
+/* ============================================================
+   事件資料庫（三階段：清河 → 開封 → 天下大勢）
+   ============================================================ */
+const EV={};
+const BEAT_ORDER=['b0','b1','b2','b3','b4a','b4','b5','b6','b7','b8','b9','b10','b11','b12'];
+const BEATS_ALL=BEAT_ORDER;
+
+/* 紅線搶救難度：投入越多，越有機會救下她 */
+function rescueD(base){
+  return clamp(base-(S.fl.hx||0)*3-(S.fl.cellar?8:0)-(S.fl.warned?4:0)-(S.fl.watch?3:0)-(S.items.includes('hcharm')?2:0)-(S.fl.guestEase?3:0)+(S.fl.jadeSeen?4:0),4,40);
+}
+
+/* ═══════════ 第一階段：清河風雲 ═══════════ */
+EV.b0={day:1,title:'第一幕・神仙渡的清晨',place:'清河・神仙渡',goal:'弄清自己的處境，守護身邊的人。',omen:'',
+text:()=>[
+`你在一陣木槳聲與鳥鳴中醒來。窗外是清河的晨霧，遠處的水面上浮著幾艘渡船。這不是你的出租屋。`,
+`兩股記憶在腦中衝撞：一股屬於你自己，一股屬於這具身體的前主人。你成了神仙渡的少東家${S.name}，從小由養母寒香尋撫養長大；養父江無浪離家闖蕩多年，音訊斷續。你自幼貼身戴著一枚來歷不明的玉佩，寒香尋再三叮囑：別讓人看見。`,
+`「哥！太陽都曬屁股啦！」門被撞開，隔壁繡金樓的紅線端著一碟桂花糕衝進來，紅繩束的辮子甩來甩去。她是一起長大的鄰家妹妹，嘴上不饒人，心卻軟得像剛蒸好的糕。`,
+`你呆呆看著她。因為你認得這一切：你曾在螢幕前玩過這個故事。清河、神仙渡、寒香尋，還有那個本該在繡金樓的火光裡死去的紅線。`,
+`「發什麼愣？」紅線把糕塞進你手裡，笑得毫無陰霾，「我娘說今天渡口要來稀客，叫我去幫著備幾匹好綢，你可別又偷懶！」`,
+`這一次，你知道結局。這一次，你想把結局改掉。`],
+opts:[
+ {l:'陪紅線去渡口搬綢緞，順便試試這具身體的力氣',tag:'force',a:['body'],d:6,
+  s:{t:'你扛起兩匹綢緞健步如飛，紅線在後面又氣又笑：「少東家今天吃了熊心豹子膽？」這具身體比你想像的結實。',fx:{xp:{body:1},n:{hong:8},inc:{hx:1},f:{qinghe:3}}},
+  f:{t:'你逞強過頭，綢緞砸在腳背上，疼得齜牙咧嘴。紅線笑得直不起腰，卻偷偷幫你揉了揉腳。',fx:{hp:-4,n:{hong:6},inc:{hx:1}}}},
+ {l:'靜下心，把前世記得的劇情整理成一份時間線',tag:'wit',a:['mind'],d:8,
+  s:{t:'你用炭筆在背面寫下一串關鍵詞：女客、開壇宴、死人刀、夜襲、火光。你記得大概的順序，也記得最痛的那一筆。記憶雖然殘缺，卻足夠你提前佈置。',fx:{xp:{mind:1},inc:{intel:1},fl:{recall:1}}},
+  f:{t:'記憶像隔了一層水霧，你越想越亂，頭痛欲裂。只隱約抓到「火」與「夜」兩個詞。',fx:{hp:-4,inc:{intel:0},fl:{recall:1}}}},
+ {l:'先盤點神仙渡的家底：帳目、存糧與人手',tag:'biz',a:['wealth'],d:2,
+  s:{t:'渡口客棧的帳本一目了然：進項穩定，存糧足以撐一個月，另有幾名可靠的夥計和船工。有了底，才有談判的資格。',fx:{r:{silver:60},xp:{wealth:1}}},
+  f:{t:'老帳房算盤打得飛快，你卻怎麼也理不清幾筆舊帳，只得先擱置。',fx:{r:{silver:15}}}},
+ {l:'翻出舊木匣，看看玉佩與養父留下的蛛絲馬跡',tag:'explore',a:['mind','luck'],d:8,
+  s:{t:'木匣底層壓著一張泛黃的字條，字跡潦草：「若見金桃，勿示於人。無浪留。」你不明白金桃是什麼，卻隱隱覺得，這與玉佩有關。',fx:{inc:{clue:1},luck:1,fl:{jiangClue:1}}},
+  f:{t:'你正翻找，寒香尋忽然推門而入，目光掃過木匣，淡淡道：「別動你不該動的東西。」你只好訕訕收手。',fx:{n:{han:-2}}}}
+]};
+
+EV.b1={day:3,title:'第二幕・帷帽下的稀客',place:'神仙渡・客棧大堂',goal:'看穿稀客的來歷。',omen:'渡口傳來消息：有位遠客要在神仙渡住下……',
+text:()=>[
+`第三日午後，渡口來了一位女客。她戴著帷帽，一身素衣，說是遠道尋親，要在神仙渡住幾日。寒香尋不動聲色地招呼她，卻把你拉到一旁：「這位客人，你別多話。」`,
+`你的前世記憶在耳邊尖叫：就是她。這位溫婉有禮的女客，會在不久之後帶人踏平半個神仙渡。`,
+`可此刻的她正笑著向紅線借針線，語氣親切，像個真正的遠客。她抬眼看你，目光卻像在掂量一件貨。`],
+opts:[
+ {l:'與她攀談，試探她的口音與來歷',tag:'wit',a:['mind','charm'],d:14,
+  s:{t:'你聊起各地風物，她應對得滴水不漏，卻在你隨口提到「燕雲」時，端杯的指尖微微一頓。你不動聲色，心裡有了底。',fx:{fl:{warned:1},inc:{intel:1},n:{guest:-3,han:5},met:['guest']}},
+  f:{t:'你的試探被她輕巧化解，她反而笑著問起你頸間的繩子。衣領微敞間，玉佩被她看見了一瞬。',fx:{fl:{jadeSeen:1},n:{guest:2},met:['guest']}}},
+ {l:'暗中觀察她與隨行侍女的行蹤',tag:'explore',a:['mind'],d:12,
+  s:{t:'你蹲在房檐下熬了半夜，看見侍女悄悄放出一隻灰鴿。腳環上的紋樣你認得：千面人的暗記。你立刻記在心裡。',fx:{fl:{warned:1},inc:{clue:1,intel:1},met:['guest'],f:{qian:-3}}},
+  f:{t:'你被侍女察覺，對方並不聲張，只在你轉身時淡淡丟下一句：「少東家夜裡著涼，容易生病。」你背脊發涼。',fx:{hp:-6,met:['guest']}}},
+ {l:'禮數周到，不露破綻，讓她以為你只是個尋常少東家',tag:'charm',a:['charm'],d:8,
+  s:{t:'你熱情、天真、毫無防備地招待她，像個沒見過世面的少年。女客眼底的審視漸漸淡了。對手一旦輕敵，後面就有空間。',fx:{fl:{guestEase:1},n:{guest:6},met:['guest'],xp:{charm:1}}},
+  f:{t:'你演得太過，女客含笑看了你很久，才輕輕說了句：「少東家，裝得不太像。」',fx:{n:{guest:-4},met:['guest'],xp:{fame:-1}}}},
+ {l:'把不祥的預感告訴寒香尋，請她提防',tag:'charm',a:['charm','mind'],d:12,
+  s:{t:'你鼓起勇氣，把「這位客人不對勁」的直覺說了出來。寒香尋沉默良久，竟說：「你比我想的更警覺。」她第一次認真地看你，眼底有複雜的光。',fx:{fl:{warned:1,hanTrust:1},n:{han:10},inc:{clue:1},met:['guest']}},
+  f:{t:'寒香尋皺眉：「孩子，別胡思亂想。」她顯然沒當真，卻在轉身時握緊了袖中的手。',fx:{n:{han:-3},met:['guest']}}}
+]};
+
+EV.b2={day:6,title:'第三幕・河灘邊的刀客',place:'清河北岸・河灘',goal:'弄清死人刀的來意。',omen:'聽說河灘上來了一個孤身刀客……',
+text:()=>[
+`你想起寒香尋的禁令，也記得前世的劇情：這一夜，你會偷偷溜出神仙渡，在河灘遇見一個人。`,
+`果然，篝火旁坐著一個戴斗笠的男人，腰懸長刀，刀鞘上的舊痕像是用血洗過。他沒回頭：「小子，跟了我一路，累不累？」`,
+`他自稱「死人刀」，說是替人帶一句話。你注意到，他的目光掃過你頸間繩子時，指尖停了一瞬。`],
+opts:[
+ {l:'抄起木棍，與他過幾招試探深淺',tag:'force',a:['body'],d:14,
+  s:{t:'你的木棍被他一刀削斷，他卻收了刀勢，沉聲道：「根骨不錯，下盤太浮。」他肯指點你兩句，這在死人刀身上算是極高的認可。',fx:{n:{si:14},xp:{body:1},met:['si']}},
+  f:{t:'你被他一腳踹進淺灘，冰涼的河水灌了一口。他冷冷道：「就這點本事，也敢跟著我？」',fx:{hp:-12,n:{si:4},met:['si']}}},
+ {l:'坦誠相見，直接問他的來意',tag:'charm',a:['charm'],d:10,
+  s:{t:'你開門見山。死人刀沉默片刻，竟答了：「我與你養母是舊識，也是舊敵。有人要她的命，有人要你頸上的東西。」他點到即止，卻已經夠你心驚。',fx:{n:{si:15},inc:{clue:1},met:['si']}},
+  f:{t:'「小子，話別說太滿。」他冷笑，把酒囊收了起來，一個字也不肯再多說。',fx:{n:{si:2},met:['si']}}},
+ {l:'靜靜觀察他的舉止，推斷他與寒香尋的關係',tag:'wit',a:['mind'],d:12,
+  s:{t:'你注意到他刀鞘上的繩結，和寒香尋繫酒簾的手法一模一樣。你不說破，只輕聲說：「你認得她。」他沉默地點了點頭。',fx:{n:{si:8},inc:{clue:1,intel:1},met:['si']}},
+  f:{t:'你的小算盤被他一眼看穿。「聰明過頭，會死得更快。」他沒動怒，卻也不再看你。',fx:{n:{si:-4},met:['si']}}},
+ {l:'請他喝酒，借酒慢慢套話（銀 30）',tag:'biz',a:['charm','wealth'],d:8,cost:{silver:30},
+  s:{t:'幾口烈酒下肚，死人刀的話也多了：「燕雲……那地方，丟了就再也回不來。」他說完便閉口，彷彿說漏了什麼。',fx:{n:{si:10},inc:{intel:1},met:['si']}},
+  f:{t:'他把酒喝光，眼皮都沒抬，臨走只丟下一句：「謝了，酒不錯。」',fx:{n:{si:3},met:['si']}}}
+]};
+
+EV.b3={day:9,title:'第四幕・開壇宴',place:'神仙渡・後院',goal:'撐過開壇宴，為夜襲做好準備。',omen:'寒香尋決定辦一場開壇宴，宴請清河舊友……',
+text:()=>{
+ const l=[`寒香尋決定在神仙渡舉辦開壇宴，宴請清河各路好友與江湖舊識。你與死人刀成了夥伴，被派去幫忙。紅線也帶著繡金樓的夥計送來燈籠與綢幔，說笑聲把後院填得滿滿當當。`,
+ `席間，你親眼看見寒香尋接過一封密信，臉色驟變。她放下酒杯，聲音平靜得可怕：「明日一早，各位請回吧。」`,
+ `你知道，這是那一夜的前奏。時間不多了。`];
+ if(S.fl.warned)l.push(`好在你早有警覺，手裡已多了一些線索。`);
+ return l;},
+opts:[
+ {l:'籌辦宴席、安排人手，順便在暗處布置接應（銀 60）',tag:'biz',a:['wealth','charm'],d:8,cost:{silver:60},
+  s:{t:'你把夥計、船工分成幾班，酒窖與後院的暗門都做了標記。宴席辦得熱鬧，也辦得有條不紊。清河的鄉親都說：少東家長大了。',fx:{r:{guards:2},f:{qinghe:8},xp:{fame:1},inc:{hx:1}}},
+  f:{t:'宴席辦得風光，布置的細節卻太亂，反讓幾個夥計忙中出錯。',fx:{r:{guards:1},f:{qinghe:3}}}},
+ {l:'趁宴席暗查賓客，找出混入的奸細',tag:'wit',a:['mind'],d:14,
+  s:{t:'你在敬酒的間隙，數出三名不曾見過的陌生人，其中一人的靴底沾著新鮮的河泥，不像是走路來的。你悄悄交代夥計暗中盯緊。',fx:{inc:{clue:1,intel:1},fl:{warned:1}}},
+  f:{t:'你盯得太明顯，反被一位老客誤會為冒犯，寒香尋不得不出面賠禮。',fx:{xp:{fame:-1},n:{han:-3}}}},
+ {l:'拉紅線到僻靜處，認真告訴她：夜裡請在繡金樓備好暗窖',tag:'charm',a:['charm','mind'],d:10,
+  s:{t:'你握住她的手腕，第一次沒有玩笑：「答應我，今晚把你娘和夥計都藏進暗窖，無論聽見什麼都別出來。」紅線愣了很久，終於點頭，又從袖口扯下一個繡著小舟的護身符塞給你：「那你也答應我，別死。」',fx:{fl:{cellar:1},inc:{hx:3},n:{hong:12},i:'hcharm'}},
+  f:{t:'紅線笑得前仰後合：「少東家，你是不是又做噩夢了？」她沒當真，但還是答應回去叮嚀一聲。',fx:{inc:{hx:1},n:{hong:4}}}},
+ {l:'與死人刀在渡口外圍佈哨，防備夜襲',tag:'force',a:['body'],d:12,
+  s:{t:'你和死人刀沿河灘佈下三道暗哨，用鈴繩連結。他看你的眼神更複雜了：「你怎麼知道今晚不太平？」你只能笑笑：「直覺。」',fx:{fl:{watch:1},n:{si:12},xp:{body:1},r:{guards:1}}},
+  f:{t:'暗哨佈得潦草，被經過的巡船沖斷了鈴繩，你白忙一場。',fx:{hp:-8,n:{si:3}}}}
+]};
+
+EV.b4a={day:12,title:'第五幕・渡口對決',place:'神仙渡・渡口',goal:'擊退千夜，趕往繡金樓。',omen:'',
+text:()=>[
+`子時，梆聲未落，渡口外傳來第一聲慘叫。`,
+`黑衣人踏過河灘，那位帷帽女客站在火光裡，緩緩摘下帷帽，露出一張眉眼清冷的臉。`,
+`「我叫千夜。」她把玩著一柄細長的彎刀，「少東家，把鎮冠珏交出來，我可以讓神仙渡留個全屍。」`,
+`死人刀拔刀擋在你身前，只說了四個字：「別回頭。走。」`,
+`可你知道，繞不開她。她的身後，繡金樓的檐角已經竄起了第一縷火舌。`],
+opts:[
+ {l:'與死人刀聯手，正面接下千夜的彎刀',tag:'force',a:['body'],d:16,days:0,
+  s:{t:'你與死人刀一左一右，刀光與彎刀撞出一串火星。千夜被逼退三步，指尖滲出一絲血，她盯著你，低聲笑了：「有意思。原來你不是只會躲的少爺。」「千夜，」死人刀冷冷道，「你的對手是我們。」',fx:{hp:-10,xp:{body:2},n:{si:8},met:['guest'],fl:{ye:1,yeWin:1}}},
+  f:{t:'千夜的彎刀快得只剩一道銀線，你的刀被挑飛，肩頭多了一道血口。「就這點本事？」她用刀尖挑起你的下巴，「鎮冠珏在你身上，真是浪費。」死人刀怒吼著撞開她，替你扛下一記重劈。',fx:{hp:-22,n:{si:5},met:['guest'],fl:{ye:1,yeLose:1}}}},
+ {l:'看穿她的易容與步法，抓破綻反擊',tag:'wit',a:['mind'],d:18,days:0,
+  s:{t:'你盯著她的腳步，發現她每次變招前，左肩都會微微一沉。你喊了一聲「左肩！」死人刀應聲劈出，彎刀被震得脫手半尺。千夜眯起眼：「你怎麼知道的？……有意思，下一次，我不會再給你機會。」',fx:{hp:-8,xp:{mind:2},n:{si:6},met:['guest'],fl:{ye:1,yeWin:1}}},
+  f:{t:'你的推演慢了半拍，千夜的彎刀貼著你的耳畔掠過，削斷一縷頭髮。「聰明，」她輕聲道，「可聰明的人，死得最快。」她反手一腳，把你踹進了淺灘。',fx:{hp:-18,met:['guest'],fl:{ye:1,yeLose:1}}}},
+ {l:'以輕功與地形周旋，拖住她的腳步',tag:'explore',a:['body','mind'],d:16,days:0,
+  s:{t:'你踩著船舷與木樁來回騰挪，千夜的刀三次擦身而過，卻始終砍不到你。她第一次露出惱怒的神色：「躲躲藏藏，算什麼本事？」「能活下去的本事。」你笑著回答，把她引向了渡口外的暗礁。',fx:{hp:-8,xp:{body:1,mind:1},n:{si:5},met:['guest'],fl:{ye:1,yeWin:1}}},
+  f:{t:'你踩空了一塊濕滑的木板，整個人摔進冰冷的河水裡。千夜站在船頭居高臨下：「這就是你的本事？」她的刀尖停在你喉前，又輕輕挪開，「留著你，鎮冠珏還用得上。」',fx:{hp:-16,met:['guest'],fl:{ye:1,yeLose:1}}}},
+ {l:'以言語亂她心神，趁隙出手',tag:'charm',a:['charm','mind'],d:20,days:0,
+  s:{t:'你高聲道：「你為誰賣命？你的主子，可曾告訴過你，他要的是金桃，還是你的命？」千夜的刀勢一滯，眼神微微晃動。就是這一瞬，你一刀橫掃，逼得她連退數步。「閉嘴！」她咬牙，「……我會殺了你。」',fx:{hp:-8,xp:{charm:2},met:['guest'],fl:{ye:1,yeWin:1}}},
+  f:{t:'你的話還沒說完，千夜已經笑了：「這種話，我聽得太多了。」她的彎刀自下而上撩起，你狼狽閃避，仍被劃開了前襟，血染了半身。',fx:{hp:-20,met:['guest'],fl:{ye:1,yeLose:1}}}}
+]};
+
+EV.b4={day:12,title:'第五幕・繡金樓之夜',place:'神仙渡・火光中',goal:'救下紅線。',omen:'',
+text:()=>{
+ const l=[];
+ if(S.fl.yeWin)l.push(`千夜捂著手腕後退，冷冷拋下一句：「這一局算你的。」她一揮手，黑衣人潮水般湧向渡口，自己卻轉身沒入火光。死人刀拄刀喘息，低聲對你說：「別愣著，去繡金樓。」`);
+ else l.push(`你被千夜一腳踹翻在地，刀尖抵在喉前，她淡淡道：「鎮冠珏，早晚是我的。」死人刀拼命撞開她，替你扛下一記重劈，血濺了你一臉。「走……去救你要救的人。」`);
+ l.push(`而繡金樓的檐角，已經竄起了火舌。`);
+ if(S.fl.cellar)l.push(`你想起白日對紅線的叮囑。暗窖，她有沒有躲進去？`);
+ else l.push(`你想起前世的劇情。就是這一刻，紅線會被困在火裡。`);
+ l.push(`你只有一次機會。`);
+ return l;},
+opts:[
+ {l:'提刀衝進火場，硬把紅線搶出來',tag:'force',a:['body'],d:()=>rescueD(19),
+  s:{t:'火舌舔著你的衣角，你一腳踹開燒焦的門板，在樑下找到了蜷縮的紅線。你把她扛上肩頭，從窗口躍出，身後轟然倒塌。她咳著、哭著，卻死死拽著你的衣袖：「哥……哥……」',fx:()=>({hp:-20,fl:{hxAlive:1},kill:'si',n:{hong:20},i:'sirendao',art:S.npc.si.aff>=40?'sidao':undefined,xp:{body:2,fame:1}})},
+  f:{t:'你衝進了火場，卻晚了一步。樑木崩落，你被濃煙逼退，聽見最後一聲呼喊淹沒在烈焰裡。死人刀在渡口倒下時，把刀塞進你手中，只說：「活下去。」',fx:{hp:-25,kill:['hong','si'],fl:{hxDead:1},i:'sirendao'}}},
+ {l:'從後院暗道繞進繡金樓，走暗窖救人',tag:'wit',a:['mind'],d:()=>rescueD(17),
+  s:{t:'你憑記憶摸進後院的暗門，一路摸黑爬進窖口。紅線抱著她母親縮在角落，嚇得說不出話。你把她們一個個托出，趁火勢未封死，從河邊小徑撤走。',fx:()=>({hp:-8,fl:{hxAlive:1},kill:'si',n:{hong:20},i:'sirendao',art:S.npc.si.aff>=40?'sidao':undefined,xp:{mind:2,fame:1}})},
+  f:{t:'暗道被塌下的木樑堵死，你硬生生被擋在了外面。你拚命撥開灰燼，只摸到一隻燒焦的紅繩。死人刀為你擋下追兵，倒在了渡口。',fx:{hp:-18,kill:['hong','si'],fl:{hxDead:1},i:'sirendao'}}},
+ {l:'高聲呼喊紅線的名字，請死人刀分一刀之力接應',tag:'charm',a:['charm','body'],d:()=>rescueD(21),
+  s:{t:'你拼盡全力嘶吼，樓上傳來一聲微弱的應答。死人刀回頭看了你一眼，反手一刀劈開火場外的敵人，為你開出一條路。「去！」你衝進去，將紅線抱了出來。他沒有等到你回頭。',fx:()=>({hp:-14,fl:{hxAlive:1},kill:'si',n:{hong:18},i:'sirendao',art:S.npc.si.aff>=40?'sidao':undefined,xp:{charm:1,body:1}})},
+  f:{t:'你的喊聲被喧囂吞沒，死人刀來不及分身，敵人如潮水湧來。你等到的，只有繡金樓整個傾塌的巨響。',fx:{hp:-20,kill:['hong','si'],fl:{hxDead:1},i:'sirendao'}}},
+ {l:'潑出酒窖的烈酒與桐油，阻斷火勢與追兵（銀 80）',tag:'biz',a:['wealth','mind'],d:()=>rescueD(15),cost:{silver:80},
+  s:{t:'你命人將整窖烈酒與桐油潑向通往繡金樓的長廊，一把火點燃。烈焰在敵人與繡金樓之間燒起一道火牆，為你贏得半炷香時間。你借著火牆掩護把紅線一家救了出來。',fx:()=>({hp:-10,fl:{hxAlive:1},kill:'si',n:{hong:18},i:'sirendao',art:S.npc.si.aff>=40?'sidao':undefined,r:{iron:-5},xp:{wealth:1,mind:1}})},
+  f:{t:'火牆燒得太旺，反把通往繡金樓的路也封死了。你眼睜睜看著火舌吞噬了你想救的人。死人刀在火光外拚到最後一口氣。',fx:{hp:-20,kill:['hong','si'],fl:{hxDead:1},i:'sirendao'}}}
+]};
+
+EV.b5={day:14,title:'第六幕・離開清河',place:'神仙渡・渡口',goal:'讀懂寒香尋的信，前往開封。',omen:'',
+text:()=>{
+ const l=[`天亮時，神仙渡一片狼藉。死去的鄉親被一個個抬出，寒香尋早已不見，只在你的枕邊留下一封信，與一句話：「去開封，找溫無缺。」`,
+ `你站在渡口，看著曾經熟悉的一切化為焦土。`,S.fl.yeWin?`你想起千夜離去前那句話：「下次，我不會再留手。」`:`你想起千夜離去前那句話：「下次，輪到你跪在我面前。」`];
+ if(S.npc.hong.alive)l.push(`紅線裹著你的外衣，眼睛哭得通紅，卻仍強撐著替你拍去肩頭的灰：「哥，你別怕，我還在。」`);
+ else l.push(`你想起那個總笑嘻嘻的小姑娘，想起桂花糕的甜味。她再也不會推開門，說「太陽都曬屁股啦」了。`);
+ return l;},
+opts:[
+ {l:'帶紅線同行，一起去開封（需紅線生還）',tag:'charm',a:['charm'],d:6,req:()=>S.npc.hong.alive,reqNote:'紅線已不在人世',
+  s:{t:'你蹲下身看著她：「繡金樓沒了，但你還在。跟我走，好不好？」紅線擦了擦眼淚，用力點頭：「嗯。我要看著你，這次換我護著你。」',fx:{fl:{hxWith:1,stage:2},n:{hong:15},xp:{charm:1}}},
+  f:{t:'紅線搖頭，倔強地抱住母親：「我娘在這兒，我得留下重建繡金樓。你去吧，我會等你回來。」她把一束紅繩塞進你手心。',fx:{fl:{hxStay:1,stage:2},n:{hong:8}}}},
+ {l:'安葬鄉親與死人刀，重整神仙渡',tag:'biz',a:['charm','wealth'],d:8,
+  s:{t:'你與倖存的鄉親一同挖墳、立碑，為死人刀刻下「無名刀客」四個字。清河的人看著你，默默點頭。這片土地記住了你。',fx:{f:{qinghe:15},xp:{fame:2},r:{silver:-30},fl:{stage:2}}},
+  f:{t:'你勉強辦完喪事，人手卻不夠，幾位鄉親默默搖頭離去。',fx:{f:{qinghe:5},fl:{stage:2}}}},
+ {l:'細讀寒香尋的信，推敲信中的隱藏線索',tag:'wit',a:['mind'],d:12,
+  s:{t:'信中寥寥數語：「他們要的是金桃，不是你。去開封，找溫無缺。切記，千面人無處不在。」落款處卻有一行極淡的小字：「燕雲舊事，終須由你了結。」你把它背了下來。',fx:{i:'hanletter',inc:{clue:2,intel:1},fl:{stage:2}}},
+  f:{t:'信中字句晦澀，你讀了三遍也只看出表面的叮嚀。',fx:{i:'hanletter',fl:{stage:2}}}},
+ {l:'連夜動身，不給敵人追上的機會',tag:'explore',a:['body','mind'],d:10,
+  s:{t:'你走了河上的暗渡，連夜登船，一路無人跟蹤。船行出清河的那一刻，你回頭，晨霧裡的神仙渡只剩一道細細的炊煙。',fx:{i:'hanletter',xp:{body:1,mind:1},fl:{stage:2}}},
+  f:{t:'船行半夜，你察覺有人跟蹤，被迫換船換路，折騰得筋疲力盡。',fx:{hp:-8,i:'hanletter',fl:{stage:2}}}}
+]};
+
+/* ═══════════ 第二階段：踏入江湖，開封尋真相 ═══════════ */
+EV.b6={day:16,title:'第七幕・麥風集的騙局',place:'開封城外・麥風集',goal:'找到溫無缺，在開封立足。',omen:'',
+text:()=>{
+ const l=[`船靠開封碼頭，你踏上的不只是一座城，還是一個比清河大得多的江湖。城外的麥風集人聲鼎沸，攤販的吆喝、牲口的嘶鳴、商人的算盤聲混成一片。`,
+ `你照著信上的地址打聽「溫無缺」，卻先被一個自稱鶯鶯的女子攔住：「公子是從外地來的吧？要不要買一張發財的憑證？一張換十貫，保賺不賠。」`];
+ if(S.fl.hxWith)l.push(`紅線拉了拉你的衣袖，壓低聲音：「哥，這人笑得好假。」`);
+ l.push(`你認出來了：這是開封偽幣騙局的開端。`);
+ return l;},
+opts:[
+ {l:'識破騙局，反將一軍',tag:'wit',a:['mind'],d:12,
+  s:{t:'你拆穿她憑證上的墨跡與紙張，順手設局讓她的同夥自己露了餡。鶯鶯先是一愣，隨即大笑：「有意思，你不是尋常肥羊。」她還了你雙倍銀兩，並留下一枚偽幣做「賠禮」。',fx:{r:{silver:80},i:'fakecoin',n:{ying:10},inc:{clue:1},met:['ying'],xp:{mind:1}}},
+  f:{t:'你自作聰明，卻被她反設了一局，損失了一筆銀子。',fx:{r:{silver:-60},met:['ying']}}},
+ {l:'假裝入局，結交鶯鶯，順藤摸出她背後的人',tag:'charm',a:['charm'],d:10,
+  s:{t:'你演了一出貪財的外地少爺，鶯鶯果然對你親熱起來，酒過三巡還透露：她只是替「上頭」跑腿的，上頭是個姓史的大人物。',fx:{n:{ying:20},fl:{yingAlly:1},inc:{intel:1,clue:1},met:['ying']}},
+  f:{t:'你演得不夠像，鶯鶯笑嘻嘻地收了你的訂金，轉頭就沒了影。',fx:{r:{silver:-30},met:['ying']}}},
+ {l:'當街制住騙子團夥，立個下馬威',tag:'force',a:['body','fame'],d:14,
+  s:{t:'你三兩下便把撲上來的混混打翻在地，周圍百姓叫好。鶯鶯在人群後長長吐出一口氣：「好身手。下次，我們換個方式見面。」',fx:{xp:{fame:2,body:1},f:{court:-2},met:['ying'],n:{ying:5}}},
+  f:{t:'對方人多，你被圍毆了一陣才脫身，還驚動了巡街的差役。',fx:{hp:-12,f:{court:-4},met:['ying']}}},
+ {l:'繞開騙局，直接去找溫無缺',tag:'explore',a:['mind','luck'],d:10,
+  s:{t:'你順著寒香尋留下的暗號，找到麥風集後巷一家不起眼的藥鋪。溫無缺接過信，神色複雜，遞給你一張精緻的請柬：「英雄會三日後開幕，你需要它。」',fx:{n:{wen:12},i:'invite',met:['wen'],inc:{intel:1}}},
+  f:{t:'你在集市裡兜了半天圈子，才在天黑前找到藥鋪，溫無缺的神色已冷淡了幾分。',fx:{r:{silver:-20},n:{wen:3},met:['wen']}}}
+]};
+
+EV.b7={day:22,title:'第八幕・英雄會',place:'開封城東・校場',goal:'在英雄會上立足，探查金造器。',omen:'開封城裡到處傳著英雄會的消息，據說朝廷大員也要親臨……',
+text:()=>[
+`英雄會在開封城東的校場開幕，各路群雄雲集，兵刃聲與酒氣混作一團。人人口中炙熱談論的，是「金造器」：傳說此器可點石成金，鑄天下之財，解亂世之困。`,
+`朝廷大員史大人親自出席，笑容和煦，言辭得體，像一尊泥塑的財神。`,
+`你在人群中瞥見一雙熟悉的眼睛：臉不是千夜的臉，眼神卻是。千面人，就在這座校場裡。`,S.fl.yeWin?`她看你時多了一分忌憚，像是在重新估量一個對手。`:`她看你時帶著勝者的從容，彷彿你仍是那個被她踩在腳下的少年。`],
+opts:[
+ {l:'登台比武，用實力讓群雄記住你',tag:'force',a:['body','fame'],d:18,
+  s:{t:'你連過三關，最後一招擊敗了台上的成名高手。台下喝彩如潮，你的名字被抄在了英雄會的名冊首頁。',fx:{xp:{fame:3,body:1},f:{jianghu:12},hp:-8}},
+  f:{t:'你在第二關就被一記重掌擊飛台下，狼狽不堪。',fx:{hp:-18,xp:{fame:-1}}}},
+ {l:'暗中觀察史大人與各方暗號，找出千面人',tag:'wit',a:['mind'],d:14,
+  s:{t:'你看出幾個人的站位與手勢在重複同一個暗號：每當史大人捋鬚，北側看台就有人低頭整理袖口。你默默記下了三張面孔。',fx:{inc:{clue:2,intel:1},xp:{mind:1}}},
+  f:{t:'你的目光被一個戴面具的人察覺，那人朝你微微頷首，笑意不明。',fx:{hp:-8,f:{qian:-8}}}},
+ {l:'結交群雄，試著把各方人物擰成一股力量',tag:'charm',a:['charm','fame'],d:14,
+  s:{t:'你與幾位坦蕩的江湖豪傑把酒言歡，隱世門派的長老也對你點頭示意。你在英雄會上，攢下了第一批真正的盟友。',fx:{f:{jianghu:15,yinshi:8},fl:{union:1},xp:{charm:2,fame:1}}},
+  f:{t:'你被幾個老江湖當槍使，白白替人出了頭，還欠下一筆人情。',fx:{xp:{fame:-1},r:{silver:-40}}}},
+ {l:'重金買通英雄會執事，打探金造器的底細（銀 100）',tag:'biz',a:['wealth','charm'],d:10,cost:{silver:100},
+  s:{t:'執事收下銀兩，低聲道：「金造器在史大人府後院，每日只開爐一個時辰。」你還拿到了一張爐房的草圖。',fx:{inc:{intel:2,clue:1},f:{court:3}}},
+  f:{t:'執事收了錢卻只吐出幾句廢話，還順手把你的行蹤賣給了別人。',fx:{f:{qian:-4}}}}
+]};
+
+EV.b8={day:28,title:'第九幕・鬼市燈',place:'開封・鬼市',goal:'從前朝遺老口中拼出燕雲往事。',omen:'',
+text:()=>{
+ const l=[`開封鬼市在夜裡才睜眼。幽暗的燈火下，人人壓低了聲音，攤上的貨沒有來歷，也沒有名字。`,
+ `你循著溫無缺給的暗號，在最深的巷子裡找到了一位白髮老者。他自稱魏先生，曾是後周舊臣。他盯著你頸間的玉佩，久久不語。`,
+ `「孩子，你可知這枚玉的來歷？」`,
+ `他嘆了口氣：「石敬瑭割讓燕雲十六州，是這百年來所有人心頭的刺。世宗北伐，三關已復，天不假年，功敗垂成。如今新朝初立，有人想把這根刺，變成另一把刀。」`];
+ if(S.fl.hxWith)l.push(`紅線在角落裡聽得入神，小聲嘀咕：「原來哥身上，背著這麼重的事。」`);
+ return l;},
+opts:[
+ {l:'追問燕雲舊事的細節，把碎片拼成全貌',tag:'wit',a:['mind'],d:12,
+  s:{t:'你一條條追問：燕雲陷落的時日、舊部的去向、玉佩上紋路的含意。魏先生越講越慢，最後長嘆：「你比我想的更像他。」他說出了一個名字，而這個名字讓你的血瞬間涼了半截。',fx:{inc:{clue:2,intel:1},fl:{truth:1},xp:{mind:2}}},
+  f:{t:'魏先生警覺地合上嘴：「知道太多，對你沒好處。」',fx:{inc:{clue:1}}}},
+ {l:'以誠相待，請求老人庇護與指點',tag:'charm',a:['charm'],d:12,
+  s:{t:'你把清河的遭遇一五一十說給他聽，連死人刀與紅線的名字都沒落下。魏先生眼角泛紅，沉默良久，將一卷舊輿圖交到你手上：「去查，去看，去問。」',fx:{n:{wei:25},fl:{weiAlly:1},i:'yanmap',met:['wei'],xp:{charm:1}}},
+  f:{t:'魏先生客氣而疏離：「孩子，我老了，只能給你一句話：小心身邊人。」',fx:{n:{wei:6},met:['wei']}}},
+ {l:'查驗玉佩與輿圖，找出兩者的對應',tag:'explore',a:['mind','luck'],d:14,
+  s:{t:'你將玉佩按在輿圖的標記上，紋路與十六州舊關隘一一吻合。這不是裝飾，是一把「鑰匙」。魏先生低聲道：「它叫鎮冠珏，也叫金桃。」',fx:{i:'yanmap',fl:{jadeKey:1},inc:{clue:2},luck:1,n:{wei:10},met:['wei']}},
+  f:{t:'你反覆比對，仍看不出名堂，只得先收好輿圖。',fx:{i:'yanmap',n:{wei:4},met:['wei']}}},
+ {l:'護送魏先生避開鬼市外跟蹤的殺手',tag:'force',a:['body'],d:16,
+  s:{t:'兩名黑衣人從屋頂撲下，你擋在老人身前，三招之內便擊退了兩人。魏先生看著你，眼神裡多了一絲信任：「你跟他年輕時一樣，肯替人擋刀。」',fx:{hp:-8,n:{wei:20},fl:{weiAlly:1,weiSaved:1},met:['wei'],xp:{body:1,fame:1}}},
+  f:{t:'殺手人多，你雖護住了老人，自己卻挨了一刀，魏先生也受了驚嚇。',fx:{hp:-18,n:{wei:5},met:['wei']}}}
+]};
+
+EV.b9={day:35,title:'第十幕・金造器開爐',place:'開封・史府後院',goal:'揭穿金造器背後的陰謀。',omen:'金造器即將在史府開爐，滿城都在議論……',
+text:()=>[
+`金造器終於開爐。史大人在眾目睽睽下宣告：此器可鑄天下之財，解亂世之困。圍觀者歡聲雷動，連朝中的老臣也頻頻點頭。`,
+`可你手裡有鶯鶯的偽幣、魏先生的輿圖、千面人的暗號。這些碎片拼在一起，是一條完整的鎖鏈：用偽幣掏空中原的銀根，用金造器的名義聚攏軍械與錢糧，最後把一切悄悄送往北境。`,
+`這不是奇蹟。這是一場裹著金箔的叛賣。`,
+`爐火映紅了史大人的臉，他朝人群裡的你，意味深長地笑了一下。`],
+opts:[
+ {l:'當眾揭穿金造器的騙局，亮出所有證據',tag:'wit',a:['mind','fame'],d:()=>clamp(24-(S.fl.clue||0)*2,6,34),
+  s:{t:'你踏上高台，將偽幣、輿圖、帳目一一擺開。台下起初一片寂靜，繼而嘩然。史大人面色微變，卻強笑著打圓場；溫無缺、鶯鶯、魏先生同時站出來為你作證。',fx:{fl:{shiExposed:1},f:{court:-8,jianghu:10},xp:{fame:3,mind:1},n:{shi:-20},met:['shi']}},
+  f:{t:'你的證據被史大人一句「偽造」輕輕擋回，圍觀者反倒指責你擾亂朝廷大計。你被衛兵請出了場。',fx:{xp:{fame:-2},hp:-10,f:{court:-10},met:['shi'],n:{shi:-10}}}},
+ {l:'夜闖爐房，毀掉金造器',tag:'force',a:['body'],d:20,
+  s:{t:'你趁夜潛入爐房，用鐵鏈絆倒爐座，滾燙的銅水潑了一地。你在大火中衝出，身後傳來史府護衛的怒吼：「有人毀器！」整個開封都被驚動了。',fx:{hp:-14,fl:{furnaceDown:1},xp:{body:2,fame:1},f:{court:-5,qian:-10},met:['shi']}},
+  f:{t:'爐房守衛比預想的多，你被逼得從牆頭滾落，肩頭灼傷一大片。',fx:{hp:-25,met:['shi']}}},
+ {l:'說服史大人身邊的人倒戈，從內部瓦解',tag:'charm',a:['charm'],d:16,
+  s:{t:'你找到史大人最信任的帳房，攤開一條他不得不面對的後路。帳房顫抖著，最終遞出了一份副本。史大人身邊的牆，裂開了第一道縫。',fx:{fl:{shiIsolated:1},inc:{clue:2},f:{court:3},n:{ying:10,wen:10},met:['shi']}},
+  f:{t:'帳房把你的話原封不動轉告了史大人。他笑著對你說：「少東家，下次想見我，直接遞帖子便是。」',fx:{f:{qian:-5},n:{shi:-5},met:['shi']}}},
+ {l:'請溫無缺出手，以經濟手段反制偽幣',tag:'biz',a:['wealth','mind'],d:14,
+  s:{t:'溫無缺沉默半晌，終於露出一個狡黠的笑容：「讓偽幣變成廢紙，比掀翻爐子容易多了。」三日之間，開封各家錢莊同時拒收偽幣，史大人的陰謀斷了血脈。',fx:{r:{silver:120},fl:{coinCrack:1},n:{wen:15},xp:{wealth:2},met:['shi']}},
+  f:{t:'溫無缺的計劃被對手察覺，錢莊間起了擠兌，損失了一筆銀兩。',fx:{r:{silver:-80},n:{wen:3},met:['shi']}}}
+]};
+
+/* ═══════════ 第三階段：天下大勢，俠之大者 ═══════════ */
+EV.b10={day:42,title:'第十一幕・燕雲舊事',place:'開封・暫居小院',goal:'直面自己的身世。',omen:'',
+text:()=>{
+ const l=[`金造器之變後的夜裡，有人叩響了你的院門。門外站著一個風塵僕僕的中年男人，鬢角染霜，腰間一柄老刀。`,
+ `「孩子，我是江無浪。」`,
+ `他走進院子，看著你的眼睛，像在確認什麼。`,
+ `「你不是我的親生兒子。你頸上的玉佩，叫鎮冠珏，是當年守燕雲的一位將領，臨死前託付給我們的。那位將領的孩子，就是你。」`,
+ `「寒香尋把你藏在神仙渡，是為了讓你做個尋常少年。可有人不許你尋常。」`];
+ if(S.npc.hong.alive)l.push(`紅線在門外探頭，眼裡有淚，卻對你比了個大拇指。`);
+ return l;},
+opts:[
+ {l:'質問他：為什麼瞞了我這麼多年？',tag:'charm',a:['charm'],d:12,
+  s:{t:'你的聲音在發抖，他卻沒有辯解，只是低頭道：「因為我怕你知道了，就再也回不到從前。」你看著這個父親般的男人，眼眶發熱，終究沒有再說重話。',fx:{n:{jiang:20},fl:{jiangBack:1},xp:{charm:2}}},
+  f:{t:'你的話越說越重，江無浪沉默地站了很久，最終只留下一句：「你想清楚了，再來找我。」',fx:{n:{jiang:-4},fl:{jiangBack:1}}}},
+ {l:'追問：舊部還剩多少人？燕雲的事，我到底該做什麼？',tag:'wit',a:['mind'],d:14,
+  s:{t:'江無浪眼中亮起了光：「還有一批人，散在關內關外。只要鎮冠珏在，他們隨時能聚。」他把幾個名字與地點一一說出，這些碎片和魏先生的話嚴絲合縫地接上了。',fx:{inc:{clue:2,intel:1},fl:{jiangBack:1,oldMen:1},n:{jiang:12},xp:{mind:2}}},
+  f:{t:'江無浪只說了一半，便咳嗽著止住：「有些事，現在說，對你沒好處。」',fx:{fl:{jiangBack:1},n:{jiang:5}}}},
+ {l:'與他過招，證明自己有資格接下這個擔子',tag:'force',a:['body'],d:16,
+  s:{t:'你拔刀，他也拔。刀光交錯三十回合，你被他壓得連連後退，卻在最後一招借力反擊，逼得他退了半步。他收刀大笑：「好，像個江家人！」並傳你幾招壓箱刀法。',fx:{n:{jiang:25},fl:{jiangBack:1},xp:{body:3},hp:-10,art:'sidao'}},
+  f:{t:'你被他一刀挑飛兵刃，狼狽跌倒。他伸手扶你：「不急，慢慢來。」',fx:{hp:-12,n:{jiang:8},fl:{jiangBack:1},xp:{body:1}}}},
+ {l:'沉默地接下事實，把玉佩收好，先商量如何保護身邊的人',tag:'explore',a:['mind','luck'],d:8,
+  s:{t:'你深吸一口氣，把玉佩重新貼身收好。江無浪讚許地點頭：「你比我想的更穩。」兩人連夜商議出一條護送紅線與百姓撤出險地的暗線。',fx:{fl:{jiangBack:1,safeLine:1},n:{jiang:12},inc:{intel:1},f:{yinshi:8}}},
+  f:{t:'你沒有說話，只是靜靜坐了一夜。天亮時，江無浪還在原地。',fx:{fl:{jiangBack:1},n:{jiang:6}}}}
+]};
+
+EV.b11={day:50,title:'第十二幕・何為俠？',place:'開封・城樓',goal:'選擇你的道路。',omen:'',
+text:()=>[
+`千面人撕下偽裝，北境勢力調兵南下，朝中有人主和有人主戰，江湖群雄各懷心思。你手中的鎮冠珏，成了各方爭奪的焦點。`,
+`江無浪站在城樓上，風吹動他花白的鬢角：「孩子，這是你要做的選擇。是入朝堂，匡扶正義；守江湖，護一方安寧；還是出雁門，去把那片失落的故土要回來？」`,
+`他頓了頓：「又或者，三條路，你都想走？」`],
+opts:[
+ {l:'入朝堂：攜鎮冠珏與證據面君，以廟堂之力匡扶正義',tag:'charm',a:['charm','fame'],d:14,
+  s:{t:'你決定走進那座森嚴的宮門。朝堂的水很深，但你相信，總要有人站在那裡說實話。你帶著證據、人脈與勇氣，邁出了這一步。',fx:{fl:{route:'court'},f:{court:20},xp:{fame:2}}},
+  f:{t:'你決心入朝，卻發現朝堂上不歡迎你的人遠比想像的多。但你已經沒有退路。',fx:{fl:{route:'court'},f:{court:5}}}},
+ {l:'守江湖：聚集英雄會群雄，為百姓守一方安寧',tag:'force',a:['body','fame'],d:14,
+  s:{t:'你選擇留在江湖。群雄聽聞你的決定，紛紛響應，各門派、市井義士、昔日的鄉親，都願在你麾下共禦外敵。',fx:{fl:{route:'jianghu'},f:{jianghu:20,yinshi:10},xp:{fame:2}}},
+  f:{t:'你的號召沒有想像中熱烈，不少人猶豫觀望。但你仍決定走這條路。',fx:{fl:{route:'jianghu'},f:{jianghu:6}}}},
+ {l:'出雁門：北上燕雲，去拿回失落的故土',tag:'explore',a:['body','mind'],d:16,
+  s:{t:'你展開魏先生給的舊輿圖，把目光投向最北的關隘。江無浪沉默地點頭：「這條路最苦，也最像那位將軍會走的路。」',fx:{fl:{route:'north'},f:{north:-5},inc:{intel:1},xp:{body:1,mind:1}}},
+  f:{t:'前路兇險，沿途補給不足。但你已決心北上。',fx:{fl:{route:'north'},hp:-8}}},
+ {l:'三條路都走：串連朝堂、江湖與邊關，擰成一股力量（需要足夠的線索與同盟）',tag:'wit',a:['mind','charm'],d:20,
+  req:()=>(S.fl.clue||0)>=5&&!!S.fl.union,reqNote:'需要至少 5 條線索，並已結成江湖同盟',
+  s:{t:'你把魏先生的舊部、溫無缺的商路、英雄會的盟約、朝中仍有良心的大臣，一根根線頭擰成一股繩。江無浪看著你，輕輕笑了：「這才是俠之大者。」',fx:{fl:{route:'all'},f:{court:15,jianghu:15,yinshi:10},xp:{mind:2,charm:2,fame:2}}},
+  f:{t:'你的串連尚欠火候，三方各有猜忌。你最終只能擇一而行。',fx:{fl:{route:'jianghu'},f:{jianghu:5}}}}
+]};
+
+/* 終局：依選擇的路線展開 */
+const FIN={
+ court:{place:'開封・垂拱殿',title:'終幕・廟堂對質',
+  intro:['你攜鎮冠珏與證據入宮。垂拱殿上，史大人一身緋袍，面不改色；北境使者立在側旁，笑意藏刀。殿外禁軍之中，有人腰間藏著千面人的信物。','新朝初立，這一場對質，決定的是「戰」還是「和」，也是中原最後的底氣。'],
+  o:[{l:'條陳證據，逐條駁倒史大人的「和議」與金造器之說',tag:'wit',a:['mind','fame'],
+      s:'你一條條陳述，邏輯如刀。殿上由譁然轉為沉默，繼而有老臣出列：「臣附議。」史大人被當庭收押，北境使者倉皇退場。',f:'你的證據被史大人一一反駁，殿上風向逆轉，你被衛士架出宮門，朝堂大勢已去。',cs:'你的陳詞字字入骨，連天子也離座起身。這一日，朝堂之上多了一個敢說真話的少年。'},
+     {l:'說動兩位重臣與老將軍，聯名上奏',tag:'charm',a:['charm','fame'],
+      s:'你一一登門，把憂心與證據攤在桌上。三位重臣、一位老將終於點頭，聯名奏摺遞上，朝局為之一轉。',f:'重臣們各懷心思，聯名一事擱淺，奏章石沉大海。',cs:'你的誠意打動了所有人，連素來謹慎的老臣也含淚落筆。'},
+     {l:'殿前截殺刺客，護住天子',tag:'force',a:['body'],
+      s:'刀光閃過，三名刺客倒在殿前。你渾身浴血，卻穩穩護住了天子的御座。滿殿皆驚，繼而跪倒。',f:'刺客太多，你力戰不支，雖然保住了天子，自己卻身負重傷，朝局依舊混亂。',cs:'你一人一刀，殿前連斬七人，血染長階。從此「護駕少俠」之名傳遍天下。'},
+     {l:'以帳目與溫無缺的商路為憑，斷其錢袋',tag:'biz',a:['wealth','mind'],
+      s:'溫無缺的商路與你手中的帳目互相印證，北境的錢糧被一夜凍結。史大人的陰謀失去了血脈。',f:'帳目被人搶先銷毀，證據不足，斷錢袋之計落空。',cs:'錢莊聯保，三日之內，所有與北境勾連的帳戶全部凍結，陰謀徹底潰散。'}]},
+ jianghu:{place:'開封・英雄會校場',title:'終幕・江湖夜戰',
+  intro:['英雄會的校場上，千面人撕下偽裝，北境潛伏的精銳自汴河兩岸殺出。群雄各自為戰，人心渙散。','你站上高台，手中是群雄敬畏的鎮冠珏。這一夜，要決出江湖的脊樑。'],
+  o:[{l:'領群雄正面迎敵，以身作旗',tag:'force',a:['body','fame'],
+      s:'你持刀立於陣前，每一次斬落敵人，身後便多一聲喝彩。黎明前，敵軍潰退，校場上飄起了江湖群雄的旗幟。',f:'敵軍凶悍，群雄損傷慘重，你被迫率殘部突圍。',cs:'你一刀劈斷敵旗，群雄士氣如虹，這一夜，千面人的精銳被一舉殲滅。'},
+     {l:'佈下八門陣，分化千面人',tag:'wit',a:['mind'],
+      s:'你借著校場的地形，將群雄分成八門，各司其職。千面人的精銳被拆散，一個個落入陷阱。',f:'陣法被千面人識破，群雄陷入混戰，反被各個擊破。',cs:'八門陣一成，敵人如入迷霧，千面人的首領也被你生擒。'},
+     {l:'聯結各門各派，擰成一股繩',tag:'charm',a:['charm','fame'],
+      s:'你一一拜訪各派掌門，說服他們放下恩怨。這一夜，江湖群雄第一次站在了同一面旗下。',f:'幾位掌門各有顧慮，臨陣退縮，戰線被撕開缺口。',cs:'江湖群雄在你的號令下，如臂使指，敵軍望風披靡。'},
+     {l:'開倉放糧、重金招募市井義士',tag:'biz',a:['wealth','charm'],cost:{silver:150},
+      s:'你散盡家財，市井百姓、船工、挑夫、鏢師都拿起了兵器。人心匯聚成海，敵人終究退去。',f:'錢花了，人也來了，卻是一盤散沙，戰局不利。',cs:'百姓與群雄並肩作戰，這一夜，開封城無人退縮。'}]},
+ north:{place:'雁門關外',title:'終幕・雁門朔風',
+  intro:['雁門關外，朔風捲雪。你憑鎮冠珏號令燕雲舊部，三千殘兵列陣關前，對面是北境大軍的先鋒。','這一仗，是為了那些再也回不去的十六州故土。'],
+  o:[{l:'率先鋒陷陣，一舉擊潰敵軍前鋒',tag:'force',a:['body'],
+      s:'你策馬衝入敵陣，刀光所至，敵軍先鋒大亂。舊部齊聲高呼，關外的雪地被染成了紅色。',f:'敵軍先鋒比想像中強悍，你的衝鋒受挫，不得不退回關內。',cs:'你一人一刀斬落敵將，北境先鋒潰不成軍，雁門關外迴盪著舊部的歡呼。'},
+     {l:'憑舊輿圖奇襲糧道',tag:'wit',a:['mind'],
+      s:'你按魏先生的輿圖，領輕騎翻過兩道山脊，一把火燒了敵軍糧草。次日，敵軍在饑寒中撤退。',f:'奇襲被敵軍斥候識破，輕騎被圍，傷亡慘重。',cs:'糧草盡燃的那一夜，北境全軍士氣崩潰，不戰而退。'},
+     {l:'說服邊關守卒與舊部同心',tag:'charm',a:['charm','fame'],
+      s:'你走遍每一座烽燧，為守卒們端上熱酒。這些被遺忘的戍卒最終都站到了你身後。',f:'守卒們冷眼旁觀，士氣低迷，防線出現缺口。',cs:'關上關下，所有人都喊出了同一個名字，那是十六州舊部的夢。'},
+     {l:'以金造器的帳本策反敵方商盟',tag:'biz',a:['wealth','mind'],
+      s:'你把帳本送到北境商盟手中，一半人倒戈，軍心頓時散亂。',f:'帳本被北境將領截獲，策反失敗。',cs:'商盟集體撤資，北境大軍的軍餉一夜枯竭，不戰自潰。'}]},
+ all:{place:'開封・燕雲十六州之上',title:'終幕・俠之大者',
+  intro:['你不選一條路，而是把三條路擰成一條。朝堂、江湖、邊關的旗號在同一夜亮起，鎮冠珏在你掌心發出微光。','這是亂世裡最難的一種俠：不是替誰守一方，而是替天下人守一口氣。'],
+  o:[{l:'以身為旗，三路並進',tag:'force',a:['body','fame'],
+      s:'你立於三軍之前，刀鋒所指，朝堂、江湖與邊關同時響應。敵軍在這一擊之下潰退。',f:'三路並進的號令傳達不暢，戰局一度混亂。',cs:'朝堂奏捷、江湖歡呼、邊關舉火，天下同時亮了一夜。'},
+     {l:'運籌帷幄，一子動全盤',tag:'wit',a:['mind'],
+      s:'你的每一步棋都有後手：朝堂拖住主和派，江湖截斷千面人，邊關牽制北境主力。三線同時收網。',f:'三線配合出現縫隙，被敵人鑽了空子。',cs:'你布的局環環相扣，連千面人最後也服輸：「這盤棋，你贏了。」'},
+     {l:'以誠心說服所有人放下成見',tag:'charm',a:['charm','fame'],
+      s:'你親自拜會朝臣、掌門與邊將，把「天下」兩個字擺在所有人面前。他們終於放下了彼此的猜忌。',f:'各方的猜忌太深，聯盟出現裂痕。',cs:'三方首領在同一張桌前舉杯，江湖與廟堂從此多了一道橋。'},
+     {l:'傾盡家財，補足三方缺口',tag:'biz',a:['wealth'],cost:{silver:150},
+      s:'你的銀兩補上了朝堂的糧餉、江湖的兵器、邊關的冬衣。三方因此都欠了你一份人情。',f:'錢雖花了，但補得不夠及時，戰局吃緊。',cs:'你的家財化作三方的底氣，從此天下人談起這一戰，都要提一句：有個少東家，傾家蕩產。'}]}
+};
+function finaleOpts(){
+ const f=FIN[S.fl.route||'jianghu'];
+ const base={court:36,jianghu:36,north:40,all:30}[S.fl.route||'jianghu']||36;
+ return f.o.map(x=>({
+  l:x.l,tag:x.tag,a:x.a,cost:x.cost,
+  d:()=>clamp(base-prep()*0.55,3,42),
+  s:{t:x.s,fx:{hp:-12,xp:{fame:3},fl:{finale:'win'}},next:'END'},
+  f:{t:x.f,fx:{hp:-26,fl:{finale:'lose'}},next:'END'},
+  cs:{t:x.cs,fx:{hp:-6,xp:{fame:3},fl:{finale:'win',glory:1}},next:'END'}
+ }));
+}
+EV.b12={day:58,title:()=>FIN[S.fl.route||'jianghu'].title,place:()=>FIN[S.fl.route||'jianghu'].place,goal:'守住你選擇的道路。',omen:'',
+text:()=>{
+ const f=FIN[S.fl.route||'jianghu'];
+ const p=prep();
+ const lvl=p>=95?'你身後的人多得讓你自己都有些意外。':p>=60?'你身後雖不算人山人海，卻有一群可以託付性命的人。':'你身後的人手與底氣都顯得單薄，風聲像是在催促。';
+ const l=f.intro.slice();
+ l.push(S.npc.hong.alive?(S.fl.hxWith?'紅線站在你身旁，把那個歪歪扭扭的護身符又塞進你手心：「哥，這次換我看你贏。」':'你收到紅線託人送來的一束紅繩，繩結繫得歪歪扭扭：「哥，我等你。」'):'你摸了摸胸口，那裡空空的，沒有護身符，沒有桂花糕的甜味。你只能握緊手中的刀。');
+ l.push(lvl);
+ return l;},
+opts:()=>finaleOpts()};
+
+/* ============================================================
+   江湖遭遇（外出探訪）：清河篇與開封篇各一組
+   ============================================================ */
+const ENC1_IDS=['e_bandit','e_tea','e_refugee','e_gamble','e_stele','e_patrol','e_wounded'];
+const ENC2_IDS=['e_fake','e_fan','e_ghostm','e_canal','e_soldier','e_gamble','e_refugee','e_wounded','e_tea'];
+const QY_IDS=['qy_yun','qy_tian','qy_monk','qy_sword','qy_ghost','qy_qin'];
+
+EV.e_bandit={title:'山道遇匪',place:'清河郊外・山道',
+text:()=>[`山道拐角，三名持刀漢子攔住去路：「留下買路錢！」他們身上的衣裳補丁摞補丁，眼裡卻帶著狠勁。`],
+opts:[
+ {l:'出手教訓，三招內放倒他們',tag:'force',a:['body'],d:8,
+  s:{t:'你欺身而上，三拳兩腳便將三人放倒。你從他們身上摸出四十兩銀子，也問出了附近的風聲。',fx:{r:{silver:40},xp:{body:1,fame:1}}},
+  f:{t:'你輕敵了。其中一人用的是軍中刀法，你被劃傷手臂，還丟了一點碎銀。',fx:{hp:-15,r:{silver:-30}}}},
+ {l:'沉著應對，言語嚇退他們',tag:'wit',a:['mind','fame'],d:8,
+  s:{t:'你亮出神仙渡的腰牌，語氣平靜：「渡口的夥計就在後面，各位想清楚。」三人面面相覷，其中一個認出渡口的酒旗，立刻退開。',fx:{xp:{fame:1,mind:1},f:{qinghe:2}}},
+  f:{t:'你的虛張聲勢被一眼看穿，對方笑著逼近，你只得破財脫身。',fx:{hp:-8,r:{silver:-20}}}},
+ {l:'給些乾糧銀兩，好言相勸（銀 20）',tag:'charm',a:['charm'],d:6,cost:{silver:20},
+  s:{t:'你遞上乾糧和碎銀：「兄弟們也是為了口飯吃。」三人沉默片刻，其中一個低聲說：「少東家，咱們原是渡口的船工……」你收了他們做外圍耳目。',fx:{xp:{fame:2,charm:1},r:{guards:1},f:{qinghe:4}}},
+  f:{t:'他們收了銀子，轉身就變了臉，還搶走你的錢袋。',fx:{r:{silver:-50}}}}
+]};
+EV.e_tea={title:'茶棚說書',place:'官道旁・茶棚',
+text:()=>[`茶棚裡人聲嘈雜，說書人拍著醒木，講的是北境的烽火與朝堂的暗流。你坐下要了一壺茶，耳朵卻豎了起來。`],
+opts:[
+ {l:'暗中聽人閒談，蒐集風聲',tag:'explore',a:['mind'],d:6,
+  s:{t:'你從幾個行商的閒談裡拼出了不少消息：北境商隊正大量採購弓弦和馬料，各路人馬的調動也比往年早了一個月。',fx:{inc:{intel:1},xp:{mind:1}}},
+  f:{t:'你聽了半天，只聽到一堆真假難辨的傳聞，白白耽誤了半日。',fx:{}}},
+ {l:'請說書人與幾個行商喝茶，結交人脈（銀 20）',tag:'biz',a:['wealth','charm'],d:8,cost:{silver:20},
+  s:{t:'你與行商相談甚歡，臨別時對方主動遞來一條生意門路。',fx:{r:{silver:50},xp:{wealth:1}}},
+  f:{t:'行商們客氣有餘，交情不足，一頓茶錢花得不太值。',fx:{}}},
+ {l:'向說書人請教江湖軼聞與武林門派',tag:'charm',a:['charm','mind'],d:6,
+  s:{t:'說書人壓低聲音，講了隱世門派與燕雲舊事的傳聞，還點名了一位「十年不下山的怪老人」。你若有所思。',fx:{f:{yinshi:3},xp:{mind:1},inc:{intel:1}}},
+  f:{t:'說書人只顧自己的段子，沒給你多少有用的東西。',fx:{}}}
+]};
+EV.e_refugee={title:'流民攔路',place:()=>(S.fl.stage||1)>=2?'開封城外・流民營':'清河郊外・荒道',
+text:()=>[`路旁蜷縮著數十名流民，衣衫襤褸，孩子餓得哭都沒力氣。為首的老漢跪下磕頭：「少東家，求您賞口吃的……」`,`亂世裡，最先被碾碎的永遠是這些人。`],
+opts:[
+ {l:'開糧賑濟，安置流民（糧 20）',tag:'charm',a:['charm','fame'],d:5,cost:{grain:20},
+  s:{t:'你命人搭起粥棚。三日後，流民中的青壯主動留下：「少東家，咱們願為你效力。」',fx:{xp:{fame:3},r:{guards:2}}},
+  f:{t:'粥棚引來更多人，秩序一度失控，你勉強維持住局面，名聲卻有損。',fx:{xp:{fame:1},hp:-5}}},
+ {l:'僱他們做工，修繕房舍與道路（銀 30）',tag:'biz',a:['wealth'],d:6,cost:{silver:30},
+  s:{t:'你把流民組織起來修牆、掘井、鋪路。一個月後，一片廢墟漸漸有了人氣，開銷也比想像中少。',fx:{r:{silver:30,grain:10},xp:{wealth:1}}},
+  f:{t:'管理不善，工錢發放出了岔子，流民鬧了一場，損失了些材料。',fx:{r:{silver:-20}}}},
+ {l:'挑出可用的青壯，編入隨從',tag:'force',a:['body','fame'],d:8,
+  s:{t:'你當場演示了幾招拳腳，擇優錄取了五個壯漢。他們感激涕零，行事格外賣力。',fx:{r:{guards:3},xp:{body:1}}},
+  f:{t:'沒人服你的管，幾個青壯反倒在隊伍裡鬧事，你不得不草草遣散。',fx:{xp:{fame:-1}}}}
+]};
+EV.e_gamble={title:'暗巷賭坊',place:'暗巷',
+text:()=>[`市集盡頭有間不起眼的賭坊，骰盅搖得震天響。門口一個漢子衝你擠眼睛：「少東家，要不要玩兩把？」`],
+opts:[
+ {l:'小賭一把，賭運氣（銀 30）',tag:'explore',a:['luck'],d:0,cost:{silver:30},
+  s:{t:'骰盅一開，大！你贏了個滿堂彩，賭坊老闆笑著遞來銀票，眼神卻有些複雜。',fx:{r:{silver:90}}},
+  f:{t:'骰盅一開，小。你輸得乾乾淨淨，沮喪地走出賭坊。',fx:{}},
+  cf:{t:'你輸紅了眼，又押了一把，連老本都賠了進去，還欠了賭坊一點人情。',fx:{r:{silver:-40},xp:{fame:-1}}}},
+ {l:'觀局不下場，看穿千術揚名',tag:'wit',a:['mind'],d:12,
+  s:{t:'你觀察了半個時辰，一眼看穿莊家的千術，在眾人面前點破。賭徒們拍案叫絕，莊家灰頭土臉地賠了你一筆「禮金」。',fx:{r:{silver:60},xp:{fame:2,mind:1}}},
+  f:{t:'你自作聰明點破，卻搞錯了手法，被賭坊的打手請了出去。',fx:{hp:-8,xp:{fame:-1}}}},
+ {l:'轉身離開，以免誤事',tag:'auto',a:[],d:0,
+  s:{t:'你搖搖頭走開。有時候，不下注也是一種贏。',fx:{}}}
+]};
+EV.e_stele={title:'野祠古碑',place:'荒野・無名古祠',
+text:()=>[`荒山腳下有座破敗的古祠，碑文斑駁，像是某種武學的圖譜，又像是一首無名的詩。碑前的青苔上，有淺淺的足跡。`],
+opts:[
+ {l:'靜心參悟碑文，推演其中意境',tag:'explore',a:['mind'],d:12,
+  s:{t:'你對著碑文枯坐一日，忽然有所頓悟：發力的節點與氣息的收放，原來可以這樣銜接。',fx:{xp:{mind:2,body:1}}},
+  f:{t:'碑文太過晦澀，你越想越頭痛，下山時眼前一陣陣發黑。',fx:{hp:-6}}},
+ {l:'在碑前打坐吐納，淬鍊筋骨',tag:'force',a:['body'],d:10,
+  s:{t:'你在古祠前盤坐吐納一夜，天亮時渾身筋骨像被洗過一遍，通體舒暢。',fx:{xp:{body:2},hp:10}},
+  f:{t:'夜風凜冽，你受了點寒，只得下山調養。',fx:{hp:-8}}},
+ {l:'細查古祠，看看有無隱藏機關',tag:'wit',a:['mind','luck'],d:14,
+  s:{t:'你在香案下找到一個暗格，裡面是一瓶陳年金創藥和幾錠碎銀，不知是哪位前人所留。',fx:{i:'yao',r:{silver:40}}},
+  f:{t:'暗格沒找著，反而驚起一窩蝙蝠，狼狽不堪。',fx:{hp:-3}}}
+]};
+EV.e_patrol={title:'官道巡兵',place:'官道',
+text:()=>[`官道上一隊巡邏兵攔下了你，領頭的伍長倨傲地打量著你：「例行查驗，把腰牌拿出來。」`],
+opts:[
+ {l:'客氣應對，順便套套近乎',tag:'charm',a:['charm'],d:8,
+  s:{t:'你遞上水酒，談笑風生。伍長臉色漸緩，臨別時低聲提醒：「最近北邊不太平，路上可得當心。」',fx:{f:{court:4},inc:{intel:1}}},
+  f:{t:'你話說得過頭，伍長以為你在拉攏，反倒冷下臉，把你的行李翻了個底朝天。',fx:{f:{court:-3},r:{silver:-10}}}},
+ {l:'暗塞些銀兩，打點關係（銀 40）',tag:'biz',a:['wealth'],d:6,cost:{silver:40},
+  s:{t:'伍長掂了掂分量，笑得親切多了。往後這一段官道，你暢行無阻。',fx:{f:{court:6},r:{silver:30}}},
+  f:{t:'伍長收了銀子，態度依舊惡劣，還順手帶走了你的一匹好馬。',fx:{f:{court:2},r:{silver:-20}}}},
+ {l:'出示憑證，據理力爭',tag:'force',a:['fame'],d:10,
+  s:{t:'你出示的證件無懈可擊，伍長只得悻悻放行。周圍的路人都記住了這位硬氣的少東家。',fx:{xp:{fame:2},f:{court:-2}}},
+  f:{t:'你堅持原則，卻被扣上「抗法」的罪名，耽擱了兩天才脫身。',fx:{xp:{fame:-1},hp:-4}}}
+]};
+EV.e_wounded={title:'路邊傷者',place:'路旁',
+text:()=>[`路旁倒著一名渾身是傷的行腳商人，氣息微弱。他懷裡死死抱著一個油布包裹，看見你，艱難地抬手：「救……救我……」`],
+opts:[
+ {l:'為他止血療傷，帶在身邊',tag:'charm',a:['charm','body'],d:8,
+  s:{t:'你用隨身的金創藥救回了他。他醒來後淚流滿面，把油布包裹塞給你：裡面是一份手繪的北境地形圖，還有幾兩碎金。「少東家，我欠你一條命。」',fx:{xp:{fame:2},r:{silver:60},inc:{intel:1}}},
+  f:{t:'你盡了力，那人還是在半路斷了氣。你把他安葬在路邊，心裡很不是滋味。',fx:{xp:{fame:1},hp:-3}}},
+ {l:'先搜查他的包裹，查清他的來歷',tag:'wit',a:['mind'],d:10,
+  s:{t:'你從包裹裡翻出一份北境商隊的名冊，上面赫然有熟悉的暗號。你悄悄收好，再為他處理傷口。',fx:{inc:{intel:1,clue:1},xp:{mind:1}}},
+  f:{t:'你的小動作被他察覺，他怒目瞪視，一把搶回包裹，掙扎著離開了。',fx:{xp:{fame:-1}}}},
+ {l:'給他一些銀兩，讓他自己求醫（銀 30）',tag:'biz',a:['wealth'],d:2,cost:{silver:30},
+  s:{t:'你留下銀兩和一壺水，繼續趕路。身後傳來他斷斷續續的道謝。',fx:{xp:{fame:1}}},
+  f:{t:'你轉身走遠，那人的呼喚漸漸消失。你心裡有點不安。',fx:{}}}
+]};
+/* ---- 開封篇專屬遭遇 ---- */
+EV.e_fake={title:'街頭「發財憑證」',place:'開封・長街',
+text:()=>[`街角圍著一圈人，有人高喊：「金憑證，一張換十貫！朝廷認證，保賺不賠！」不少百姓已經掏出了積蓄。`,`你一眼認出：這是偽幣騙局的另一個據點。`],
+opts:[
+ {l:'當眾拆穿騙局，保護百姓',tag:'wit',a:['mind','fame'],d:10,
+  s:{t:'你拿起憑證指出墨跡、紙張、印章三處破綻，騙子們慌忙收攤。百姓們感激涕零，你的名聲在街頭傳開。',fx:{xp:{fame:2,mind:1},inc:{clue:1},f:{court:-2}}},
+  f:{t:'你的指控被騙子們反咬，引來一陣推搡，不得不悻悻退場。',fx:{hp:-6,xp:{fame:-1}}}},
+ {l:'買一張回去細查（銀 20）',tag:'biz',a:['wealth','mind'],d:6,cost:{silver:20},
+  s:{t:'你花二十兩買了一張，拿回住處拆解，發現憑證的印泥配方與金造器所用的金粉同源。又是一條線。',fx:{inc:{clue:1,intel:1},i:'fakecoin'}},
+  f:{t:'你花了冤枉錢，憑證只是一張廢紙，看不出什麼名堂。',fx:{}}},
+ {l:'掀翻攤子，給騙子一個教訓',tag:'force',a:['body'],d:10,
+  s:{t:'你一腳踢翻桌子，騙子們四散逃竄。百姓們拍手叫好，你還撿到了一小袋沒來得及帶走的銀兩。',fx:{r:{silver:40},xp:{body:1,fame:1},f:{court:-2}}},
+  f:{t:'騙子們早有準備，你被打手團團圍住，狼狽脫身。',fx:{hp:-12,f:{court:-3}}}}
+]};
+EV.e_fan={title:'樊樓夜宴',place:'開封・樊樓',
+text:()=>[`樊樓上下燈火通明，酒客高談闊論，從朝堂爭論到邊關，有人拍案，有人低語。`,`在這座樓裡，一句閒話可能值千金，也可能要人命。`],
+opts:[
+ {l:'與酒客同席敬酒，套聽消息',tag:'charm',a:['charm'],d:8,
+  s:{t:'你放下身段，與鄰桌的幾位老客碰杯。三巡之後，其中一位醉醺醺地吐出了一句關鍵：「那金造器……是要拿來換北邊的馬的。」',fx:{inc:{intel:1,clue:1},xp:{charm:1}}},
+  f:{t:'你灌了太多酒，什麼都沒套出來，反而吐了一地。',fx:{hp:-5,xp:{fame:-1}}}},
+ {l:'花錢包下雅間，居高臨下觀察',tag:'biz',a:['wealth','mind'],d:8,cost:{silver:50},
+  s:{t:'你在雅間裡一坐就是半夜，看見幾位大員的轎子停在後門，其中一人的徽記你記得清清楚楚。',fx:{inc:{intel:2},xp:{wealth:1}}},
+  f:{t:'你點了一桌酒菜，卻只看了一晚歌舞，毫無收穫。',fx:{}}},
+ {l:'聽牆角，捕捉鄰桌的低語',tag:'wit',a:['mind'],d:12,
+  s:{t:'你借著上菜的間隙，把幾桌人的低聲交談拼湊起來：有人在議論下個月的朝會，有人在傳「北邊的信」。',fx:{inc:{intel:1,clue:1},xp:{mind:1}}},
+  f:{t:'你偷聽太明顯，被鄰桌察覺，一場尷尬的對視後你只得離席。',fx:{xp:{fame:-1}}}}
+]};
+EV.e_ghostm={title:'鬼市淘貨',place:'開封・鬼市',
+text:()=>[`夜市燈火幽暗，攤主們低聲吆喝「來歷不明」的貨：舊兵器、舊書信、從沒聽過的藥。`,`有人緊緊盯著你的錢袋。`],
+opts:[
+ {l:'淘幾件舊貨，看有沒有好東西（銀 40）',tag:'biz',a:['wealth','luck'],d:8,cost:{silver:40},
+  s:{t:'你翻出一瓶不起眼的藥，攤主說是「祖傳金創藥」。你拿去鑒別，竟是上品。',fx:{i:'yao',r:{silver:30}}},
+  f:{t:'你買到的盡是贗品，攤主早已不見蹤影。',fx:{}}},
+ {l:'打聽千面人的線索',tag:'explore',a:['mind','charm'],d:12,
+  s:{t:'你塞了些銀兩給一個瘦小的線人，他湊近耳邊：「城西有座舊宅，夜裡常有戴面具的人進出。」',fx:{inc:{clue:1,intel:1},f:{qian:-3}}},
+  f:{t:'你問得太直，線人臉色一變，轉身就走。',fx:{f:{qian:-3}}}},
+ {l:'制住扒手，順藤摸瓜',tag:'force',a:['body'],d:10,
+  s:{t:'你反手扣住扒手手腕，他連連告饒，還主動說出了鬼市幾個暗樁的位置。',fx:{xp:{body:1},inc:{intel:1}}},
+  f:{t:'扒手滑得像泥鰍，你不但沒抓住，還丟了荷包。',fx:{r:{silver:-30}}}}
+]};
+EV.e_canal={title:'汴河纖夫',place:'開封・汴河碼頭',
+text:()=>[`汴河上船隻如織，纖夫們赤著上身拉著粗纜，號子聲震天。一位滿手老繭的老纖夫坐在岸邊歇腳，向你點了點頭。`],
+opts:[
+ {l:'坐下聽老纖夫講河上的故事',tag:'charm',a:['charm'],d:6,
+  s:{t:'老纖夫講了許多：漕運的規矩、河上的暗話，還有幾年前一艘運往北境的「貨船」夜裡悄悄沉沒的舊聞。',fx:{inc:{intel:1},xp:{fame:1}}},
+  f:{t:'老纖夫話不多，你們只是靜靜看了一下午河。',fx:{}}},
+ {l:'幫忙拉一段纖，順便練力氣',tag:'force',a:['body'],d:8,
+  s:{t:'你肩扛粗繩，腳踩河岸，和纖夫們一起拉了一個時辰。筋骨練開了，也博得了他們的敬意。',fx:{xp:{body:2,fame:1}}},
+  f:{t:'你體力不支，被繩索勒得肩頭生疼，只得退下。',fx:{hp:-5}}},
+ {l:'打聽漕運與北上的船期（銀 20）',tag:'biz',a:['wealth'],d:6,cost:{silver:20},
+  s:{t:'你得知下個月有三艘大船「頻繁往返北境」，載的全是鐵與糧。',fx:{inc:{intel:1,clue:1}}},
+  f:{t:'船工們警惕地閉了嘴，你的銀子白花了。',fx:{}}}
+]};
+EV.e_soldier={title:'城門下的老卒',place:'開封・城門',
+text:()=>[`城門下坐著一個瘸腿老卒，手裡摩挲著一枚磨損的銅牌，曾在北境戍守多年。`,`他望著北方的天，一動不動。`],
+opts:[
+ {l:'請他喝一碗酒，聽他講邊關往事（銀 10）',tag:'charm',a:['charm'],d:6,cost:{silver:10},
+  s:{t:'老卒喝了酒，話匣子打開：「我們守的那座烽燧，冬天連鳥都不來。後來，上頭說撤就撤，一句話，我們就成了棄子。」他眼眶紅了。',fx:{xp:{fame:2,charm:1},inc:{intel:1}}},
+  f:{t:'老卒喝完酒，只擺擺手：「過去的事，不提了。」',fx:{}}},
+ {l:'給些銀兩，聊表心意（銀 30）',tag:'biz',a:['wealth'],d:2,cost:{silver:30},
+  s:{t:'老卒一愣，緊緊握住你的手：「年輕人，這世道還有你這樣的人。」',fx:{xp:{fame:2}}},
+  f:{t:'老卒推辭不要，你悻悻收回。',fx:{}}},
+ {l:'套問北境的布防與路線',tag:'wit',a:['mind'],d:10,
+  s:{t:'老卒指著北方，一條條說出關隘、水源、糧道的位置。這些資料，比任何輿圖都實用。',fx:{inc:{intel:2},xp:{mind:1}}},
+  f:{t:'老卒眼神一冷，閉口不談。',fx:{}}}
+]};
+
+/* ============================================================
+   燕雲奇遇
+   ============================================================ */
+EV.qy_yun={qy:true,title:'燕雲奇遇・斷崖棋局',place:'清河北山・無名斷崖',cond:()=>(S.fl.stage||1)===1&&S.day>=2,
+text:()=>[`你循著一道細瀑向上攀爬，在雲霧間發現一處石洞。洞內有一位白髮老人，獨自對著一盤殘棋，不言不語。`,`他抬眼看你：「後生，這局棋我下了十年。你若解得開，老夫送你一場機緣。」`,`石壁上刻著四個字：十六聲。`],
+opts:[
+ {l:'凝神解棋局，尋找破局之法',tag:'wit',a:['mind','luck'],d:16,
+  s:{t:'你伸手落下一子，竟是「斷尾求生」的絕殺。老人長身而起，仰天大笑：「十年了，終於有人看懂！」他傳你《十六聲心經》殘篇：「心有十六聲，聽到了才算入門。」',fx:{art:'xinjing',n:{yun:25},luck:2,met:['yun'],xp:{mind:2}}},
+  f:{t:'你思索良久，始終解不開。老人搖頭：「緣分未到。」但他還是贈了你一粒丹藥。',fx:{i:'yao',n:{yun:5},met:['yun']}}},
+ {l:'奉茶相敬，以誠意打動老人',tag:'charm',a:['charm'],d:10,
+  s:{t:'你以隨身水囊煮了一壺山泉，恭敬奉上。老人品茶良久，點頭：「尊老之心，勝過棋力。」他傳你一套輕功步法「雲水步」。',fx:{art:'yunshui',n:{yun:20},luck:1,met:['yun'],xp:{charm:1}}},
+  f:{t:'你太過拘謹，老人似乎沒看出你的誠意，只淡淡說了句「下山去吧」。',fx:{n:{yun:3},met:['yun']}}},
+ {l:'出手試探，請老人賜教幾招',tag:'force',a:['body'],d:24,
+  s:{t:'你出手如電，老人卻以一根枯枝挑開你的拳風，輕輕一點，你只覺全身氣血翻湧。「不錯，根基紮實。」他笑著點撥了你幾句要訣。',fx:{xp:{body:3},n:{yun:12},hp:-8,met:['yun']}},
+  f:{t:'枯枝一點，你整個人飛出三丈，摔在崖邊的草叢裡。老人哈哈大笑：「後生，下次再來。」',fx:{hp:-24,met:['yun']}}}
+]};
+EV.qy_tian={qy:true,title:'燕雲奇遇・井中人',place:'清河・荒村古井',cond:()=>(S.fl.stage||1)===1&&S.day>=4,
+text:()=>[`荒村的古井邊，你聽見井底傳來微弱的呼吸聲。一根斷繩垂入黑暗，井沿上有未乾的血跡。`,`井下藏著一個人，她身上的傷，是被人追殺的痕跡。`],
+opts:[
+ {l:'垂繩下井，把人救上來',tag:'force',a:['body'],d:12,
+  s:{t:'你拽著繩索一路下井，在濕滑的石壁間找到她。她面色蒼白，卻睜眼冷冷道：「田英。欠你一條命。」從此，這位傳奇刺客成了你的夥伴。',fx:{n:{tian:30},fl:{tianJoined:1},art:'yunshui',hp:-6,met:['tian'],luck:1}},
+  f:{t:'繩索在中途斷裂，你摔進井底，嗆了幾口水。好在田英最終自己爬了出來，留下一句「謝了」就消失了。',fx:{hp:-15,n:{tian:8},met:['tian']}}},
+ {l:'引開追兵，再救她',tag:'wit',a:['mind'],d:12,
+  s:{t:'你在遠處丟下一件衣物，製造被追的假象，追兵果然上鉤。你悄悄下井救人，她看著你的眼神多了幾分信任。',fx:{n:{tian:28},fl:{tianJoined:1},met:['tian'],xp:{mind:1},luck:1}},
+  f:{t:'你的計謀被追兵識破，追兵折返，你抱著傷者狼狽逃走。',fx:{hp:-12,n:{tian:6},met:['tian']}}},
+ {l:'輕聲安撫，等她信任你',tag:'charm',a:['charm'],d:14,
+  s:{t:'你坐在井沿，輕輕說著話：神仙渡的炊煙、紅線的桂花糕、江湖的酒。許久，井底傳來一聲輕笑：「好吧，你不像壞人。」',fx:{n:{tian:30},fl:{tianJoined:1},met:['tian'],xp:{charm:1},i:'yao'}},
+  f:{t:'你的安撫沒起作用，她始終沒有回應。你只好留下乾糧和水，無奈離開。',fx:{met:['tian'],n:{tian:3}}}}
+]};
+EV.qy_monk={qy:true,title:'燕雲奇遇・枯禪寒潭',place:'古寺・寒潭',cond:()=>S.day>=10,
+text:()=>[`山腰古寺荒涼，寺後有一汪寒潭。一名枯瘦老僧在潭邊靜坐，周身結霜，恍如石像。`,`他睜眼，聲音像從遠處傳來：「施主，可願一試？潭水三刻，能撐得住的，我傳他一門功夫。」`],
+opts:[
+ {l:'潛入寒潭，咬牙忍耐三刻',tag:'force',a:['body'],d:14,
+  s:{t:'刺骨之寒讓你幾乎失去知覺，你卻硬是撐過了三刻。老僧點頭，傳你《金鐘罩》心法：「記住，身如鐘，心如磬。」',fx:{art:'jinzhong',maxhp:20,xp:{body:2},luck:1}},
+  f:{t:'你只撐了不到一刻便凍得失去知覺，被老僧撈了上來。「有緣再來。」',fx:{hp:-20}}},
+ {l:'以智取巧：用現代知識調整呼吸與血流',tag:'wit',a:['mind'],d:16,
+  s:{t:'你想起書上說過的呼吸調節與冷水適應，慢慢調整節奏。老僧見你竟能從容應對，驚訝之餘，也傳了你《金鐘罩》。',fx:{art:'jinzhong',maxhp:20,xp:{mind:2},luck:1}},
+  f:{t:'你自作聰明地調整呼吸，卻亂了氣息，嗆了幾口寒水，只得上岸。',fx:{hp:-12}}},
+ {l:'向老僧請教佛理，不入寒潭',tag:'charm',a:['charm','mind'],d:8,
+  s:{t:'你與老僧論道至深夜，他笑道：「施主不入潭，亦有慧根。」他傳你一段養氣口訣。',fx:{xp:{mind:2},hp:20}},
+  f:{t:'老僧只是笑而不語，你知趣地告辭。',fx:{}}}
+]};
+EV.qy_sword={qy:true,title:'燕雲奇遇・寒鐵劍冢',place:'冰封山谷',cond:()=>S.day>=14,
+text:()=>[`山谷深處有一座被寒氣封凍的石壇，壇上插滿鏽跡斑斑的殘兵，傳說這是前朝名將埋兵之所。最中央，一柄通體漆黑的長刀斜插石縫，刀身隱隱泛著霜氣。`,`石壇周圍的地面刻滿機關紋路。`],
+opts:[
+ {l:'細讀機關紋路，破解封印',tag:'wit',a:['mind','luck'],d:16,
+  s:{t:'你順著紋路逐步推演，終於找到了機關的關鍵節點。石縫鬆動，長刀自動滑出。刀身上刻著兩字：斷霜。',fx:{i:'duanshuang',luck:2,xp:{mind:1}}},
+  f:{t:'你判斷失誤，觸動了一道暗箭。你狼狽閃避，卻再無機會靠近石壇。',fx:{hp:-15}}},
+ {l:'以蠻力硬拔，賭自己筋骨夠硬',tag:'force',a:['body'],d:22,
+  s:{t:'你運足全力一拔，筋骨作響，長刀終於出鞘，寒氣沖天而起。你虎口迸血，卻握住了一柄絕世好刀。',fx:{i:'duanshuang',hp:-15,xp:{body:2},luck:1}},
+  f:{t:'你用盡全力也拔不動，反被寒氣反噬，手臂凍得發麻，狼狽退去。',fx:{hp:-18}}},
+ {l:'靜靜祭拜前人，不動兵器',tag:'charm',a:['fame','charm'],d:8,
+  s:{t:'你在石壇前躬身一拜，風忽然停了。一道微光自刀身上亮起，長刀自行鬆動，落入你的手中。',fx:{i:'duanshuang',luck:2,xp:{fame:2}}},
+  f:{t:'你誠心祭拜，卻只換來滿谷寂靜。也許你與此刀無緣。',fx:{xp:{fame:1}}}}
+]};
+EV.qy_ghost={qy:true,title:'燕雲奇遇・鬼市縮地',place:'開封・鬼市深處',cond:()=>(S.fl.stage||1)>=2&&S.day>=18,
+text:()=>[`鬼市最深處，一個瘦得像竹竿的老人蹲在牆角，面前只擺著一雙破草鞋。`,`他抬頭，笑得露出黃牙：「小子，這鞋換你一個故事，換不換？」`],
+opts:[
+ {l:'講一個你最想改變的故事，與他交換',tag:'charm',a:['charm','luck'],d:12,
+  s:{t:'你講了神仙渡，講了那一夜的火光。老人聽完，沉默良久，把草鞋推到你面前：「穿上它，你跑得比命運還快。」他教了你一套「縮地成寸」的步法。',fx:{art:'suodi',luck:1,xp:{charm:1}}},
+  f:{t:'你的故事太平淡，老人搖搖頭：「再想想。」',fx:{}}},
+ {l:'細看草鞋與老人的腳步，揣摩其中玄機',tag:'explore',a:['mind'],d:16,
+  s:{t:'你盯著他的足跡看了一個時辰，忽然悟出每一步間距的規律。老人大笑：「聰明！這門功夫，送你。」',fx:{art:'suodi',xp:{mind:2},luck:1}},
+  f:{t:'你看不出名堂，老人笑著擺手：「走吧走吧。」',fx:{}}},
+ {l:'以武會友，請老人指點幾招',tag:'force',a:['body'],d:22,
+  s:{t:'老人避開你每一拳，卻不還手，直到你累得氣喘吁吁，他才笑道：「身手不錯，步子太笨。」他教了你縮地的要訣。',fx:{art:'suodi',xp:{body:2},hp:-5}},
+  f:{t:'你連老人的衣角都沒碰到，反被他用腳尖輕輕絆倒。',fx:{hp:-10}}}
+]};
+EV.qy_qin={qy:true,title:'燕雲奇遇・盲琴師',place:'開封・樊樓後院',cond:()=>(S.fl.stage||1)>=2&&S.day>=20,
+text:()=>[`樊樓後院的槐樹下，一位盲眼琴師正在調弦。曲調幽深，像是一個人在極遠處說話。`,`他沒有抬頭：「這位客人，你的腳步聲裡，有火的味道。」`],
+opts:[
+ {l:'安靜聽完整首曲子，以心相和',tag:'charm',a:['charm','mind'],d:12,
+  s:{t:'你聽到了曲中的風、河、刀聲。一曲終了，琴師輕歎：「你聽懂了。」他傳你「應律」之術，教你以聲辨人、以律察心。',fx:{art:'yinglv',xp:{mind:1,charm:1},luck:1}},
+  f:{t:'你聽得心神不寧，一曲未終便起身離去。琴師沒有挽留。',fx:{}}},
+ {l:'請教琴中暗藏的江湖消息',tag:'wit',a:['mind'],d:14,
+  s:{t:'琴師撥了三個音，你才反應過來：這是開封某條暗線的聯絡暗號。他笑道：「我只是個瞎子，你自己聽。」',fx:{art:'yinglv',inc:{clue:1,intel:1},xp:{mind:1}}},
+  f:{t:'琴音如水，你什麼都沒聽出來。',fx:{}}},
+ {l:'請他再彈一曲，並留下銀兩（銀 30）',tag:'biz',a:['wealth'],d:4,cost:{silver:30},
+  s:{t:'琴師收下銀兩，略一點頭，彈了一曲《故人》。曲終，他傳了你一句口訣。',fx:{art:'yinglv',luck:1}},
+  f:{t:'琴師收了銀兩，沒有再彈第二曲。',fx:{}}}
+]};
+
+/* ============================================================
+   日常行動
+   ============================================================ */
+const HUB={
+ explore:{tag:'explore',l:'外出探訪：走出門去，到街市、山道與茶棚看看江湖百態',d:'可能遇上江湖遭遇，也有機會碰到燕雲奇遇',days:2,go:true},
+ rest:{tag:'auto',l:'靜養調息：閉門休養，恢復元氣',days:2,
+  s:{t:['你關上門窗，煎藥、打坐、調息，兩日過去，精神好了許多。'],fx:{hp:25}}},
+ train:{tag:'force',l:'修練武功：在空地上苦練拳腳刀法',a:['body'],d:6,days:2,
+  s:{t:['你一遍遍打熟拳路，汗水浸透衣衫，筋骨漸漸有了新的感覺。','晨霧中練刀三百回，你隱隱摸到了發力的訣竅。'],fx:()=>({xp:{body:S.traits.includes('martial')?2:1}})},
+  f:{t:['你操之過急，拉傷了肩背，只得放慢進度。'],fx:{hp:-6}}},
+ drill:{tag:'force',l:'召集人手：招攬可靠的幫手（銀 20）',a:['body','fame'],d:8,days:2,cost:{silver:20},
+  s:{t:['你親自帶人練習列陣與合擊，幫手們的氣勢明顯不同了。'],fx:{r:{guards:2},xp:{fame:1}}},
+  f:{t:['人手們陽奉陰違，操練草草收場。'],fx:{xp:{fame:-1}}}},
+ spar:{tag:'force',l:'向死人刀請教刀法',a:['body'],d:12,days:2,req:()=>S.npc.si.alive&&S.npc.si.met,reqNote:'他不在這裡',
+  s:{t:['死人刀的刀快得驚人，你被逼得連連後退，卻在險象中領悟了許多。'],fx:()=>({xp:{body:2},n:{si:9}})},
+  f:{t:['你被一刀背抽在腰上，疼得齜牙咧嘴。死人刀淡淡道：「再來。」'],fx:{hp:-10,n:{si:4}}}},
+ inspect:{tag:'biz',l:'經營生計：打理手上的生意與人脈',a:['wealth'],d:5,days:2,
+  s:{t:['你一家家走訪，掌櫃們戰戰兢兢地交上帳目，多了一筆進項。','你換了幾個懶散的夥計，整頓貨架，生意明顯起色。'],fx:()=>({r:{silver:40+S.attr.wealth*15}})},
+  f:{t:['生意清淡，只收到一點零頭。'],fx:{r:{silver:15}}}},
+ grain:{tag:'biz',l:'採買補給：購置乾糧與藥材（銀 60）',a:['wealth'],d:4,days:2,cost:{silver:60},
+  s:{t:['你壓低價格，一口氣買進一批糧草，包袱裡總算有了點底氣。'],fx:{r:{grain:50}}},
+  f:{t:['商人趁機抬價，你只買到一小批。'],fx:{r:{grain:20}}}},
+ smelt:{tag:'biz',l:'打造兵刃：請匠人鍛造兵器（銀 40、糧 10）',a:['wealth','body'],d:8,days:2,cost:{silver:40,grain:10},
+  s:{t:['爐火連燒兩日，鐵匠們汗流浹背，一件件兵器出爐。'],fx:{r:{iron:25}}},
+  f:{t:['爐溫失控，一批鐵毀了大半。'],fx:{r:{iron:8}}}},
+ feast:{tag:'charm',l:'結交朋友：請人喝酒，打聽風聲（銀 50）',a:['charm'],d:8,days:2,cost:{silver:50},
+  s:{t:['酒過三巡，賓主盡歡。你借機結識了不少人脈，名聲也傳出去了。'],fx:{xp:{charm:1,fame:2}}},
+  f:{t:['酒席上有人借酒鬧事，你費了好大力氣才圓場。'],fx:{xp:{fame:-1}}}},
+ relief:{tag:'charm',l:'接濟窮苦：施粥送藥，收攏人心（糧 25）',a:['charm','fame'],d:4,days:2,cost:{grain:25},
+  s:{t:['你開箱施粥，百姓排起長隊，口口相傳「這位少東家是個善人」。'],fx:{xp:{fame:2},r:{guards:1}}},
+  f:{t:['人群擁擠，場面一度失控，你好容易才維持住秩序。'],fx:{hp:-4}}},
+ withhong:{tag:'charm',l:'陪紅線：陪她逛逛集市，聽她說說話',a:['charm'],d:3,days:1,
+  req:()=>S.npc.hong.alive&&((S.fl.stage||1)===1||!!S.fl.hxWith),reqNote:'她不在身邊',
+  s:{t:['紅線拉著你逛了一下午集市，嘴裡嘰嘰喳喳，手裡的糖人舔了又舔。你發現自己很久沒有這麼輕鬆了。','她趴在窗邊畫花樣，你坐在她旁邊，聽她說「以後我要開全清河最大的繡莊」。你笑著說好，心裡卻想：我一定要讓你有以後。'],
+     fx:()=>({n:{hong:6},inc:{hx:1,intel:(S.fl.stage||1)>=2?1:0},hp:5,xp:{charm:1}})},
+  f:{t:['你分心想著心事，紅線悶悶不樂地鼓著臉：「哥，你是不是有事瞞著我？」你只好笑笑搪塞過去。'],fx:{n:{hong:2},inc:{hx:1}}}},
+ study:{tag:'wit',l:'研讀古籍：翻閱藏書與兵書',a:['mind'],d:6,days:2,
+  s:{t:['你翻閱半日，若有所得，連現代人的學識也被這些古籍啟發。'],fx:{xp:{mind:1}}},
+  f:{t:['書中盡是晦澀典故，你看得昏昏欲睡。'],fx:{}}},
+ ledger:{tag:'wit',l:'梳理線索：把近日見聞逐條寫下、互相比對',a:['mind'],d:8,days:2,
+  s:{t:['你將零散的見聞逐條比對，抓出了幾處前後矛盾的細節，線索多了一條。'],fx:()=>({inc:{clue:(S.fl.clue||0)<8?1:0},xp:{mind:1}})},
+  f:{t:['線索太雜亂，你理了半天也沒理出頭緒。'],fx:{}}},
+ trace:{tag:'wit',l:'追查千面人：順著蛛絲馬跡盯梢可疑之人',a:['mind'],d:12,days:2,
+  s:{t:['你盯了三日，發現一名面目模糊的人夜裡總在同一處更換衣飾。千面人的影子，似乎又近了一步。'],fx:{inc:{clue:1,intel:1},xp:{mind:1}}},
+  f:{t:['盯梢的人被對方察覺，你白白折騰了幾日。'],fx:{f:{qian:-3}}}},
+ plan:{tag:'wit',l:'推演局勢：在沙盤上推演各方勢力的動向',a:['mind'],d:8,days:2,
+  s:{t:['你把朝廷、千面人、北境……的關係在沙盤上排開，漸漸看出了一條暗線。'],fx:{inc:{intel:1},xp:{mind:1}}},
+  f:{t:['局勢太亂，你推演了半日卻越推越亂。'],fx:{}}}
+};
+const HUB_FORCE=['train','drill','spar'];
+const HUB_BIZ=['inspect','grain','smelt','feast','relief'];
+const HUB_WIT=['study','ledger','trace','plan'];
+
+const GEN={
+ force:{a:['body'],d:10,s:{t:'你憑一身筋骨處理了此事，局勢暫時被你壓住。',fx:{xp:{body:1,fame:1}}},f:{t:'你行事魯莽，吃了一點暗虧。',fx:{hp:-8}}},
+ wit:{a:['mind'],d:10,s:{t:'你想了個巧法，竟真讓局面鬆動了幾分。',fx:{xp:{mind:1},inc:{intel:1}}},f:{t:'你的點子不夠周全，白費了一番心思。',fx:{}}},
+ biz:{a:['wealth'],d:8,s:{t:'你用銀錢與人脈疏通了關節，局勢略有轉機。',fx:{r:{silver:30},xp:{wealth:1}}},f:{t:'你花了冤枉錢，卻沒買到想要的結果。',fx:{r:{silver:-30}}}},
+ charm:{a:['charm'],d:10,s:{t:'你好言相勸，對方的態度漸漸軟化，口碑也有所提升。',fx:{xp:{charm:1,fame:1}}},f:{t:'你說錯了話，場面一時尷尬。',fx:{xp:{fame:-1}}}},
+ explore:{a:['mind','luck'],d:10,s:{t:'你四處打聽，意外撈到了一點有用的線索。',fx:{inc:{intel:1},xp:{mind:1}}},f:{t:'你轉了一圈，一無所獲。',fx:{}}}
+};
+const KW=[['force',/打|殺|戰|揍|攻|擒|拳|刀|劍|硬|衝|武|砸|搶|擋|守|練/],['charm',/說|談|勸|求|請|拜|結交|拉攏|安撫|道歉|協商|宴|招|哄|拉/],['biz',/買|賣|錢|銀|帳|賬|糧|鐵|貨|賄|財|價|商|賞/],['wit',/查|謀|計|算|想|騙|偷|假|策|分析|推|布局|誘|設伏|讀|裝|聽/],['explore',/找|尋|搜|逛|走|去|出|訪|看|翻|探|問|逃|溜/]];
+
+/* ============================================================
+   四、結局資料庫
+   ============================================================ */
+const hxLine=()=>S.npc.hong.alive
+  ?(S.fl.hxWith
+    ?'紅線一直陪在你身邊。繡金樓的金線在開封也有了名號。每當你回頭，總能看見她束著紅繩辮子笑著跑來：「哥！」這一次，她沒有在火光裡消失。'
+    :'紅線留在清河，把繡金樓重新開了起來。每年春天，你都會收到一匹繡著渡口與小舟的絹，針腳依舊歪歪扭扭。')
+  :'你沒能救下紅線。每逢清明，你都會帶一匹金線繡的紅絹回到清河，在繡金樓的舊址前坐很久。那夜火光裡的呼喊，你這一生都沒有忘記。';
+const jiangLine=()=>S.fl.jiangBack?'江無浪在神仙渡舊址旁蓋了一間小屋，常常坐在渡口看船。他偶爾會說：「你像他。」你知道他說的是誰。':'江無浪終究沒有等到與你重逢的那一天。';
+
+const ENDINGS=[
+ {id:'death',n:'殞命江湖',r:'亡',c:()=>S.hp<=0,
+  t:()=>`${S.name}倒在了亂世的風裡。那個帶著前世記憶的靈魂，終究沒能把結局改寫完。\n${hxLine()}\n神仙渡的渡船仍在清河上來來去去，只是再沒有人記得，曾有一個少東家，想把整個故事都改掉。`},
+ {id:'ruin',n:'燕雲夢碎',r:'敗',c:()=>S.fl.finale==='lose',
+  t:()=>`終幕一戰，你敗了。鎮冠珏的光芒黯淡，三條路都在你眼前關閉。你帶著殘部向南走，身後是燃燒的旗幟。\n${hxLine()}\n許多年後，江湖上仍有人談起那一夜：一個少年，如何在絕境中咬碎了牙。你知道，這個故事還沒有結束。`},
+ {id:'all',n:'俠之大者',r:'S',c:()=>S.fl.finale==='win'&&S.fl.route==='all',
+  t:()=>`朝堂、江湖、邊關，三路並進，天下為之一震。史大人伏法，千面人的網被連根拔起，北境南下的大軍被擋在雁門之外。\n鎮冠珏在你掌心化為一道溫熱的光，彷彿有無數個沉睡了很久的聲音在輕輕回應：十六聲，終於聽見了。\n${hxLine()}\n${jiangLine()}\n有人問你：「何為俠？」你想了很久，只說：「替不能開口的人，把話說完。」`},
+ {id:'court',n:'廟堂之高',r:'A',c:()=>S.fl.finale==='win'&&S.fl.route==='court',
+  t:()=>`垂拱殿上的一戰，改變了朝局。史大人伏法，北境使者灰頭土臉地被送出邊關。天子賜你「忠義少卿」之名，你在朝堂上留下了一個肯說真話的位置。\n${hxLine()}\n${jiangLine()}\n你偶爾會想起清河的晨霧，想起那個喊你「哥」的小姑娘，想起一切開始之前的、平凡的日子。`},
+ {id:'jianghu',n:'江湖之遠',r:'A',c:()=>S.fl.finale==='win'&&S.fl.route==='jianghu',
+  t:()=>`英雄會之夜，千面人的精銳折戟校場。江湖群雄奉你為盟，各門各派在你的旗下，頭一回為了同一件事並肩而立。\n${hxLine()}\n${jiangLine()}\n你沒有留在朝堂，也沒有北上，只守著這座城與身邊的人。有人說這不夠大，你卻覺得，守住一個地方的燈火，也是俠。`},
+ {id:'north',n:'燕雲北望',r:'A',c:()=>S.fl.finale==='win'&&S.fl.route==='north',
+  t:()=>`雁門關外的雪夜，你憑鎮冠珏號令舊部，三千殘兵將北境先鋒擊退。十六州的故土尚未收復，但那面旗，終於再次在關外豎了起來。\n${hxLine()}\n${jiangLine()}\n老卒們望著北方，眼裡有光。他們說：「少東家，我們等這一天，等了很多年。」`},
+ {id:'hold',n:'守得雲開',r:'C',c:()=>S.fl.finale==='win',
+  t:()=>`最後一戰，你守住了想守住的人。前路依舊風雨飄搖，但你知道，只要這面旗還在，故事就沒有結束。\n${hxLine()}`}
+];
+
+
+/* ============================================================
+   五、遊戲狀態與引擎
+   ============================================================ */
+let S=null;
+
+function newState(name,attr,traits){
+  const s={name,day:1,hp:100,maxhp:100,luck:10,
+    attr:{...attr},xp:{body:0,mind:0,charm:0,wealth:0,fame:0},traits:[...traits],
+    res:{silver:100+attr.wealth*60+(traits.includes('merchant')?80:0),grain:60+attr.wealth*10,iron:10+attr.wealth*3,guards:6},
+    items:['jade','yao'],arts:['basic'],fac:{},npc:{},fl:{stage:1},done:[],log:[],
+    cur:null,phase:'event',hubIds:[],result:null,over:false};
+  Object.keys(FAC).forEach(k=>s.fac[k]=FAC[k].v);
+  Object.keys(NPCS).forEach(k=>s.npc[k]={aff:NPCS[k].aff,alive:true,met:!!NPCS[k].met});
+  return s;
+}
+
+function prep(){
+  let p=S.res.guards*2.5+S.res.iron/4+S.res.grain/10;
+  const N=S.npc;
+  if(N.hong.alive&&S.fl.hxWith)p+=6;
+  if(S.fl.tianJoined)p+=8;
+  if(S.fl.yingAlly)p+=4;
+  if(N.wen.met&&N.wen.aff>=20)p+=4;
+  if(S.fl.weiAlly)p+=6;
+  if(S.fl.jiangBack&&N.jiang.aff>=30)p+=8;
+  if(S.fac.court>=20)p+=8; if(S.fac.jianghu>=20)p+=8; if(S.fac.yinshi>=15)p+=5; if(S.fac.qinghe>=20)p+=4;
+  if(S.fl.furnaceDown)p+=8; if(S.fl.shiExposed)p+=10; if(S.fl.shiIsolated)p+=6; if(S.fl.coinCrack)p+=6;
+  if(S.fl.union)p+=8; if(S.fl.oldMen)p+=6; if(S.fl.safeLine)p+=4;
+  p+=(S.fl.clue||0)*2+(S.fl.intel||0)*2;
+  return p;
+}
+
+function attrVal(k){return k==='luck'?S.luck/2:S.attr[k]}
+function bonusFor(tag){
+  let b=0;
+  S.traits.forEach(t=>b+=(TRAITS[t].bonus[tag]||0));
+  S.arts.forEach(a=>b+=((ARTS[a].bonus||{})[tag]||0));
+  new Set(S.items).forEach(i=>b+=((ITEMS[i].bonus||{})[tag]||0));
+  if(tag==='charm'&&S.traits.includes('martial'))b-=4;
+  if(tag==='wit'&&S.traits.includes('photo')&&S.hp<50)b-=5;
+  if(S.hp<40)b-=8;
+  return b;
+}
+/* 隱藏判定：回傳 cs 大成功 / s 成功 / f 失敗 / cf 大失敗 */
+function rollCheck(tag,attrs,diff){
+  if(tag==='auto'||!attrs||!attrs.length)return 's';
+  const vals=attrs.map(attrVal);
+  const avg=vals.reduce((x,y)=>x+y,0)/vals.length;
+  const chance=clamp(36+avg*6+bonusFor(tag)+(S.luck-10)*0.8-diff,8,92);
+  const r=rnd(1,100);
+  const critS=4+Math.floor(S.luck/4);
+  const critF=100-Math.max(2,6-Math.floor(S.luck/5));
+  if(r<=chance&&r<=critS)return 'cs';
+  if(r>chance&&r>=critF)return 'cf';
+  return r<=chance?'s':'f';
+}
+
+function canPay(c){return !c||Object.keys(c).every(k=>S.res[k]>=c[k])}
+function pay(c){if(c)Object.keys(c).forEach(k=>S.res[k]-=c[k])}
+const RN={silver:'銀兩',grain:'糧草',iron:'兵器',guards:'人手'};
+
+function applyFx(fx){
+  const ch=[];
+  if(!fx)return ch;
+  if(typeof fx==='function')fx=fx()||{};
+  const add=(t,g)=>ch.push({t,g});
+  if(fx.hp){const o=S.hp;S.hp=clamp(S.hp+fx.hp,0,S.maxhp);if(S.hp!==o)add(`健康 ${fmt(S.hp-o)}`,S.hp>o)}
+  if(fx.maxhp){S.maxhp+=fx.maxhp;S.hp+=fx.maxhp;add(`健康上限 +${fx.maxhp}`,true)}
+  if(fx.a)for(const k in fx.a){const o=S.attr[k];S.attr[k]=clamp(o+fx.a[k],1,10);if(S.attr[k]!==o)add(`${ATTR[k].n} ${fmt(S.attr[k]-o)}`,fx.a[k]>0)}
+  if(fx.xp)for(const k in fx.xp){
+    let d=fx.xp[k];if(!d)continue;
+    if(k==='fame'&&d>1&&S.traits.includes('merchant'))d-=1;
+    S.xp[k]+=d;
+    if(S.xp[k]>=3){S.xp[k]=0;if(S.attr[k]<10){S.attr[k]++;add(`${ATTR[k].n} 提升至 ${S.attr[k]}`,true)}else add(`${ATTR[k].n} 已臻極致`,true)}
+    else if(S.xp[k]<=-3){S.xp[k]=0;if(S.attr[k]>1){S.attr[k]--;add(`${ATTR[k].n} 下降至 ${S.attr[k]}`,false)}}
+    else add(`${ATTR[k].n}歷練 ${fmt(d)}`,d>0);
+  }
+  if(fx.r)for(const k in fx.r){
+    const o=S.res[k];S.res[k]=Math.max(0,o+fx.r[k]);
+    if(S.res[k]!==o)add(`${RN[k]} ${fmt(S.res[k]-o)}`,S.res[k]>o);
+  }
+  if(fx.f)for(const k in fx.f){if(!fx.f[k])continue;S.fac[k]=clamp(S.fac[k]+fx.f[k],-100,100);add(`${FAC[k].n} ${fmt(fx.f[k])}`,fx.f[k]>0)}
+  if(fx.n)for(const k in fx.n){if(!fx.n[k])continue;const p=S.npc[k];p.aff=clamp(p.aff+fx.n[k],-100,100);p.met=true;add(`${NPCS[k].n} 好感 ${fmt(fx.n[k])}`,fx.n[k]>0)}
+  if(fx.met)fx.met.forEach(k=>{if(!S.npc[k].met){S.npc[k].met=true;add(`結識 ${NPCS[k].n}`,true)}});
+  if(fx.i){S.items.push(fx.i);add(`獲得「${ITEMS[fx.i].n}」`,true)}
+  if(fx.li){const ix=S.items.indexOf(fx.li);if(ix>=0)S.items.splice(ix,1)}
+  if(fx.art&&!S.arts.includes(fx.art)){S.arts.push(fx.art);add(`習得武學《${ARTS[fx.art].n}》`,true);if(fx.art==='jinzhong'){}}
+  if(fx.fl)for(const k in fx.fl){S.fl[k]=fx.fl[k]}
+  if(fx.inc)for(const k in fx.inc){S.fl[k]=(S.fl[k]||0)+fx.inc[k]}
+  if(fx.luck)S.luck=clamp(S.luck+fx.luck,1,20);
+  if(fx.kill)[].concat(fx.kill).forEach(k=>{if(S.npc[k].alive){S.npc[k].alive=false;S.npc[k].met=true;add(`${NPCS[k].n} 殞命`,false)}});
+  return ch;
+}
+
+/* ---------- 流程 ---------- */
+function txtOf(t){return typeof t==='function'?t():t}
+function pickT(t){const v=txtOf(t);return Array.isArray(v)?pick(v):v}
+
+function showEvent(id){
+  S.cur=id;S.phase='event';S.result=null;
+  render();save();
+}
+function nextBeat(){
+  return BEAT_ORDER.find(id=>!S.done.includes(id));
+}
+function proceed(){
+  if(S.over)return;
+  const b=nextBeat();
+  if(b&&EV[b].day<=S.day)return showEvent(b);
+  if(!b&&!S.over)return endGame();
+  showHub();
+}
+function showHub(){
+  const ok=i=>!HUB[i].req||HUB[i].req();
+  const ids=['explore'];
+  ids.push(S.hp<50?'rest':pick(HUB_FORCE.filter(ok)));
+  ids.push(ok('withhong')&&Math.random()<0.55?'withhong':pick(HUB_BIZ));
+  ids.push(pick(HUB_WIT.filter(ok)));
+  const st=S.fl.stage||1;
+  S.hubIds=ids;S.cur='hub';S.phase='event';S.result=null;
+  S.hubText=pick(st>=2?[
+   '開封的清晨，早市的吆喝聲與車馬聲混在一起。','午後的汴河上船影重重，岸邊的茶肆裡人聲鼎沸。','夜裡的樊樓燈火通明，遠處隱約傳來絲竹聲。','城裡風聲鶴唳，你總覺得暗處有人在看著你。','一場冷雨洗過長街，濕漉漉的青石板上映著燈籠的光。']:[
+   '晨霧未散，渡口的炊煙裊裊升起。','午後陽光斜照，河面上泛著金光。','秋風捲著落葉，吹過渡口的酒旗。','夜裡下了一場冷雨，神仙渡一片靜謐。','遠處傳來船工的號子聲，又是平凡的一日。']);
+  render();save();
+}
+function currentOpts(){
+  if(S.cur==='hub')return S.hubIds.map(id=>({...HUB[id],id}));
+  const o=EV[S.cur].opts;return typeof o==='function'?o():o;
+}
+
+function choose(opt,userText){
+  if(S.phase!=='event')return;
+  if(!canPay(opt.cost)||(opt.req&&!opt.req()))return;
+  pay(opt.cost);
+  const fromHub=S.cur==='hub';
+  const curId=S.cur;
+  if(opt.go){
+    S.day+=opt.days||1;
+    const id=exploreTarget();
+    return showEvent(id);
+  }
+  const diff=typeof opt.d==='function'?opt.d():(opt.d||0);
+  const tier=rollCheck(opt.tag,opt.a,diff);
+  let o=tier==='cs'?(opt.cs||opt.s):tier==='cf'?(opt.cf||opt.f||opt.s):tier==='s'?opt.s:(opt.f||opt.s);
+  let changes=applyFx(o.fx);
+  let text=pickT(o.t);
+  if(tier==='cs'&&!opt.cs){changes=changes.concat(applyFx({xp:{fame:1},luck:1}));text+='\n天時地利人和，結果比你預期的更好。'}
+  if(tier==='cf'&&!opt.cf){changes=changes.concat(applyFx({hp:-8}));text+='\n禍不單行，事情比最壞的情況還糟。'}
+  if(tier==='cf'&&opt.tag==='charm'&&S.traits.includes('tongue')){changes=changes.concat(applyFx({xp:{fame:-2}}));text+='\n言多必失，你的話很快傳遍了江湖。'}
+  if(tier==='cs'&&S.traits.includes('modern')&&(opt.tag==='wit'||opt.tag==='biz')){
+    S.fl.anach=(S.fl.anach||0)+1;
+    if(S.fl.anach%3===0){changes=changes.concat(applyFx({hp:-12,luck:-1}));text+='\n你的見識太過超前，冥冥中似有天機反噬，胸口一陣刺痛。'}
+  }
+  if(userText)text=`你決定「${userText}」。\n`+text;
+  const days=opt.days!==undefined?opt.days:(fromHub?2:1);
+  S.day+=days;
+  if(!opt.generic&&BEATS_ALL.includes(curId)&&!S.done.includes(curId))S.done.push(curId);
+  let nx=o.next!==undefined?o.next:(opt.next!==undefined?opt.next:(!opt.generic&&EV[curId]&&EV[curId].next?EV[curId].next:undefined));
+  if(typeof nx==='function')nx=nx();
+  if(!opt.generic&&o.fx&&typeof o.fx==='object'&&o.fx.next)nx=o.fx.next;
+  S.log.push({day:S.day,title:fromHub?'日常':txtOf(EV[curId].title),pick:(userText||opt.l||'').slice(0,40),tier});
+  if(S.log.length>80)S.log.shift();
+  S.result={tier,text,changes,next:nx||null,title:fromHub?'日常':txtOf(EV[curId].title),end:S.hp<=0,qy:!!(EV[curId]&&EV[curId].qy)};
+  if(tier!=='f'&&tier!=='cf'&&EV[curId]&&EV[curId].qy){S.fl.qyCount=(S.fl.qyCount||0)+1}
+  S.phase='result';
+  render();save();
+}
+function exploreTarget(){
+  const c=QY_IDS.filter(id=>!S.fl['seen_'+id]&&EV[id].cond());
+  if(c.length&&Math.random()<0.10+S.luck*0.012){const id=pick(c);S.fl['seen_'+id]=1;return id}
+  const pool=(S.fl.stage||1)>=2?ENC2_IDS:ENC1_IDS;
+  const ids=pool.filter(i=>i!==S.fl.lastEnc);
+  const id=pick(ids);S.fl.lastEnc=id;return id;
+}
+function onContinue(){
+  const r=S.result;
+  if(r.end)return endGame();
+  if(r.next==='END')return endGame();
+  if(r.next&&EV[r.next])return showEvent(r.next);
+  proceed();
+}
+function freeAct(text){
+  if(S.phase!=='event')return;
+  text=text.trim();if(!text)return;
+  let tag='wit';
+  for(const [k,re] of KW){if(re.test(text)){tag=k;break}}
+  const opts=currentOpts();
+  let o=opts.find(x=>x.tag===tag&&!x.go&&canPay(x.cost)&&(!x.req||x.req()));
+  if(!o){
+    const g=GEN[tag];
+    o={tag,a:g.a,d:g.d,s:g.s,f:g.f,days:1,generic:true};
+  }
+  choose(o,text);
+}
+function useItem(i){
+  const it=ITEMS[i];if(!it||!it.use||S.phase==='ending')return;
+  const ix=S.items.indexOf(i);if(ix<0)return;
+  S.items.splice(ix,1);applyFx({hp:it.use.hp});
+  render();save();
+}
+
+/* ---------- 結局 ---------- */
+function endGame(){
+  S.over=true;
+  const e=ENDINGS.find(x=>x.c())||ENDINGS[ENDINGS.length-1];
+  const attrSum=AK.reduce((s,k)=>s+S.attr[k],0);
+  const facSum=Object.values(S.fac).reduce((s,v)=>s+Math.max(0,v),0);
+  const score=attrSum*10+Math.floor(S.res.silver/10)+Math.floor(facSum/2)+S.arts.length*20+(S.fl.qyCount||0)*30+(S.fl.finale==='win'?120:0)+(S.fl.glory?60:0)+(S.npc.hong.alive?80:0)+(S.fl.jiangBack?30:0)-(S.hp<=0?80:0);
+  try{localStorage.removeItem(SAVE_KEY)}catch(_){}
+  $('#game').classList.add('hidden');$('#ending').classList.remove('hidden');
+  const ach=[];
+  if(S.npc.hong.alive)ach.push('火光中救下紅線');
+  if(S.npc.hong.alive&&S.fl.hxWith)ach.push('紅線相伴');
+  if(S.fl.glory)ach.push('終局大捷');
+  if(S.fl.shiExposed)ach.push('揭穿金造器');
+  if(S.fl.furnaceDown)ach.push('毀爐之人');
+  if(S.fl.tianJoined)ach.push('井中人相隨');
+  if(S.fl.weiAlly)ach.push('得遺老信任');
+  if(S.fl.jiangBack)ach.push('父子重逢');
+  if(S.fl.route==='all')ach.push('俠之大者');
+  if(S.arts.includes('xinjing'))ach.push('聽見十六聲');
+  if(S.items.includes('duanshuang'))ach.push('寒鐵得刃');
+  $('#ending').innerHTML=`<div class="card">
+   <div class="dim" style="text-align:center;letter-spacing:.3em">第 ${S.day} 日 · 終局</div>
+   <h1>${e.n}</h1>
+   <div class="rank">${e.r}</div>
+   <div class="txt" style="margin:16px 0">${e.t().split('\n').map(p=>`<p>${p}</p>`).join('')}</div>
+   <table class="sum">
+    <tr><td>最終屬性</td><td>${AK.map(k=>ATTR[k].n+S.attr[k]).join('　')}</td></tr>
+    <tr><td>隱藏天命（終值）</td><td>${S.luck}</td></tr>
+    <tr><td>銀兩／糧草／兵器／人手</td><td>${S.res.silver}／${S.res.grain}／${S.res.iron}／${S.res.guards}</td></tr>
+    <tr><td>武學</td><td>${S.arts.map(a=>ARTS[a].n).join('、')}</td></tr>
+    <tr><td>燕雲奇遇</td><td>${S.fl.qyCount||0} 次</td></tr>
+    <tr><td>成就</td><td>${ach.join('、')||'—'}</td></tr>
+    <tr><td><b>江湖評分</b></td><td><b style="font-size:20px">${score}</b></td></tr>
+   </table>
+   <div class="row" style="justify-content:center"><button class="btn" id="btnAgain">再入亂世</button></div>
+  </div>`;
+  $('#btnAgain').onclick=()=>{$('#ending').classList.add('hidden');openCreate()};
+}
+
+/* ---------- 存檔 ---------- */
+function save(){try{localStorage.setItem(SAVE_KEY,JSON.stringify(S))}catch(_){}}
+function loadSave(){try{const t=localStorage.getItem(SAVE_KEY);return t?JSON.parse(t):null}catch(_){return null}}
+
+/* ============================================================
+   六、介面
+   ============================================================ */
+const CN=['','初一','初二','初三','初四','初五','初六','初七','初八','初九','初十','十一','十二','十三','十四','十五','十六','十七','十八','十九','二十','廿一','廿二','廿三','廿四','廿五','廿六','廿七','廿八','廿九','三十'];
+function dateStr(){
+  const d=S.day-1,m=Math.floor(d/30),dd=d%30+1;
+  const mn=['九月','十月','十一月','十二月','正月'][Math.min(m,4)];
+  return `建隆三年・${m<=1?'秋':'冬'}・${mn}${CN[dd]}`;
+}
+function goalText(){
+  const b=nextBeat();
+  if(!b)return '';
+  const e=EV[b];
+  const left=e.day-S.day;
+  let t=`當前目標：${e.goal||'見機行事'}`;
+  return t;
+}
+function renderTop(){
+  const p=Math.round(S.hp/S.maxhp*100);
+  $('#top').innerHTML=`<div><span class="t1">📅 ${dateStr()}</span> <span class="dim">· ${S.cur==='hub'?((S.fl.stage||1)>=2?'開封・日常':'神仙渡・日常'):EV[S.cur]?txtOf(EV[S.cur].place):''}</span></div>
+  <div>❤️ <span class="hpbar"><i style="width:${p}%"></i></span> <span>${S.hp}/${S.maxhp}</span>　💰 ${S.res.silver}</div>
+  <div class="row" style="margin:0"><button class="btn sm" id="btnLog">江湖日誌</button><button class="btn sm" id="btnMenu">選單</button></div>`;
+  $('#btnLog').onclick=openLog;$('#btnMenu').onclick=openMenu;
+}
+function renderSide(){
+  const a=AK.map(k=>`<div class="stat"><span>${ATTR[k].i}${ATTR[k].n}</span><div class="bar"><i style="width:${S.attr[k]*10}%"></i></div><b style="color:var(--gold)">${S.attr[k]}</b></div>`).join('');
+  const tr=S.traits.map(t=>`<span class="tag" title="${esc(TRAITS[t].d+' 優：'+TRAITS[t].pro+'；劣：'+TRAITS[t].con)}">${TRAITS[t].n}</span>`).join('');
+  const items=S.items.map(i=>ITEMS[i].use?`<span class="tag use" data-use="${i}" title="${esc(ITEMS[i].d)}">${ITEMS[i].n}</span>`:`<span class="tag" title="${esc(ITEMS[i].d)}">${ITEMS[i].n}</span>`).join('')||'<span class="dim">（空）</span>';
+  const arts=S.arts.map(i=>`<span class="tag" title="${esc(ARTS[i].d)}">${ARTS[i].n}</span>`).join('');
+  const fac=Object.keys(FAC).map(k=>{const v=S.fac[k];const w=Math.abs(v)/2;const col=v>=0?'var(--jade)':'var(--red)';
+    return `<div class="fr"><span>${FAC[k].i}${FAC[k].n}</span><div class="fbar"><i style="${v>=0?'left:50%':'right:50%'};width:${w}%;background:${col}"></i></div><span style="color:${col};text-align:right">${attWord(v)}</span></div>`}).join('');
+  const npc=Object.keys(NPCS).filter(k=>S.npc[k].met).map(k=>{
+    const p=S.npc[k];const st=k==='jiang'?(S.fl.jiangBack?'已重逢':'音訊斷續'):(p.alive?attWord(p.aff):'已故');
+    return `<div class="fr" style="grid-template-columns:1fr auto"><span>${NPCS[k].n} <span class="dim">${NPCS[k].role}</span></span><span style="color:${!p.alive?'var(--red)':p.aff>=8?'var(--jade)':p.aff<=-8?'var(--red)':'var(--dim)'}">${st}</span></div>`}).join('');
+  $('#side').innerHTML=`<div class="card"><h4>${esc(S.name)} · 屬性</h4>${a}<div class="stat" style="margin-top:4px"><span>🌀天命</span><div class="dim">？？？</div><span></span></div></div>
+  <div class="card"><h4>資源</h4><div class="res"><span>💰銀 ${S.res.silver}</span><span>🌾糧 ${S.res.grain}</span><span>⚒️兵器 ${S.res.iron}</span><span>🛡️人手 ${S.res.guards}</span></div></div>
+  <div class="card"><h4>詞條</h4>${tr}<h4 style="margin-top:8px">武學</h4>${arts}<h4 style="margin-top:8px">物品 <span class="dim" style="font-size:12px;letter-spacing:0">（點擊可使用的物品）</span></h4>${items}</div>
+  <div class="card"><h4>勢力格局</h4>${fac}</div>
+  <div class="card"><h4>人物</h4>${npc}</div>`;
+  document.querySelectorAll('[data-use]').forEach(el=>el.onclick=()=>useItem(el.dataset.use));
+}
+function paras(arr){return (Array.isArray(arr)?arr:String(arr).split('\n')).map(p=>`<p>${p}</p>`).join('')}
+
+function renderMain(){
+  const m=$('#main');
+  if(S.phase==='result'){
+    const r=S.result;
+    const label={cs:'大成功',s:'成功',f:'失敗',cf:'大失敗'}[r.tier];
+    m.innerHTML=`<div class="card scene">
+      ${r.qy?'<div class="seal" style="color:var(--gold);border:1px solid var(--gold);display:inline-block;padding:0 8px;font-size:13px;letter-spacing:.2em;margin-bottom:6px">燕雲奇遇</div><br>':''}
+      <span class="badge b-${r.tier}">${label}</span>
+      <div class="txt">${paras(r.text)}</div>
+      <div class="chips">${r.changes.map(c=>`<span class="chip ${c.g?'g':'b'}">${c.t}</span>`).join('')}</div>
+      ${S.hp<=0?'<div class="omen">你的氣血已盡……</div>':''}
+      <div class="row" style="margin-top:16px"><button class="btn" id="btnCont">繼續</button></div>
+    </div>`;
+    $('#btnCont').onclick=onContinue;
+    return;
+  }
+  let title,place,textHtml,extra='';
+  if(S.cur==='hub'){
+    title=(S.fl.stage||1)>=2?'開封・日常':'神仙渡・日常';place='第 '+S.day+' 日';
+    const b=nextBeat();
+    let hint=S.hubText;
+    textHtml=`<p>${hint}</p><p>莊中事務千頭萬緒，你有幾件事可以做：</p>`;
+    if(b&&EV[b].omen&&EV[b].day-S.day<=5&&EV[b].day-S.day>=0)extra+=`<div class="omen">${EV[b].omen}</div>`;
+    extra+=`<div class="goal">${goalText()}</div>`;
+  }else{
+    const e=EV[S.cur];title=txtOf(e.title);place=txtOf(e.place);textHtml=paras(txtOf(e.text));
+  }
+  const opts=currentOpts();
+  const letters='ABCDEFG';
+  const html=opts.map((o,i)=>{
+    const ok=canPay(o.cost)&&(!o.req||o.req());
+    let note='';
+    if(!canPay(o.cost))note='　<span style="color:#d98a82">（資源不足）</span>';
+    else if(o.req&&!o.req())note=`　<span style="color:#d98a82">（${o.reqNote||'條件不足'}）</span>`;
+    return `<button class="opt" data-i="${i}" ${ok?'':'disabled'}><span class="k">${letters[i]}</span><span>${o.l}<span class="tg">${TAGS[o.tag]}</span>${note}${o.d&&typeof o.d==='string'?`<small>${o.d}</small>`:''}</span></button>`}).join('');
+  m.innerHTML=`<div class="card scene"><h3>${title}</h3><div class="place">${place}</div><div class="txt">${textHtml}</div>${extra}
+    <div class="opts">${html}</div>
+    <div class="free"><input type="text" id="free" placeholder="自由行動：直接輸入你想做的事，例如「假裝重傷未醒，偷聽他們說什麼」" maxlength="60"><button class="btn sm" id="btnFree">執行</button></div></div>`;
+  m.querySelectorAll('.opt').forEach(b=>b.onclick=()=>choose(opts[+b.dataset.i]));
+  const doFree=()=>{const v=$('#free').value;if(v.trim())freeAct(v)};
+  $('#btnFree').onclick=doFree;$('#free').onkeydown=e=>{if(e.key==='Enter')doFree()};
+}
+function syncNames(){NPCS.guest.n=S.fl.ye?'千夜':'神秘女客';NPCS.guest.role=S.fl.ye?'千面人首領':'來歷不明的遠客'}
+function render(){
+  syncNames();
+  $('#game').classList.remove('hidden');
+  renderTop();renderSide();renderMain();
+  window.scrollTo({top:0});
+}
+
+/* ---------- 對話框 ---------- */
+function openModal(html){const m=$('#modal');m.innerHTML=`<div class="card">${html}</div>`;m.classList.remove('hidden');m.onclick=e=>{if(e.target===m)closeModal()}}
+function closeModal(){$('#modal').classList.add('hidden')}
+function openLog(){
+  const rows=S.log.slice().reverse().map(l=>`<div class="logline"><span class="dim">第${l.day}日</span> 〔${esc(l.title)}〕${esc(l.pick)} → <b style="color:${l.tier==='cs'?'var(--gold)':l.tier==='s'?'var(--jade)':'var(--red)'}">${{cs:'大成功',s:'成功',f:'失敗',cf:'大失敗'}[l.tier]}</b></div>`).join('')||'<div class="dim">尚無記錄。</div>';
+  openModal(`<h3 style="margin-top:0;color:var(--gold)">江湖日誌</h3>${rows}<div class="row"><button class="btn sm" onclick="closeModal()">關閉</button></div>`);
+}
+function openMenu(){
+  openModal(`<h3 style="margin-top:0;color:var(--gold)">選單</h3>
+  <p class="dim">遊戲會在每個回合自動存檔（存於本機瀏覽器，換裝置不會同步）。</p>
+  <p>判定說明：每次抉擇都有隱藏判定，與相關屬性、詞條、武學、物品、健康與天命有關。屬性透過「歷練」累積，歷練滿三點提升一級。</p>
+  <div class="row"><button class="btn sm" id="mSave">立即存檔</button><button class="btn sm red" id="mNew">放棄並重新開始</button><button class="btn sm" onclick="closeModal()">關閉</button></div>`);
+  $('#mSave').onclick=()=>{save();closeModal()};
+  $('#mNew').onclick=()=>{try{localStorage.removeItem(SAVE_KEY)}catch(_){}closeModal();$('#game').classList.add('hidden');openCreate()};
+}
+
+/* ---------- 創角 ---------- */
+let CR={attr:{body:2,mind:2,charm:2,wealth:2,fame:2},traits:['modern','photo','tongue']};
+const PRE={bal:{body:2,mind:2,charm:2,wealth:2,fame:2},war:{body:4,mind:2,charm:1,wealth:1,fame:2},mind:{body:1,mind:4,charm:2,wealth:2,fame:1},biz:{body:1,mind:2,charm:2,wealth:4,fame:1}};
+function crLeft(){return 10-AK.reduce((s,k)=>s+CR.attr[k],0)}
+function renderCreate(){
+  $('#alloc').innerHTML=AK.map(k=>`<div class="arow"><div>${ATTR[k].i} ${ATTR[k].n}</div><div class="d">${ATTR[k].d}</div><div class="stepper"><button data-k="${k}" data-d="-1">−</button><b>${CR.attr[k]}</b><button data-k="${k}" data-d="1">＋</button></div></div>`).join('');
+  $('#alloc').querySelectorAll('button').forEach(b=>b.onclick=()=>{
+    const k=b.dataset.k,d=+b.dataset.d,v=CR.attr[k]+d;
+    if(v<1||v>10)return;if(d>0&&crLeft()<=0)return;
+    CR.attr[k]=v;renderCreate();
+  });
+  $('#left').textContent=crLeft();
+  $('#traits').innerHTML=Object.keys(TRAITS).map(k=>{const t=TRAITS[k];return `<div class="trait ${CR.traits.includes(k)?'on':''}" data-t="${k}"><b>${t.n}</b><div class="dim" style="font-size:13px">${t.d}</div><div class="pro">＋ ${t.pro}</div><div class="con">－ ${t.con}</div></div>`}).join('');
+  $('#traits').querySelectorAll('.trait').forEach(el=>el.onclick=()=>{
+    const k=el.dataset.t;const ix=CR.traits.indexOf(k);
+    if(ix>=0)CR.traits.splice(ix,1);else if(CR.traits.length<3)CR.traits.push(k);
+    renderCreate();
+  });
+  $('#tcount').textContent=`(${CR.traits.length}/3)`;
+  $('#btnStart').disabled=!(crLeft()===0&&CR.traits.length===3);
+}
+function openCreate(){
+  $('#title').classList.add('hidden');$('#create').classList.remove('hidden');renderCreate();
+}
+function startGame(){
+  const name=($('#pname').value.trim()||'江舟').slice(0,6);
+  S=newState(name,CR.attr,CR.traits);
+  $('#create').classList.add('hidden');
+  showEvent('b0');
+}
+
+/* ---------- 啟動 ---------- */
+$('#btnNew').onclick=openCreate;
+$('#btnBack').onclick=()=>{$('#create').classList.add('hidden');$('#title').classList.remove('hidden')};
+$('#btnStart').onclick=startGame;
+document.querySelectorAll('[data-pre]').forEach(b=>b.onclick=()=>{
+  const p=b.dataset.pre;
+  if(p==='rnd'){const a={body:1,mind:1,charm:1,wealth:1,fame:1};for(let i=0;i<5;i++)a[pick(AK)]++;CR.attr=a}
+  else CR.attr={...PRE[p]};
+  renderCreate();
+});
+(function(){
+  const sv=loadSave();
+  if(sv&&!sv.over){$('#btnCont').onclick=()=>{S=sv;$('#title').classList.add('hidden');render()}}
+  else $('#btnCont').classList.add('hidden');
+})();
+
+/* ============================================================
+   背景：水墨遠山與飄落楓葉（Canvas）
+   ============================================================ */
+(function(){
+  const cv=$('#bg'),cx=cv.getContext('2d');
+  let W=0,H=0;
+  function rs(){W=cv.width=innerWidth;H=cv.height=innerHeight}
+  addEventListener('resize',rs);rs();
+  const leaves=Array.from({length:26},()=>({x:Math.random()*2000,y:Math.random()*1200,v:.25+Math.random()*.6,s:2+Math.random()*3,a:Math.random()*6,w:.5+Math.random()}));
+  const reduce=matchMedia('(prefers-reduced-motion: reduce)').matches;
+  function mount(t,base,amp,f,col){
+    cx.beginPath();cx.moveTo(0,H);
+    for(let x=0;x<=W;x+=12){const y=base+Math.sin(x*f+t*.00003)*amp+Math.sin(x*f*2.3+1)*amp*.45;cx.lineTo(x,y)}
+    cx.lineTo(W,H);cx.closePath();cx.fillStyle=col;cx.fill();
+  }
+  function frame(t){
+    const g=cx.createLinearGradient(0,0,0,H);g.addColorStop(0,'#0e0c0b');g.addColorStop(1,'#241a14');
+    cx.fillStyle=g;cx.fillRect(0,0,W,H);
+    cx.beginPath();cx.arc(W*.8,H*.18,36,0,7);cx.fillStyle='rgba(235,220,180,.14)';cx.fill();
+    mount(t,H*.62,40,.004,'rgba(48,40,34,.55)');
+    mount(t,H*.72,36,.006,'rgba(36,30,26,.7)');
+    mount(t,H*.84,26,.008,'rgba(24,20,17,.9)');
+    leaves.forEach(l=>{
+      l.y+=l.v;l.x+=Math.sin(t*.001*l.w+l.a)*.4+.15;l.a+=.01;
+      if(l.y>H+10){l.y=-10;l.x=Math.random()*W}
+      if(l.x>W+10)l.x=-10;
+      cx.save();cx.translate(l.x,l.y);cx.rotate(l.a);
+      cx.fillStyle='rgba(190,80,50,.55)';cx.beginPath();cx.ellipse(0,0,l.s,l.s*.55,0,0,7);cx.fill();cx.restore();
+    });
+    if(!reduce&&!document.hidden)requestAnimationFrame(frame);
+  }
+  requestAnimationFrame(frame);
+  document.addEventListener('visibilitychange',()=>{if(!document.hidden&&!reduce)requestAnimationFrame(frame)});
+})();
+</script>
+</body>
+</html>
