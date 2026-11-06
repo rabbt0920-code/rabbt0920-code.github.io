@@ -23,12 +23,12 @@
 :root{
   --bg:#0f1218;--bg2:#161a23;--card:#1b202b;--card2:#222937;--line:#2d3546;
   --text:#ece6d6;--mute:#9ba2b0;--gold:#d9b45b;--gold-d:#8a7036;--jade:#6cc1a6;--red:#e2674d;--blue:#7fa6e0;
-  --r:14px;
+  --r:14px;--hi:var(--hi);--tint:#212a3d;--btn1:#e5c570;--btn2:#c49a3e;--btnb:#e9cf85;
 }
 *{box-sizing:border-box}
 html{color-scheme:dark}
 body{margin:0;min-height:100vh;color:var(--text);
-  background:radial-gradient(1100px 520px at 50% -8%,#212a3d 0%,rgba(15,18,24,0) 70%),var(--bg);
+  background:radial-gradient(1100px 520px at 50% -8%,var(--tint) 0%,rgba(15,18,24,0) 70%),var(--bg);
   font:16px/1.75 'Noto Sans TC','PingFang TC','Microsoft JhengHei',system-ui,-apple-system,sans-serif}
 h1,h2,h3{font-family:'Noto Serif TC','Songti TC','PMingLiU',serif;font-weight:700;letter-spacing:.05em;margin:0;line-height:1.35}
 p{margin:0 0 .7em}
@@ -45,8 +45,8 @@ h2[tabindex]:focus{outline:none}
   border:1px solid var(--line);background:var(--card2);transition:background .15s,border-color .15s,transform .1s}
 .btn:hover:not(:disabled){border-color:var(--gold-d);background:#29324a}
 .btn:active:not(:disabled){transform:translateY(1px)}
-.btn.primary{background:linear-gradient(180deg,#e5c570,#c49a3e);color:#1a1405;border-color:#e9cf85;font-weight:700}
-.btn.primary:hover:not(:disabled){background:linear-gradient(180deg,#efd283,#cfa648)}
+.btn.primary{background:linear-gradient(180deg,var(--btn1),var(--btn2));color:#1a1405;border-color:var(--btnb);font-weight:700}
+.btn.primary:hover:not(:disabled){filter:brightness(1.08)}
 .btn.ghost{background:transparent}
 .btn:disabled{opacity:.45;cursor:not-allowed}
 .btnrow{display:flex;flex-wrap:wrap;gap:10px;margin-top:16px}
@@ -189,13 +189,13 @@ details.log summary{cursor:pointer;padding:10px 0;color:var(--mute)}
 
 .capnote{font-size:.74rem;color:var(--mute);margin:6px 0 0}
 .resume{margin:10px auto;max-width:420px}
-.stage{font-size:.78rem;letter-spacing:.08em;color:#ffcf7a;margin:0 0 6px;display:flex;align-items:center;gap:10px}
+.stage{font-size:.78rem;letter-spacing:.08em;color:var(--hi);margin:0 0 6px;display:flex;align-items:center;gap:10px}
 .stage.fr{color:#ffa3c4}
-.pips{display:inline-flex;gap:4px}.pips i{width:18px;height:4px;border-radius:2px;background:var(--line)}.pips i.on{background:#ffcf7a}
+.pips{display:inline-flex;gap:4px}.pips i{width:18px;height:4px;border-radius:2px;background:var(--line)}.pips i.on{background:var(--hi)}
 .event.major{border-color:#7a5a2a;box-shadow:0 0 0 1px #7a5a2a55,0 8px 30px #0006}
 .duel{margin:4px 0 10px;padding:10px 12px;border-radius:12px;background:#0003;border:1px solid var(--line)}
 .duel-h{display:flex;justify-content:space-between;align-items:center;font-size:.8rem;color:var(--mute);margin-bottom:6px}
-.duel-h b{color:#ffcf7a;letter-spacing:.15em}
+.duel-h b{color:var(--hi);letter-spacing:.15em}
 .dice{display:flex;justify-content:center;gap:14px;font-size:2.4rem;line-height:1;margin:2px 0 8px}
 .die{display:inline-block;animation:roll .75s cubic-bezier(.2,.8,.3,1.2) both}
 .die.d2{animation-delay:.08s}
@@ -223,7 +223,45 @@ details.log summary{cursor:pointer;padding:10px 0;color:var(--mute)}
 .chip.help{border-color:#2f6a55;color:#9df0cc}
 .felix{margin:6px 0 10px}
 .epi{margin:14px 0;padding:12px 14px;border-radius:12px;border:1px solid #7a5a2a;background:#2a22140f}
-.epi h3{margin:0 0 6px;color:#ffcf7a}
+.epi h3{margin:0 0 6px;color:var(--hi)}
+
+.notice{margin:-2px 0 12px;padding:8px 12px;border-radius:10px;border:1px solid #7a5a2a;background:#3a2c1426;color:var(--hi);font-size:.9rem}
+
+.why{font-size:.8rem;color:var(--mute);font-style:italic;margin:-.3em 0 .8em;opacity:.9}
+.result .why{margin:.2em 0 .6em}
+/* 學院主題色 */
+body[data-house]{transition:background .6s}
+body[data-house="g"]{--gold:#e3a94a;--gold-d:#8e3a2a;--hi:#ffc27a;--tint:#3d1c1c;--btn1:#e9b158;--btn2:#b3402e;--btnb:#f0c070;--line:#3a2a2d}
+body[data-house="r"]{--gold:#8fb3f0;--gold-d:#35507e;--hi:#d6ad74;--tint:#17264a;--btn1:#a9c4f2;--btn2:#4d73b5;--btnb:#c9b089;--line:#2a3550}
+body[data-house="s"]{--gold:#7fd0a5;--gold-d:#2a6a4a;--hi:#cdd6de;--tint:#132c22;--btn1:#a7e0c0;--btn2:#3f8d66;--btnb:#c6d0d8;--line:#253a33}
+body[data-house="h"]{--gold:#f0cb4e;--gold-d:#7a6322;--hi:#f5d873;--tint:#2f2914;--btn1:#f5d873;--btn2:#c9a032;--btnb:#f8e29a;--line:#3a3524}
+body[data-house] .hud{box-shadow:inset 0 3px 0 var(--gold-d)}
+body[data-house] .event.major{border-color:var(--gold-d);box-shadow:0 0 0 1px var(--gold-d),0 8px 30px #0006}
+body[data-house] .pips i.on{background:var(--gold)}
+
+.career{margin:14px 0;padding:14px 16px;border-radius:12px;border:1px solid var(--gold-d);background:linear-gradient(135deg,#ffffff08,#00000000)}
+.career h3{margin:2px 0 6px;color:var(--hi);font-size:1.3rem}
+
+/* 結局 CG */
+.cg{margin:-20px -20px 16px;border-radius:var(--r) var(--r) 0 0;overflow:hidden;border-bottom:1px solid var(--line);line-height:0}
+.cg svg{width:100%;height:auto;display:block;aspect-ratio:400/220}
+.cg .tw{animation:cgtw 3s ease-in-out infinite}
+@keyframes cgtw{50%{opacity:.25}}
+.cg .float{animation:cgfl 4s ease-in-out infinite}
+@keyframes cgfl{50%{transform:translateY(-4px)}}
+.cg .pulse{animation:cgpu 2.6s ease-in-out infinite;transform-box:fill-box;transform-origin:center}
+@keyframes cgpu{50%{opacity:.08;transform:scale(1.25)}}
+.cg .spin{animation:cgsp 18s linear infinite}
+@keyframes cgsp{to{transform:rotate(360deg)}}
+.cg .burst{animation:cgbu 3.5s ease-out infinite;opacity:0}
+@keyframes cgbu{0%{opacity:0;transform:scale(.3)}15%{opacity:1}60%{opacity:0;transform:scale(1.2)}100%{opacity:0}}
+.cg .rise{animation:cgri 6s linear infinite;opacity:0}
+@keyframes cgri{0%{opacity:0;transform:translateY(0)}20%{opacity:.9}100%{opacity:0;transform:translateY(-120px)}}
+.cg .flash{animation:cgfa 5s steps(1) infinite;opacity:0}
+@keyframes cgfa{0%,88%{opacity:0}90%{opacity:1}92%{opacity:0}94%{opacity:.8}96%,100%{opacity:0}}
+.cg .rain{animation:cgra .8s linear infinite}
+@keyframes cgra{to{transform:translate(-4px,12px)}}
+@media (prefers-reduced-motion:reduce){.cg *{animation:none!important}.cg .burst,.cg .rise{opacity:.7}.cg .flash{opacity:0}}
 
 </style>
 </head>
@@ -544,7 +582,7 @@ EVENTS.push(
 {id:'m_tower',mm:70,t:'六月・天文塔之夜',text:'六年級的最後一夜，城堡被黑暗的印記籠罩。有人站在高塔上，等一個你熟悉的人。你知道這個夜晚，在原本的故事裡，是個誰也不願面對的結局。',o:[
   O('衝上塔頂，試圖改變結局','bold',['體',19],{
     g:R('你在最後一秒趕到，替老校長擋下了那道咒語。這一次，結局被改寫了。',{體:2,心:2,人:3},{flag:'towerSaved',unlock:'u_dumbledore'}),
-    k:R('你趕到了，但還是慢了半步。你抱住受傷的老人，一起從塔頂摔下。',{體:-2,心:1}),
+    k:R('你氣喘吁吁地衝上塔頂，在綠光亮起的前一刻撞開了舉著魔杖的人。咒語擦過老校長的肩膀，打碎了身後的窗。你們都受了傷，但他還活著。',{體:-1,心:2,人:2},{flag:'towerSaved',unlock:'u_dumbledore'}),
     f:R('你被沿途的敵人攔住，什麼也沒能改變。',{心:-2}),
     b:R('敵人的咒語，直接擊中了你。',{},{die:'死於天文塔下的黑暗之夜'})}),
   O('留在下面，阻止敵人入侵','diligent',['悟',18],{
@@ -663,7 +701,7 @@ EVENTS.push(
   O('嚇得愣在原地','timid',null,R('你在走廊上愣了三分鐘，他飄走時還友善地揮手。',{心:-1})),
   O('請教他一些歷史','diligent',['悟',10],{k:R('他講了好幾個你在書上找不到的歷史細節。',{悟:1}),f:R('他說得顛三倒四，你什麼也沒聽懂。',{})})
 ]},
-{id:'e_exam',rep:true,t:'期中小考',y:[1,7],w:1.3,text:'這是一場「不用太緊張」的測驗，但整座城堡都在緊張。你的同桌正在念咒語，聲音大到快把你的筆都震掉。',o:[
+{id:'e_exam',rep:true,t:'期中小考',y:[1,6],w:1.3,text:'這是一場「不用太緊張」的測驗，但整座城堡都在緊張。你的同桌正在念咒語，聲音大到快把你的筆都震掉。',o:[
   O('穩紮穩打，按部就班','diligent',['悟',10],{g:R('你考出了前三名，被教授點名表揚。',{悟:2,人:1}),k:R('成績不錯，沒有失誤。',{悟:1}),f:R('你粗心大意，丟了不該丟的分。',{悟:-1})}),
   O('憑直覺亂答','bold',['心',11],{k:R('居然蒙對了不少題。',{悟:1}),f:R('你的答案一片慘不忍睹。',{悟:-1,人:-1})}),
   O('找老師討要筆記重點','careful',['人',10],{k:R('老師看了你一眼，給了你一些暗示。',{悟:1,人:1}),f:R('老師說：「自己看書。」',{人:-1})})
@@ -734,7 +772,7 @@ EVENTS.push(
   O('留在原地抄錄','diligent',['悟',12],{g:R('你抄下了最重要的三頁，筆跡工整。',{悟:2},{clue:1}),k:R('你抄了一半，但記下了關鍵的部分。',{悟:1}),f:R('手酸得快斷了，只抄到半頁。',{體:-1})}),
   O('把書放回去，當作沒看見','timid',null,R('你放回書，心裡卻一直在想：這本書到底是什麼？',{心:-1}))
 ]},
-{id:'t_prof',t:'校長的問題',y:[4,7],earth:true,w:0.9,text:'老校長在走廊上叫住了你，眼睛藏在半月形的眼鏡後面：「你最近，似乎對『時間』很有興趣？」',o:[
+{id:'t_prof',dalive:true,t:'校長的問題',y:[4,6],earth:true,w:0.9,text:'老校長在走廊上叫住了你，眼睛藏在半月形的眼鏡後面：「你最近，似乎對『時間』很有興趣？」',o:[
   O('坦白告訴他一切','timid',['心',12],{g:R('老校長沉默了很久：「我想，我知道你要找什麼。」他遞給你一張泛黃的紙。',{心:1,人:1},{clue:1}),k:R('他點了點頭：「明白了。」他沒有多說，但給了你一個提示。',{人:1}),f:R('他笑了笑：「年輕人，有些事情要靠自己找。」',{})}),
   O('裝傻，說只是好奇','careful',['人',12],{k:R('他半信半疑地放過了你，但眼神很深。',{人:1}),f:R('他看穿了你的謊，只是嘆了口氣。',{人:-1})}),
   O('反過來問他的看法','bold',['悟',12],{g:R('他被你的問題逗樂了，很認真地給了你一個啟發。',{悟:1,人:1},{clue:1}),k:R('他給了你一個意味深長的微笑。',{悟:1}),f:R('他說：「你還太年輕。」',{})})
@@ -773,7 +811,7 @@ EVENTS.push(
   O('握緊它，閉上眼睛','timid',['心',14],{g:R('一聲清亮的鳴叫在你耳邊響起。你感到有什麼東西，永遠地陪伴著你。',{體:1,心:1},{unlock:'u_phoenix'}),k:R('羽毛暖暖的，你覺得好受多了。',{心:1}),f:R('羽毛忽然變涼，你不確定它是不是在拒絕你。',{})}),
   O('帶去給教授檢查','careful',['人',12],{k:R('教授看了很久：「這是個好兆頭。」',{人:1}),f:R('教授說那只是普通的羽毛。',{})})
 ]},
-{id:'r_dumbledore',rare2:'u_potter',t:'一場深夜的談話',y:[4,7],rare:'u_dumbledore',w:2,text:'午夜，一位白鬍子的老先生坐在你的床邊：「我只是想知道，你覺得，什麼是最重要的魔法？」',o:[
+{id:'r_dumbledore',dalive:true,rare2:'u_potter',t:'一場深夜的談話',y:[4,6],rare:'u_dumbledore',w:2,text:'午夜，一位白鬍子的老先生坐在你的床邊：「我只是想知道，你覺得，什麼是最重要的魔法？」',o:[
   O('「愛，無論哪一種。」','timid',['心',14],{g:R('老校長微笑，沒有說話。第二天，他在大廳裡對你點了點頭。從此，你多了一份特別的信任。',{心:1,人:2},{unlock:'u_dumbledore',flag:'love'}),k:R('他笑著說：「很棒的答案。」',{心:1},{flag:'love'}),f:R('他沉默了一會兒，轉身離開。',{},{flag:'love'})}),
   O('「知識，沒有它什麼都做不了。」','diligent',['悟',14],{k:R('他點了點頭：「嗯，也是一種答案。」',{悟:1}),f:R('他笑了笑：「你還需要時間。」',{})})
 ]},
@@ -1112,33 +1150,33 @@ EVENTS.push(
   O('和同學分工翻譯','careful',['人',9],{k:R('你們分工完成，成績不錯。',{人:1,悟:1}),f:R('分段拼起來完全對不上。',{})},{sk:'runes'})
 ]},
 // ---------- 家長同意書與活米村之旅 ----------
-{id:'e_slip',y:[3,7],nf:['slip'],t:'家長同意書',w:3,text:'三年級的秋天，佈告欄上貼出了霍格莫德週末的通知：「持有家長（或監護人）同意書的三年級以上學生，可前往英國唯一的純巫師村落。」大家都在互相問：「你的簽好了嗎？」你的那張，還是空白的。',o:[
+{id:'e_slip',y:[3,6],nf:['slip'],t:'家長同意書',w:3,text:'三年級的秋天，佈告欄上貼出了霍格莫德週末的通知：「持有家長（或監護人）同意書的三年級以上學生，可前往英國唯一的純巫師村落。」大家都在互相問：「你的簽好了嗎？」你的那張，還是空白的。',o:[
   O('寫信請家長簽名','careful',['人',9],{k:R('貓頭鷹一來一回，簽好的同意書回到了你手上。',{人:1},{flag:'slip'}),f:R('回信說：「這個週末還是留在學校比較安全。」',{心:-1})}),
   O('請老師出面說明情況','timid',['人',10],{k:R('老師看了看你的情況，嘆了口氣，替你想了辦法。同意書補齊了。',{人:1},{flag:'slip'}),f:R('老師說：「這件事，我沒有辦法。」',{})}),
   O('偷偷模仿簽名','bold',['心',11],{g:R('你的簽名一模一樣，騙過了所有人。你有點心虛，但也有點得意。',{心:1},{flag:'slip'}),k:R('簽名有點歪，但居然過關了。',{},{flag:'slip'}),f:R('被管理員一眼看穿，罰了你一週的掃地。',{人:-1,心:-1},{pts:-8}),b:R('被當場拆穿，你被記了大過。',{人:-2},{pts:-15})})
 ]},
-{id:'e_hogsmeade',rep:true,fl:['slip'],y:[3,7],w:2,t:'霍格莫德週末：蜂蜜公爵',text:'週末的霍格莫德，街道兩旁堆滿了雪。蜂蜜公爵糖果店裡人頭攢動，櫃台上擺著會爆炸的糖、會打嗝的巧克力和一種「吃了會讓頭髮變成彩虹色」的軟糖。',o:[
+{id:'e_hogsmeade',rep:true,fl:['slip'],y:[3,6],w:2,t:'霍格莫德週末：蜂蜜公爵',text:'週末的霍格莫德，街道兩旁堆滿了雪。蜂蜜公爵糖果店裡人頭攢動，櫃台上擺著會爆炸的糖、會打嗝的巧克力和一種「吃了會讓頭髮變成彩虹色」的軟糖。',o:[
   O('大包小包買糖果，分給朋友','careful',['金',9],{k:R('你分發糖果，人緣大漲。口袋雖然癟了，心情卻很好。',{人:2,金:-1}),f:R('你被一種會吐火的糖嚇到，把一整袋都灑了。',{金:-1})}),
   O('偷偷試吃免費樣品','bold',['人',10],{k:R('你吃遍了所有樣品，老闆微笑著假裝沒看見。',{體:1}),f:R('你被老闆發現，提著衣領送出門。',{人:-1})}),
   O('研究糖果的魔法配方','diligent',['悟',10],{g:R('你分析出幾款糖果背後的咒語原理，覺得這是意外的收穫。',{悟:1},{sk:{charms:0.4}}),k:R('你記下了幾個有趣的配方。',{悟:1}),f:R('你看了半天，什麼也沒看出來。',{})})
 ]},
-{id:'e_hogsmeade2',rep:true,fl:['slip'],y:[3,7],w:2,t:'霍格莫德週末：三把掃帚',text:'酒吧裡暖烘烘的，空氣裡是奶油啤酒和烤肉的香氣。老闆娘端著十幾杯酒在人群中穿梭，牆角的壁爐劈啪作響。',o:[
+{id:'e_hogsmeade2',rep:true,fl:['slip'],y:[3,6],w:2,t:'霍格莫德週末：三把掃帚',text:'酒吧裡暖烘烘的，空氣裡是奶油啤酒和烤肉的香氣。老闆娘端著十幾杯酒在人群中穿梭，牆角的壁爐劈啪作響。',o:[
   O('點一杯奶油啤酒，和朋友聊天','timid',['人',9],{g:R('你和朋友們聊了一整個下午，友情更深了。你的鬍子……是奶油泡沫。',{人:2,心:1}),k:R('你們聊得很開心。',{人:1}),f:R('你把酒灑在隔壁桌的客人身上，賠了點錢。',{金:-1})}),
   O('偷聽隔壁桌的談話','careful',['心',11],{g:R('你聽到了魔法部官員的談話，有一條關於黑暗勢力的線索。',{悟:1,心:1},{flag:'heardRumor'}),k:R('你聽到了一些零碎的消息。',{人:1}),f:R('隔壁桌的人察覺你在偷聽，狠狠瞪了你一眼。',{人:-1})}),
   O('在角落看書，享受安靜','diligent',['心',9],{k:R('你點了一杯熱飲，在角落看完了半本書。',{悟:1}),f:R('吵到你什麼都看不進去。',{})})
 ]},
-{id:'e_hogsmeade3',rep:true,fl:['slip'],y:[3,7],w:2,t:'霍格莫德週末：笑話店',text:'一家塞滿了惡作劇道具的店：噴墨水的糞彈、會逃跑的鞋子、一盒「吃了就流鼻血」的糖。店員擠眉弄眼：「新貨剛到，要不要試試？」',o:[
+{id:'e_hogsmeade3',rep:true,fl:['slip'],y:[3,6],w:2,t:'霍格莫德週末：笑話店',text:'一家塞滿了惡作劇道具的店：噴墨水的糞彈、會逃跑的鞋子、一盒「吃了就流鼻血」的糖。店員擠眉弄眼：「新貨剛到，要不要試試？」',o:[
   O('買一堆道具，準備整人','bold',['金',10],{g:R('你用一個「迷你煙火」讓整座城堡熱鬧了一晚，卻沒人抓到你。',{人:2,金:-1},{pts:5}),k:R('道具效果不錯，只是被費契盯上了。',{人:1,金:-1},{pts:-3}),f:R('你在公共休息室試用，不小心炸了自己的床。',{人:-1,金:-1},{pts:-8})}),
   O('只買一點小道具送朋友','careful',['金',9],{k:R('朋友收到禮物都很開心。',{人:1,金:-1}),f:R('朋友嫌棄你的品味。',{金:-1})}),
   O('逛逛就走，不買','timid',null,R('你把每一款道具都試玩了一遍，一個銅板也沒花。',{心:1}))
 ]},
-{id:'e_hogsmeade4',rep:true,fl:['slip'],y:[3,7],w:1.5,t:'霍格莫德週末：尖叫屋與郵局',text:'村子的盡頭，有一棟據說鬧鬼的木屋，窗戶被木板釘死，偶爾傳出奇怪的聲響。郵局裡則停滿了貓頭鷹，空氣中混雜著羽毛和墨水味。',o:[
+{id:'e_hogsmeade4',rep:true,fl:['slip'],y:[3,6],w:1.5,t:'霍格莫德週末：尖叫屋與郵局',text:'村子的盡頭，有一棟據說鬧鬼的木屋，窗戶被木板釘死，偶爾傳出奇怪的聲響。郵局裡則停滿了貓頭鷹，空氣中混雜著羽毛和墨水味。',o:[
   O('走到尖叫屋外面看看','bold',['心',10],{g:R('你在屋外繞了一圈，聽見裡面傳來沉重的腳步聲，嚇得你一身冷汗，但也有點興奮。',{心:2}),k:R('你什麼也沒看到，但滿足了好奇心。',{心:1}),f:R('窗板突然發出巨響，你嚇得摔了一跤。',{體:-1})}),
   O('去郵局寄信，順便逛逛','timid',['人',9],{k:R('你寄了信，還幫一隻迷路的貓頭鷹找到了主人。',{人:1}),f:R('郵局人太多，排了整整一下午。',{})}),
   O('向村民打聽傳聞','careful',['人',11],{g:R('一位老村民低聲告訴你一個古老的傳說：「在很久以前，有人從『另一個世界』走出了這座村子。」',{人:1},{clue:1}),k:R('你聽到了一些有趣的八卦。',{人:1}),f:R('村民不太想理你。',{})})
 ]},
 // ---------- 課業落後：補考 ----------
-{id:'e_makeup',rep:true,y:[2,7],w:3,cond:r=>CORE.some(c=>lvl(r,c)<Math.floor(yearOf(r)*0.8)),t:'補考通知',text:'公佈欄上貼出了一張名單，你的名字赫然在列：某一門課，你的進度落後了。教授把你叫進辦公室，眼神複雜：「還有補救的機會，你看著辦。」',o:[
+{id:'e_makeup',rep:true,y:[2,6],w:3,cond:r=>CORE.some(c=>lvl(r,c)<Math.floor(yearOf(r)*0.8)),t:'補考通知',text:'公佈欄上貼出了一張名單，你的名字赫然在列：某一門課，你的進度落後了。教授把你叫進辦公室，眼神複雜：「還有補救的機會，你看著辦。」',o:[
   O('通宵補課，把落後的趕回來','diligent',['心',10],{k:R('你熬了三個通宵，把落後的進度硬生生補了回來。',{悟:1,體:-1},{sk:Object.fromEntries(CORE.map(c=>[c,0.5]))}),f:R('你熬夜熬到頭昏腦脹，什麼也沒記住。',{體:-1},{pts:-3})}),
   O('找同學借筆記','careful',['人',10],{k:R('同學慷慨解囊，你勉強跟上了進度。',{人:1},{sk:Object.fromEntries(CORE.map(c=>[c,0.3]))}),f:R('同學的筆記字跡潦草，你看不懂。',{人:-1})}),
   O('向教授求情，延後考試','timid',['人',11],{k:R('教授嘆了口氣，同意延後一個月。',{心:1}),f:R('教授說：「規矩就是規矩。」',{心:-1},{pts:-4})})
@@ -1199,7 +1237,7 @@ EVENTS.push(
   O('偷偷打探消息','careful',['悟',11],{k:R('你拼湊出一些零碎的情報，雖然不全，但足夠讓你多一分準備。',{悟:1,心:1}),f:R('你的好奇心引來了不必要的注意。',{人:-1})}),
   O('開個玩笑緩和氣氛','bold',['人',11],{k:R('大廳裡終於有了一點笑聲。',{人:2}),f:R('時機不對，有人瞪了你一眼。',{人:-1})})
 ]},
-{id:'l_newt',t:'N.E.W.T. 的壓力',y:[6,7],w:1.5,text:'高年級的課程難得像是要把人壓扁。教授的作業量，足以讓一般學生放棄睡眠、夢想與社交生活。',o:[
+{id:'l_newt',t:'N.E.W.T. 的壓力',y:[6,6],w:1.5,text:'高年級的課程難得像是要把人壓扁。教授的作業量，足以讓一般學生放棄睡眠、夢想與社交生活。',o:[
   O('排出優先順序，捨棄次要的','careful',['悟',12],{k:R('你果斷放棄了兩個作業，把時間花在最重要的科目。成績意外地漂亮。',{悟:2,心:1}),f:R('你選錯了科目，後悔不已。',{悟:-1})}),
   O('全部都做，硬撐','diligent',['心',12],{k:R('你像一台機器一樣完成了所有作業。',{悟:1,心:1,體:-1}),f:R('你撐不下去，在課堂上睡著。',{體:-1,人:-1})}),
   O('求助於同學','timid',['人',11],{k:R('大家互相支援，你們熬過了這個學期。',{人:1,悟:1}),f:R('同學們自顧不暇。',{})})
@@ -1778,16 +1816,16 @@ const FRIEND_HELP=[
 ];
 const cntOf=(r,k)=>(r.cnt||{})[k]||0;
 const CONSEQ_BONUS=[
-  {ev:['m_ministry_2','m_ministry_3'],f:'duelFriend',n:'當年的決鬥對手助陣',b:2},
-  {ev:['m_ministry','m_ministry_2'],f:'blackFriend',n:'長髮男人事先的警告',b:1},
-  {ev:['m_chamber','m_chamber_2'],f:'stoneHero',n:'魔法石之夜的經驗',b:1},
-  {ev:['m_grave','m_grave_2'],f:'giantFriend',n:'巨人教你的森林求生術',b:1},
-  {ev:['m_hunt','m_hunt_2','f_village','f_ministry','f_bank'],f:'diaryNotes',n:'當年抄下的日記',b:1},
-  {ev:['m_memory_2','m_memory_3'],f:r=>cntOf(r,'like')>=5,n:'教授們對你的好印象',b:1},
-  {ev:['m_final_b'],f:'patronus',n:'你的守護神',b:2},
-  {ev:['m_da','m_da_2','m_da_3','m_ministry'],f:r=>cntOf(r,'trouble')>=3&&!has(r,'pardoned'),n:'違規前科（被盯得更緊）',b:-1},
-  {ev:['m_ball','m_ball_2','m_ball_3'],f:r=>has(r,'feudFoe')&&!has(r,'feudAlly'),n:'死對頭在旁邊冷嘲熱諷',b:-1},
-  {ev:['m_final_a'],f:'daQuit',n:'練習會成員對你的不信任',b:-2}
+  {ev:['m_ministry_2','m_ministry_3'],f:'duelFriend',n:'當年的決鬥對手助陣',b:2,why:'因為你@duelFriend在決鬥之後，向對手伸出了手'},
+  {ev:['m_ministry','m_ministry_2'],f:'blackFriend',n:'長髮男人事先的警告',b:1,why:'因為你@blackFriend在尖叫屋替那個長髮男人說了話'},
+  {ev:['m_chamber','m_chamber_2'],f:'stoneHero',n:'魔法石之夜的經驗',b:1,why:'因為你一年級在魔法石之夜闖過了關卡'},
+  {ev:['m_grave','m_grave_2'],f:'giantFriend',n:'巨人教你的森林求生術',b:1,why:'因為你@giantFriend在禁林裡陪巨人找過生物'},
+  {ev:['m_hunt','m_hunt_2','f_village','f_ministry','f_bank'],f:'diaryNotes',n:'當年抄下的日記',b:1,why:'因為你@diaryNotes抄下了那本日記上的內容'},
+  {ev:['m_memory_2','m_memory_3'],f:r=>cntOf(r,'like')>=5,n:'教授們對你的好印象',b:1,why:'因為你在課堂上一次又一次合了教授們的心意'},
+  {ev:['m_final_b'],f:'patronus',n:'你的守護神',b:2,why:'因為你@patronus在催狂魔事件後，苦練出了守護神'},
+  {ev:['m_da','m_da_2','m_da_3','m_ministry'],f:r=>cntOf(r,'trouble')>=3&&!has(r,'pardoned'),n:'違規前科（被盯得更緊）',b:-1,why:'因為你夜遊、惡作劇被抓了太多次，老師們一直盯著你'},
+  {ev:['m_ball','m_ball_2','m_ball_3'],f:r=>has(r,'feudFoe')&&!has(r,'feudAlly'),n:'死對頭在旁邊冷嘲熱諷',b:-1,why:'因為你@feudFoe跟別院的人結下了梁子'},
+  {ev:['m_final_a'],f:'daQuit',n:'練習會成員對你的不信任',b:-2,why:'因為你@daQuit選擇暫停了練習會，有些人一直沒原諒你'}
 ];
 const ALLIES=[
   {f:'giantFriend',n:'森林的巨人'},{f:'kidAlly',n:'當年的新生'},{f:'elfAlly',n:'家庭小精靈'},{f:'blackFriend',n:'長髮的男人'},
@@ -1920,6 +1958,25 @@ const HOUSE_EPI={
 // 平衡：新增的援軍與道具讓決戰變容易，決戰本身難度 +2
 EVENTS.find(e=>e.id==='m_final').o.forEach(o=>{if(o.c)o.c=[o.c[0],o.c[1]+2];});
 
+// 後果事件的「因為…」小字
+const WHY={
+ cq_kid2:'因為你@helpedKid帶迷路的他回過宿舍',cq_elf2:'因為你@elfFriend在廚房裡幫過這個小精靈',
+ cq_black:'因為你@blackFriend在尖叫屋替他說了話',cq_giant:'因為你@giantFriend在禁林裡陪巨人找過生物',
+ cq_ban:r=>`因為你違規被抓了 ${cntOf(r,'trouble')} 次`,cq_diary:'因為你@diaryNotes抄下了那本日記的內容',
+ cq_date:'因為你@ballDate在耶誕舞會上大方邀了舞',cq_feud:'因為你@feudFoe跟他針鋒相對過',
+ cq_duel:'因為你@duelFriend在決鬥後向他伸出了手',cq_teacher:r=>`因為你的做法已經 ${cntOf(r,'like')} 次讓教授們滿意`,
+ cq_cedric:'因為你@cedricLives在墓園裡把他拖了回來',cq_daquit:'因為你@daQuit選擇暫停了練習會',
+ cq_turner:'因為你選修了兩門以上的課',m_tower_2s:'因為你在天文塔擋下了那道咒語',m_tower_3s:'因為你在天文塔擋下了那道咒語',
+ l_leave_s:'因為老校長還活著',f_s_order:'因為老校長還活著',f_s_lesson:'因為老校長還活著',f_s_castle:'因為老校長還活著',f_letter_s:'因為老校長還活著',p_s_tea:'因為你救下了老校長',
+ x_rival1:'因為你們同在史萊哲林，又早有過節',x_rival2:'因為你之前在壁爐邊陪過他',x_rival3:'因為你在走廊上沒有丟下他',
+ fr_g2_ev:'因為你@fr_g1幫歐文克服過懼高',fr_g3_ev:'因為你@fr_g2沒有丟下衝進禁林的歐文',
+ fr_r2_ev:'因為你@fr_r1幫艾莉絲找回了被藏的書',fr_r3_ev:'因為你@fr_r2陪她研究過星圖上的時間',
+ fr_s2_ev:'因為你@fr_s1守住了薇拉的祕密',fr_s3_ev:'因為你@fr_s2在流言中沒有離開她',
+ fr_h2_ev:'因為你@fr_h1在溫室裡幫過湯米',fr_h3_ev:'因為你@fr_h2陪他度過了被嘲笑的那一晚',
+ m_final_h_s:'因為你是史萊哲林的一員'
+};
+for(const id in WHY){const ev=EVENTS.find(e=>e.id===id);if(ev)ev.why=WHY[id];}
+
 // ===== engine.js：遊戲規則（不依賴 DOM，可在 Node 測試） =====
 let RNG=Math.random;
 const setRng=f=>{RNG=f;};
@@ -2017,6 +2074,12 @@ function advance(run){
     applyFx(run,TUNE.yearGain>1?{悟:1,[pick(SKEYS.filter(k=>k!=='悟'))]:1}:{悟:1},tmp);
     lines.push('新學年開始，你又長大了一點');
   }
+  if(run.month===FLEE_FROM-1&&run.post===null)lines.push('✦ 暑假快結束了。你心裡清楚：新學年，你不會再回到教室了。');
+  if(run.month===FLEE_TO+1&&has(run,'flee')){
+    lines.push(has(run,'towerSaved')?'✦ 逃亡結束：鳳凰帶來了校長的召集令，你們穿過密道回到了霍格華茲。最後的決戰就要開始了。':'✦ 逃亡結束：你們穿過酒館後方的密道，回到了霍格華茲。最後的決戰就要開始了。');
+    (run.keys=run.keys||[]).push({m:run.month,t:'逃亡結束',s:'回到霍格華茲，迎接最後的決戰',b:null});
+  }
+  if(run.month===FLEE_TO+2&&run.post!==null)lines.push('✦ 戰爭結束了。你終於不必再躲躲藏藏。');
   if(run.month>FLEE_TO)run.flags=run.flags.filter(f=>f!=='flee');
   if(run.month<=LAST_MONTH&&mInYear(run)<=10&&!fleeing(run)){
     // 日常上課：每月各科自然進步
@@ -2040,8 +2103,12 @@ function advance(run){
 // ---- 事件篩選 ----
 const FLEE_FROM=73,FLEE_TO=81;
 const fleeing=run=>has(run,'flee')&&run.month<=FLEE_TO;
+const dAlive=run=>!run.done.includes('m_tower')||has(run,'towerSaved');
+const isSchool=e=>!!e.cls||/^(c_|v_|e_exam$|e_makeup$|e_slip$|e_hogsmeade|e_timetable$|e_elect|l_newt$|l_owl$)/.test(e.id);
 function eligible(run,e,meta){
   if(!!e.flee!==fleeing(run))return false;
+  if(e.dalive&&!dAlive(run))return false;
+  if(isSchool(e)&&run.month>=FLEE_FROM)return false;
   const y=yearOf(run);
   const[ymin,ymax]=e.y||[1,7];
   if(y<ymin||y>ymax)return false;
@@ -2098,8 +2165,13 @@ function helpsFor(run,ev,o){
   for(const id of run.items||[]){const it=ITEMS[id];if(it&&it.b){const v=it.b(run,ev,o);if(v)h.push({n:it.n,b:v});}}
   if(run.felixOn&&hasItem(run,'felix'))h.push({n:'幸運藥水',b:6});
   for(const f of FRIEND_HELP)if(friendOn(run,f.c)&&f.t(run,ev,o))h.push({n:f.n+'幫忙',b:1});
-  for(const c of CONSEQ_BONUS)if(c.ev.includes(ev.id)&&(typeof c.f==='function'?c.f(run):has(run,c.f)))h.push({n:c.n,b:c.b});
+  for(const c of CONSEQ_BONUS)if(c.ev.includes(ev.id)&&(typeof c.f==='function'?c.f(run):has(run,c.f)))h.push({n:c.n,b:c.b,why:c.why});
   return h;
+}
+// 因果說明：@旗標 → 該旗標取得時的年級
+function whyText(run,w){
+  if(!w)return '';const s=typeof w==='function'?w(run):w;
+  return s.replace(/@(\w+)/g,(_,f)=>{const m=(run.fm||{})[f];return m?YEARN[Math.min(7,Math.ceil(m/12))]:'';});
 }
 const alliesOf=run=>ALLIES.filter(a=>typeof a.f==='function'?a.f(run):has(run,a.f)).map(a=>a.n);
 function bonusFor(run,ev,o){
@@ -2152,8 +2224,9 @@ function optInfo(run,ev,i){
 // ---- 結算 ----
 function resolve(run,ev,i,meta){
   const o=ev.o[i];
-  const out={lines:[],notes:[],text:'',extra:'',band:null,roll:null,die:null,end:null,goal:null,unlock:null,survive:''};
+  const out={why:[],lines:[],notes:[],text:'',extra:'',band:null,roll:null,die:null,end:null,goal:null,unlock:null,survive:''};
   if(o.cost)for(const k in o.cost){run.stats[k]-=o.cost[k];out.lines.push({txt:`${SK[k]} −${o.cost[k]}（花費）`,up:false});}
+  out.why=helpsFor(run,ev,o).filter(h=>h.why).map(h=>whyText(run,h.why));
   let band='k';
   if(o.c){
     const k=o.c[0],dc=dcOf(run,ev,o);
@@ -2207,7 +2280,7 @@ function resolve(run,ev,i,meta){
   if(o.c&&run.felixOn&&hasItem(run,'felix')){run.items=run.items.filter(x=>x!=='felix');run.felixOn=false;out.lines.push({txt:'幸運藥水已用完',up:false});}
   if(res.item&&!hasItem(run,res.item)){run.items.push(res.item);out.lines.push({txt:`獲得道具：${ITEMS[res.item].n}`,up:true});(run.keys=run.keys||[]).push({m:run.month,t:'獲得道具',s:ITEMS[res.item].n,b:null});}
   if(res.inc)[].concat(res.inc).forEach(k=>{run.cnt=run.cnt||{};run.cnt[k]=(run.cnt[k]||0)+1;});
-  if(res.flag)[].concat(res.flag).forEach(f=>{if(!has(run,f))run.flags.push(f)});
+  if(res.flag)[].concat(res.flag).forEach(f=>{if(!has(run,f)){run.flags.push(f);(run.fm=run.fm||{})[f]=run.month;}});
   if(res.unflag){const u=[].concat(res.unflag);run.flags=run.flags.filter(f=>!u.includes(f))}
   if(res.clue){
     run.clue=Math.max(0,run.clue+res.clue);
@@ -2307,7 +2380,19 @@ function rollLegacy(meta,rng){
 }
 
 // ===== 成就（第二世起開始記錄） =====
+// ---- 魔法職業（打敗佛地魔並留在魔法世界時，依最高的五維決定）----
+const CAREERS={
+  悟:{n:'霍格華茲校長',t:'你回到霍格華茲任教，從助教一路當到校長。每年開學，你都會在分類帽唱完歌之後說一句：「歡迎回家。」——只有你自己知道，這句話對你有多重的分量。'},
+  體:{n:'傲羅辦公室主任',t:'你成了傲羅辦公室最年輕的主任。黑巫師的殘黨一聽到你的名字就連夜搬家。新進的傲羅私下說，你的訓練比那場大戰還可怕。'},
+  人:{n:'魔法部部長',t:'戰後重建的魔法部需要一個人人都信得過的人，最後大家想到的都是你。你上任的第一道命令，是把部長辦公室的門拆掉。'},
+  心:{n:'聖蒙果醫院院長',t:'你見過太多人倒下，所以選擇了讓人站起來的那條路。聖蒙果的病人說，只要院長在走廊上走過一圈，連最重的詛咒都好像輕了一點。'},
+  金:{n:'古靈閣首位巫師理事',t:'你用家底和眼光重建了戰後的魔法經濟，成了古靈閣幾百年來第一位巫師理事。妖精們說你是「勉強可以信任的人類」——這已經是牠們最高的讚美了。'}
+};
+// 各屬性的一般水準不同（人緣容易漲、家底很難漲），所以比的是「相對最突出」
+const CAREER_NORM={悟:30,體:20,人:40,心:32,金:9};
+const careerOf=run=>SKEYS.reduce((a,k)=>run.stats[k]/CAREER_NORM[k]>run.stats[a]/CAREER_NORM[a]?k:a,SKEYS[0]);
 const ACH=[
+  ...SKEYS.map(k=>({id:'car_'+k,always:true,n:CAREERS[k].n,d:`打敗佛地魔、留在魔法世界，且${SK[k]}是你最突出的能力`,t:(r,type)=>type==='victory'&&r.goals.voldemort&&careerOf(r)===k})),
   {id:'a_saved',n:'改寫命運',d:'救下老校長，並打敗佛地魔',t:(r)=>r.flags.includes('towerSaved')&&r.goals.voldemort},
   {id:'a_y3',n:'三年級了',d:'活到三年級',t:(r)=>r.month>=25},
   {id:'a_y5',n:'O.W.L. 倖存者',d:'活到五年級',t:(r)=>r.month>=49},
@@ -2335,12 +2420,83 @@ const ACH=[
   {id:'a_dark',n:'黑暗時代',d:'見證黑魔王的勝利',t:(r,t)=>t==='dark'}
 ];
 function checkAch(run,meta,type){
-  if(meta.runs<1)return[];
   meta.ach=meta.ach||[];
   const got=[];
-  ACH.forEach(a=>{if(!meta.ach.includes(a.id)&&a.t(run,type)){meta.ach.push(a.id);got.push(a.id);}});
+  ACH.forEach(a=>{if(meta.runs<1&&!a.always)return;if(!meta.ach.includes(a.id)&&a.t(run,type)){meta.ach.push(a.id);got.push(a.id);}});
   return got;
 }
+
+// ===== 結局 CG：原創向量插圖（隨學院主題色變化）=====
+const CG=(()=>{
+  const W=400,H=220;
+  // 固定亂數，讓星星每次位置一樣
+  const rng=s=>()=>((s=(s*9301+49297)%233280)/233280);
+  const stars=(n,seed,maxY,col='#fff')=>{const r=rng(seed);let o='';for(let i=0;i<n;i++){const x=(r()*W).toFixed(1),y=(r()*maxY).toFixed(1),s=(r()*1.3+.4).toFixed(2),d=(r()*3).toFixed(2);o+=`<circle class="tw" style="animation-delay:${d}s" cx="${x}" cy="${y}" r="${s}" fill="${col}"/>`;}return o;};
+  // 城堡剪影：x 為中心，base 為地面高度
+  const castle=(x,base,s,fill,win)=>{
+    const t=(dx,w,h,roof)=>`<rect x="${x+dx*s}" y="${base-h*s}" width="${w*s}" height="${h*s}" fill="${fill}"/><polygon points="${x+(dx-2)*s},${base-h*s} ${x+(dx+w/2)*s},${base-(h+roof)*s} ${x+(dx+w+2)*s},${base-h*s}" fill="${fill}"/>`;
+    let o=`<rect x="${x-60*s}" y="${base-34*s}" width="${120*s}" height="${34*s}" fill="${fill}"/>`;
+    o+=t(-70,14,58,22)+t(-44,12,74,26)+t(-16,20,96,34)+t(14,12,70,24)+t(40,14,84,28)+t(62,10,52,18);
+    if(win){const r=rng(7);for(let i=0;i<14;i++){const wx=x+(-62+r()*120)*s,wy=base-(12+r()*70)*s;o+=`<rect class="tw" style="animation-delay:${(r()*3).toFixed(1)}s" x="${wx.toFixed(1)}" y="${wy.toFixed(1)}" width="${2.4*s}" height="${3.6*s}" rx=".6" fill="${win}"/>`;}}
+    return o;
+  };
+  const hills=(fill,y=190)=>`<path d="M0 ${y} Q80 ${y-22} 170 ${y-6} T400 ${y-14} V220 H0Z" fill="${fill}"/>`;
+  const person=(x,y,s,fill)=>`<g fill="${fill}"><circle cx="${x}" cy="${y-24*s}" r="${4.2*s}"/><path d="M${x-6*s} ${y} L${x-4.5*s} ${y-18*s} Q${x} ${y-21*s} ${x+4.5*s} ${y-18*s} L${x+6*s} ${y}Z"/></g>`;
+  const sky=(id,a,b)=>`<defs><linearGradient id="${id}" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="${a}"/><stop offset="1" stop-color="${b}"/></linearGradient></defs><rect width="${W}" height="${H}" fill="url(#${id})"/>`;
+  const S={
+  // 英雄歸鄉：城堡與現代城市之間的時間之門
+  perfect:()=>{
+    let city='';const r=rng(3);let x=232;while(x<400){const w=14+r()*20,h=40+r()*80;city+=`<rect x="${x.toFixed(0)}" y="${(190-h).toFixed(0)}" width="${w.toFixed(0)}" height="${h.toFixed(0)}" fill="#1a2233"/>`;for(let k=0;k<4;k++)city+=`<rect class="tw" style="animation-delay:${(r()*3).toFixed(1)}s" x="${(x+3+r()*(w-6)).toFixed(0)}" y="${(190-h+6+r()*(h-14)).toFixed(0)}" width="2.4" height="3" fill="#ffe7a8"/>`;x+=w+2;}
+    return sky('gp','#1a2140','#3a3350')+`<rect x="200" width="200" height="220" fill="#0e1424" opacity=".55"/>`+stars(40,11,140)
+    +castle(95,190,.8,'#151a2a','var(--hi)')+city+hills('#0c101a',196)
+    +`<g class="spin" style="transform-origin:200px 118px"><circle cx="200" cy="118" r="46" fill="none" stroke="var(--gold)" stroke-width="2" stroke-dasharray="3 7"/><circle cx="200" cy="118" r="36" fill="none" stroke="var(--hi)" stroke-width="1.2" opacity=".7"/></g>`
+    +`<circle cx="200" cy="118" r="30" fill="var(--hi)" opacity=".18" class="pulse"/><g opacity=".9">${[0,30,60,90,120,150].map(a=>`<line x1="200" y1="82" x2="200" y2="90" stroke="var(--gold)" stroke-width="1.5" transform="rotate(${a*2} 200 118)"/>`).join('')}</g>`
+    +person(200,150,1.15,'#0a0d16');
+  },
+  // 倖存者的傳說：晨光中的城堡、勝利的火花
+  victory:()=>{
+    let sparks='';const r=rng(5);for(let i=0;i<5;i++){const cx=60+r()*280,cy=30+r()*60,c=i%2?'var(--hi)':'var(--gold)';sparks+=`<g class="burst" style="animation-delay:${(i*.7).toFixed(1)}s;transform-origin:${cx.toFixed(0)}px ${cy.toFixed(0)}px">`;for(let k=0;k<12;k++){const a=k*30*Math.PI/180;sparks+=`<line x1="${(cx+Math.cos(a)*5).toFixed(1)}" y1="${(cy+Math.sin(a)*5).toFixed(1)}" x2="${(cx+Math.cos(a)*16).toFixed(1)}" y2="${(cy+Math.sin(a)*16).toFixed(1)}" stroke="${c}" stroke-width="1.4" stroke-linecap="round"/>`;}sparks+='</g>';}
+    return sky('gv','#2a2f55','#f0b07a')+`<circle cx="330" cy="150" r="60" fill="#ffd9a0" opacity=".18"/><circle cx="330" cy="150" r="30" fill="#ffe2b0" opacity=".9"/>`+sparks
+    +castle(200,186,1.05,'#2a2238','#ffe2a6')
+    +hills('#1c1828',192)+person(70,196,.9,'#120f1c')+person(86,198,.8,'#120f1c')+person(100,196,.95,'#120f1c');
+  },
+  // 歸去來兮：回到原本世界，窗外夜景，桌上一根羽毛
+  home:()=>{
+    return sky('gh','#141a2e','#232a44')+`<rect x="36" y="22" width="200" height="132" rx="4" fill="#0d1222" stroke="#3a4260" stroke-width="5"/><line x1="136" y1="22" x2="136" y2="154" stroke="#3a4260" stroke-width="4"/><line x1="36" y1="88" x2="236" y2="88" stroke="#3a4260" stroke-width="4"/>`
+    +`<defs><clipPath id="cgwin"><rect x="38" y="24" width="196" height="128"/></clipPath></defs><g clip-path="url(#cgwin)"><circle cx="196" cy="54" r="16" fill="#f3e6b8"/>${stars(30,21,160,'#cfd6ff')}<g fill="#1b2440">${[[40,60],[70,90],[100,45],[150,80],[190,100],[210,70]].map(([x,h])=>`<rect x="${x}" y="${152-h}" width="22" height="${h}"/>`).join('')}</g></g>`
+    +`<rect x="0" y="170" width="400" height="50" fill="#1a1f30"/><rect x="250" y="120" width="120" height="8" fill="#3b3326"/><rect x="262" y="128" width="6" height="42" fill="#2c261c"/><rect x="352" y="128" width="6" height="42" fill="#2c261c"/>`
+    +`<path d="M300 120 l-6 -36 h16 z" fill="#2e3550"/><circle cx="302" cy="80" r="14" fill="var(--hi)" opacity=".22" class="pulse"/><circle cx="302" cy="82" r="5" fill="#ffe7a8"/>`
+    +`<path class="float" d="M326 116 q18 -22 34 -26 q-10 10 -32 28 z" fill="var(--gold)"/><line x1="326" y1="116" x2="360" y2="90" stroke="#1a1408" stroke-width=".8"/>`
+    +`<g transform="translate(340 118)"><path d="M0 0 h-10 l2 -14 h6 z" fill="#6a5a3a"/><path d="M-9 -14 q4 -8 8 0" fill="none" stroke="var(--hi)" stroke-width="1"/></g>`;
+  },
+  // 畢業快樂：拋向天空的畢業帽
+  graduate:()=>{
+    let caps='';const r=rng(9);for(let i=0;i<9;i++){const x=40+r()*320,y=30+r()*90,a=(r()*50-25).toFixed(0);caps+=`<g class="float" style="animation-delay:${(r()*2).toFixed(1)}s"><g transform="translate(${x.toFixed(0)} ${y.toFixed(0)}) rotate(${a})"><polygon points="-14,0 0,-6 14,0 0,6" fill="#14121c"/><rect x="-7" y="1" width="14" height="6" fill="#14121c"/><line x1="10" y1="0" x2="13" y2="11" stroke="${i%2?'var(--gold)':'var(--hi)'}" stroke-width="1.2"/></g></g>`;}
+    return sky('gg','#6ea0d8','#d9e8f2')+`<g fill="#ffffff" opacity=".7"><ellipse cx="80" cy="50" rx="34" ry="10"/><ellipse cx="300" cy="36" rx="40" ry="11"/></g>`
+    +castle(200,186,.95,'#5a6680',null)+hills('#4c7a4e',194)+caps
+    +[60,82,104,296,318,340].map((x,i)=>person(x,206,.85,'#22303a')).join('');
+  },
+  // 隕落：草地上的魔杖，螢光緩緩升起
+  died:()=>{
+    let flies='';const r=rng(13);for(let i=0;i<14;i++){flies+=`<circle class="rise" style="animation-delay:${(r()*5).toFixed(1)}s" cx="${(140+r()*120).toFixed(0)}" cy="${(140+r()*40).toFixed(0)}" r="${(r()*1.4+.8).toFixed(1)}" fill="var(--hi)"/>`;}
+    let grass='';for(let x=0;x<400;x+=6){const h=8+((x*37)%14);grass+=`<path d="M${x} 220 q2 -${h} ${4} -${h+4}" stroke="#16241c" stroke-width="2" fill="none"/>`;}
+    return sky('gd','#070a12','#141c26')+stars(50,17,150,'#9fb0d0')+`<circle cx="70" cy="46" r="14" fill="#cfd6e6" opacity=".7"/><circle cx="76" cy="42" r="13" fill="#070a12"/>`
+    +`<path d="M0 182 Q200 168 400 182 V220 H0Z" fill="#0e1712"/>`+grass
+    +`<g transform="rotate(-8 200 178)"><rect x="150" y="176" width="100" height="4" rx="2" fill="#5a4630"/><rect x="150" y="175" width="26" height="6" rx="2" fill="#3d2f20"/><circle cx="251" cy="178" r="6" fill="var(--hi)" opacity=".35" class="pulse"/></g>`
+    +flies+`<g transform="translate(300 184)"><path d="M0 0 q-4 -10 0 -18 q4 8 0 18" fill="#e8e4f0"/><path d="M0 0 q-10 -6 -12 -14 q8 2 12 14" fill="#d8d2e6"/><path d="M0 0 q10 -6 12 -14 q-8 2 -12 14" fill="#d8d2e6"/></g>`;
+  },
+  // 黑暗時代：暴風雨中的城堡
+  dark:()=>{
+    let crows='';const r=rng(19);for(let i=0;i<7;i++){const x=(60+r()*280).toFixed(0),y=(30+r()*60).toFixed(0);crows+=`<path class="float" style="animation-delay:${(r()*2).toFixed(1)}s" d="M${x} ${y} q5 -5 10 0 q5 -5 10 0" stroke="#05070a" stroke-width="2" fill="none"/>`;}
+    return sky('gk','#0b1410','#1a2a22')+`<g fill="#0e1813" opacity=".9"><ellipse cx="90" cy="40" rx="120" ry="34"/><ellipse cx="300" cy="30" rx="140" ry="38"/><ellipse cx="200" cy="64" rx="160" ry="26"/></g>`
+    +`<path class="flash" d="M262 20 l-14 40 h10 l-12 38 l26 -48 h-11 l12 -30z" fill="#c8ffd8"/>`
+    +castle(200,188,1.05,'#050806','#5fd98a')+crows+hills('#040605',194)
+    +`<g class="rain" stroke="#4a6a5a" stroke-width=".8" opacity=".5">${Array.from({length:40},(_,i)=>{const x=(i*11+7)%400,y=(i*37)%200;return `<line x1="${x}" y1="${y}" x2="${x-4}" y2="${y+12}"/>`;}).join('')}</g>`;
+  }
+  };
+  const ALT={perfect:'時間之門的兩側，一邊是城堡，一邊是熟悉的城市',victory:'晨光中的城堡上空綻放著慶祝的火花',home:'回到原本世界的房間，桌上放著一根羽毛筆',graduate:'城堡前，畢業生把帽子拋向天空',died:'夜晚的草地上，一根魔杖的光芒漸漸熄滅',dark:'暴風雨中的城堡，窗裡透出陰綠色的光'};
+  return type=>S[type]?`<figure class="cg"><svg viewBox="0 0 ${W} ${H}" role="img" aria-label="${ALT[type]}" preserveAspectRatio="xMidYMid slice">${S[type]()}</svg></figure>`:'';
+})();
 
 // ===== ui.js：介面與流程 =====
 const HERO="<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 800 420\" role=\"img\" aria-label=\"月夜下的古老城堡，湖面倒映著燈火，遠處有一列蒸汽火車\"><defs><linearGradient id=\"sk\" x1=\"0\" y1=\"0\" x2=\"0\" y2=\"1\"><stop offset=\"0\" stop-color=\"#090b17\"/><stop offset=\".7\" stop-color=\"#1f2a4a\"/><stop offset=\"1\" stop-color=\"#3a3560\"/></linearGradient><radialGradient id=\"mn\" cx=\".5\" cy=\".5\" r=\".5\"><stop offset=\"0\" stop-color=\"#fff6d8\"/><stop offset=\".55\" stop-color=\"#f1d98b\" stop-opacity=\".6\"/><stop offset=\"1\" stop-color=\"#d9b45b\" stop-opacity=\"0\"/></radialGradient><linearGradient id=\"lk\" x1=\"0\" y1=\"0\" x2=\"0\" y2=\"1\"><stop offset=\"0\" stop-color=\"#26335a\"/><stop offset=\"1\" stop-color=\"#0d1226\"/></linearGradient></defs><rect width=\"800\" height=\"420\" fill=\"url(#sk)\"/><g fill=\"#fff\" opacity=\".85\"><circle cx=\"60\" cy=\"40\" r=\"1.5\"/><circle cx=\"140\" cy=\"100\" r=\"1.1\"/><circle cx=\"230\" cy=\"30\" r=\"1.4\"/><circle cx=\"320\" cy=\"80\" r=\"1\"/><circle cx=\"560\" cy=\"35\" r=\"1.5\"/><circle cx=\"660\" cy=\"105\" r=\"1.2\"/><circle cx=\"730\" cy=\"55\" r=\"1.6\"/><circle cx=\"470\" cy=\"25\" r=\"1\"/><circle cx=\"30\" cy=\"150\" r=\"1\"/><circle cx=\"770\" cy=\"160\" r=\"1\"/><circle cx=\"610\" cy=\"70\" r=\"1\"/><circle cx=\"190\" cy=\"60\" r=\"1\"/></g><circle cx=\"610\" cy=\"100\" r=\"95\" fill=\"url(#mn)\"/><circle cx=\"610\" cy=\"100\" r=\"52\" fill=\"#f6e7ae\"/><circle cx=\"594\" cy=\"88\" r=\"9\" fill=\"#e6d08a\" opacity=\".6\"/><circle cx=\"628\" cy=\"116\" r=\"12\" fill=\"#e6d08a\" opacity=\".5\"/><path d=\"M0 270 Q120 215 240 245 Q330 190 430 235 Q560 205 680 245 Q760 225 800 250 L800 420 L0 420Z\" fill=\"#10152b\"/><g fill=\"#070a14\"><path d=\"M250 300 L250 215 L262 215 L262 190 L270 168 L278 190 L278 215 L300 215 L300 175 L308 150 L316 175 L316 205 L350 205 L350 150 L360 120 L370 150 L370 205 L400 205 L400 165 L410 135 L420 165 L420 205 L450 205 L450 185 L462 185 L462 160 L470 138 L478 160 L478 185 L496 185 L496 300Z\"/><rect x=\"228\" y=\"235\" width=\"22\" height=\"65\"/><rect x=\"496\" y=\"215\" width=\"26\" height=\"85\"/><path d=\"M232 235 L239 205 L246 235Z\"/><path d=\"M500 215 L509 182 L518 215Z\"/></g><g fill=\"#ffd36b\" opacity=\".9\"><rect x=\"266\" y=\"225\" width=\"4\" height=\"8\"/><rect x=\"304\" y=\"190\" width=\"4\" height=\"8\"/><rect x=\"354\" y=\"160\" width=\"4\" height=\"9\"/><rect x=\"364\" y=\"160\" width=\"4\" height=\"9\"/><rect x=\"354\" y=\"182\" width=\"4\" height=\"9\"/><rect x=\"404\" y=\"172\" width=\"4\" height=\"9\"/><rect x=\"414\" y=\"172\" width=\"4\" height=\"9\"/><rect x=\"466\" y=\"170\" width=\"4\" height=\"9\"/><rect x=\"330\" y=\"230\" width=\"4\" height=\"9\"/><rect x=\"380\" y=\"230\" width=\"4\" height=\"9\"/><rect x=\"430\" y=\"230\" width=\"4\" height=\"9\"/><rect x=\"278\" y=\"262\" width=\"4\" height=\"9\"/><rect x=\"460\" y=\"250\" width=\"4\" height=\"9\"/><rect x=\"236\" y=\"262\" width=\"3\" height=\"8\"/><rect x=\"506\" y=\"245\" width=\"3\" height=\"8\"/></g><path d=\"M0 305 Q200 280 400 300 Q600 280 800 305 L800 420 L0 420Z\" fill=\"url(#lk)\"/><g stroke=\"#ffd36b\" stroke-width=\"2\" opacity=\".4\"><path d=\"M300 316 h24 M345 322 h50 M410 316 h30 M460 324 h22\"/></g><g fill=\"none\" stroke=\"#fff\" opacity=\".25\"><path d=\"M100 345 q20 -6 40 0 M520 360 q30 -8 60 0 M640 340 q14 -4 28 0\"/></g><g fill=\"#05070e\"><rect x=\"30\" y=\"268\" width=\"120\" height=\"14\" rx=\"3\"/><rect x=\"42\" y=\"256\" width=\"22\" height=\"14\"/><rect x=\"132\" y=\"244\" width=\"8\" height=\"26\"/><circle cx=\"136\" cy=\"238\" r=\"7\"/><rect x=\"66\" y=\"274\" width=\"76\" height=\"3\" fill=\"#ffd36b\" opacity=\".7\"/></g><g fill=\"#fff\" opacity=\".35\"><circle cx=\"146\" cy=\"226\" r=\"6\"/><circle cx=\"158\" cy=\"214\" r=\"8\"/><circle cx=\"174\" cy=\"200\" r=\"10\"/></g><g fill=\"#05070e\" transform=\"translate(110 150)\"><path d=\"M0 8 Q8 -2 14 6 Q22 -2 30 8 Q22 4 15 10 Q8 4 0 8Z\"/></g></svg>";
@@ -2354,8 +2510,12 @@ function saveRun(){try{if(!run||run.ended||ui.screen!=='play'||!ui.cur)return;co
 function clearRun(){try{localStorage.removeItem(RKEY);}catch(e){}}
 function loadRun(){try{const s=localStorage.getItem(RKEY);return s?JSON.parse(s):null;}catch(e){return null;}}
 function evById(r,id){return id==='g_voldemort'?goalEvent(r):EVENTS.find(e=>e.id===id);}
-function resumeRun(){const s=loadRun();if(!s)return;const ev=evById(s.run,s.cur.id);if(!ev){clearRun();return render();}
-  run=s.run;ui.cur={ev,passive:s.cur.passive||[''],out:s.cur.out,pick:s.cur.pick};ui.screen='play';render();}
+function resumeRun(){const s=loadRun();if(!s)return;let ev=evById(s.run,s.cur.id);if(!ev){clearRun();return render();}
+  const r=s.run;r.items=r.items||[];r.cnt=r.cnt||{};r.keys=r.keys||[];r.flags=r.flags||[];
+  let mig='';
+  if(r.month>=FLEE_FROM&&r.month<=FLEE_TO&&r.post===null&&!r.flags.includes('flee')){r.flags.push('flee');if(!r.done.includes('l_leave'))r.done.push('l_leave');mig='✦ 存檔已更新：你在七年級開學時離開了城堡，現在正在逃亡途中，不會再有上課事件。';}
+  if(mig&&!s.cur.out&&isSchool(ev)){ev=pickEvent(r,meta);s.cur.passive=[calLabel(r)];}
+  run=r;ui.cur={ev,passive:(s.cur.passive||['']).concat(mig&&!s.cur.out?[mig]:[]),out:s.cur.out,pick:s.cur.pick};ui.screen='play';render();}
 let meta=loadMeta(),run=null;
 const ui={screen:'title',sel:[],alloc:{},offer:[],cur:null,pchoices:[],flash:'',gender:'男'};
 const app=document.getElementById('app');
@@ -2383,7 +2543,7 @@ function keysHtml(keys){
 function histHtml(){
   const h=meta.hist||[];if(!h.length)return '';
   return `<details class="card hist" style="text-align:left"><summary><h3 style="display:inline">前世回顧</h3> <span class="counter">最近 ${h.length} 世</span></summary>
-    ${h.slice().reverse().map(x=>`<details class="life"><summary><b>第 ${x.n} 世</b>・${esc(ENDINGS[x.type]?ENDINGS[x.type].n:x.type)}<span class="small muted">　${esc(x.house||'未分院')}・${esc(x.fam)}・走到${esc(x.at)}${x.friends&&x.friends.length?'・好友 '+esc(x.friends.join('、')):''}</span></summary>${keysHtml(x.keys)}</details>`).join('')}
+    ${h.slice().reverse().map(x=>`<details class="life"><summary><b>第 ${x.n} 世</b>・${esc(ENDINGS[x.type]?ENDINGS[x.type].n:x.type)}<span class="small muted">　${esc(x.house||'未分院')}・${esc(x.fam)}・走到${esc(x.at)}${x.career?'・'+esc(x.career):''}${x.friends&&x.friends.length?'・好友 '+esc(x.friends.join('、')):''}</span></summary>${keysHtml(x.keys)}</details>`).join('')}
   </details>`;
 }
 function vTitle(){
@@ -2497,7 +2657,7 @@ function optBtn(ev,o,i){
   const f=optInfo(run,ev,i);
   const chips=[`<span class="chip st-${o.s}">${STYLE_FULL[o.s]}</span>`];
   if(o.c)chips.push(`<span class="chip">${SK[o.c[0]]}檢定・成功率 ${f.chance}%</span>`);
-  (f.helps||[]).forEach(h=>chips.push(`<span class="chip ${h.b>0?'help':'danger'}">${esc(h.n)} ${h.b>0?'+':''}${h.b}</span>`));
+  (f.helps||[]).forEach(h=>chips.push(`<span class="chip ${h.b>0?'help':'danger'}"${h.why?` title="${esc(whyText(run,h.why))}"`:''}>${esc(h.n)} ${h.b>0?'+':''}${h.b}</span>`));
   if(f.pref)chips.push(`<span class="chip ${f.pref==='like'?'gold':'danger'}">${f.pref==='like'?'教授欣賞這種做法':'教授不喜歡這種做法'}</span>`);
   if(f.sk)chips.push(`<span class="chip gold">${esc(SKNAME[f.sk.id])} Lv${f.sk.lvl}${f.sk.bonus?`（+${f.sk.bonus}）`:''}</span>`);
   if(!o.c)chips.push('<span class="chip">無需檢定</span>');
@@ -2522,6 +2682,7 @@ function vResult(c){
   return `<div class="result band-${out.band||'k'}">
     ${rollLine}
     <p class="rtext">${tx(out.text)}</p>
+    ${(out.why||[]).filter(Boolean).map(w=>`<p class="why">↳ 因果：${tx(w)}</p>`).join('')}
     ${(out.notes||[]).map(n=>`<p class="pextra">${tx(n)}</p>`).join('')}
     ${out.extra?`<p class="pextra">〔${run.persona}〕${tx(out.extra)}</p>`:''}
     ${out.survive?`<p class="survive">${esc(out.survive)}</p>`:''}
@@ -2548,8 +2709,9 @@ function vPlay(){
   const body=c.out?vResult(c):`${felix}<div class="opts">${ev.o.map((o,i)=>optBtn(ev,o,i)).join('')}</div>`;
   return `${hud()}
     <article class="card event ${(ev.mm||ev.stg||ev.fin)?'major':''}" aria-live="polite">${stageTag(ev)}
-      <p class="passive">【${calLabel(run)}】${c.passive.slice(1).map(tx).join('・')}</p>
-      <h2 data-focus tabindex="-1">${tx(ev.t)}</h2>
+      <p class="passive">【${calLabel(run)}】${c.passive.slice(1).filter(s=>!String(s).startsWith('✦')).map(tx).join('・')}</p>
+      ${c.passive.slice(1).filter(s=>String(s).startsWith('✦')).map(s=>`<p class="notice">${tx(s)}</p>`).join('')}
+      <h2 data-focus tabindex="-1">${tx(ev.t)}</h2>${ev.why&&whyText(run,ev.why)?`<p class="why">↳ ${tx(whyText(run,ev.why))}</p>`:''}
       <p class="etext" style="white-space:pre-line">${tx(evText(run,ev))}</p>
       ${body}
     </article>${logHtml()}`;
@@ -2560,10 +2722,11 @@ function vEnd(){
   const e=run.ended,E=ENDINGS[e.type];
   const flags=run.flags.filter(f=>FLAGNAME[f]).map(f=>`<span class="chip">${FLAGNAME[f]}</span>`).join('');
   const unl=run.newUnlocks.map(id=>`<p class="unlock">本世解鎖：<b>${esc(traitOf(id).n)}</b>（${esc(traitOf(id).d)}）</p>`).join('');
-  return `<section class="card"><p class="kicker" style="margin:0">${calLabel(run)}・${run.persona||'尚未分院'}</p>
+  return `<section class="card">${CG(e.type)}<p class="kicker" style="margin:0">${calLabel(run)}・${run.persona||'尚未分院'}</p>
     <h2 class="endtitle" data-focus tabindex="-1">${E.n}</h2>
     ${E.hidden?'<p class="toast">✦ 隱藏結局</p>':''}${e.cause?`<p style="color:#ffa391">${tx(e.cause)}</p>`:''}
     <p>${tx(has(run,'towerSaved')&&ENDINGS_SAVED[e.type]?ENDINGS_SAVED[e.type]:E.t)}</p>${has(run,'towerSaved')&&e.type!=='dark'&&e.type!=='died'?`<p class="small" style="color:#ffcf7a">${tx(ENDINGS_SAVED.extra)}</p>`:''}
+    ${e.type==='victory'&&run.goals.voldemort?(()=>{const k=careerOf(run),c=CAREERS[k];return `<div class="career"><p class="kicker" style="margin:0">魔法職業・你最突出的能力：${esc(SK[k])} ${run.stats[k]}</p><h3>${esc(c.n)}</h3><p>${tx(c.t)}</p></div>`;})():''}
     <div class="sum">
       <div>打敗佛地魔<b>${run.goals.voldemort?'✓ 達成':'未達成'}</b></div>
       <div>回到原本的世界<b>${run.goals.home?'✓ 達成':'未達成'}</b></div>
@@ -2606,6 +2769,8 @@ function vStory(){
 // ---------- 流程 ----------
 function render(scroll=true){
   const v={title:vTitle,create:vCreate,birth:vBirth,play:vPlay,end:vEnd,story:vStory}[ui.screen]();
+  const th=(ui.screen==='play'||ui.screen==='end')&&run&&run.persona?({葛來分多:'g',雷文克勞:'r',史萊哲林:'s',赫夫帕夫:'h'})[run.persona]:'';
+  document.body.dataset.house=th||'';
   app.innerHTML=v;
   saveRun();
   if(scroll){
@@ -2626,7 +2791,7 @@ function endRun(type,cause){
   run.ended={type,cause};
   run.newAch=checkAch(run,meta,type);
   meta.legacy=(type==='died'||type==='worldend')?makeLegacyRecord(run,cause):null;
-  meta.hist=(meta.hist||[]).concat([{n:meta.runs+1,type,house:run.persona,fam:run.family.n,at:calLabel(run),friends:friendsOf(run),keys:(run.keys||[]).slice(-16)}]).slice(-12);
+  meta.hist=(meta.hist||[]).concat([{n:meta.runs+1,type,house:run.persona,fam:run.family.n,at:calLabel(run),career:type==='victory'&&run.goals.voldemort?CAREERS[careerOf(run)].n:null,friends:friendsOf(run),keys:(run.keys||[]).slice(-16)}]).slice(-12);
   clearRun();
   meta.runs++;
   [type].forEach(t=>{if(!meta.endings.includes(t))meta.endings.push(t);});
