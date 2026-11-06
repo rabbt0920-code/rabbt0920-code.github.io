@@ -17,6 +17,7 @@ button{font:inherit;color:inherit;cursor:pointer}
 .btn:disabled{opacity:.4;cursor:not-allowed}
 .btn.red{border-color:#7b2f28;color:#e9a39b;background:linear-gradient(#3c1d1a,#2a1411)}
 .btn.sm{padding:5px 12px;font-size:13px;letter-spacing:.05em}
+.btn.sel{border-color:var(--gold);background:#5a4326;color:#fff3cf}
 .card{background:rgba(28,24,20,.92);border:1px solid var(--line);border-radius:6px;padding:18px 20px;backdrop-filter:blur(2px)}
 /* title */
 #title{min-height:86vh;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;gap:14px}
@@ -58,8 +59,6 @@ input[type=text]{background:#14110e;border:1px solid var(--line);color:var(--ink
 .opt .k{color:var(--gold);font-weight:bold;min-width:26px}
 .opt small{display:block;color:var(--dim);font-size:12.5px}
 .tg{font-size:12px;border:1px solid #5a4a31;border-radius:3px;padding:0 5px;margin-left:6px;color:var(--dim);white-space:nowrap}
-.free{display:flex;gap:8px;margin-top:14px}
-.free input{flex:1}
 .badge{display:inline-block;padding:1px 14px;border-radius:3px;letter-spacing:.3em;font-weight:bold;margin-bottom:6px}
 .b-cs{background:#d8ad5e;color:#2a1c05}.b-s{background:#3c6b53;color:#dff3e8}.b-f{background:#6b3b2a;color:#f3d8cc}.b-cf{background:#8e2b25;color:#fff}
 .chips{display:flex;flex-wrap:wrap;gap:6px;margin-top:12px}
@@ -114,8 +113,9 @@ table.sum td:last-child{text-align:right;color:var(--gold)}
   <section id="create" class="screen hidden">
     <div class="card">
       <h2>少東家 · 命格</h2>
+      <div class="row"><span>性別</span><button class="btn sm sel" data-g="m">男</button><button class="btn sm" data-g="f">女</button><span class="dim" style="font-size:13px">（影響旁人對你的稱呼，以及俠緣際遇）</span></div>
       <div class="row"><span>姓名</span><input type="text" id="pname" value="江舟" maxlength="6" style="width:140px"></div>
-      <div class="row"><b>配點：</b>共 10 點，每項至少 1，至多 10。剩餘 <b id="left" style="color:var(--gold);font-size:22px">0</b> 點
+      <div class="row"><b>配點：</b>共 <span id="pool">10</span> 點（<span id="loopTxt"></span>），每項至少 1，至多 10。剩餘 <b id="left" style="color:var(--gold);font-size:22px">0</b> 點
         <span style="flex:1"></span>
         <span class="dim">快速配點：</span>
         <button class="btn sm" data-pre="bal">均衡</button><button class="btn sm" data-pre="war">武人</button><button class="btn sm" data-pre="mind">謀士</button><button class="btn sm" data-pre="biz">商賈</button><button class="btn sm" data-pre="rnd">隨機</button>
@@ -264,7 +264,7 @@ const B9={
   {on:S.items.includes('fakecoin'),v:2,up:'手中那枚偽幣成了最直接的物證',miss:'若手裡有一枚偽幣當物證，說服力會強得多'}],
  force:()=>[
   {on:!!S.fl.furnacePlan,v:4,up:'英雄會上買來的爐房草圖，讓你避開了大半守衛',miss:'若在英雄會上打探到爐房草圖，潛入會輕鬆許多'},
-  {on:!!S.fl.tianJoined,v:3,up:'被你從井裡救出的田英，替你開路、放倒了暗哨',miss:'若當初救下井中人，她會替你開路'},
+  {on:!!S.fl.tianJoined,v:3,up:'被你從井裡救出的田英，替你開路、放倒了暗哨',miss:'若當初救下井中人，他會替你開路'},
   {on:S.arts.includes('suodi')||S.arts.includes('yunshui'),v:3,up:'你練就的輕身功夫，讓你像影子一樣滑過守衛',miss:'若學過輕身功夫，潛入會從容得多'}],
  biz:()=>[
   {on:S.npc.wen.met&&S.npc.wen.aff>=15,v:4,up:'溫無缺對你的信任，讓他願意傾力出手',miss:'若與溫無缺走得更近，他會出更多力'},
@@ -811,17 +811,17 @@ opts:[
   f:{t:'枯枝一點，你整個人飛出三丈，摔在崖邊的草叢裡。老人哈哈大笑：「後生，下次再來。」',fx:{hp:-24,met:['yun']}}}
 ]};
 EV.qy_tian={qy:true,title:'燕雲奇遇・井中人',place:'清河・荒村古井',cond:()=>(S.fl.stage||1)===1&&S.day>=4,
-text:()=>[`荒村的古井邊，你聽見井底傳來微弱的呼吸聲。一根斷繩垂入黑暗，井沿上有未乾的血跡。`,`井下藏著一個人，她身上的傷，是被人追殺的痕跡。`],
+text:()=>[`荒村的古井邊，你聽見井底傳來微弱的呼吸聲。一根斷繩垂入黑暗，井沿上有未乾的血跡。`,`井下藏著一個人，他身上的傷，是被人追殺的痕跡。`],
 opts:[
  {l:'垂繩下井，把人救上來',tag:'force',a:['body'],d:12,
-  s:{t:'你拽著繩索一路下井，在濕滑的石壁間找到她。她面色蒼白，卻睜眼冷冷道：「田英。欠你一條命。」從此，這位傳奇刺客成了你的夥伴。',fx:{n:{tian:30},fl:{tianJoined:1},cause:'tianReturn',art:'yunshui',hp:-6,met:['tian'],luck:1}},
+  s:{t:'你拽著繩索一路下井，在濕滑的石壁間找到他。他面色蒼白，卻睜眼冷冷道：「田英。欠你一條命。」從此，這位傳奇刺客成了你的夥伴。',fx:{n:{tian:30},fl:{tianJoined:1},cause:'tianReturn',art:'yunshui',hp:-6,met:['tian'],luck:1}},
   f:{t:'繩索在中途斷裂，你摔進井底，嗆了幾口水。好在田英最終自己爬了出來，留下一句「謝了」就消失了。',fx:{hp:-15,n:{tian:8},met:['tian']}}},
  {l:'引開追兵，再救她',tag:'wit',a:['mind'],d:12,
-  s:{t:'你在遠處丟下一件衣物，製造被追的假象，追兵果然上鉤。你悄悄下井救人，她看著你的眼神多了幾分信任。',fx:{n:{tian:28},fl:{tianJoined:1},cause:'tianReturn',met:['tian'],xp:{mind:1},luck:1}},
+  s:{t:'你在遠處丟下一件衣物，製造被追的假象，追兵果然上鉤。你悄悄下井救人，他看著你的眼神多了幾分信任。',fx:{n:{tian:28},fl:{tianJoined:1},cause:'tianReturn',met:['tian'],xp:{mind:1},luck:1}},
   f:{t:'你的計謀被追兵識破，追兵折返，你抱著傷者狼狽逃走。',fx:{hp:-12,n:{tian:6},met:['tian']}}},
- {l:'輕聲安撫，等她信任你',tag:'charm',a:['charm'],d:14,
+ {l:'輕聲安撫，等他信任你',tag:'charm',a:['charm'],d:14,
   s:{t:'你坐在井沿，輕輕說著話：神仙渡的炊煙、紅線的桂花糕、江湖的酒。許久，井底傳來一聲輕笑：「好吧，你不像壞人。」',fx:{n:{tian:30},fl:{tianJoined:1},cause:'tianReturn',met:['tian'],xp:{charm:1},i:'yao'}},
-  f:{t:'你的安撫沒起作用，她始終沒有回應。你只好留下乾糧和水，無奈離開。',fx:{met:['tian'],n:{tian:3}}}}
+  f:{t:'你的安撫沒起作用，他始終沒有回應。你只好留下乾糧和水，無奈離開。',fx:{met:['tian'],n:{tian:3}}}}
 ]};
 EV.qy_monk={qy:true,title:'燕雲奇遇・枯禪寒潭',place:'古寺・寒潭',cond:()=>S.day>=10,
 text:()=>[`山腰古寺荒涼，寺後有一汪寒潭。一名枯瘦老僧在潭邊靜坐，周身結霜，恍如石像。`,`他睜眼，聲音像從遠處傳來：「施主，可願一試？潭水三刻，能撐得住的，我傳他一門功夫。」`],
@@ -898,7 +898,9 @@ const CAUSE={
   fx:()=>(S.fl.weiAlly||S.fl.union)?{f:{court:-3}}:{f:{court:-8},xp:{fame:-1}}},
  coinReward:{seed:'你與溫無缺聯手廢掉了偽幣',after:6,text:'溫無缺的商盟按約分了你一份紅利，錢莊也肯為你周轉。',fx:{r:{silver:200},f:{court:3}}},
  soldier:{seed:'你善待了城門下的老卒',after:9,text:'老卒領來了幾個舊日袍澤：「少東家，我們這些人，刀還拿得動。」',fx:{r:{guards:3},fl:{soldierDebt:1}}},
- tianReturn:{seed:'你從井裡救出了田英',after:10,text:'田英悄無聲息地出現在你身後：「欠你的，我還一半。」她遞來一份繡金樓在各地的落腳點名單。',fx:{inc:{clue:2},n:{tian:10}}}
+ loveGift:{seed:'你向知己坦露了心意',after:8,text:()=>BOND[S.fl.love].gift,fx:{hp:15,r:{silver:60},xp:{charm:1}}},
+ wedGift:{seed:'你與知己結為連理',after:6,text:'成家之後，日子安穩而溫暖。你發現自己多了一份必須守住的牽掛，也多了一份豁出去的底氣。',fx:{hp:25,r:{guards:2},xp:{fame:1}}},
+ tianReturn:{seed:'你從井裡救出了田英',after:10,text:'田英悄無聲息地出現在你身後：「欠你的，我還一半。」他遞來一份繡金樓在各地的落腳點名單。',fx:{inc:{clue:2},n:{tian:10}}}
 };
 const FLAGNOTES=[
  ['warned','你識破了神秘女客的來歷','夜襲來臨時，你比別人早一步準備。'],
@@ -910,11 +912,13 @@ const FLAGNOTES=[
  ['hxAlive','你從火光中救下了紅線','她會活著，繼續活在你身邊或清河。'],
  ['hxDead','你沒能救下紅線','這份遺憾會跟著你，直到終局。'],
  ['hxWith','紅線隨你同赴開封','她會成為你最可靠的耳目。'],
+ ['love','你與一位知己心意相通','俠緣已定：對方會在終局助你，並寫進結局。'],
+ ['married','你與知己結為連理','成家之後多了牽掛，也多了底氣。'],
  ['yeWin','你在渡口擊退了千夜','她離去時帶著忌憚（對話因此不同）。'],
  ['yeLose','你在渡口敗給了千夜','她離去時帶著勝者的從容（對話因此不同）。'],
  ['yingAlly','你與鶯鶯結了善緣','她日後會替你傳消息、作證。'],
  ['weiAlly','你得到魏先生的信任','舊部與老臣的門路為你打開。'],
- ['tianJoined','你把田英從井裡救了出來','她欠你一份情，會在關鍵時替你擋刀。'],
+ ['tianJoined','你把田英從井裡救了出來','他欠你一份情，會在關鍵時替你擋刀。'],
  ['union','你在英雄會上結成同盟','終局時群雄會到場。'],
  ['furnacePlan','你取得了金造器爐房的草圖','夜闖爐房時能避開大半守衛。'],
  ['shiExposed','你當眾揭穿史大人','他的黨羽終將反撲，但也失去了正當性。'],
@@ -977,18 +981,51 @@ const HUB_FORCE=['train','drill','spar'];
 const HUB_BIZ=['inspect','grain','smelt','feast','relief'];
 const HUB_WIT=['study','ledger','trace','plan'];
 
-const GEN={
- force:{a:['body'],d:10,s:{t:'你憑一身筋骨處理了此事，局勢暫時被你壓住。',fx:{xp:{body:1,fame:1}}},f:{t:'你行事魯莽，吃了一點暗虧。',fx:{hp:-8}}},
- wit:{a:['mind'],d:10,s:{t:'你想了個巧法，竟真讓局面鬆動了幾分。',fx:{xp:{mind:1},inc:{intel:1}}},f:{t:'你的點子不夠周全，白費了一番心思。',fx:{}}},
- biz:{a:['wealth'],d:8,s:{t:'你用銀錢與人脈疏通了關節，局勢略有轉機。',fx:{r:{silver:30},xp:{wealth:1}}},f:{t:'你花了冤枉錢，卻沒買到想要的結果。',fx:{r:{silver:-30}}}},
- charm:{a:['charm'],d:10,s:{t:'你好言相勸，對方的態度漸漸軟化，口碑也有所提升。',fx:{xp:{charm:1,fame:1}}},f:{t:'你說錯了話，場面一時尷尬。',fx:{xp:{fame:-1}}}},
- explore:{a:['mind','luck'],d:10,s:{t:'你四處打聽，意外撈到了一點有用的線索。',fx:{inc:{intel:1},xp:{mind:1}}},f:{t:'你轉了一圈，一無所獲。',fx:{}}}
-};
-const KW=[['force',/打|殺|戰|揍|攻|擒|拳|刀|劍|硬|衝|武|砸|搶|擋|守|練/],['charm',/說|談|勸|求|請|拜|結交|拉攏|安撫|道歉|協商|宴|招|哄|拉/],['biz',/買|賣|錢|銀|帳|賬|糧|鐵|貨|賄|財|價|商|賞/],['wit',/查|謀|計|算|想|騙|偷|假|策|分析|推|布局|誘|設伏|讀|裝|聽/],['explore',/找|尋|搜|逛|走|去|出|訪|看|翻|探|問|逃|溜/]];
-
 /* ============================================================
    四、結局資料庫
    ============================================================ */
+const BOND={
+ ying:{ok:['鶯鶯拉著你鑽進樊樓後巷，邊嗑瓜子邊把全城的八卦說給你聽。你笑得直不起腰，才發現她把你的錢袋偷去又偷偷塞了回來。','汴河畫舫上，鶯鶯晃著酒盞對你說：「騙了一輩子人，倒是頭一回捨不得騙你。」'],
+  fail:['鶯鶯放了你鴿子，只讓人捎來一句：「今兒有場戲要演，改日吧。」'],
+  cOk:'你把心裡的話說了出來。鶯鶯愣了好一會兒，第一次沒有笑。「我這張嘴說過那麼多假話……」她低頭，聲音發啞，「這一句是真的，我也是。」',
+  cNo:'鶯鶯捂著嘴笑了，笑著笑著卻別過臉：「你這話，我當你喝醉了。」她沒有拒絕，只是還沒準備好。',
+  wed:'汴河畔沒有花轎，沒有賓客，只有一桌酒、一盞燭。鶯鶯換了一身最素的衣裳，一本正經地和你對拜：「這一回，不騙你。」',
+  gift:'鶯鶯塞給你一隻繡工拙劣的香囊，裡頭藏著一張紙條：「我替你留意著全城的風聲，你只管往前走。」',
+  end:'鶯鶯成了你最信任的耳目，也是你在這亂世裡唯一敢把後背交給的人。',
+  endM:'你與鶯鶯在汴河畔安了家。她仍愛開玩笑說自己「騙了你一輩子」，你只笑著給她添茶：「那就騙下去。」'},
+ tian:{ok:['田英靠在屋脊上擦著短刃，半晌才說：「從來沒人陪我看過月亮。」你坐在他旁邊，兩人誰也沒再說話。','他笨拙地為你煮了一碗麵，鹹得發苦。你全吃完了，他別過臉，耳根微紅。'],
+  fail:['田英只淡淡看你一眼，身影便沒入夜色：「今日有事。」'],
+  cOk:'田英握刀的手頓了一下。「我這種人，活不長。」他低聲說，「你不怕？」你搖頭。他沉默許久，把短刃解下放進你掌心：「那就替我收好。」',
+  cNo:'田英後退半步，像被燙到：「別說這種話……我還不配。」他沒有走，只是不敢看你。',
+  wed:'沒有賓客，只有渡口的風。田英換下一身黑衣，穿了生平第一件紅袍，僵硬得像上刑場。對拜時他低聲說：「此後，我的刀只為你出鞘。」',
+  gift:'田英悄無聲息地出現在窗邊，留下一把磨得雪亮的短刃：「夜裡睡得安穩些，我守著。」',
+  end:'田英始終在你身後三步之處，像一道沉默的影子，卻是你最安心的依靠。',
+  endM:'你與田英在渡口邊安了家。他再不接殺人的活，只在院裡劈柴、磨刀，偶爾抬頭看你，眼裡有難得的柔軟。'},
+ wen:{ok:['溫無缺在書房裡為你煮了一壺新茶，與你談了半夜的天下財貨。他說話總是溫溫和和，卻句句讓你心安。','他陪你逛夜市，一路替你付帳，又裝作不經意地把最後一串糖葫蘆遞到你手裡。'],
+  fail:['溫無缺因商號急事爽約，只讓人送來一盒點心與一張致歉的字條。'],
+  cOk:'溫無缺放下茶盞，認真看了你很久：「我算了一輩子帳，只有這一筆，不想算。」他笑了，「我也是。」',
+  cNo:'溫無缺沉吟片刻，溫和地說：「此事我須好好想想，不是不願，是不想輕率。」',
+  wed:'溫家花廳裡紅燭高燃，商盟的朋友都來道賀。溫無缺舉杯，眼裡是少見的失態：「今日這筆買賣，我賺大了。」',
+  gift:'溫無缺遞來一冊親手整理的商路暗帳與一袋銀子：「開封的錢，你隨便用，我陪你賭這一局。」',
+  end:'溫無缺的商路與帳本都為你敞開。他說：「世人看銀子，我只看你。」',
+  endM:'你與溫無缺在開封安了家，商號的帳房裡總留著一盞為你等門的燈。'}
+};
+const BOND_IDS=['ying','tian','wen'];
+function bondCands(){
+  if(S.fl.love)return (S.fl.married?[]:[S.fl.love]);
+  return BOND_IDS.filter(k=>S.npc[k].met&&S.npc[k].alive&&((S.fl.stage||1)>=2||k==='tian'));
+}
+function bondOpt(k){
+  const b=BOND[k],N=NPCS[k].n,p=S.npc[k];
+  if(S.fl.love===k&&p.aff>=75)
+    return {id:'bond',tag:'auto',l:`締結良緣：與${N}拜堂成親（銀 100）`,days:2,cost:{silver:100},s:{t:[b.wed],fx:{fl:{married:1},n:{[k]:15},hp:25,cause:'wedGift'}}};
+  if(!S.fl.love&&p.aff>=50)
+    return {id:'bond',tag:'charm',l:`吐露心意：向${N}說出心裡話`,a:['charm'],d:10,days:1,
+      s:{t:[b.cOk],fx:{fl:{love:k},n:{[k]:15},xp:{charm:1},cause:'loveGift'}},f:{t:[b.cNo],fx:{n:{[k]:-2}}}};
+  return {id:'bond',tag:'charm',l:`赴約：與${N}相處一日`,a:['charm'],d:S.fl.love===k?5:8,days:1,
+    s:{t:b.ok,fx:{n:{[k]:9},xp:{charm:1},hp:5}},f:{t:b.fail,fx:{n:{[k]:3}}}};
+}
+const loveLine=()=>{const k=S.fl.love;if(!k||!S.npc[k].alive)return '';return '\n'+(S.fl.married?BOND[k].endM:BOND[k].end)};
 const hxLine=()=>S.npc.hong.alive
   ?(S.fl.hxWith
     ?'紅線一直陪在你身邊。她那手繡小舟的針線活，在開封也有了名號。每當你回頭，總能看見她束著紅繩辮子笑著跑來：「哥！」這一次，她沒有在火光裡消失。'
@@ -998,17 +1035,17 @@ const jiangLine=()=>S.fl.jiangBack?'江無浪在神仙渡舊址旁蓋了一間�
 
 const ENDINGS=[
  {id:'death',n:'殞命江湖',r:'亡',c:()=>S.hp<=0,
-  t:()=>`${S.name}倒在了亂世的風裡。那個帶著前世記憶的靈魂，終究沒能把結局改寫完。\n${hxLine()}\n神仙渡的渡船仍在清河上來來去去，只是再沒有人記得，曾有一個少東家，想把整個故事都改掉。`},
+  t:()=>`${S.name}倒在了亂世的風裡。那個帶著前世記憶的靈魂，終究沒能把結局改寫完。\n${hxLine()}${loveLine()}\n神仙渡的渡船仍在清河上來來去去，只是再沒有人記得，曾有一個少東家，想把整個故事都改掉。`},
  {id:'ruin',n:'燕雲夢碎',r:'敗',c:()=>S.fl.finale==='lose',
-  t:()=>`終幕一戰，你敗了。鎮冠珏的光芒黯淡，三條路都在你眼前關閉。你帶著殘部向南走，身後是燃燒的旗幟。\n${hxLine()}\n許多年後，江湖上仍有人談起那一夜：一個少年，如何在絕境中咬碎了牙。你知道，這個故事還沒有結束。`},
+  t:()=>`終幕一戰，你敗了。鎮冠珏的光芒黯淡，三條路都在你眼前關閉。你帶著殘部向南走，身後是燃燒的旗幟。\n${hxLine()}${loveLine()}\n許多年後，江湖上仍有人談起那一夜：一個少年，如何在絕境中咬碎了牙。你知道，這個故事還沒有結束。`},
  {id:'all',n:'俠之大者',r:'S',c:()=>S.fl.finale==='win'&&S.fl.route==='all',
-  t:()=>`朝堂、江湖、邊關，三路並進，天下為之一震。史大人伏法，繡金樓的網被連根拔起，北境南下的大軍被擋在雁門之外。\n鎮冠珏在你掌心化為一道溫熱的光，彷彿有無數個沉睡了很久的聲音在輕輕回應：十六聲，終於聽見了。\n${hxLine()}\n${jiangLine()}\n有人問你：「何為俠？」你想了很久，只說：「替不能開口的人，把話說完。」`},
+  t:()=>`朝堂、江湖、邊關，三路並進，天下為之一震。史大人伏法，繡金樓的網被連根拔起，北境南下的大軍被擋在雁門之外。\n鎮冠珏在你掌心化為一道溫熱的光，彷彿有無數個沉睡了很久的聲音在輕輕回應：十六聲，終於聽見了。\n${hxLine()}${loveLine()}\n${jiangLine()}\n有人問你：「何為俠？」你想了很久，只說：「替不能開口的人，把話說完。」`},
  {id:'court',n:'廟堂之高',r:'A',c:()=>S.fl.finale==='win'&&S.fl.route==='court',
-  t:()=>`垂拱殿上的一戰，改變了朝局。史大人伏法，北境使者灰頭土臉地被送出邊關。天子賜你「忠義少卿」之名，你在朝堂上留下了一個肯說真話的位置。\n${hxLine()}\n${jiangLine()}\n你偶爾會想起清河的晨霧，想起那個喊你「哥」的小姑娘，想起一切開始之前的、平凡的日子。`},
+  t:()=>`垂拱殿上的一戰，改變了朝局。史大人伏法，北境使者灰頭土臉地被送出邊關。天子賜你「忠義少卿」之名，你在朝堂上留下了一個肯說真話的位置。\n${hxLine()}${loveLine()}\n${jiangLine()}\n你偶爾會想起清河的晨霧，想起那個喊你「哥」的小姑娘，想起一切開始之前的、平凡的日子。`},
  {id:'jianghu',n:'江湖之遠',r:'A',c:()=>S.fl.finale==='win'&&S.fl.route==='jianghu',
-  t:()=>`英雄會之夜，繡金樓的精銳折戟校場。江湖群雄奉你為盟，各門各派在你的旗下，頭一回為了同一件事並肩而立。\n${hxLine()}\n${jiangLine()}\n你沒有留在朝堂，也沒有北上，只守著這座城與身邊的人。有人說這不夠大，你卻覺得，守住一個地方的燈火，也是俠。`},
+  t:()=>`英雄會之夜，繡金樓的精銳折戟校場。江湖群雄奉你為盟，各門各派在你的旗下，頭一回為了同一件事並肩而立。\n${hxLine()}${loveLine()}\n${jiangLine()}\n你沒有留在朝堂，也沒有北上，只守著這座城與身邊的人。有人說這不夠大，你卻覺得，守住一個地方的燈火，也是俠。`},
  {id:'north',n:'燕雲北望',r:'A',c:()=>S.fl.finale==='win'&&S.fl.route==='north',
-  t:()=>`雁門關外的雪夜，你憑鎮冠珏號令舊部，三千殘兵將北境先鋒擊退。十六州的故土尚未收復，但那面旗，終於再次在關外豎了起來。\n${hxLine()}\n${jiangLine()}\n老卒們望著北方，眼裡有光。他們說：「少東家，我們等這一天，等了很多年。」`},
+  t:()=>`雁門關外的雪夜，你憑鎮冠珏號令舊部，三千殘兵將北境先鋒擊退。十六州的故土尚未收復，但那面旗，終於再次在關外豎了起來。\n${hxLine()}${loveLine()}\n${jiangLine()}\n老卒們望著北方，眼裡有光。他們說：「少東家，我們等這一天，等了很多年。」`},
  {id:'hold',n:'守得雲開',r:'C',c:()=>S.fl.finale==='win',
   t:()=>`最後一戰，你守住了想守住的人。前路依舊風雨飄搖，但你知道，只要這面旗還在，故事就沒有結束。\n${hxLine()}`}
 ];
@@ -1034,6 +1071,8 @@ function prepList(){
  const N=S.npc,F=S.fac,f=S.fl;
  return [
   {on:!!(N.hong.alive&&f.hxWith),v:6,up:'紅線一路陪在你身邊，穩住了人心',miss:null},
+  {on:!!(f.love&&N[f.love].alive),v:6,up:`${f.love?NPCS[f.love].n:''}始終在你身側，與你並肩迎戰`,miss:null},
+  {on:!!f.married,v:4,up:'成家之後，你多了一份必須守住的牽掛，也多了一份豁出去的底氣',miss:null},
   {on:!!f.tianJoined,v:8,up:'被你從井裡救出的田英，如今替你擋在最前',miss:'若當初救下井中人，田英本可替你守住側翼'},
   {on:!!f.yingAlly,v:4,up:'鶯鶯的消息網替你盯住了暗處的敵人',miss:'若與鶯鶯結了善緣，你會多一雙耳目'},
   {on:!!(N.wen.met&&N.wen.aff>=20),v:4,up:'溫無缺的商路為你調來了糧草',miss:'若與溫無缺走得更近，糧草會更充裕'},
@@ -1160,6 +1199,11 @@ function showHub(){
   const ids=['explore'];
   ids.push(S.hp<50?'rest':pick(HUB_FORCE.filter(ok)));
   ids.push(ok('withhong')&&Math.random()<0.55?'withhong':pick(HUB_BIZ));
+  const bc=bondCands();
+  if(bc.length&&Math.random()<(S.fl.love?0.55:0.45)){
+    S.bondId=bc.slice().sort((a,b)=>S.npc[b].aff-S.npc[a].aff)[Math.random()<0.7?0:Math.floor(Math.random()*bc.length)];
+    ids[2]='bond';
+  }
   ids.push(pick(HUB_WIT.filter(ok)));
   const st=S.fl.stage||1;
   S.hubIds=ids;S.cur='hub';S.phase='event';S.result=null;
@@ -1169,7 +1213,7 @@ function showHub(){
   render();save();
 }
 function currentOpts(){
-  if(S.cur==='hub')return S.hubIds.map(id=>({...HUB[id],id}));
+  if(S.cur==='hub')return S.hubIds.map(id=>id==='bond'?bondOpt(S.bondId):({...HUB[id],id}));
   const o=EV[S.cur].opts;return typeof o==='function'?o():o;
 }
 
@@ -1199,13 +1243,13 @@ function choose(opt,userText){
   if(userText)text=`你決定「${userText}」。\n`+text;
   const days=opt.days!==undefined?opt.days:(fromHub?2:1);
   S.day+=days;
-  if(!opt.generic&&BEATS_ALL.includes(curId)&&!S.done.includes(curId))S.done.push(curId);
-  let nx=o.next!==undefined?o.next:(opt.next!==undefined?opt.next:(!opt.generic&&EV[curId]&&EV[curId].next?EV[curId].next:undefined));
+  if(BEATS_ALL.includes(curId)&&!S.done.includes(curId))S.done.push(curId);
+  let nx=o.next!==undefined?o.next:(opt.next!==undefined?opt.next:(EV[curId]&&EV[curId].next?EV[curId].next:undefined));
   if(typeof nx==='function')nx=nx();
-  if(!opt.generic&&o.fx&&typeof o.fx==='object'&&o.fx.next)nx=o.fx.next;
+  if(o.fx&&typeof o.fx==='object'&&o.fx.next)nx=o.fx.next;
   S.log.push({day:S.day,title:fromHub?'日常':txtOf(EV[curId].title),pick:(userText||opt.l||'').slice(0,40),tier});
   if(S.log.length>80)S.log.shift();
-  const echo=(!opt.generic&&EV[curId]&&EV[curId].echo)?EV[curId].echo(tier,opt):null;
+  const echo=(EV[curId]&&EV[curId].echo)?EV[curId].echo(tier,opt):null;
   S.result={echo,tier,text,changes,next:nx||null,title:fromHub?'日常':txtOf(EV[curId].title),end:S.hp<=0,qy:!!(EV[curId]&&EV[curId].qy)};
   if(tier!=='f'&&tier!=='cf'&&EV[curId]&&EV[curId].qy){S.fl.qyCount=(S.fl.qyCount||0)+1}
   S.phase='result';
@@ -1225,19 +1269,6 @@ function onContinue(){
   if(r.next&&EV[r.next])return showEvent(r.next);
   proceed();
 }
-function freeAct(text){
-  if(S.phase!=='event')return;
-  text=text.trim();if(!text)return;
-  let tag='wit';
-  for(const [k,re] of KW){if(re.test(text)){tag=k;break}}
-  const opts=currentOpts();
-  let o=opts.find(x=>x.tag===tag&&!x.go&&canPay(x.cost)&&(!x.req||x.req()));
-  if(!o){
-    const g=GEN[tag];
-    o={tag,a:g.a,d:g.d,s:g.s,f:g.f,days:1,generic:true};
-  }
-  choose(o,text);
-}
 function useItem(i){
   const it=ITEMS[i];if(!it||!it.use||S.phase==='ending')return;
   const ix=S.items.indexOf(i);if(ix<0)return;
@@ -1253,6 +1284,7 @@ function endGame(){
   const facSum=Object.values(S.fac).reduce((s,v)=>s+Math.max(0,v),0);
   const score=attrSum*10+Math.floor(S.res.silver/10)+Math.floor(facSum/2)+S.arts.length*20+(S.fl.qyCount||0)*30+(S.fl.finale==='win'?120:0)+(S.fl.glory?60:0)+(S.npc.hong.alive?80:0)+(S.fl.jiangBack?30:0)-(S.hp<=0?80:0);
   try{localStorage.removeItem(SAVE_KEY)}catch(_){}
+  const before=runs();try{localStorage.setItem(RUNS_KEY,String(before+1))}catch(_){}
   $('#game').classList.add('hidden');$('#ending').classList.remove('hidden');
   const ach=[];
   if(S.npc.hong.alive)ach.push('火光中救下紅線');
@@ -1261,6 +1293,7 @@ function endGame(){
   if(S.fl.shiExposed)ach.push('揭穿金造器');
   if(S.fl.furnaceDown)ach.push('毀爐之人');
   if(S.fl.tianJoined)ach.push('井中人相隨');
+  if(S.fl.love)ach.push(S.fl.married?'俠緣・結為連理':'俠緣・心意相通');
   if(S.fl.weiAlly)ach.push('得遺老信任');
   if(S.fl.jiangBack)ach.push('父子重逢');
   if(S.fl.route==='all')ach.push('俠之大者');
@@ -1280,6 +1313,7 @@ function endGame(){
     <tr><td>成就</td><td>${ach.join('、')||'—'}</td></tr>
     <tr><td><b>江湖評分</b></td><td><b style="font-size:20px">${score}</b></td></tr>
    </table>
+   <p class="dim" style="text-align:center">${before+1<=5?`輪迴印記 +1：下一局可分配 ${Math.min(15,10+before+1)} 點天賦`+(before+1>=5?'（已達上限）':''):'天賦已臻圓滿：下一局可分配 15 點'}</p>
    <div class="row" style="justify-content:center"><button class="btn" id="btnAgain">再入亂世</button></div>
   </div>`;
   $('#btnAgain').onclick=()=>{$('#ending').classList.add('hidden');openCreate()};
@@ -1321,7 +1355,8 @@ function renderSide(){
   const fac=Object.keys(FAC).map(k=>{const v=S.fac[k];const w=Math.abs(v)/2;const col=v>=0?'var(--jade)':'var(--red)';
     return `<div class="fr"><span>${FAC[k].i}${FAC[k].n}</span><div class="fbar"><i style="${v>=0?'left:50%':'right:50%'};width:${w}%;background:${col}"></i></div><span style="color:${col};text-align:right">${attWord(v)}</span></div>`}).join('');
   const npc=Object.keys(NPCS).filter(k=>S.npc[k].met).map(k=>{
-    const p=S.npc[k];const st=k==='jiang'?(S.fl.jiangBack?'已重逢':'音訊斷續'):(p.alive?attWord(p.aff):'已故');
+    const p=S.npc[k];const st0=k==='jiang'?(S.fl.jiangBack?'已重逢':'音訊斷續'):(p.alive?attWord(p.aff):'已故');
+    const st=S.fl.love===k?(S.fl.married?'伴侶 💍':'心上人 ❤'):st0;
     return `<div class="fr" style="grid-template-columns:1fr auto"><span>${NPCS[k].n} <span class="dim">${NPCS[k].role}</span></span><span style="color:${!p.alive?'var(--red)':p.aff>=8?'var(--jade)':p.aff<=-8?'var(--red)':'var(--dim)'}">${st}</span></div>`}).join('');
   $('#side').innerHTML=`<div class="card"><h4>${esc(S.name)} · 屬性</h4>${a}<div class="stat" style="margin-top:4px"><span>🌀天命</span><div class="dim">？？？</div><span></span></div></div>
   <div class="card"><h4>資源</h4><div class="res"><span>💰銀 ${S.res.silver}</span><span>🌾糧 ${S.res.grain}</span><span>⚒️兵器 ${S.res.iron}</span><span>🛡️人手 ${S.res.guards}</span></div></div>
@@ -1369,12 +1404,21 @@ function renderMain(){
     else if(o.req&&!o.req())note=`　<span style="color:#d98a82">（${o.reqNote||'條件不足'}）</span>`;
     return `<button class="opt" data-i="${i}" ${ok?'':'disabled'}><span class="k">${letters[i]}</span><span>${o.l}<span class="tg">${TAGS[o.tag]}</span>${note}${o.d&&typeof o.d==='string'?`<small>${o.d}</small>`:''}</span></button>`}).join('');
   m.innerHTML=`<div class="card scene"><h3>${title}</h3><div class="place">${place}</div><div class="txt">${textHtml}</div>${extra}
-    <div class="opts">${html}</div>
-    <div class="free"><input type="text" id="free" placeholder="自由行動：直接輸入你想做的事，例如「假裝重傷未醒，偷聽他們說什麼」" maxlength="60"><button class="btn sm" id="btnFree">執行</button></div></div>`;
+    <div class="opts">${html}</div></div>`;
   m.querySelectorAll('.opt').forEach(b=>b.onclick=()=>choose(opts[+b.dataset.i]));
-  const doFree=()=>{const v=$('#free').value;if(v.trim())freeAct(v)};
-  $('#btnFree').onclick=doFree;$('#free').onkeydown=e=>{if(e.key==='Enter')doFree()};
 }
+const GF=[[/少東家/g,'少當家'],[/哥/g,'姊'],[/公子/g,'姑娘'],[/小子/g,'丫頭'],[/親生兒子/g,'親生女兒'],[/少年(?!人)/g,'少女']];
+function gfix(root){
+  if(!S||S.gender!=='f'||!root||root.nodeType!==1&&root.nodeType!==3)return;
+  const apply=n=>{let t=n.nodeValue,o=t;for(const [re,r] of GF)t=t.replace(re,r);if(t!==o)n.nodeValue=t};
+  if(root.nodeType===3){apply(root);return}
+  const w=document.createTreeWalker(root,NodeFilter.SHOW_TEXT);let n;while(n=w.nextNode())apply(n);
+}
+new MutationObserver(ms=>ms.forEach(m=>m.addedNodes.forEach(n=>{
+  const el=n.nodeType===1?n:n.parentElement;
+  if(el&&el.closest('#create,#title'))return;
+  gfix(n);
+}))).observe(document.body,{childList:true,subtree:true});
 function syncNames(){NPCS.guest.n=S.fl.ye?'千夜':'神秘女客';NPCS.guest.role=S.fl.ye?'繡金樓之人':'來歷不明的遠客'}
 function render(){
   syncNames();
@@ -1407,9 +1451,15 @@ function openMenu(){
 }
 
 /* ---------- 創角 ---------- */
+let CRG='m';
 let CR={attr:{body:2,mind:2,charm:2,wealth:2,fame:2},traits:['modern','photo','tongue']};
 const PRE={bal:{body:2,mind:2,charm:2,wealth:2,fame:2},war:{body:4,mind:2,charm:1,wealth:1,fame:2},mind:{body:1,mind:4,charm:2,wealth:2,fame:1},biz:{body:1,mind:2,charm:2,wealth:4,fame:1}};
-function crLeft(){return 10-AK.reduce((s,k)=>s+CR.attr[k],0)}
+const RUNS_KEY='yy16_runs';
+function runs(){try{return Math.max(0,parseInt(localStorage.getItem(RUNS_KEY)||'0',10)||0)}catch(_){return 0}}
+function pool(){return 10+Math.min(5,runs())}
+function fillPre(a,order){let n=pool()-AK.reduce((t,k)=>t+a[k],0),g=0;while(n>0&&g++<200){const k=order[(g-1)%order.length];if(a[k]<10){a[k]++;n--}}return a}
+const PRE_ORD={bal:['body','mind','charm','wealth','fame'],war:['body','body','mind','fame','charm','wealth'],mind:['mind','mind','charm','wealth','body','fame'],biz:['wealth','wealth','charm','mind','fame','body']};
+function crLeft(){return pool()-AK.reduce((s,k)=>s+CR.attr[k],0)}
 function renderCreate(){
   $('#alloc').innerHTML=AK.map(k=>`<div class="arow"><div>${ATTR[k].i} ${ATTR[k].n}</div><div class="d">${ATTR[k].d}</div><div class="stepper"><button data-k="${k}" data-d="-1">−</button><b>${CR.attr[k]}</b><button data-k="${k}" data-d="1">＋</button></div></div>`).join('');
   $('#alloc').querySelectorAll('button').forEach(b=>b.onclick=()=>{
@@ -1417,7 +1467,7 @@ function renderCreate(){
     if(v<1||v>10)return;if(d>0&&crLeft()<=0)return;
     CR.attr[k]=v;renderCreate();
   });
-  $('#left').textContent=crLeft();
+  $('#left').textContent=crLeft();$('#pool').textContent=pool();const r=runs();$('#loopTxt').textContent=r>=5?`輪迴 ${r} 次，天賦已臻圓滿，額外 +5`:`輪迴 ${r} 次，每完成一局下一局 +1，上限 15`;
   $('#traits').innerHTML=Object.keys(TRAITS).map(k=>{const t=TRAITS[k];return `<div class="trait ${CR.traits.includes(k)?'on':''}" data-t="${k}"><b>${t.n}</b><div class="dim" style="font-size:13px">${t.d}</div><div class="pro">＋ ${t.pro}</div><div class="con">－ ${t.con}</div></div>`}).join('');
   $('#traits').querySelectorAll('.trait').forEach(el=>el.onclick=()=>{
     const k=el.dataset.t;const ix=CR.traits.indexOf(k);
@@ -1428,11 +1478,13 @@ function renderCreate(){
   $('#btnStart').disabled=!(crLeft()===0&&CR.traits.length===3);
 }
 function openCreate(){
+  CRG='m';document.querySelectorAll('[data-g]').forEach(x=>x.classList.toggle('sel',x.dataset.g==='m'));$('#pname').value='江舟';
+  CR.attr={body:1,mind:1,charm:1,wealth:1,fame:1};{let n=pool()-5,g=0;while(n>0&&g++<100){const k=AK[(g-1)%5];if(CR.attr[k]<10){CR.attr[k]++;n--}}}
   $('#title').classList.add('hidden');$('#create').classList.remove('hidden');renderCreate();
 }
 function startGame(){
   const name=($('#pname').value.trim()||'江舟').slice(0,6);
-  S=newState(name,CR.attr,CR.traits);
+  S=newState(name,CR.attr,CR.traits);S.gender=CRG;
   $('#create').classList.add('hidden');
   showEvent('b0');
 }
@@ -1441,14 +1493,19 @@ function startGame(){
 $('#btnNew').onclick=openCreate;
 $('#btnBack').onclick=()=>{$('#create').classList.add('hidden');$('#title').classList.remove('hidden')};
 $('#btnStart').onclick=startGame;
+document.querySelectorAll('[data-g]').forEach(b=>b.onclick=()=>{
+  CRG=b.dataset.g;
+  document.querySelectorAll('[data-g]').forEach(x=>x.classList.toggle('sel',x.dataset.g===CRG));
+  const n=$('#pname');if(n.value==='江舟'||n.value==='江月')n.value=CRG==='f'?'江月':'江舟';
+});
 document.querySelectorAll('[data-pre]').forEach(b=>b.onclick=()=>{
   const p=b.dataset.pre;
-  if(p==='rnd'){const a={body:1,mind:1,charm:1,wealth:1,fame:1};for(let i=0;i<5;i++)a[pick(AK)]++;CR.attr=a}
-  else CR.attr={...PRE[p]};
+  if(p==='rnd'){const a={body:1,mind:1,charm:1,wealth:1,fame:1};for(let i=0,n=pool()-5;i<n;i++){const o=AK.filter(k=>a[k]<10);a[pick(o)]++}CR.attr=a}
+  else CR.attr=fillPre({...PRE[p]},PRE_ORD[p]);
   renderCreate();
 });
 (function(){
-  const sv=loadSave();if(sv&&!sv.led)sv.led=[];
+  const sv=loadSave();if(sv&&!sv.led)sv.led=[];if(sv&&!sv.gender)sv.gender='m';
   if(sv&&!sv.over){$('#btnLoad').onclick=()=>{S=sv;$('#title').classList.add('hidden');render()}}
   else $('#btnLoad').classList.add('hidden');
 })();
