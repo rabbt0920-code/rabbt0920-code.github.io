@@ -119,10 +119,10 @@ details p,details li{color:#c9c4b8;line-height:1.7;font-size:13px}
 
 <details>
   <summary>資料來源與可信度（請先看）</summary>
-  <p><span class="v">■ 已查證（嚴格照遊戲規則）</span>：各部位可出現的初始詞條池與稀有詞條位置（武學增效只出在武器、全武學增效只出在環／佩、首領增傷只出在腕／脛、奇術增傷只出在冠／胸）；96 階起攻具屬攻改為「無相攻擊」；攻具定音為外功穿透／無相穿透（國際服 91 階起四系穿透合併為 Formless Penetration）／外功抗性；國際服 91 階起扇、傘武器定音改為「扇之術／傘之術增效」；2.1 起 96 階以上九重春色（Vernal Umbrella）特殊技與蓄力技詞條合併為「頻射飛彈增傷」並新增輕重擊／派生詞條；Retuning 移除最小屬攻；套裝 4 件效果描述；五維換算（96 版本）；黃字上限精準 100%／會心 80%／會意 40%；判定順序（先判會意，再判精準與會心）；國際服目前流派與 2.3 新增「牽絲・羽」、Cloudshear／Reinchime 套裝；弓玦套裝飲羽／驚弦／追影。</p>
+  <p><span class="v">■ 已查證（嚴格照遊戲規則）</span>：各部位可出現的初始詞條池與稀有詞條位置（武學增效只出在武器、全武學增效只出在環／佩、首領增傷只出在腕／脛、奇術增傷只出在冠／胸）；96 階起攻具屬攻改為「無相攻擊」；攻具定音為外功穿透／無相穿透（國際服 91 階起四系穿透合併為 Formless Penetration）／外功抗性；國際服 91 階起扇、傘武器定音改為「扇之術／傘之術增效」；2.1 起 96 階以上九重春色（Vernal Umbrella）特殊技與蓄力技詞條合併為「頻射飛彈增傷」並新增輕重擊／派生詞條；Retuning 移除最小屬攻；套裝 4 件效果描述；五維換算（96 版本）；黃字上限精準 100%／會心 80%／會意 40%；判定順序（先判會意，再判精準與會心）；國際服目前流派與 2.3 新增「牽絲・翊」、Cloudshear／Reinchime 套裝；弓玦套裝飲羽／驚弦／追影。</p>
   <p><span class="v">■ 三率詞條數值的推算依據</span>：中國服 100 階攻略記載弓玦 2 件套為精準 4.7%／會心 5.2%／會意 2.6%（白字），浣花 2 件套約可省下 2 條會心類詞條，白字會心約 148%、會意約 74% 才溢出（＝黃字 80%／40%）。據此推得單條金色滿值約為會心 5.2%、精準 4.7%、會意 2.6%（白字），金色區間約 4.2–5.2%、紫色約 2.9–4.1%。套裝 2 件數值也以同一比例換算到 100 階。</p>
   <p><span class="e">■ 估算（可能與遊戲內數值有出入）</span>：100 階單條詞條滿值（以中國服 100 階攻略的面板目標反推）、角色基礎數值、白字→黃字換算係數、首領防禦與穿透公式、套裝 4 件效果的覆蓋率、武學天賦門檻、2.3 已調整但未公開數值的飛隼／浣花 4 件效果、Swaying Heights／Tiltrim／Cloudshear／Agile Steps／Jade Embrace／Obsidian Armor／Brimflow／Reinchime 等尚未確認繁中譯名的套裝（以英文名顯示）。輸出指數只適合「同一套模型下比較兩套配裝」，不是遊戲內實際 DPS。</p>
-  <p>未收錄：破竹・醉（Bamboocut - Draught）因第二把武器資料不足暫不列入；止戈定音（Arena Attunement）屬 PvP，不影響本模擬。所有估算值集中在原始碼開頭的 <code>DATA</code> 區塊，方便日後依遊戲內實際數值修正。</p>
+  <p>破竹・樽（懸身拳法＋斷水雙訣，國際服 2.0 第二篇章加入）與鳴金・霆（決獄懸鋒槍＋拔山取月槍，資料取自國服）的防具流派定音名稱尚未查證，標示「待確認」；止戈定音（Arena Attunement）屬 PvP，不影響本模擬。所有估算值集中在原始碼開頭的 <code>DATA</code> 區塊，方便日後依遊戲內實際數值修正。</p>
 </details>
 
 <script>
@@ -172,6 +172,9 @@ const PATHS = [
   {id:'umbra', n:'鳴金・影', en:'Bellstrike - Umbra', attr:'BS', style:'aff', tA:'shi',
    mainT:'劍', mainN:'積矩九劍', mainEn:'Strategic Sword', subT:'槍', subN:'九曲驚神槍', subEn:'Heavenquaker Spear', ms:.75, lh:.3,
    att:[['積矩九劍・流血增傷',.35],['積矩九劍・特殊技增傷',.25]]},
+  {id:'thunder', n:'鳴金・霆', en:'Bellstrike・國服資料', attr:'BS', style:'aff', tA:'shi',
+   mainT:'槍', mainN:'決獄懸鋒槍', mainEn:'決獄懸鋒槍', subT:'槍', subN:'拔山取月槍', subEn:'拔山取月槍', ms:.6, lh:.3,
+   att:[['決獄懸鋒槍・武學技增傷（待確認）',.3],['拔山取月槍・蓄力技增傷（待確認）',.3]]},
   {id:'might', n:'裂石・威', en:'Stonesplit - Might', attr:'SS', style:'crit', tA:'jin',
    mainT:'陌刀', mainN:'嗟夫刀法', mainEn:'Thundercry Blade', subT:'槍', subN:'八方風雷槍', subEn:'Stormbreaker Spear', ms:.8, lh:.2,
    att:[['嗟夫刀法・蓄力技增傷',.5],['嗟夫刀法・武學技增傷',.2]]},
@@ -187,13 +190,16 @@ const PATHS = [
   {id:'kite', n:'破竹・鳶', en:'Bamboocut - Kite', attr:'BC', style:'crit', tA:'agi',
    mainT:'手甲', mainN:'Heavenwill Gauntlets', mainEn:'Heavenwill Gauntlets', subT:'繩鏢', subN:'Skygrasp Rope Dart', subEn:'Skygrasp Rope Dart', ms:.75, lh:.2,
    att:[['手甲・蓄力技增傷',.5],['手甲・武學技增傷',.2]]},
+  {id:'draught', n:'破竹・樽', en:'Bamboocut - Draught', attr:'BC', style:'crit', tA:'agi',
+   mainT:'手甲', mainN:'懸身拳法', mainEn:'Skystrike Gauntlets', subT:'雙刀', subN:'斷水雙訣', subEn:'斷水雙訣', ms:.6, lh:.3,
+   att:[['懸身拳法・酩酊強化技增傷（待確認）',.35],['斷水雙訣・武學技增傷（待確認）',.25]]},
   {id:'jade', n:'牽絲・玉', en:'Silkbind - Jade', attr:'SB', style:'crit', tA:'agi',
    mainT:'傘', mainN:'九重春色', mainEn:'Vernal Umbrella', subT:'扇', subN:'Inkwell Fan', subEn:'Inkwell Fan', ms:.8, lh:.3,
    att:[['九重春色・頻射飛彈增傷',.5],['九重春色・輕重擊／派生增傷',.25]]},
   {id:'deluge', n:'牽絲・霖（治療）', en:'Silkbind - Deluge', attr:'SB', style:'crit', tA:'agi',
    mainT:'扇', mainN:'Panacea Fan', mainEn:'Panacea Fan', subT:'傘', subN:'Soulshade Umbrella', subEn:'Soulshade Umbrella', ms:.6, lh:.2,
    att:[['千香引魂蠱・特殊技增療',.4]]},
-  {id:'wings', n:'牽絲・羽（2.3 新）', en:'Silkbind - Wings', attr:'SB', style:'crit', tA:'agi',
+  {id:'wings', n:'牽絲・翊（2.3 新）', en:'Silkbind - Wings', attr:'SB', style:'crit', tA:'agi',
    mainT:'腰鼓', mainN:'Museflow Waist Drum', mainEn:'Museflow Waist Drum', subT:'扇', subN:'Willowbend Fan', subEn:'Willowbend Fan', ms:.7, lh:.3,
    att:[['腰鼓・武學技增傷（待確認）',.3],['腰鼓・蓄力技增傷（待確認）',.3]]}
 ];
