@@ -731,6 +731,50 @@ const TOPICS = [
   { t:'網紅股主力疑似出貨，散戶小心接刀', ids:['MEME'], dir:-1 },
   { t:'AI 泡沫論甚囂塵上，科技股恐面臨修正', ids:['ACCTON','TSMC'], dir:-1 },
 ];
+/* ---------- 政治選舉（自由模式）----------
+ * 勝負與市場反應都是種子亂數決定，兩黨完全對稱、不偏袒任何一方；
+ * 台灣的「香蕉黨／鳳梨黨」為虛構政黨，與現實無關。美國兩黨只用黨名，沒有任何真實候選人。 */
+const POLS = {
+  us_pres: { icon:'🇺🇸', name:'美國總統大選', k:10, rumors:[
+    { t:'{P}若勝選恐祭出新一輪科技出口管制，半導體供應鏈傳出壓力', ids:['TSMC','ACCTON'], dir:-1 },
+    { t:'{P}主打製造業回流與減稅，市場預期電子零組件訂單受惠', ids:['YAGEO','TSMC'], dir:1 } ] },
+  us_mid:  { icon:'🇺🇸', name:'美國國會期中選舉', k:10, rumors:[
+    { t:'期中選舉倒數：市場押注國會分裂、政策僵局，反而降低政策風險', ids:['BLUE'], dir:1 },
+    { t:'兩黨為債務上限互槓，市場擔憂聯邦政府再度關門', ids:['BOND'], dir:-1 } ] },
+  tw_pres: { icon:'🇹🇼', name:'台灣總統大選', k:0, rumors:[
+    { t:'總統大選倒數：{P}主打金融開放與減稅，金融股題材升溫', ids:['GREEN'], dir:1 },
+    { t:'選情膠著、兩岸話題升溫，外資觀望氣氛濃厚', ids:['TSMC'], dir:-1 } ] },
+  tw_local:{ icon:'🏙', name:'台灣縣市長選舉', k:10, rumors:[
+    { t:'縣市長選戰白熱化：候選人競相喊出社宅與容積獎勵，傳產題材受矚目', ids:['FPC'], dir:1 },
+    { t:'選前各黨祭出大建設支票，市場質疑財政負擔，債券價格承壓', ids:['BOND'], dir:-1 } ] },
+};
+function planPol(){
+  const t=G.year, L=[];
+  if(t>=3 && (t-3)%4===0) L.push('us_pres','tw_pres');      // 總統年（美國＋台灣）
+  if(t>=5 && (t-5)%4===0) L.push('us_mid','tw_local');       // 期中／地方選舉年
+  return L.map(id=>{
+    const P=POLS[id], us=id.startsWith('us'), A=us?'民主黨':'香蕉黨', B=us?'共和黨':'鳳梨黨';
+    const winA=chance(.5), clear=chance(.5), pollA=chance(.72)?winA:!winA, gap=+(clear?rand(4,9):rand(.4,3)).toFixed(1);
+    const adj=+((clear?chance(.65):chance(.35))?1:-1)*rand(.015,.05);
+    const e={ id, k:P.k, A, B, winA, clear, pollA, gap, adj:+adj.toFixed(3), src:pick(SOURCES) };
+    if(id==='us_mid') e.senA=chance(.5)?winA:!winA;
+    if(id==='tw_local'){ e.seatsA=winA?(clear?randi(4,5):4):(clear?randi(1,2):2); e.house=+((chance(.5)?1:-1)*rand(.03,.07)).toFixed(3); }
+    e.news=`【${P.name}】最新民調：${e.pollA?A:B}領先 ${gap} 個百分點，${P.k===0?'1':'11'} 月開票。`;
+    return e;
+  });
+}
+function polResult(e){
+  const W=e.winA?e.A:e.B, O=e.winA?e.B:e.A, how=e.clear?'大勝':'險勝';
+  if(e.id==='us_pres') return `${W}候選人${how}，當選美國總統`;
+  if(e.id==='us_mid')  return `${W}取得眾議院多數${(e.senA===e.winA)?`，參議院也由${W}掌控`:`，但參議院由${O}掌控，形成分裂國會`}`;
+  if(e.id==='tw_pres') return `${W}候選人${how}，當選總統`;
+  return `六都市長${e.A} ${e.seatsA} 席、${e.B} ${6-e.seatsA} 席，${W}拿下多數`;
+}
+function announcePol(e,mq){
+  const P=POLS[e.id];
+  const msg=`${P.icon} ${P.name}開票：${polResult(e)}。${e.adj>0?'結果明朗，市場鬆了一口氣':'不確定性猶存，市場出現觀望賣壓'}，大盤本月 ${pct(mq)}${e.house?`；房市氣氛${e.house>0?'轉熱':'轉冷'}`:''}。`;
+  log('🗳 '+msg.slice(msg.indexOf(' ')+1),'market'); if(Y){ (Y.pol=Y.pol||[]).push(msg); }
+}
 const SOURCES = ['壓乎財經','股市爆料公社','鄉民股版熱議','財經週刊','外資內部報告'];
 
 /* ---------- 難度（僅自由模式）---------- */
@@ -973,7 +1017,7 @@ const logHead = t => log(t,'head');
 
 /* ---------- 年度帳本 ---------- */
 function startYearLedger(){
-  Y={ startNet:netWorth(), startEq:houseEquity(), health:G.health, mood:G.mood, pnl:0, div:0, fut:0, income:0, rent:0, spend:0, shop:0, interest:0, event:'', mid:'' };
+  Y={ startNet:netWorth(), startEq:houseEquity(), health:G.health, mood:G.mood, pnl:0, div:0, fut:0, income:0, rent:0, spend:0, shop:0, interest:0, event:'', mid:'', pol:[] };
 }
 function buildYearSummary(endNet){
   if(!Y) return null;
@@ -982,7 +1026,7 @@ function buildYearSummary(endNet){
               ['🏡 房產淨值變化',eq],['🏦 利息收支',Y.interest]];
   rows.push(['🎲 事件、手續費與其他一次性項目', d-rows.reduce((t,r)=>t+r[1],0)]);
   return { age:G.age-1, yr:G.mode==='history'?calYear(G.year-1):null, d, pc:Y.startNet>0?d/Y.startNet:null, startNet:Y.startNet, endNet,
-           rows:rows.filter(r=>Math.abs(r[1])>=100), event:Y.event, mid:Y.mid, h0:Y.health, h1:G.health, m0:Y.mood, m1:G.mood };
+           rows:rows.filter(r=>Math.abs(r[1])>=100), event:Y.event, mid:Y.mid, pol:Y.pol, h0:Y.health, h1:G.health, m0:Y.mood, m1:G.mood };
 }
 function showYearSummary(S){
   const head=S.d>=0?`💰 這一年賺了 <b class="up">${fmt(S.d)}</b>`:`📉 這一年虧了 <b class="dn">${fmt(-S.d)}</b>`;
@@ -992,6 +1036,7 @@ function showYearSummary(S){
     <p class="mut" style="margin:0 0 8px">淨資產 ${fmt(S.startNet)} → <b style="color:var(--txt)">${fmt(S.endNet)}</b></p>
     ${lm?`<p style="margin:0 0 8px">📊 大盤 <b class="${upDn(lm.idxChg)}">${pct(lm.idxChg)}</b>｜${esc(lm.label)}</p>`:''}
     <table class="sum">${S.rows.map(r=>`<tr><td>${r[0]}</td><td class="${upDn(r[1])}">${fmt(r[1],true)}</td></tr>`).join('')}</table>
+    ${(S.pol||[]).map(x=>`<p style="margin:10px 0 0">${esc(x)}</p>`).join('')}
     ${S.mid?`<p style="margin:10px 0 0">⚡ 年中事件：${esc(S.mid.replace(/^[^\s]+\s/,''))}</p>`:''}
     ${S.event?`<p style="margin:10px 0 0">🎲 年度事件：${esc(S.event.replace(/^[^\s]+\s/,''))}</p>`:''}
     <p class="mut" style="margin:8px 0 0">健康 ${Math.round(S.h0)} → ${Math.round(S.h1)}｜心情 ${Math.round(S.m0)} → ${Math.round(S.m1)}</p>`;
@@ -1062,6 +1107,12 @@ function rollMarket_(){
   ANALYSTS.forEach(a => { m.hints[a.id] = chance(a.acc) ? truth : wrong(); m.quotes[a.id]=pick(a.quotes); });
   m.news = pick(NEWS[chance(.5) ? truth : wrong()]);
   m.topics = genTopics();
+  m.pol = G.mode==='free' ? planPol() : [];
+  m.pol.forEach(e=>{                                  // 選舉題材：同樣有真有假
+    const rs=POLS[e.id].rumors.filter(r=>r.ids.every(isListed)); if(!rs.length) return;
+    const r=pick(rs), real=chance(.55);
+    m.topics.push({ t:r.t.replace('{P}',pick([e.A,e.B])), ids:r.ids, dir:r.dir, real, eff: real ? r.dir*rand(.10,.22) : -r.dir*rand(0,.06), src:e.src, pol:true });
+  });
   if(G.mode==='free' && G.year>=2 && chance(.2)){          // 年中突發事件：平均 5 年一次
     const B=pick(MIDS);
     m.mid={ id:B.id, title:B.title, desc:B.desc, k:randi(1,7), s:+rand(B.s[0],B.s[1]).toFixed(3),
@@ -1130,12 +1181,14 @@ function simStart(){
     const back={rebound:1, vshape:1.6, grind:.4}[md.out]*sh;
     for(let j=1;j<=3;j++) mqs[md.k+j]+=back/3;
   }
+  (m.pol||[]).forEach(e=>{ mqs[e.k]+=e.adj; });         // 選舉當月的市場反應
   return { m,reg,sw,p0,q0,eq0,idx0,fut0,ex,crashYear,mqs, called:false, div:0, futPnl:0, mid:null, idxPause:null };
 }
 function simMonths(X, from, to){
   const {m,reg,sw,ex,crashYear,mqs}=X;
   for(let k=from;k<to;k++){
     const mq=mqs[k];
+    (m.pol||[]).forEach(e=>{ if(e.k===k) announcePol(e,mq); });
     G.idx *= 1+mq;
     const sec={}; for(const key in SECTORS) sec[key]=SECTORS[key]/Math.sqrt(12)*randt(6);
     for(const a of ASSETS){
@@ -1200,7 +1253,8 @@ function simFinish(X){
 
   if(sw && !sw.hist) G.forcedNext = sw.next;
   const hg = sw && sw.house!=null ? sw.house : (m.rhinoBuild ? m.rhinoBuild.house : reg.house);
-  G.houseIdx = Math.max(.4, G.houseIdx*(1 + hg + (m.target!=null?0:D().mmAdj*.15) + .02*randn()*D().volMul));
+  const polHouse=(m.pol||[]).reduce((t,e)=>t+(e.house||0),0);
+  G.houseIdx = Math.max(.4, G.houseIdx*(1 + hg + polHouse + (m.target!=null?0:D().mmAdj*.15) + .02*randn()*D().volMul));
 }
 
 
@@ -1903,7 +1957,8 @@ function renderNews(){
   let h=`<div class="colA"><div class="ybar"><div class="ylogo">壓乎<i>！</i>新聞</div><small style="color:#e6dcff">${histTag}｜${G.age} 歲的你今天該讀的財經頭條</small></div>`;
   h+=`<div class="card"><h2>📰 今日頭條</h2>
     <div class="news"><b>${esc(m.news)}</b><small>壓乎財經｜大盤現在 ${Math.round(G.idx).toLocaleString()} 點</small></div>
-    ${m.topics.map(t=>`<div class="news"><b>${t.dir>0?'🔥':'🧊'} ${esc(t.t)}</b><small>${t.src}｜相關個股：${t.ids.map(i=>AM[i].short).join('、')}｜消息真偽未經證實</small></div>`).join('')}</div>`;
+    ${(m.pol||[]).map(e=>`<div class="news"><b>🗳 ${esc(e.news)}</b><small>${e.src}｜民調有誤差，結果仍有變數</small></div>`).join('')}
+    ${m.topics.map(t=>`<div class="news"><b>${t.pol?'🗳':(t.dir>0?'🔥':'🧊')} ${esc(t.t)}</b><small>${t.src}｜相關個股：${t.ids.map(i=>AM[i].short).join('、')}｜消息真偽未經證實</small></div>`).join('')}</div>`;
   if(m.warn){
     const lv=m.warn.level;
     h+=`<div class="card rhino"><h2>🦏 灰犀牛警訊：${esc(m.warn.name)}</h2>
@@ -1921,7 +1976,7 @@ function renderNews(){
         ${lm.swan?`<small>${esc(lm.swan.desc)}</small>`:lm.hist?`<small>${esc(lm.hist.desc)}</small>`:''}</div>
       <div class="news"><b>分析師成績單</b><small>實際走勢：${VIEW[lm.truth]}｜${ANALYSTS.map(a=>`${a.icon}${lm.hints[a.id]===lm.truth?'✅':'❌'}`).join('　')}</small></div>
       ${lm.topics.map(t=>`<div class="news"><b>${esc(t.t)}</b><small>結果：${t.ids.map(i=>`${AM[i].short} ${pct(G.chg[i])}`).join('、')}　<span class="hit ${t.hit?'ok':'no'}">${t.hit?'✅ 題材成真':'❌ 假消息'}</span></small></div>`).join('')}</div>`;
-    const flash=LOGS.filter(l=>l.y===G.year-1 && l.c==='market' && /🚀|💣|🦢|🦏|📰|🔔/.test(l.m));
+    const flash=LOGS.filter(l=>l.y===G.year-1 && l.c==='market' && /🚀|💣|🦢|🦏|📰|🔔|🗳/.test(l.m));
     if(flash.length) h+=`<div class="card"><h2>⚡ 市場快訊</h2>${flash.map(l=>`<div class="news"><b style="font-size:14px">${esc(l.m)}</b></div>`).join('')}</div>`;
   }
   $('#pg-news').innerHTML=h+'</div>';
@@ -2187,6 +2242,7 @@ const HELP_HTML=`<ul>
   <li><b>健康與心情</b>：虧錢會傷心情，心情差會傷身體，健康歸零遊戲結束。</li>
   <li><b>⚡ 年中突發事件</b>（自由模式）：平均每 5 年一次，年中突然重挫，你只能選停損、加碼或裝死，之後走勢是漲是跌要賭。</li>
   <li><b>📉 放空</b>（困難模式）：台指期可以做空，大盤跌你賺、大盤漲你賠，被軋也會被強制平倉。</li>
+  <li><b>🗳 選舉新聞</b>（自由模式）：美國總統／期中選舉、台灣總統／縣市長選舉會定期登場，新聞有民調與題材傳聞（可能是假的），開票會影響大盤與房市。兩黨勝負完全隨機、不偏袒任何一方；台灣的「香蕉黨／鳳梨黨」為虛構政黨。</li>
   <li><b>🎲 挑戰碼</b>（自由模式）：每局有一組代碼，朋友輸入同一組，會遇到一模一樣的股市走勢，比誰退休時最有錢。</li>
   <li>價格顏色為台股慣例：<span class="up">紅漲</span>、<span class="dn">綠跌</span>。成就會永久收藏在「存檔/讀檔」。</li>
   <li class="mut">本遊戲為模擬娛樂，個股走勢與歷史數據皆為擬真重現，不構成投資建議。</li></ul>`;
