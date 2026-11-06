@@ -1,0 +1,760 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>燕雲十六聲 配裝模擬器（國際服 2.3・100階）</title>
+<style>
+:root{
+  --bg:#121317; --panel:#1b1d23; --panel2:#22252d; --line:#33363f; --ink:#e9e4d8; --dim:#9a968c;
+  --gold:#e2b65a; --purple:#a77be0; --blue:#5b9bd5; --red:#c8543a; --jade:#5fae8f;
+}
+*{box-sizing:border-box}
+html,body{margin:0;background:var(--bg);color:var(--ink);font-family:"Noto Sans TC","PingFang TC","Microsoft JhengHei",system-ui,sans-serif;font-size:14px}
+header{padding:14px 20px 6px;display:flex;align-items:baseline;gap:14px;flex-wrap:wrap}
+header h1{margin:0;font-family:"Noto Serif TC","Songti TC",serif;font-size:22px;letter-spacing:2px}
+header .sub{color:var(--dim);font-size:12.5px}
+.toolbar{display:flex;flex-wrap:wrap;gap:8px 14px;padding:8px 20px 10px;border-bottom:1px solid var(--line);align-items:center}
+.toolbar label{display:flex;align-items:center;gap:6px;color:var(--dim);font-size:12.5px}
+select,input[type=number],button,textarea{background:var(--panel2);color:var(--ink);border:1px solid var(--line);border-radius:6px;padding:5px 8px;font:inherit;font-size:13px}
+input[type=number]{width:64px}
+button{cursor:pointer}
+button:hover{border-color:var(--gold)}
+button.primary{background:#3a2f1a;border-color:#7a6230;color:#f3dca6}
+.grp{display:flex;gap:8px;align-items:center;padding-right:12px;border-right:1px solid var(--line)}
+.grp:last-child{border-right:none}
+#stage{padding:10px 20px 0}
+#cv{width:100%;display:block;border-radius:10px;background:var(--panel);cursor:default}
+#editor{margin:12px 20px;padding:14px 16px;background:var(--panel);border:1px solid var(--line);border-radius:10px}
+#editor h2{margin:0 0 10px;font-size:16px;font-family:"Noto Serif TC",serif;letter-spacing:1px}
+.row{display:grid;grid-template-columns:52px minmax(170px,1.6fr) 72px minmax(120px,1fr) 90px;gap:8px;align-items:center;margin:6px 0}
+.row .tag{color:var(--dim);font-size:12px}
+.row .val{font-variant-numeric:tabular-nums;text-align:right}
+.row input[type=range]{width:100%}
+.hint{color:var(--dim);font-size:12px;margin-top:8px;line-height:1.6}
+details{margin:0 20px 30px;background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:10px 16px}
+details summary{cursor:pointer;color:var(--gold)}
+details p,details li{color:#c9c4b8;line-height:1.7;font-size:13px}
+.v{color:var(--jade)} .e{color:#e0a060}
+#io{display:none;margin:10px 20px;padding:12px;background:var(--panel);border:1px solid var(--line);border-radius:10px}
+#io textarea{width:100%;height:90px}
+
+.sheetClose,#backdrop{display:none}
+@media (max-width:759px){
+  html,body{font-size:15px}
+  header{padding:10px 12px 4px;gap:4px 10px}
+  header h1{font-size:19px;letter-spacing:1px}
+  header .sub{font-size:11.5px;line-height:1.5}
+  .toolbar{display:grid;grid-template-columns:1fr 1fr;gap:8px 10px;padding:8px 12px 12px}
+  .grp{display:contents}
+  .toolbar label{flex-direction:column;align-items:stretch;gap:3px;font-size:12px}
+  .toolbar label.chk{flex-direction:row;align-items:center;gap:6px;min-height:36px;font-size:13px;color:var(--ink)}
+  .toolbar label.chk input{width:20px;height:20px}
+  .toolbar .wide{grid-column:1/-1}
+  select,input[type=number],button,textarea{min-height:40px;font-size:16px;width:100%}
+  input[type=number]{width:100%}
+  #io{margin:8px 12px}
+  #stage{padding:8px 6px 0}
+  #cv{border-radius:8px}
+  #editor{position:fixed;left:0;right:0;bottom:0;margin:0;z-index:30;max-height:80vh;overflow-y:auto;
+    border-radius:16px 16px 0 0;padding:12px 14px calc(18px + env(safe-area-inset-bottom));
+    transform:translateY(105%);visibility:hidden;transition:transform .25s ease,visibility 0s .25s;box-shadow:0 -8px 30px rgba(0,0,0,.5)}
+  #editor.open{transform:none;visibility:visible;transition:transform .25s ease}
+  #editor h2{display:flex;align-items:center;gap:8px;position:sticky;top:-12px;background:var(--panel);padding:10px 0 8px;margin:-12px 0 6px;z-index:1}
+  .sheetClose{display:block;margin-left:auto;width:auto;min-height:36px;padding:4px 18px;background:#3a2f1a;border-color:#7a6230;color:#f3dca6;font-size:15px}
+  #backdrop{display:block;position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:25;opacity:0;pointer-events:none;transition:opacity .25s}
+  #backdrop.open{opacity:1;pointer-events:auto}
+  .row{grid-template-columns:46px 1fr 74px;gap:6px 8px;margin:10px 0;padding-bottom:8px;border-bottom:1px solid var(--line)}
+  .row input[type=range]{grid-column:1/3;height:28px}
+  .row .val{grid-column:3;font-size:15px}
+  #e_set,#e_bset{grid-column:2/4}
+  .hint{font-size:12.5px}
+  details{margin:0 10px 30px}
+}
+</style>
+</head>
+<body>
+<header>
+  <h1>燕雲十六聲・配裝模擬器</h1>
+  <span class="sub">國際服 Where Winds Meet 2.3（2026/10/15 起）・100 階裝備・Lv.100　點擊畫布上的裝備格即可編輯詞條</span>
+</header>
+
+<div class="toolbar">
+  <div class="grp"><label class="wide">流派
+    <select id="path"></select></label></div>
+  <div class="grp">
+    <label>攻具套裝<select id="lset"></select></label>
+    <label>防具套裝<select id="rset"></select></label>
+    <label>弓・玦<select id="bset"></select></label>
+  </div>
+  <div class="grp">
+    <label class="chk"><input type="checkbox" id="baseTal" checked>基礎天賦點滿</label>
+    <label class="chk"><input type="checkbox" id="maTal" checked>武學天賦點滿</label>
+    <label class="chk"><input type="checkbox" id="boss" checked>目標為首領</label>
+  </div>
+  <div class="grp">
+    <label title="心法、叠音、武庫等百分比外功加成，用來校準到你的實際面板">其他外功%<input type="number" id="extra" step="1"></label>
+    <label title="心法突破提供的直接會心率">直接會心%<input type="number" id="dcrit" step="0.1"></label>
+    <label title="心法突破提供的直接會意率">直接會意%<input type="number" id="daff" step="0.1"></label>
+    <label title="心法提供的會心傷害加成（基礎會心傷害 +50% 之外）">會心傷害+%<input type="number" id="cdmg" step="1"></label>
+    <label title="心法提供的會意傷害加成（基礎會意傷害 +35% 之外）">會意傷害+%<input type="number" id="admg" step="1"></label>
+  </div>
+  <div class="grp">
+    <button class="primary wide" id="auto">依流派自動調律（滿值）</button>
+    <button id="clear">清空詞條</button>
+    <button id="snap">記為對照</button>
+    <button id="ioBtn">匯出／匯入</button>
+  </div>
+</div>
+
+<div id="io">
+  <div class="hint">複製下方代碼即可保存配裝；貼上別人的代碼後按「匯入」。</div>
+  <textarea id="ioText"></textarea>
+  <div style="margin-top:6px;display:flex;gap:8px"><button id="copyBtn">複製</button><button id="impBtn">匯入</button><span id="ioMsg" class="hint"></span></div>
+</div>
+
+<div id="stage"><canvas id="cv"></canvas></div>
+<div id="backdrop"></div>
+<section id="editor"></section>
+
+<details>
+  <summary>資料來源與可信度（請先看）</summary>
+  <p><span class="v">■ 已查證（嚴格照遊戲規則）</span>：各部位可出現的初始詞條池與稀有詞條位置（武學增效只出在武器、全武學增效只出在環／佩、首領增傷只出在腕／脛、奇術增傷只出在冠／胸）；96 階起攻具屬攻改為「無相攻擊」；攻具定音為外功穿透／無相穿透（國際服 91 階起四系穿透合併為 Formless Penetration）／外功抗性；國際服 91 階起扇、傘武器定音改為「扇之術／傘之術增效」；2.1 起 96 階以上九重春色（Vernal Umbrella）特殊技與蓄力技詞條合併為「頻射飛彈增傷」並新增輕重擊／派生詞條；Retuning 移除最小屬攻；套裝 4 件效果描述；五維換算（96 版本）；黃字上限精準 100%／會心 80%／會意 40%；判定順序（先判會意，再判精準與會心）；國際服目前流派與 2.3 新增「牽絲・羽」、Cloudshear／Reinchime 套裝；弓玦套裝飲羽／驚弦／追影。</p>
+  <p><span class="v">■ 三率詞條數值的推算依據</span>：中國服 100 階攻略記載弓玦 2 件套為精準 4.7%／會心 5.2%／會意 2.6%（白字），浣花 2 件套約可省下 2 條會心類詞條，白字會心約 148%、會意約 74% 才溢出（＝黃字 80%／40%）。據此推得單條金色滿值約為會心 5.2%、精準 4.7%、會意 2.6%（白字），金色區間約 4.2–5.2%、紫色約 2.9–4.1%。套裝 2 件數值也以同一比例換算到 100 階。</p>
+  <p><span class="e">■ 估算（可能與遊戲內數值有出入）</span>：100 階單條詞條滿值（以中國服 100 階攻略的面板目標反推）、角色基礎數值、白字→黃字換算係數、首領防禦與穿透公式、套裝 4 件效果的覆蓋率、武學天賦門檻、2.3 已調整但未公開數值的飛隼／浣花 4 件效果、Swaying Heights／Tiltrim／Cloudshear／Agile Steps／Jade Embrace／Obsidian Armor／Brimflow／Reinchime 等尚未確認繁中譯名的套裝（以英文名顯示）。輸出指數只適合「同一套模型下比較兩套配裝」，不是遊戲內實際 DPS。</p>
+  <p>未收錄：破竹・醉（Bamboocut - Draught）因第二把武器資料不足暫不列入；止戈定音（Arena Attunement）屬 PvP，不影響本模擬。所有估算值集中在原始碼開頭的 <code>DATA</code> 區塊，方便日後依遊戲內實際數值修正。</p>
+</details>
+
+<script>
+"use strict";
+/* ================= DATA（估算值集中於此，可依遊戲內數值修正） ================= */
+const QUAL = {
+  gold:  {n:'金', c:'#e2b65a', lo:0.80, hi:1.00},
+  purple:{n:'紫', c:'#a77be0', lo:0.55, hi:0.78},
+  blue:  {n:'藍', c:'#5b9bd5', lo:0.35, hi:0.53}
+};
+const ATTRN = {BS:'鳴金', SS:'裂石', SB:'牽絲', BC:'破竹'};
+
+// 詞條定義：v = 100 階金色滿值（估算）
+const AFX = {
+  maxPA:{n:'最大外功攻擊', v:77.8},
+  minPA:{n:'最小外功攻擊', v:97},
+  jin:{n:'勁', v:49.4}, agi:{n:'敏', v:49.4}, shi:{n:'勢', v:49.4}, ti:{n:'體', v:49.4}, yu:{n:'御', v:49.4},
+  prec:{n:'精準率', v:4.7, u:'%'}, crit:{n:'會心率', v:5.2, u:'%'}, aff:{n:'會意率', v:2.6, u:'%'},
+  hp:{n:'最大氣血', v:1650}, pdef:{n:'外功防禦', v:40},
+  maxFL:{n:'最大無相攻擊', v:44.2}, minFL:{n:'最小無相攻擊', v:44.2},
+  wpn:{n:'武學增效', v:7.6, u:'%', rare:1},
+  allMA:{n:'全武學增效', v:3.8, u:'%', rare:1},
+  boss:{n:'對首領單位增傷', v:3.8, u:'%', rare:1},
+  mys1:{n:'單體奇術增傷', v:3.8, u:'%', rare:1},
+  mys2:{n:'群體奇術增傷', v:3.8, u:'%', rare:1}
+};
+for (const k of Object.keys(ATTRN)) {
+  AFX['max'+k] = {n:'最大'+ATTRN[k]+'攻擊', v:44.2};
+  AFX['min'+k] = {n:'最小'+ATTRN[k]+'攻擊', v:44.2};
+}
+const ATTR_AFX = ['maxBS','minBS','maxSS','minSS','maxSB','minSB','maxBC','minBC'];
+
+// 定音（v = 單件滿值；外功穿透 4 件 30.8–51.2、流派定音 4 件 14.4%–24% 取自中國服 100 階攻略）
+const ATT = {
+  pen:{n:'外功穿透', v:12.8},
+  flpen:{n:'無相穿透', v:7.7},
+  pres:{n:'外功抗性', v:12.8},
+  artFan:{n:'扇之術增效', v:6.0, u:'%'},
+  artUmb:{n:'傘之術增效', v:6.0, u:'%'}
+};
+
+// 流派（國際服 2.3）。ms = 主武器傷害佔比，lh = 輕重擊佔比，att = 防具流派定音 [名稱, 覆蓋傷害比例]
+const PATHS = [
+  {id:'splendor', n:'鳴金・虹', en:'Bellstrike - Splendor', attr:'BS', style:'aff', tA:'shi',
+   mainT:'劍', mainN:'無名劍法', mainEn:'Nameless Sword', subT:'槍', subN:'無名槍法', subEn:'Nameless Spear', ms:.75, lh:.35,
+   att:[['無名劍法・蓄力技增傷',.45],['無名劍法・武學技增傷',.25]]},
+  {id:'umbra', n:'鳴金・影', en:'Bellstrike - Umbra', attr:'BS', style:'aff', tA:'shi',
+   mainT:'劍', mainN:'積矩九劍', mainEn:'Strategic Sword', subT:'槍', subN:'九曲驚神槍', subEn:'Heavenquaker Spear', ms:.75, lh:.3,
+   att:[['積矩九劍・流血增傷',.35],['積矩九劍・特殊技增傷',.25]]},
+  {id:'might', n:'裂石・威', en:'Stonesplit - Might', attr:'SS', style:'crit', tA:'jin',
+   mainT:'陌刀', mainN:'嗟夫刀法', mainEn:'Thundercry Blade', subT:'槍', subN:'八方風雷槍', subEn:'Stormbreaker Spear', ms:.8, lh:.2,
+   att:[['嗟夫刀法・蓄力技增傷',.5],['嗟夫刀法・武學技增傷',.2]]},
+  {id:'strength', n:'裂石・鈞', en:'Stonesplit - Strength', attr:'SS', style:'crit', tA:'agi',
+   mainT:'橫刀', mainN:'斬雪刀法', mainEn:'Snowparting Blade', subT:'陌刀', subN:'破陣刀法', subEn:'Phalanxbane Blade', ms:.65, lh:.4,
+   att:[['斬雪刀法・輕重擊派生增傷',.4],['斬雪刀法・蓄力技增傷',.15],['斬雪刀法・武學技增傷',.15],['破陣刀法・蓄力技增傷',.2],['破陣刀法・武學技增傷',.1]]},
+  {id:'wind', n:'破竹・風', en:'Bamboocut - Wind', attr:'BC', style:'crit', tA:'agi',
+   mainT:'雙刀', mainN:'泥犁三垢', mainEn:'Infernal Twinblades', subT:'繩鏢', subN:'粟子遊塵', subEn:'Mortal Rope Dart', ms:.55, lh:.3,
+   att:[['泥犁三垢・武學技增傷',.25],['粟子遊塵・特殊技增傷',.3]]},
+  {id:'dust', n:'破竹・塵', en:'Bamboocut - Dust', attr:'BC', style:'crit', tA:'agi',
+   mainT:'傘', mainN:'Everspring Umbrella', mainEn:'Everspring Umbrella', subT:'繩鏢', subN:'Towline Sweep', subEn:'Towline Sweep', ms:.7, lh:.3,
+   att:[['Everspring Umbrella・特殊技增傷',.35],['Everspring Umbrella・武學技增傷',.25]]},
+  {id:'kite', n:'破竹・鳶', en:'Bamboocut - Kite', attr:'BC', style:'crit', tA:'agi',
+   mainT:'手甲', mainN:'Heavenwill Gauntlets', mainEn:'Heavenwill Gauntlets', subT:'繩鏢', subN:'Skygrasp Rope Dart', subEn:'Skygrasp Rope Dart', ms:.75, lh:.2,
+   att:[['手甲・蓄力技增傷',.5],['手甲・武學技增傷',.2]]},
+  {id:'jade', n:'牽絲・玉', en:'Silkbind - Jade', attr:'SB', style:'crit', tA:'agi',
+   mainT:'傘', mainN:'九重春色', mainEn:'Vernal Umbrella', subT:'扇', subN:'Inkwell Fan', subEn:'Inkwell Fan', ms:.8, lh:.3,
+   att:[['九重春色・頻射飛彈增傷',.5],['九重春色・輕重擊／派生增傷',.25]]},
+  {id:'deluge', n:'牽絲・霖（治療）', en:'Silkbind - Deluge', attr:'SB', style:'crit', tA:'agi',
+   mainT:'扇', mainN:'Panacea Fan', mainEn:'Panacea Fan', subT:'傘', subN:'Soulshade Umbrella', subEn:'Soulshade Umbrella', ms:.6, lh:.2,
+   att:[['千香引魂蠱・特殊技增療',.4]]},
+  {id:'wings', n:'牽絲・羽（2.3 新）', en:'Silkbind - Wings', attr:'SB', style:'crit', tA:'agi',
+   mainT:'腰鼓', mainN:'Museflow Waist Drum', mainEn:'Museflow Waist Drum', subT:'扇', subN:'Willowbend Fan', subEn:'Willowbend Fan', ms:.7, lh:.3,
+   att:[['腰鼓・武學技增傷（待確認）',.3],['腰鼓・蓄力技增傷（待確認）',.3]]}
+];
+
+// 攻具套裝：two = 2 件屬性（100 階），fx = 4 件效果的模型化收益（含覆蓋率估算）
+const OSETS = [
+  {id:'hawk', n:'飛隼', en:'Hawkwing', two:{aff:5.2}, four:'觸發會意時獲得 5 秒外功攻擊 +2%，最多 5 層（2.3 已調整，數值未公開）', fx:{hawk:.10}},
+  {id:'jadeware', n:'玉斗', en:'Jadeware', two:{maxPA:91}, four:'施放武學技後 12 秒會意傷害 +10%，對受控或氣力 <40% 目標再 +20%（30 秒一次）', fx:{affB:.064}},
+  {id:'swallow', n:'燕歸', en:'Swallowcall', two:{minPA:91}, four:'輕擊對氣力 <40% 目標 +15%，對力竭目標 +5%', fx:{all:.02}},
+  {id:'rain', n:'時雨', en:'Rainwhisper', two:{prec:9.3}, four:'會心傷害／治療 +10%，有護盾時再 +15%', fx:{critB:.145}},
+  {id:'mist', n:'煙柳', en:'Veil of the Willow', two:{prec:9.3}, four:'輕擊後重擊傷害 +12%（反之亦然），持續 10 秒', fx:{lh:.084}},
+  {id:'ivory', n:'浣花', en:'Ivorybloom', two:{crit:10.4}, four:'滿氣血時會心額外 +5% 機率、會心效果 +15（2.3 已調整，數值未公開）', fx:{dCrit:.04, critB:.12}},
+  {id:'stars', n:'連星', en:'Stars Align', two:{minPA:91}, four:'命中 2 名以上敵人或首領疊層，每層武學傷害 +3%（最多 5 層），受傷清層', fx:{all:.105}},
+  {id:'ridge', n:'岳山傾', en:'Shattered Ridge', two:{minPA:91}, four:'卸勢或命中首領 5 秒：氣血傷害 +5%，連段／協戰觸發 +5%', fx:{all:.05}},
+  {id:'ether', n:'撼天', en:'Etherwrath', two:{minPA:91}, four:'命中首領每層全攻擊 +1%（5 層），滿層武學屬攻穿透 +4；完美閃避直接 5 層', fx:{atk:.05}},
+  {id:'gale', n:'急風驟', en:'Swift Gale', two:{maxPA:91}, four:'空中重擊傷害 +10% 並擊倒（10 秒一次）', fx:{all:.02}},
+  {id:'sway', n:'Swaying Heights', en:'Swaying Heights', two:{minPA:91}, four:'對氣血 >50% 目標傷害 +5%，每多 5% 再 +1%（最多 10%）', fx:{all:.04}},
+  {id:'tilt', n:'Tiltrim', en:'Tiltrim', two:{minPA:46, maxPA:46}, four:'武學特殊強化期間造成傷害疊層，每層全攻擊 +1%（5 層）', fx:{atk:.03}},
+  {id:'cloud', n:'Cloudshear（2.3 新）', en:'Cloudshear', two:{minPA:91}, four:'為自己或隊友施加攻擊增益時傷害與治療 +2%，自身施加升級為 +6%（15 秒）', fx:{all:.048}}
+];
+const DSETS = [
+  {id:'eagle', n:'鷹揚', en:'Eaglerise', two:'外功防禦提升', four:'持續傷害或治療疊層，每層減傷 1.2%（5 層）；滿層下一次傷害 -90%（首領減半），30 秒一次'},
+  {id:'form', n:'易相', en:'Formbend', two:'外功防禦提升', four:'護盾持續 +2 秒；氣力 >85% 或有氣力免傷盾時氣血傷害 -20%'},
+  {id:'moon', n:'桂月', en:'Moonflare', two:'氣血提升', four:'防禦與攻擊時 30% 機率獲得 10% 氣血護盾，有盾時回復 2% 氣血（60 秒一次）'},
+  {id:'calm', n:'江凝', en:'Calmwaters', two:'外功防禦提升', four:'完美閃避 50% 機率回復 3% 氣血與 10 耐力'},
+  {id:'agile', n:'Agile Steps', en:'Agile Steps', two:'氣血提升', four:'成功卸勢後 2 秒減傷 20%，最多 3 層'},
+  {id:'flaw', n:'御無缺', en:'Flawless Defense', two:'外功防禦提升', four:'受到傷害 -5%；氣血 <60% 時每少 10% 再 -1%（5 層）'},
+  {id:'chill', n:'不知寒', en:'Beyond the Chill', two:'氣血提升', four:'戰鬥中 10 秒未受傷，獲得 2 秒減傷 40%'},
+  {id:'snow', n:'梨雪', en:'Whirlsnow', two:'外功防禦提升', four:'單次損失 >40% 氣血或低於 20% 時，下次治療額外回復 25%（60 秒一次）'},
+  {id:'embrace', n:'Jade Embrace', en:'Jade Embrace', two:'氣血提升', four:'1 秒內移動超過 6 米，5 秒氣血與氣力傷害 -15%（20 秒一次）'},
+  {id:'obsid', n:'Obsidian Armor', en:'Obsidian Armor', two:'外功防禦提升', four:'霸體時氣血傷害 -5%，霸體受擊降低被會心／會意機率'},
+  {id:'honor', n:'尚義', en:'Honorbound', two:'外功防禦提升', four:'完美閃避 5 秒氣血傷害 -10%，受會心與會意傷害 -12%（10 秒一次）'},
+  {id:'brim', n:'Brimflow', en:'Brimflow', two:'外功防禦提升', four:'武學特殊強化期間每層受傷 -1%（5 層），滿層再降低受會心／會意傷害 10%'},
+  {id:'rein', n:'Reinchime（2.3 新）', en:'Reinchime', two:'外功防禦提升', four:'施加攻擊增益時 5 秒減傷 2%，自身施加升級為 6%'}
+];
+const BSETS = [
+  {id:'none', n:'（無）', two:{}},
+  {id:'plume', n:'飲羽', en:'Plume', two:{prec:4.7}},
+  {id:'string', n:'驚弦', en:'Startling String', two:{crit:5.2}},
+  {id:'shadow', n:'追影', en:'Pursuing Shadow', two:{aff:2.6}}
+];
+
+// 部位：初始詞條池（已查證）與調律詞條池
+const W_INIT = ['maxPA','minPA','maxFL','minFL','agi','shi'];
+const A_INIT = ['maxPA','minPA'];
+const HC_INIT = ['crit','aff','prec','hp','pdef'];
+const WS_INIT = ['crit','aff','jin','prec','ti','yu','hp','pdef'];
+const L_TUNE = ['maxPA','minPA','jin','agi','shi','ti','yu','prec','crit','aff','maxFL','minFL'];
+const R_TUNE = ['maxPA','minPA','jin','agi','shi','ti','yu','prec','crit','aff','hp','pdef'].concat(ATTR_AFX);
+const SLOTS = [
+  {id:'main', n:'主武器', side:'L', init:W_INIT, tune:L_TUNE.concat(['wpn']), base:{minPA:100,maxPA:200}},
+  {id:'sub',  n:'副武器', side:'L', init:W_INIT, tune:L_TUNE.concat(['wpn']), base:{minPA:100,maxPA:200}},
+  {id:'ring', n:'環',    side:'L', init:A_INIT, tune:L_TUNE.concat(['allMA']), base:{minPA:45,maxPA:90}},
+  {id:'pend', n:'佩',    side:'L', init:A_INIT, tune:L_TUNE.concat(['allMA']), base:{minPA:45,maxPA:90}},
+  {id:'head', n:'冠',    side:'R', init:HC_INIT, tune:R_TUNE.concat(['mys1','mys2']), base:{hp:2400,pdef:60}},
+  {id:'chest',n:'胸甲',  side:'R', init:HC_INIT, tune:R_TUNE.concat(['mys1','mys2']), base:{hp:2400,pdef:60}},
+  {id:'wrist',n:'腕甲',  side:'R', init:WS_INIT, tune:R_TUNE.concat(['boss']), base:{hp:2400,pdef:60}},
+  {id:'shin', n:'脛甲',  side:'R', init:WS_INIT, tune:R_TUNE.concat(['boss']), base:{hp:2400,pdef:60}}
+];
+const SLOT = Object.fromEntries(SLOTS.map(s=>[s.id,s]));
+
+// 角色與模型常數（估算）
+const BASE = {minPA:450, maxPA:350, five:164, prec:105, crit:60, aff:25, hp:45000, pdef:300, natMin:60, natMax:120, pen:0};
+const BASE_TAL = {maxPA:150, minPA:75, prec:6, crit:6, aff:3, five:15};
+const FIVE = {jin:{min:.225,max:1.36}, agi:{min:.9,crit:.076}, shi:{max:.9,aff:.038}, ti:{hp:60}, yu:{hp:17,pdef:.5}};
+const YK = {prec:.765, crit:.54, aff:.54};      // 白字 → 黃字
+const CAP = {prec:100, crit:80, aff:40};
+const BOSS_DEF = 500, DEF_K = 2860;
+const TAL_TIERS = [120, 200, 280];
+const FIVE_N = {jin:'勁', agi:'敏', shi:'勢', ti:'體', yu:'御'};
+
+/* ================= 狀態 ================= */
+function emptySlot(side, setId){
+  return {set:setId, init:{a:null,q:'gold',r:1}, tune:[0,1,2,3].map(()=>({a:null,q:'gold',r:1})), att:{a:null,r:1}};
+}
+function newBuild(){
+  const b = {path:'splendor', bset:'string', baseTal:true, maTal:true, boss:true, extra:0, dCrit:0, dAff:0, critDmg:20, affDmg:10, snap:null, slots:{}};
+  for (const s of SLOTS) b.slots[s.id] = emptySlot(s.side, s.side==='L'?'hawk':'eagle');
+  return b;
+}
+let B = newBuild();
+let selected = 'main', hover = null;
+const pathOf = id => PATHS.find(p=>p.id===id) || PATHS[0];
+const osetOf = id => OSETS.find(s=>s.id===id);
+const dsetOf = id => DSETS.find(s=>s.id===id);
+
+function affLabel(a, slotId){
+  if (!a) return '（空）';
+  if (a==='wpn'){ const P=pathOf(B.path); return (slotId==='sub'?P.subT:P.mainT)+'武學增效'; }
+  return AFX[a].n;
+}
+function attPool(slotId){
+  const sl = SLOT[slotId], P = pathOf(B.path);
+  if (sl.side==='L'){
+    const pool = ['pen','flpen','pres'];
+    if (slotId==='main'||slotId==='sub'){
+      const t = slotId==='main'?P.mainT:P.subT;
+      if (t==='扇') pool.push('artFan');
+      if (t==='傘') pool.push('artUmb');
+    }
+    return pool;
+  }
+  return P.att.map((_,i)=>'A'+i);
+}
+function attLabel(a){
+  if (!a) return '（未定音）';
+  if (a[0]==='A'){ const P=pathOf(B.path); const x=P.att[+a.slice(1)]; return x?x[0]:'（未定音）'; }
+  return ATT[a].n;
+}
+function attMax(a){ return a && a[0]==='A' ? 6.0 : (a?ATT[a].v:0); }
+function attUnit(a){ return a && (a[0]==='A' || ATT[a]&&ATT[a].u) ? '%' : ''; }
+function qval(a,q,r){ const Q=QUAL[q]; return AFX[a].v*(Q.lo+(Q.hi-Q.lo)*r); }
+function attVal(att){ return att.a ? attMax(att.a)*(0.6+0.4*att.r) : 0; }
+const fmt = (v,u)=> u==='%' ? v.toFixed(1)+'%' : (Math.abs(v)>=100? v.toFixed(0) : v.toFixed(1));
+
+/* ================= 計算 ================= */
+function compute(b, extra){
+  const P = pathOf(b.path);
+  const s = {maxPA:BASE.maxPA, minPA:BASE.minPA, jin:BASE.five, agi:BASE.five, shi:BASE.five, ti:BASE.five, yu:BASE.five,
+    prec:BASE.prec, crit:BASE.crit, aff:BASE.aff, hp:BASE.hp, pdef:BASE.pdef,
+    FL:[0,0], attr:{BS:[0,0],SS:[0,0],SB:[0,0],BC:[0,0]}, wpnMain:0, wpnSub:0, allMA:0, boss:0, mys1:0, mys2:0,
+    pen:BASE.pen, flpen:0, pres:0, art:{main:0,sub:0}, att:{}, setCount:{}, fx:{}};
+  s.attr[P.attr] = [BASE.natMin, BASE.natMax];
+  if (b.baseTal){ s.maxPA+=BASE_TAL.maxPA; s.minPA+=BASE_TAL.minPA; s.prec+=BASE_TAL.prec; s.crit+=BASE_TAL.crit; s.aff+=BASE_TAL.aff;
+    for (const k of ['jin','agi','shi','ti','yu']) s[k]+=BASE_TAL.five; }
+  const add = (a, v, slotId)=>{
+    if (a==='wpn'){ if (slotId==='sub') s.wpnSub+=v; else s.wpnMain+=v; return; }
+    if (a==='maxFL'){ s.FL[1]+=v; return; } if (a==='minFL'){ s.FL[0]+=v; return; }
+    const m = /^(max|min)(BS|SS|SB|BC)$/.exec(a);
+    if (m){ s.attr[m[2]][m[1]==='max'?1:0]+=v; return; }
+    s[a] = (s[a]||0) + v;
+  };
+  for (const sl of SLOTS){
+    const g = b.slots[sl.id];
+    for (const [k,v] of Object.entries(sl.base)) s[k]+=v;
+    s.setCount[g.set] = (s.setCount[g.set]||0)+1;
+    for (const t of [g.init].concat(g.tune)) if (t.a) add(t.a, qval(t.a,t.q,t.r), sl.id);
+    if (g.att.a){
+      const v = attVal(g.att);
+      if (g.att.a[0]==='A'){ s.att[g.att.a]=(s.att[g.att.a]||0)+v; }
+      else if (g.att.a==='artFan'||g.att.a==='artUmb'){ s.art[sl.id]+=v; }
+      else s[g.att.a]+=v;
+    }
+  }
+  // 套裝
+  for (const [id,c] of Object.entries(s.setCount)){
+    const os = osetOf(id);
+    if (os){
+      if (c>=2) for (const [k,v] of Object.entries(os.two)) add(k,v);
+      if (c>=4) for (const [k,v] of Object.entries(os.fx)) s.fx[k]=(s.fx[k]||0)+v;
+    }
+  }
+  const bs = BSETS.find(x=>x.id===b.bset); if (bs) for (const [k,v] of Object.entries(bs.two)) add(k,v);
+  if (extra) for (const [k,v] of Object.entries(extra)) add(k, v, extra.__slot);
+  // 五維換算
+  s.minPA += s.jin*FIVE.jin.min + s.agi*FIVE.agi.min;
+  s.maxPA += s.jin*FIVE.jin.max + s.shi*FIVE.shi.max;
+  s.crit += s.agi*FIVE.agi.crit; s.aff += s.shi*FIVE.shi.aff;
+  s.hp += s.ti*FIVE.ti.hp + s.yu*FIVE.yu.hp; s.pdef += s.yu*FIVE.yu.pdef;
+  return s;
+}
+
+function damage(s, b){
+  const P = pathOf(b.path), fx = s.fx;
+  const yPrec = Math.min(CAP.prec, s.prec*YK.prec), yCrit = Math.min(CAP.crit, s.crit*YK.crit), yAff = Math.min(CAP.aff, s.aff*YK.aff);
+  let critB = (fx.critB||0) + b.critDmg/100, affB = (fx.affB||0) + b.affDmg/100;
+  // 武學天賦
+  const tval = s[P.tA]; const tiers = TAL_TIERS.map(t=> b.maTal && tval>=t);
+  const nT = tiers.filter(Boolean).length;
+  if (P.style==='aff') affB += .067*nT; else critB += .10*nT;
+  const talAll = (P.style==='aff' && nT===3) ? .03 : 0;
+  const pa = Math.min(1, yAff/100 + b.dAff/100);
+  const pc = Math.min(1, yCrit/100 + b.dCrit/100 + (fx.dCrit||0));
+  const pp = yPrec/100;
+  const hawk = (fx.hawk||0) * Math.min(1, pa/0.15);
+  const atkMul = 1 + b.extra/100 + (fx.atk||0) + hawk;
+  const physMul = DEF_K/(DEF_K + Math.max(0, BOSS_DEF - s.pen));
+  const minP = s.minPA*atkMul, maxP = Math.max(minP, s.maxPA*atkMul);
+  // 屬攻：本系（含無相）×1.5；外系最小值為固定加值
+  let natMin = (s.FL[0]+s.attr[P.attr][0])*1.5, natMax = (s.FL[1]+s.attr[P.attr][1])*1.5;
+  natMax = Math.max(natMin, natMax);
+  let oMin=0, oMax=0;
+  for (const k of Object.keys(ATTRN)) if (k!==P.attr){ const m=s.attr[k][0], M=Math.max(m, s.attr[k][1]); oMin+=m; oMax+=M; }
+  const attrMul = 1 + s.flpen*0.004;
+  const Amin = minP*physMul + (natMin+oMin)*attrMul;
+  const Amax = maxP*physMul + (natMax+oMax)*attrMul;
+  const avg = (Amin+Amax)/2;
+  const E = pa*Amax*(1.35+affB) + (1-pa)*(pp*(pc*avg*(1.5+critB) + (1-pc)*avg) + (1-pp)*Amin);
+  const ms = P.ms;
+  const wpnZone = 1 + (ms*(s.wpnMain + s.art.main) + (1-ms)*(s.wpnSub + s.art.sub) + s.allMA)/100;
+  const bossZone = 1 + (b.boss ? s.boss/100 : 0);
+  let attZone = 1; P.att.forEach((x,i)=>{ attZone += x[1]*(s.att['A'+i]||0)/100; });
+  const setZone = 1 + (fx.all||0) + (fx.lh||0)*P.lh + talAll;
+  const idx = E*wpnZone*bossZone*attZone*setZone/10;
+  return {idx, pa, pc, pp, yPrec, yCrit, yAff, tiers, tval, minP, maxP, Amin, Amax, critB, affB, atkMul, physMul,
+    wpnZone, bossZone, attZone, setZone,
+    dist:{aff:pa, crit:(1-pa)*pp*pc, white:(1-pa)*pp*(1-pc), graze:(1-pa)*(1-pp)}};
+}
+const evalIdx = b => damage(compute(b), b).idx;
+
+function gains(){
+  const base = evalIdx(B);
+  const keys = ['maxPA','minPA','jin','agi','shi','prec','crit','aff','maxFL','minFL','wpn','allMA','boss'];
+  const P = pathOf(B.path);
+  keys.push('max'+P.attr, 'min'+P.attr);
+  const out = keys.map(k=>{
+    const ex = {}; ex[k] = AFX[k].v; ex.__slot = 'main';
+    const s = compute(B, ex); delete s.__slot;
+    const v = damage(s, B).idx;
+    return {k, n: k==='wpn' ? P.mainT+'武學增效' : AFX[k].n, g:(v/base-1)*100};
+  });
+  out.sort((a,b)=>b.g-a.g);
+  return out;
+}
+
+/* 同件詞條規則：稀有詞條限 1 條；同一詞條（含大外、小外）最多 2 條；屬性攻擊類（各系屬攻、無相）合計最多 2 條 */
+const ATTR_KIND = new Set(ATTR_AFX.concat(['maxFL','minFL']));
+function canAdd(list, a){
+  const xs = list.filter(Boolean);
+  const cnt = xs.filter(x=>x===a).length;
+  if (AFX[a].rare) return cnt===0;
+  if (cnt>=2) return false;
+  if (ATTR_KIND.has(a) && xs.filter(x=>ATTR_KIND.has(x)).length>=2) return false;
+  return true;
+}
+/* ================= 自動調律（貪婪法，依邊際收益） ================= */
+function autofill(){
+  for (const sl of SLOTS){ const g=B.slots[sl.id]; g.init={a:null,q:'gold',r:1}; g.tune=[0,1,2,3].map(()=>({a:null,q:'gold',r:1})); g.att={a:null,r:1}; }
+  const tryBest = (slotId, setter, pool, ok)=>{
+    let best=null, bv=-1;
+    for (const a of pool){ if (ok && !ok(a)) continue; setter(a); const v=evalIdx(B); if (v>bv+1e-9){bv=v;best=a;} }
+    setter(best);
+  };
+  for (const sl of SLOTS){
+    const g = B.slots[sl.id];
+    tryBest(sl.id, a=>{g.init.a=a;}, sl.init);
+    for (let i=0;i<4;i++){
+      tryBest(sl.id, a=>{g.tune[i].a=a;}, sl.tune, a=>{
+        return canAdd([g.init.a].concat(g.tune.slice(0,i).map(t=>t.a)), a);
+      });
+    }
+    tryBest(sl.id, a=>{g.att.a=a;}, attPool(sl.id));
+  }
+}
+
+/* ================= Canvas ================= */
+const cv = document.getElementById('cv'), ctx = cv.getContext('2d');
+let W = 1280, H = 820, MOBILE = false;
+let scale = 1;
+const cards = [];
+function layoutCards(){
+  cards.length = 0;
+  const L = ['main','sub','ring','pend'], R = ['head','chest','wrist','shin'];
+  const lx = MOBILE?6:20, rx = MOBILE?214:230, y0 = MOBILE?72:62;
+  L.forEach((id,i)=>cards.push({id, x:lx, y:y0+i*140, w:200, h:132}));
+  R.forEach((id,i)=>cards.push({id, x:rx, y:y0+i*140, w:200, h:132}));
+  cards.push({id:'bow', x:lx, y:y0+4*140, w:rx+200-lx, h:56});
+}
+layoutCards();
+function resize(){
+  const cw = cv.clientWidth;
+  MOBILE = cw < 760; W = MOBILE ? 420 : 1280; H = MOBILE ? 2150 : 820;
+  layoutCards(); scale = cw/W;
+  const dpr = window.devicePixelRatio||1;
+  cv.width = Math.round(W*scale*dpr); cv.height = Math.round(H*scale*dpr);
+  cv.style.height = (H*scale)+'px';
+  ctx.setTransform(scale*dpr,0,0,scale*dpr,0,0);
+  draw();
+}
+const SERIF = '"Noto Serif TC","Songti TC",serif', SANS = '"Noto Sans TC","PingFang TC","Microsoft JhengHei",sans-serif';
+function rr(x,y,w,h,r){ ctx.beginPath(); ctx.moveTo(x+r,y); ctx.arcTo(x+w,y,x+w,y+h,r); ctx.arcTo(x+w,y+h,x,y+h,r); ctx.arcTo(x,y+h,x,y,r); ctx.arcTo(x,y,x+w,y,r); ctx.closePath(); }
+function text(t,x,y,o={}){ ctx.font=(o.b?'600 ':'')+(o.s||12)+'px '+(o.f||SANS); ctx.fillStyle=o.c||'#e9e4d8'; ctx.textAlign=o.a||'left'; ctx.textBaseline=o.bl||'alphabetic'; ctx.fillText(t,x,y); }
+function clip(t, maxW, size){ ctx.font=size+'px '+SANS; if (ctx.measureText(t).width<=maxW) return t; while(t.length>1 && ctx.measureText(t+'…').width>maxW) t=t.slice(0,-1); return t+'…'; }
+const setColor = id => { const pal=['#5fae8f','#c8543a','#e2b65a','#6f9fd8','#b07cc6','#d08a4a','#7fb3a0','#c9a0a0','#8a9a5b','#a0a0c9','#d0b070','#7a8fa0','#c07090']; const i=[...OSETS,...DSETS].findIndex(s=>s.id===id); return pal[(i<0?0:i)%pal.length]; };
+
+let lastRes = null, lastStats = null, lastGains = [];
+function draw(){
+  ctx.clearRect(0,0,W,H);
+  ctx.fillStyle='#1b1d23'; ctx.fillRect(0,0,W,H);
+  const P = pathOf(B.path);
+  // 標題
+  const sub = '主：'+P.mainT+'・'+P.mainN+'　副：'+P.subT+'・'+P.subN;
+  if (MOBILE){
+    text(P.n, 8, 30, {s:21, f:SERIF, b:1});
+    ctx.font='600 21px '+SERIF; const tw = ctx.measureText(P.n).width;
+    text(P.en, 18+tw, 29, {s:11.5, c:'#9a968c'});
+    text(clip(sub, 404, 11.5), 8, 54, {s:11.5, c:'#9a968c'});
+    drawCards(P);
+    ctx.save(); ctx.translate(0, 646); drawRight(P, 15); ctx.restore();
+    ctx.save(); ctx.translate(0, 1330); drawPanel(P, 15); ctx.restore();
+  } else {
+    text(P.n, 20, 38, {s:22, f:SERIF, b:1});
+    ctx.font='600 22px '+SERIF; const tw = ctx.measureText(P.n).width;
+    text(P.en+'　｜　'+sub, 32+tw, 37, {s:12.5, c:'#9a968c'});
+    drawCards(P);
+    drawPanel(P, 452);
+    drawRight(P, 870);
+  }
+}
+function drawCards(P){
+  for (const c of cards){
+    const sel = selected===c.id, hov = hover===c.id;
+    rr(c.x,c.y,c.w,c.h,8); ctx.fillStyle = sel?'#2a2a26':'#22252d'; ctx.fill();
+    ctx.lineWidth = sel?2:1; ctx.strokeStyle = sel?'#e2b65a':(hov?'#6a6455':'#33363f'); ctx.stroke();
+    if (c.id==='bow'){
+      const bs = BSETS.find(x=>x.id===B.bset);
+      text('弓・射玦', c.x+12, c.y+22, {s:13, b:1});
+      text(bs.id==='none'?'未設定弓玦套裝':(bs.n+'（'+bs.en+'）2 件：'+Object.entries(bs.two).map(([k,v])=>AFX[k].n+' +'+v+'%').join('')), c.x+12, c.y+43, {s:12, c:'#c9c4b8'});
+      continue;
+    }
+    const g = B.slots[c.id], sl = SLOT[c.id];
+    const set = sl.side==='L'?osetOf(g.set):dsetOf(g.set);
+    text(sl.n, c.x+10, c.y+19, {s:13.5, b:1, f:SERIF});
+    if (set){ const col=setColor(set.id); const nm=clip(set.n,110,11); ctx.font='11px '+SANS; const w=ctx.measureText(nm).width+12;
+      rr(c.x+c.w-w-8, c.y+7, w, 17, 8); ctx.fillStyle=col+'33'; ctx.fill(); text(nm, c.x+c.w-8-w/2, c.y+19.5, {s:11, c:col, a:'center'}); }
+    const lines = [['初', g.init]].concat(g.tune.map((t,i)=>[String(i+1), t]));
+    lines.forEach(([tag,t],i)=>{
+      const y = c.y+38+i*15.5;
+      text(tag, c.x+10, y, {s:10.5, c:'#6f6b62'});
+      if (!t.a){ text('—', c.x+26, y, {s:11.5, c:'#55524b'}); return; }
+      const Q = QUAL[t.q];
+      ctx.beginPath(); ctx.arc(c.x+29, y-4, 3, 0, 7); ctx.fillStyle=Q.c; ctx.fill();
+      const lab = affLabel(t.a, c.id);
+      const rare = AFX[t.a].rare;
+      text(clip(lab, 112, 11.5), c.x+37, y, {s:11.5, c: rare?'#f0c870':'#ddd8cc', b:rare});
+      text(fmt(qval(t.a,t.q,t.r), AFX[t.a].u), c.x+c.w-10, y, {s:11.5, c:Q.c, a:'right'});
+    });
+    const y = c.y+c.h-10;
+    text('定', c.x+10, y, {s:10.5, c:'#6f6b62'});
+    if (g.att.a){
+      text(clip(attLabel(g.att.a), 120, 11), c.x+26, y, {s:11, c:'#8fd0b4'});
+      text(fmt(attVal(g.att), attUnit(g.att.a)), c.x+c.w-10, y, {s:11, c:'#8fd0b4', a:'right'});
+    } else text('（未定音）', c.x+26, y, {s:11, c:'#55524b'});
+  }
+}
+function bar(x,y,w,h,frac,col,bg){ rr(x,y,w,h,h/2); ctx.fillStyle=bg||'#2c2f37'; ctx.fill(); if (frac>0){ rr(x,y,Math.max(h,w*Math.min(1,frac)),h,h/2); ctx.fillStyle=col; ctx.fill(); } }
+function section(t,x,y){ text(t, x, y, {s:13, b:1, f:SERIF, c:'#e2b65a'}); ctx.strokeStyle='#33363f'; ctx.lineWidth=1; ctx.beginPath(); ctx.moveTo(x+ctx.measureText(t).width+10, y-4); ctx.lineTo(x+390, y-4); ctx.stroke(); }
+function drawPanel(P, x0){
+  const s = lastStats, r = lastRes;
+  section('外功與屬攻', x0, 72);
+  text('外功攻擊', x0, 100, {s:12, c:'#9a968c'});
+  text(Math.round(r.minP)+' ～ '+Math.round(r.maxP), x0, 126, {s:24, b:1, f:SERIF});
+  const natMin=(s.FL[0]+s.attr[P.attr][0]), natMax=Math.max(natMin, s.FL[1]+s.attr[P.attr][1]);
+  text('本系（'+ATTRN[P.attr]+'＋無相）屬攻 '+Math.round(natMin)+' ～ '+Math.round(natMax), x0+200, 102, {s:12, c:'#c9c4b8'});
+  text('外功加成 ×'+r.atkMul.toFixed(3)+'　防禦係數 ×'+r.physMul.toFixed(3), x0+200, 122, {s:11.5, c:'#9a968c'});
+
+  section('五維', x0, 160);
+  const keys = ['jin','agi','shi','ti','yu'];
+  keys.forEach((k,i)=>{
+    const y = 180+i*22, v = s[k], isT = k===P.tA;
+    text(FIVE_N[k], x0, y+9, {s:12.5, b:isT, c:isT?'#f0c870':'#ddd8cc'});
+    bar(x0+28, y, 290, 10, v/420, isT?'#c9a050':'#5a6170');
+    if (isT) TAL_TIERS.forEach(t=>{ const tx=x0+28+290*t/420; ctx.fillStyle='#e9e4d8'; ctx.fillRect(tx-0.5,y-3,1.5,16); });
+    text(Math.round(v), x0+390, y+9, {s:12, a:'right'});
+  });
+  text('▲ 金色刻度 = 武學天賦門檻（'+TAL_TIERS.join(' / ')+'，主屬性：'+FIVE_N[P.tA]+'）', x0, 302, {s:11, c:'#8a867c'});
+
+  section('三率（黃字 / 白字）', x0, 332);
+  const rates = [['精準率', r.yPrec, s.prec, CAP.prec, '#6f9fd8'], ['會心率', r.yCrit, s.crit, CAP.crit, '#e2b65a'], ['會意率', r.yAff, s.aff, CAP.aff, '#d07a4a']];
+  rates.forEach(([n,y,w,cap,col],i)=>{
+    const yy = 352+i*28;
+    text(n, x0, yy+10, {s:12.5});
+    bar(x0+52, yy, 200, 12, y/cap, col);
+    const over = (w*YK[['prec','crit','aff'][i]]) > cap;
+    text(y.toFixed(1)+'%', x0+262, yy+11, {s:13, b:1, c: over?'#ff8a6a':col});
+    text('白 '+w.toFixed(1)+'%', x0+390, yy+11, {s:11, c:'#8a867c', a:'right'});
+    if (over) text('溢出', x0+246, yy+10, {s:10.5, c:'#ff8a6a', a:'right'});
+  });
+  text('上限：精準 100%、會心 80%、會意 40%；直接會心 '+B.dCrit+'%、直接會意 '+B.dAff+'% 不受上限', x0, 444, {s:11, c:'#8a867c'});
+
+  section('穿透與神力', x0, 474);
+  const P2 = pathOf(B.path);
+  const rows = [
+    ['外功穿透', s.pen.toFixed(1)], ['無相穿透', s.flpen.toFixed(1)],
+    [P2.mainT+'武學增效', (s.wpnMain+s.art.main).toFixed(1)+'%'], [P2.subT+'武學增效', (s.wpnSub+s.art.sub).toFixed(1)+'%'],
+    ['全武學增效', s.allMA.toFixed(1)+'%'], ['對首領增傷', s.boss.toFixed(1)+'%'],
+    ['奇術增傷（單/群）', s.mys1.toFixed(1)+' / '+s.mys2.toFixed(1)+'%'], ['氣血 / 外功防禦', Math.round(s.hp)+' / '+Math.round(s.pdef)]
+  ];
+  rows.forEach(([n,v],i)=>{ const cx = x0+(i%2)*200, cy = 498+Math.floor(i/2)*22; text(n, cx, cy, {s:12, c:'#9a968c'}); text(v, cx+188, cy, {s:12.5, a:'right', b:1}); });
+  let ay = 498+4*22+6;
+  P2.att.forEach((a,i)=>{ const v=s.att['A'+i]||0; if(v>0){ text('定音：'+a[0], x0, ay, {s:11.5, c:'#8fd0b4'}); text('+'+v.toFixed(1)+'%（覆蓋 '+Math.round(a[1]*100)+'%）', x0+390, ay, {s:11.5, c:'#8fd0b4', a:'right'}); ay+=18; } });
+
+  section('套裝', x0, 712);
+  let sy = 734;
+  const counts = Object.entries(s.setCount).sort((a,b)=>b[1]-a[1]);
+  for (const [id,c] of counts){
+    const os = osetOf(id), ds = dsetOf(id), st = os||ds; if (!st) continue;
+    const col = setColor(id);
+    text(st.n+' ×'+c, x0, sy, {s:12.5, b:1, c:col});
+    const two = os ? Object.entries(os.two).map(([k,v])=>AFX[k].n+'+'+v+(AFX[k].u||'')).join(' ') : ds.two;
+    text((c>=2?'● ':'○ ')+'2件 '+two, x0+120, sy, {s:11.5, c:c>=2?'#ddd8cc':'#6f6b62'});
+    text((c>=4?'● ':'○ ')+'4件', x0+330, sy, {s:11.5, c:c>=4?'#ddd8cc':'#6f6b62'});
+    sy += 19; if (sy>800) break;
+  }
+}
+function drawRight(P, x0){
+  const r = lastRes, w = 390;
+  rr(x0, 54, w, 128, 10); ctx.fillStyle='#24221d'; ctx.fill(); ctx.strokeStyle='#5a4a28'; ctx.stroke();
+  text(P.style==='crit'&&P.id==='deluge'?'輸出指數（治療流派僅供參考）':'輸出指數（模型估算）', x0+16, 80, {s:12.5, c:'#c9b07a'});
+  text(r.idx.toFixed(0), x0+16, 132, {s:44, b:1, f:SERIF, c:'#f3dca6'});
+  if (B.snap){
+    const d = (r.idx/B.snap-1)*100;
+    text('對照 '+B.snap.toFixed(0)+'　'+(d>=0?'+':'')+d.toFixed(2)+'%', x0+16, 164, {s:13, b:1, c: d>=0?'#7fd0a0':'#ff8a6a'});
+  } else text('按「記為對照」後可比較兩套配裝', x0+16, 164, {s:11.5, c:'#8a867c'});
+  text('武學 ×'+r.wpnZone.toFixed(3), x0+w-16, 84, {s:11, c:'#8a867c', a:'right'});
+  text('首領 ×'+r.bossZone.toFixed(3), x0+w-16, 102, {s:11, c:'#8a867c', a:'right'});
+  text('定音 ×'+r.attZone.toFixed(3), x0+w-16, 120, {s:11, c:'#8a867c', a:'right'});
+  text('套裝 ×'+r.setZone.toFixed(3), x0+w-16, 138, {s:11, c:'#8a867c', a:'right'});
+
+  section('判定分佈', x0, 214);
+  const d = r.dist, parts = [['會意',d.aff,'#d07a4a'],['會心',d.crit,'#e2b65a'],['白字',d.white,'#9aa3b5'],['擦傷',d.graze,'#5a5f6a']];
+  let bx = x0;
+  parts.forEach(([n,v,c])=>{ const ww = w*v; if (ww>0){ ctx.fillStyle=c; ctx.fillRect(bx, 226, ww, 18); } bx+=ww; });
+  parts.forEach(([n,v,c],i)=>{ const lx = x0+i*98; ctx.fillStyle=c; ctx.fillRect(lx, 254, 9, 9); text(n+' '+(v*100).toFixed(1)+'%', lx+14, 263, {s:11.5}); });
+  text('先判會意（以最大攻擊結算），再判精準與會心；未精準即擦傷（以最小攻擊結算）', x0, 284, {s:11, c:'#8a867c'});
+
+  section('武學天賦', x0, 316);
+  const tN = FIVE_N[P.tA];
+  r.tiers.forEach((on,i)=>{
+    const cx = x0+i*130, need = TAL_TIERS[i];
+    rr(cx, 328, 122, 44, 7); ctx.fillStyle = on?'#25362e':'#26282f'; ctx.fill(); ctx.strokeStyle = on?'#5fae8f':'#3a3d46'; ctx.stroke();
+    text('第'+'一二三'[i]+'重　'+tN+' ≥ '+need, cx+10, 346, {s:11.5, b:1, c:on?'#9fe0c0':'#8a867c'});
+    const eff = P.style==='aff' ? '會意傷害+6.7%'+(i===2?' 全傷+3%':'') : '會心傷害 +10%';
+    text(on?eff:(!B.maTal?'未點天賦':'屬性不足（'+Math.round(r.tval)+'）'), cx+10, 364, {s:10.5, c:on?'#ddd8cc':'#ff8a6a'});
+  });
+
+  section('下一條金色滿值詞條收益', x0, 404);
+  const top = lastGains.slice(0, 12);
+  const mx = Math.max(0.01, ...top.map(g=>g.g));
+  top.forEach((g,i)=>{
+    const y = 418+i*24;
+    text(g.n, x0, y+12, {s:12, c: AFX[g.k].rare?'#f0c870':'#ddd8cc'});
+    bar(x0+120, y+3, 200, 11, g.g/mx, g.g>0.005?'#6fa08a':'#444852');
+    text((g.g>=0?'+':'')+g.g.toFixed(2)+'%', x0+w, y+12, {s:12, a:'right', c: g.g>0.005?'#9fe0c0':'#8a867c'});
+  });
+  text('收益為 0 通常代表該率已達黃字上限（溢出）', x0, 418+12*24+10, {s:11, c:'#8a867c'});
+}
+function hit(mx,my){ for (const c of cards) if (mx>=c.x&&mx<=c.x+c.w&&my>=c.y&&my<=c.y+c.h) return c.id; return null; }
+function evPos(e){ const rct=cv.getBoundingClientRect(); return [(e.clientX-rct.left)/scale, (e.clientY-rct.top)/scale]; }
+cv.addEventListener('mousemove', e=>{ const h=hit(...evPos(e)); if (h!==hover){ hover=h; cv.style.cursor=h?'pointer':'default'; draw(); } });
+cv.addEventListener('mouseleave', ()=>{ hover=null; draw(); });
+cv.addEventListener('click', e=>{ const h=hit(...evPos(e)); if (h){ selected=h; hover=null; renderEditor(); draw();
+  if (MOBILE) openSheet(true); else document.getElementById('editor').scrollIntoView({behavior:'smooth', block:'nearest'}); } });
+function openSheet(on){ document.getElementById('editor').classList.toggle('open', on); document.getElementById('backdrop').classList.toggle('open', on); }
+document.getElementById('backdrop').addEventListener('click', ()=>openSheet(false));
+document.getElementById('editor').addEventListener('click', e=>{ if (e.target.id==='sheetClose') openSheet(false); });
+
+/* ================= 編輯器 ================= */
+const $ = id => document.getElementById(id);
+function opt(v, label, sel, dis){ return `<option value="${v}"${sel?' selected':''}${dis?' disabled':''}>${label}</option>`; }
+function renderEditor(){
+  const ed = $('editor');
+  if (selected==='bow'){
+    ed.innerHTML = `<h2>弓・射玦<button class="sheetClose" id="sheetClose">完成</button></h2><div class="row"><span class="tag">套裝</span><select id="e_bset">${BSETS.map(s=>opt(s.id, s.id==='none'?s.n:s.n+'（'+s.en+'）', s.id===B.bset)).join('')}</select></div>
+    <div class="hint">弓與射玦同套 2 件即生效（國際服 91 階起）。弓玦幾乎只影響造詣，這裡只計算其 2 件套屬性。</div>`;
+    $('e_bset').onchange = e=>{ B.bset=e.target.value; $('bset').value=B.bset; update(); };
+    return;
+  }
+  const sl = SLOT[selected], g = B.slots[selected];
+  const sets = sl.side==='L' ? OSETS : DSETS;
+  const used = [g.init.a].concat(g.tune.map(t=>t.a));
+  const affRow = (tag, key, t, pool, idx) => {
+    const others = used.filter((_,j)=>j!==idx);
+    const opts = (idx===0?'':opt('', '（空）', !t.a)) + pool.map(a=>{
+      const dis = !canAdd(others, a);
+      return opt(a, affLabel(a, selected)+(AFX[a].rare?'　★':''), t.a===a, dis);
+    }).join('');
+    return `<div class="row"><span class="tag">${tag}</span>
+      <select data-k="${key}" data-f="a">${idx===0 && !t.a ? opt('', '（選擇初始詞條）', true) : ''}${opts}</select>
+      <select data-k="${key}" data-f="q">${Object.entries(QUAL).map(([q,Q])=>opt(q, Q.n+'色', t.q===q)).join('')}</select>
+      <input type="range" min="0" max="100" value="${Math.round(t.r*100)}" data-k="${key}" data-f="r" ${t.a?'':'disabled'}>
+      <span class="val" style="color:${QUAL[t.q].c}">${t.a?fmt(qval(t.a,t.q,t.r),AFX[t.a].u):'—'}</span></div>`;
+  };
+  const ap = attPool(selected);
+  ed.innerHTML = `<h2>${sl.n}<span style="font-size:12px;color:var(--dim);font-family:inherit">${sl.side==='L'?'攻具（左側四件）':'防具（右側四件）'}</span><button class="sheetClose" id="sheetClose">完成</button></h2>
+    <div class="row"><span class="tag">套裝</span><select id="e_set">${sets.map(s=>opt(s.id, s.n+(s.en&&s.en!==s.n?'（'+s.en+'）':''), s.id===g.set)).join('')}</select></div>
+    ${affRow('初始', 'init', g.init, sl.init, 0)}
+    ${g.tune.map((t,i)=>affRow('調律'+(i+1), 't'+i, t, sl.tune, i+1)).join('')}
+    <div class="row"><span class="tag">定音</span>
+      <select id="e_att">${opt('', '（未定音）', !g.att.a)}${ap.map(a=>opt(a, attLabel(a), g.att.a===a)).join('')}</select>
+      <span class="tag">隨機值</span>
+      <input type="range" id="e_attr" min="0" max="100" value="${Math.round(g.att.r*100)}" ${g.att.a?'':'disabled'}>
+      <span class="val" style="color:#8fd0b4">${g.att.a?fmt(attVal(g.att),attUnit(g.att.a)):'—'}</span></div>
+    <div class="hint">初始詞條池（此部位實際會出現）：${sl.init.map(a=>affLabel(a,selected)).join('、')}。<br>
+    ★ 稀有詞條每件限一條；一般詞條同件最多重複兩條（例如雙大外）。滑桿代表該品質區間內的隨機值，拉到最右為滿值。<br>
+    ${sl.side==='L'?'攻具定音為通用定音（外功穿透／無相穿透／外功抗性），扇、傘武器另有扇之術／傘之術增效。':'防具定音為流派定音，只列出目前流派兩把武器的選項。'}</div>
+    <div class="hint" style="color:#c9c4b8">${(sl.side==='L'?osetOf(g.set):dsetOf(g.set)).four ? '4 件效果：'+(sl.side==='L'?osetOf(g.set):dsetOf(g.set)).four : ''}</div>`;
+  $('e_set').onchange = e=>{ g.set=e.target.value; update(); renderEditor(); };
+  ed.querySelectorAll('[data-k]').forEach(el=>{
+    const handler = ()=>{
+      const k = el.dataset.k, f = el.dataset.f;
+      const t = k==='init' ? g.init : g.tune[+k.slice(1)];
+      if (f==='a') t.a = el.value || null;
+      if (f==='q') t.q = el.value;
+      if (f==='r') t.r = el.value/100;
+      update(); if (f!=='r') renderEditor(); else el.nextElementSibling.textContent = t.a?fmt(qval(t.a,t.q,t.r),AFX[t.a].u):'—';
+    };
+    el.addEventListener(el.type==='range'?'input':'change', handler);
+  });
+  $('e_att').onchange = e=>{ g.att.a = e.target.value || null; update(); renderEditor(); };
+  $('e_attr').oninput = e=>{ g.att.r = e.target.value/100; update(); e.target.nextElementSibling.textContent = g.att.a?fmt(attVal(g.att),attUnit(g.att.a)):'—'; };
+}
+
+/* ================= 工具列 ================= */
+function fillToolbar(){
+  $('path').innerHTML = PATHS.map(p=>opt(p.id, p.n+'（'+p.en+'）', p.id===B.path)).join('');
+  $('lset').innerHTML = opt('', '— 各件自訂 —', false) + OSETS.map(s=>opt(s.id, s.n+(s.en!==s.n?'（'+s.en+'）':''), false)).join('');
+  $('rset').innerHTML = opt('', '— 各件自訂 —', false) + DSETS.map(s=>opt(s.id, s.n+(s.en!==s.n?'（'+s.en+'）':''), false)).join('');
+  $('bset').innerHTML = BSETS.map(s=>opt(s.id, s.n, s.id===B.bset)).join('');
+  syncToolbar();
+}
+function syncToolbar(){
+  $('path').value = B.path; $('bset').value = B.bset;
+  const L = SLOTS.filter(s=>s.side==='L').map(s=>B.slots[s.id].set), R = SLOTS.filter(s=>s.side==='R').map(s=>B.slots[s.id].set);
+  $('lset').value = L.every(x=>x===L[0]) ? L[0] : '';
+  $('rset').value = R.every(x=>x===R[0]) ? R[0] : '';
+  $('baseTal').checked = B.baseTal; $('maTal').checked = B.maTal; $('boss').checked = B.boss;
+  $('extra').value = B.extra; $('cdmg').value = B.critDmg; $('admg').value = B.affDmg; $('dcrit').value = B.dCrit; $('daff').value = B.dAff;
+}
+$('path').onchange = e=>{
+  B.path = e.target.value;
+  for (const sl of SLOTS){ const g=B.slots[sl.id]; if (g.att.a && !attPool(sl.id).includes(g.att.a)) g.att.a=null; }
+  update(); renderEditor();
+};
+$('lset').onchange = e=>{ if (!e.target.value) return; SLOTS.filter(s=>s.side==='L').forEach(s=>B.slots[s.id].set=e.target.value); update(); renderEditor(); };
+$('rset').onchange = e=>{ if (!e.target.value) return; SLOTS.filter(s=>s.side==='R').forEach(s=>B.slots[s.id].set=e.target.value); update(); renderEditor(); };
+$('bset').onchange = e=>{ B.bset=e.target.value; update(); if (selected==='bow') renderEditor(); };
+$('baseTal').onchange = e=>{ B.baseTal=e.target.checked; update(); };
+$('maTal').onchange = e=>{ B.maTal=e.target.checked; update(); };
+$('boss').onchange = e=>{ B.boss=e.target.checked; update(); };
+$('extra').oninput = e=>{ B.extra=+e.target.value||0; update(); };
+$('dcrit').oninput = e=>{ B.dCrit=+e.target.value||0; update(); };
+$('daff').oninput = e=>{ B.dAff=+e.target.value||0; update(); };
+$('cdmg').oninput = e=>{ B.critDmg=+e.target.value||0; update(); };
+$('admg').oninput = e=>{ B.affDmg=+e.target.value||0; update(); };
+$('auto').onclick = ()=>{ autofill(); update(); renderEditor(); };
+$('clear').onclick = ()=>{ for (const sl of SLOTS){ const g=B.slots[sl.id]; g.init={a:null,q:'gold',r:1}; g.tune=[0,1,2,3].map(()=>({a:null,q:'gold',r:1})); g.att={a:null,r:1}; } update(); renderEditor(); };
+$('snap').onclick = ()=>{ B.snap = lastRes.idx; update(); };
+$('ioBtn').onclick = ()=>{ const io=$('io'); const show = io.style.display!=='block'; io.style.display = show?'block':'none';
+  if (show){ $('ioText').value = btoa(unescape(encodeURIComponent(JSON.stringify(B)))); $('ioMsg').textContent=''; } };
+$('copyBtn').onclick = async ()=>{ try{ await navigator.clipboard.writeText($('ioText').value); $('ioMsg').textContent='已複製'; } catch(e){ $('ioText').select(); $('ioMsg').textContent='請手動複製（Ctrl+C）'; } };
+$('impBtn').onclick = ()=>{
+  try{ const o = JSON.parse(decodeURIComponent(escape(atob($('ioText').value.trim()))));
+    if (!o.slots || !o.path) throw 0; B = Object.assign(newBuild(), o); syncToolbar(); update(); renderEditor(); $('ioMsg').textContent='匯入成功'; }
+  catch(e){ $('ioMsg').textContent='代碼無法解析'; }
+};
+
+function save(){ try{ localStorage.setItem('wwm_build_v2', JSON.stringify(B)); }catch(e){} }
+function load(){ try{ const t = localStorage.getItem('wwm_build_v2'); if (t){ const o=JSON.parse(t); if (o.slots&&o.path){ B=Object.assign(newBuild(), o); return true; } } }catch(e){} return false; }
+
+function update(){
+  lastStats = compute(B); lastRes = damage(lastStats, B); lastGains = gains();
+  syncToolbar(); draw(); save();
+}
+
+if (!load()) autofill();
+fillToolbar();
+lastStats = compute(B); lastRes = damage(lastStats, B); lastGains = gains();
+renderEditor();
+window.addEventListener('resize', resize);
+resize();
+</script>
+</body>
+</html>
