@@ -5,6 +5,13 @@
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1">
 <meta name="description" content="22 歲到 65 歲的股市人生模擬：買颱雞電、玩槓桿、扛黑天鵝、躲灰犀牛，看你能走到哪個退休結局。">
 <meta name="theme-color" content="#0e131a">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<link rel="icon" type="image/png" href="icon-192.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="股海人生">
 <title>股海人生模擬器</title>
 <style>
 :root{--ph:#0e131a;--panel:#161e29;--panel2:#1c2634;--line:#273244;--txt:#e7edf4;--mut:#8b9aae;--up:#ff4d5e;--dn:#1fbf78;--acc:#4da3ff;--gold:#f4c15a;--warn:#ff9a5b;--yp:#7b2cf5}
@@ -253,20 +260,22 @@ details ul{margin:8px 0 0;padding-left:18px;line-height:1.7}
 @keyframes pDn{0%{text-shadow:0 0 0 #2fcf8a}30%{text-shadow:0 0 14px #2fcf8a;transform:scale(1.07)}}
 #phone.shake{animation:shk .5s}
 @keyframes shk{10%,50%,90%{transform:translateX(-5px)}30%,70%{transform:translateX(5px)}}
-.confetti{position:absolute;top:-12px;width:8px;height:14px;pointer-events:none;animation:cfall 3s linear forwards;z-index:30}
+.confetti{position:absolute;top:-12px;width:8px;height:14px;pointer-events:none;animation:cfall 3s linear forwards;z-index:1;opacity:.85}#endCard{position:relative;z-index:2}
 @keyframes cfall{to{transform:translateY(900px) rotate(720deg);opacity:.8}}
 #tutShade{position:absolute;inset:0;z-index:48}
 #tutSpot{position:absolute;z-index:49;border:2px solid var(--gold);border-radius:12px;box-shadow:0 0 0 9999px #000a;pointer-events:none;transition:all .25s}
 #tutCard{position:absolute;z-index:50;background:#182231;border:1px solid var(--gold);border-radius:16px;padding:14px;box-shadow:0 10px 40px #000c}
 #tutCard h4{margin:2px 0 6px;font-size:16px}#tutCard p{margin:0 0 10px;font-size:14px;line-height:1.55}
 .tut-n{font-size:11px;color:var(--mut)}
-#tutCard .btns{display:flex;gap:6px;flex-wrap:nowrap}#tutCard .btns button{flex:1;padding:8px 4px;font-size:13px;white-space:nowrap}#tutCard .btns .primary{flex:1.4}
+#tutCard .btns{display:flex;gap:6px;flex-wrap:nowrap}#tutCard .btns button{flex:1;min-width:0;padding:9px 2px;font-size:13px;white-space:nowrap}#tutCard .btns .primary{flex:1.4}
 .recgrid{display:grid;grid-template-columns:1fr 1fr;gap:8px}
 .reclist{display:flex;flex-direction:column;gap:6px}
 .recrow{display:flex;justify-content:space-between;gap:8px;background:#121924;border:1px solid #2f3c52;border-radius:12px;padding:8px 10px;font-size:13px}
 .recrow.best{border-color:var(--gold)}
-.recrow small{display:block;color:#7d8aa0;font-size:11px;margin-top:2px}
+.recrow small{display:block;color:#8d9ab0;font-size:12px;margin-top:2px}.recrow>div:first-child{min-width:0;flex:1}.recr{text-align:right;flex:none}.recr b{white-space:nowrap}
 @media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+@media (max-width:520px){#toast{top:8px;font-size:12px;max-width:94%;z-index:60}#tutCard{font-size:14px}#tutCard h4{font-size:15px}}
+@media (max-height:700px){.card.dlg{max-height:92%}#tutCard p{font-size:13px;margin-bottom:8px}}
 </style>
 </head>
 <body>
@@ -370,6 +379,7 @@ details ul{margin:8px 0 0;padding-left:18px;line-height:1.7}
           <button id="btnImport">⬆ 匯入存檔代碼</button>
           <button id="btnHelp">❓ 遊戲說明</button>
           <button id="btnTut">📖 新手教學</button>
+          <button id="btnInstall">📲 加到手機桌面</button>
           <button id="btnRestart">🔄 重新開始</button>
         </div>
         <p class="mut" style="margin:10px 0 0;font-size:12px">每年會自動存檔在這個瀏覽器。換裝置或清除瀏覽器資料前，請先匯出存檔代碼。</p>
@@ -785,7 +795,7 @@ const RHINOS = [
            ['建商推案量暴增，銀行房貸成數放寬到九成','投資客：房價只會漲不會跌'],
            ['空屋率創新高，多家建商傳出資金鏈警訊','財經名嘴：這次不一樣'],
            ['預售屋大量解約，代銷業者裁員','官員：基本面依然健康']],
-    burst:{ name:'房地產泡沫破裂', desc:'房價崩跌拖垮銀行，信用緊縮席捲市場。', qm:[-.06,-.15,-.12,-.04], vol:1, ex:{GREEN:-.25,BOND:.06}, house:-.25, infl:0, recession:true, next:'bear' } },
+    burst:{ name:'房地產泡沫破裂', desc:'房價崩跌拖垮銀行，信用緊縮席捲市場。', qm:[-.06,-.15,-.12,-.04], vol:1, ex:{GREEN:-.25,BOND:.06}, house:-.25, infl:0, recession:true, fin:true, next:'bear' } },
   { id:'tech', name:'科技估值泡沫', icon:'🫧',
     build:{ ex:{ACCTON:.15,YAGEO:.12,TSMC:.08,MEME:.25}, house:.03 },
     warns:[['科技股本益比突破 60 倍，散戶開戶數創新高','分析師：產業革命才剛開始'],
@@ -799,7 +809,7 @@ const RHINOS = [
            ['多家企業發行高利垃圾債，評等機構下修展望','官員：金融體系穩健'],
            ['信評機構接連降評，債券利差急速擴大','市場：央行一定會出手救'],
            ['數家中型企業延遲付息，銀行緊縮放款','專家：只是個案']],
-    burst:{ name:'債務危機引爆', desc:'違約潮爆發，信用市場凍結，金融股與景氣股重挫。', qm:[-.08,-.12,-.1,-.03], vol:1, ex:{GREEN:-.2,BOND:-.08,FPC:-.12}, house:-.08, infl:.01, recession:true, next:'bear' } },
+    burst:{ name:'債務危機引爆', desc:'違約潮爆發，信用市場凍結，金融股與景氣股重挫。', qm:[-.08,-.12,-.1,-.03], vol:1, ex:{GREEN:-.2,BOND:-.08,FPC:-.12}, house:-.08, infl:.01, recession:true, fin:true, next:'bear' } },
 ];
 
 /* ---------- 歷史模式：擬真年表（ret = 加權指數年報酬，數值為擬真重現）---------- */
@@ -826,7 +836,7 @@ const HIST = {
          warn:['美國次級房貸核貸標準越來越寬鬆，「零頭期款」盛行','專家：美國房價從未全國性下跌過'] },
   2007:{ ret:.09, title:'次貸暗流', desc:'美國房貸機構接連出包，但股市仍創高。', qm:[.08,.12,.02,-.12],
          warn:['美國多家次貸放款機構倒閉，避險基金傳出鉅虧','信用利差急速擴大，銀行間互不信任'] },
-  2008:{ ret:-.46, title:'全球金融海嘯', desc:'雷曼兄弟倒閉，全球信用凍結，史詩級崩盤。', kind:'rhino', qm:[-.05,-.08,-.25,-.25], ex:{GREEN:-.25,BOND:.08}, house:-.12, infl:.035, recession:true },
+  2008:{ ret:-.46, title:'全球金融海嘯', desc:'雷曼兄弟倒閉，全球信用凍結，史詩級崩盤。', kind:'rhino', qm:[-.05,-.08,-.25,-.25], ex:{GREEN:-.25,BOND:.08}, house:-.12, infl:.035, recession:true, fin:true },
   2009:{ ret:.78, title:'救市大放水', desc:'各國央行降息印鈔，股市從谷底 V 型反彈。', kind:'boom' },
   2010:{ ret:.10, title:'ECFA 簽署', desc:'兩岸經濟合作協議，傳產與金融股受惠。' },
   2011:{ ret:-.21, title:'歐債危機', desc:'希臘債務違約疑慮擴散，美債遭降評。', kind:'crisis', qm:[.0,.0,-.15,-.07], ex:{GREEN:-.08} },
@@ -1000,7 +1010,7 @@ CAREERS.engineer = { id:'engineer', code:'E', icon:'💻', name:'工程師', liv
     desc:'科技業工程師：起薪高、成長快，加班與縮編是日常（健康每年小幅下降），有機會領到員工分紅配股。景氣不好時要小心裁員潮。',
     jobs:[ { t:'助理工程師', sal:440000, promo:.22 }, { t:'工程師', sal:570000, promo:.18 }, { t:'資深工程師', sal:760000, promo:.14 },
            { t:'技術主管', sal:1010000, promo:.10 }, { t:'研發經理', sal:1380000, promo:.07 }, { t:'技術總監', sal:1930000, promo:0 } ] };
-CAREERS.teacher = { id:'teacher', code:'T', icon:'📚', name:'教師', liv:.98, hp:0, mood:.8,
+CAREERS.teacher = { id:'teacher', code:'T', icon:'📚', name:'教師', liv:.98, hp:0, mood:.8, crisisSafe:true,
     desc:'穩定的教職：薪水不高、升遷慢，但有寒暑假與成就感（每年心情小幅回升）。可以接家教增加收入，也要面對親師壓力。',
     jobs:[ { t:'代理教師', sal:430000, promo:.30 }, { t:'正式教師', sal:540000, promo:.15 }, { t:'資深教師', sal:650000, promo:.10 },
            { t:'組長', sal:760000, promo:.08 }, { t:'主任', sal:900000, promo:.05 }, { t:'校長', sal:1060000, promo:0 } ] };
@@ -1008,7 +1018,7 @@ CAREERS.sales = { id:'sales', code:'S', icon:'🤝', name:'業務', liv:1, hp:-.
     desc:'靠業績吃飯：升遷快、獎金多，應酬喝酒傷身，也可能遇到客戶倒帳。簽到大單時收入驚人。',
     jobs:[ { t:'業務助理', sal:400000, promo:.26 }, { t:'業務專員', sal:500000, promo:.22 }, { t:'資深業務', sal:640000, promo:.17 },
            { t:'業務主任', sal:860000, promo:.12 }, { t:'業務經理', sal:1150000, promo:.09 }, { t:'業務副總', sal:1700000, promo:0 } ] };
-CAREERS.civil = { id:'civil', code:'P', icon:'🏛', name:'公務員', liv:.97, hp:0, mood:.3, safe:true,
+CAREERS.civil = { id:'civil', code:'P', icon:'🏛', name:'公務員', liv:.97, hp:0, mood:.3, safe:true, crisisSafe:true,
     desc:'鐵飯碗：不會被裁員、薪水穩定、每年有考績獎金，但升遷慢、日子一成不變。可以靠升等考試往上爬。',
     jobs:[ { t:'約僱人員', sal:450000, promo:.25 }, { t:'科員', sal:540000, promo:.12 }, { t:'股長', sal:640000, promo:.10 },
            { t:'科長', sal:770000, promo:.07 }, { t:'專門委員', sal:900000, promo:.05 }, { t:'處長', sal:1060000, promo:0 } ] };
@@ -1248,7 +1258,7 @@ function rollMarket_(){
     m.hist=H; m.target=H.ret;
     m.regime = H.ret>.08?'bull':(H.ret<-.05?'bear':'side');
     if(H.kind||H.qm||H.ex) m.swan={ name:H.title, desc:H.desc, qm:H.qm||null, ex:H.ex||{}, house:H.house, infl:H.infl||0, recession:!!H.recession, vol:.8,
-                                    kind:H.kind==='rhino'?'rhino':(H.kind==='swan'?'swan':'hist'), hist:true };
+                                    kind:H.kind==='rhino'?'rhino':(H.kind==='swan'?'swan':'hist'), hist:true, fin:!!H.fin };
     if(H.warn) m.warn={ name:'歷史的伏筆', icon:'🦏', level:Math.min(3,H.warn.length+1), lines:H.warn.map(t=>[t,'']) };
   } else {
     let regime;
@@ -1315,6 +1325,9 @@ const MIDS = [
   { id:'flash',  title:'程式交易閃崩',         desc:'演算法互相踩踏，指數半小時內急殺，盤後交易所才說明是系統異常。', s:[.07,.13] },
 ];
 const SECTORS = { tech:.12, trad:.08, fin:.08 };
+/* 自由模式：部分個股股價限定在區間內（歷史模式照真實走勢，不限制） */
+const PRICE_BANDS = { TSMC:[300,2800], YAGEO:[100,1500], GREEN:[10,60] };
+const bandPx = (id,p) => (G.mode==='free' && PRICE_BANDS[id]) ? clamp(p,PRICE_BANDS[id][0],PRICE_BANDS[id][1]) : p;
 function simStart(){
   const m=G.market, reg=REGIMES[m.regime], sw=m.swan;
   const p0={...G.prices}, q0={}; ASSETS.forEach(a => q0[a.id]=G.holdings[a.id].qty);
@@ -1381,12 +1394,12 @@ function simMonths(X, from, to){
         if(chance(a.jumpUp/12)){ const j=rand(...a.jumpUpR); f*=j; log(`🚀 ${a.name} 利多爆發，單月大漲 ${((j-1)*100).toFixed(0)}%！`,'market'); }
         else if(chance(a.jumpDn/12)){ const j=rand(...a.jumpDnR); f*=j; log(`💣 ${a.name} 爆出利空，單月重挫 ${((1-j)*100).toFixed(0)}%！`,'market'); }
       }
-      G.prices[a.id] = tickRound(G.prices[a.id]*f);
+      G.prices[a.id] = bandPx(a.id, tickRound(G.prices[a.id]*f));
     }
     if(k===7){                                          // 8 月除息
       for(const a of ASSETS){ if(!a.div) continue;
         const h=G.holdings[a.id]; if(h.qty>0) X.div += h.qty*G.prices[a.id]*a.div;
-        G.prices[a.id] = tickRound(G.prices[a.id]*(1-a.div)); }
+        G.prices[a.id] = bandPx(a.id, tickRound(G.prices[a.id]*(1-a.div))); }
     }
     if(G.margin>0 && !X.called && holdValue()/G.margin < MAINT){ marginCall(k+1); X.called=true; }
     if(G.fut){                                          // 台指期逐月結算
@@ -1741,6 +1754,16 @@ function settleFinances(){
 /* =====================================================================
  *  人生事件
  * ===================================================================== */
+/* 金融海嘯（信用危機年）：除了公務員與教師，其他職業有機率失業 */
+function crisisJobLoss(){
+  const sw=G.market&&G.market.swan; if(!sw||!sw.fin||careerOf().crisisSafe) return;
+  const p=clamp(.5-.05*G.level,.25,.5);                // 職級越低越容易被裁
+  if(Math.random()>=p){ log('😮‍💨 金融海嘯席捲產業，公司大舉裁員，幸好你這次沒被點名。心情 -2。','info'); dM(-2); return; }
+  const loss=salary()*.5; G.cash-=loss; dM(-12); dH(-3);
+  let t=`📦 金融海嘯重創產業，你被公司裁員失業！空窗期損失約 ${fmt(-loss,1)}，心情 -12、健康 -3`;
+  if(G.level>0&&chance(.3)){ G.level--; t+=`，重新找到工作後降為「${JOBS[G.level].t}」`; }
+  log(t+'。','bad'); if(Y&&!Y.event) Y.event=t;
+}
 function pickEvent(){ return inWorld(()=>pickW(EVENTS, e => (G.age>=e.ages[0]&&G.age<=e.ages[1]) ? e.w() : 0)); }
 function tickFx(){
   const f=fx();
@@ -1801,6 +1824,7 @@ function endYear(){
   simulateMarket(()=>{                                    // 年中突發事件會在這裡暫停等玩家決定
     propYear();
     settleFinances();
+    crisisJobLoss();
     const ev=pickEvent();
     if(!ev){ finishYear(); return; }
     if(ev.choices){ log(`🎲 年度事件：${ev.title}`,'info'); showChoice(ev, finishYear); }
@@ -2270,10 +2294,31 @@ function shake(){ const el=$('#phone'); if(!el) return; el.classList.remove('sha
 function confetti(){
   const box=$('#endOverlay'); if(!box) return; box.querySelectorAll('.confetti').forEach(x=>x.remove());
   const cols=['#f5c542','#ff5d5d','#2fcf8a','#4aa3ff','#c77dff'];
-  for(let i=0;i<42;i++){ const c=document.createElement('i'); c.className='confetti';
+  for(let i=0;i<26;i++){ const c=document.createElement('i'); c.className='confetti';
     c.style.cssText=`left:${Math.random()*100}%;background:${cols[i%cols.length]};animation-delay:${(Math.random()*1.2).toFixed(2)}s;animation-duration:${(2.2+Math.random()*1.6).toFixed(2)}s`;
     box.appendChild(c); }
   setTimeout(()=>box.querySelectorAll('.confetti').forEach(x=>x.remove()),5200);
+}
+
+/* ---------- 加到手機桌面（PWA）---------- */
+let installEvt=null;
+window.addEventListener('beforeinstallprompt',e=>{ e.preventDefault(); installEvt=e; });
+window.addEventListener('appinstalled',()=>{ installEvt=null; toast('📲 已加到桌面！'); });
+const isStandalone=()=>(window.matchMedia&&matchMedia('(display-mode: standalone)').matches)||window.navigator.standalone===true;
+function showInstallHelp(){
+  if(isStandalone()) return toast('✅ 你已經是從桌面 App 開啟的');
+  if(installEvt){ installEvt.prompt(); installEvt.userChoice.finally(()=>{ installEvt=null; }); return; }
+  const ua=navigator.userAgent, ios=/iphone|ipad|ipod/i.test(ua)||(/Macintosh/.test(ua)&&navigator.maxTouchPoints>1);
+  const steps=ios
+    ? ['用 <b>Safari</b> 開啟這個頁面（其他瀏覽器可能沒有此選項）','點下方的 <b>分享按鈕</b>（方框加向上箭頭）','往下找到並點 <b>「加入主畫面」</b>','按右上角 <b>「新增」</b>，桌面就會出現遊戲圖示']
+    : ['用 <b>Chrome</b> 開啟這個頁面','點右上角 <b>⋮ 選單</b>','選 <b>「安裝應用程式」</b>或 <b>「加到主畫面」</b>','確認後桌面就會出現遊戲圖示'];
+  showDialog({ title:'📲 加到手機桌面', body:`<p style="margin:0 0 8px" class="mut">加入後會像 App 一樣全螢幕開啟，部署在網站上時還能離線玩。</p>
+    <ol style="margin:0 0 8px;padding-left:20px;line-height:1.7">${steps.map(t=>`<li>${t}</li>`).join('')}</ol>
+    <p class="mut" style="margin:0;font-size:12px">存檔存在這個瀏覽器；從桌面圖示開啟時可能是另一份存檔，建議先「匯出存檔代碼」備份。</p>`,
+    buttons:[{label:'知道了',primary:true}] });
+}
+if('serviceWorker' in navigator && /^https?:$/.test(location.protocol)){
+  window.addEventListener('load',()=>{ try{ navigator.serviceWorker.register('sw.js').catch(()=>{}); }catch(e){} });
 }
 
 /* ---------- 新手引導 ---------- */
@@ -2311,14 +2356,14 @@ function tutShow(){
     const r=el?el.getBoundingClientRect():null, ok=r&&r.width>0&&r.height>0;
     shade.style.background=ok?'transparent':'#000a';
     spot.classList.toggle('hidden',!ok);
-    const cw=Math.min(340,ph.width-24); card.style.width=cw+'px';
+    const narrow=ph.width<520, cw=narrow?ph.width-20:Math.min(340,ph.width-24); card.style.width=cw+'px';
     let top=(ph.height-card.offsetHeight)/2, left=(ph.width-cw)/2;
     if(ok){
       const x=r.left-ph.left, y=r.top-ph.top, w=r.width, h=Math.min(r.height,ph.height*.5);
       spot.style.cssText=`left:${x-4}px;top:${y-4}px;width:${w+8}px;height:${h+8}px`;
       const below=y+h+12, above=y-card.offsetHeight-12;
       top = below+card.offsetHeight<=ph.height-8 ? below : (above>=8 ? above : ph.height-card.offsetHeight-8);
-      left=Math.max(8,Math.min(x,ph.width-cw-8));
+      left=narrow?10:Math.max(8,Math.min(x,ph.width-cw-8));
     }
     card.style.top=Math.max(8,top)+'px'; card.style.left=left+'px';
   },80);
@@ -2358,8 +2403,8 @@ function renderRecords(){
     <div class="recgrid">${byC.map(c=>`<div class="ach ${c.n?'on':''}" style="cursor:default"><b>${crTxt(c.id)}</b>${c.n?`${c.n} 局｜${c.best!=null?fmt(c.best):'—'}`:'尚未體驗'}</div>`).join('')}</div>
     <p style="margin:12px 0 6px"><b>最近的人生</b></p>
     <div class="reclist">${runs.slice(0,15).map(r=>`<div class="recrow ${bestRun&&r===bestRun?'best':''}">
-      <div><b>${r.icon} ${esc(r.rank)}${r.early?' 🏖':''}</b><small>${esc(crTxt(r.career||'office'))}・${esc(r.job)}｜${modeTxt(r)}｜${r.age} 歲${r.code?'｜'+esc(r.code):''}</small></div>
-      <div style="text-align:right"><b>${fmt(r.nw)}</b><small>${fmtTime(r.t)}｜${esc(r.end)}</small></div></div>`).join('')}</div>`;
+      <div><b>${r.icon} ${esc(r.rank)}${r.early?' 🏖':''}</b><small>${esc(crTxt(r.career||'office'))}・${esc(r.job)}｜${modeTxt(r)}｜${r.age} 歲</small><small>${esc(r.end)}${r.code?'｜'+esc(r.code):''}</small></div>
+      <div class="recr"><b>${fmt(r.nw)}</b><small>${fmtTime(r.t)}</small></div></div>`).join('')}</div>`;
 }
 
 /* ---------- 存檔 / 成就 ---------- */
@@ -2599,6 +2644,7 @@ const HELP_HTML=`<ul>
   <li><b>⚡ 年中突發事件</b>（自由模式）：平均每 5 年一次，年中突然重挫，你只能選停損、加碼或裝死，之後走勢是漲是跌要賭。</li>
   <li><b>📉 放空</b>（困難模式）：台指期可以做空，大盤跌你賺、大盤漲你賠，被軋也會被強制平倉。</li>
   <li><b>🗳 選舉新聞</b>（自由模式）：美國總統／期中選舉、台灣總統／縣市長選舉會定期登場，新聞有民調與題材傳聞（可能是假的），開票會影響大盤與房市。兩黨勝負完全隨機、不偏袒任何一方；台灣的「香蕉黨／鳳梨黨」為虛構政黨。</li>
+  <li><b>📦 金融海嘯失業潮</b>：遇到信用危機（歷史模式的 2008 金融海嘯、自由模式的債務危機／房地產泡沫破裂），除了公務員與教師，其他職業有機率失業，職級越低風險越高。</li>
   <li><b>🏖 提前退休</b>：淨資產超過 1 億時會問你要不要提前退休，可勾選「永不再問」，沒勾的話每 5 年問一次。</li>
   <li><b>🎲 挑戰碼</b>（自由模式）：每局有一組代碼，朋友輸入同一組，會遇到一模一樣的股市走勢，比誰退休時最有錢。</li>
   <li>價格顏色為台股慣例：<span class="up">紅漲</span>、<span class="dn">綠跌</span>。成就會永久收藏在「存檔/讀檔」。</li>
@@ -2707,6 +2753,7 @@ function init(){
   $('#btnRestart').onclick=()=>askConfirm('重新開始？','會回到模式選擇畫面，目前未存檔的進度會消失。',showStart,'重新開始','取消');
   $('#btnSound').onclick=()=>{ META.mute=!META.mute; saveMeta(); syncSound(); if(!META.mute) SFX.play('good'); };
   $('#btnTut').onclick=()=>startTutorial();
+  $('#btnInstall').onclick=showInstallHelp;
   $('#btnClearRec').onclick=()=>askConfirm('清除歷代人生紀錄？','只會清除歷代人生列表與統計，成就與結局圖鑑不受影響。',()=>{ META.runs=[]; META.best=null; saveMeta(); render(); toast('🗑 已清除紀錄'); },'清除','取消');
   document.addEventListener('click',e=>{ if(e.target.closest('button')) SFX.play('click'); },true);
   syncSound();
