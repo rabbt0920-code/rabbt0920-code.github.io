@@ -240,12 +240,39 @@ details ul{margin:8px 0 0;padding-left:18px;line-height:1.7}
 .sharecard .sc-code{margin-top:10px;padding:8px;border:1px dashed #f4c15a99;border-radius:10px;font-size:14px}
 .sharecard .sc-code b{color:var(--gold);letter-spacing:2px;font-size:17px}
 .sharecard .sc-code small{display:block;color:#9fb0d0;font-size:11px;margin-top:2px}
+
+/* ===== v10：過場、教學、歷代紀錄 ===== */
+@keyframes pop{from{transform:scale(.94) translateY(8px);opacity:0}}
+.card.dlg{animation:pop .22s ease-out}
+#yearFlash{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;pointer-events:none;z-index:45;opacity:0;color:#fff;text-shadow:0 2px 18px #000}
+#yearFlash b{font-size:34px}#yearFlash span{font-size:18px;opacity:.85}
+#yearFlash.go{animation:yflash .95s ease-out}
+@keyframes yflash{0%{opacity:0;transform:scale(.9);background:#0000}25%{opacity:1;transform:scale(1);background:#0007}100%{opacity:0;transform:scale(1.06);background:#0000}}
+.pulseUp{animation:pUp 1s ease-out}.pulseDn{animation:pDn 1s ease-out}
+@keyframes pUp{0%{text-shadow:0 0 0 #ff5d5d}30%{text-shadow:0 0 14px #ff5d5d;transform:scale(1.07)}}
+@keyframes pDn{0%{text-shadow:0 0 0 #2fcf8a}30%{text-shadow:0 0 14px #2fcf8a;transform:scale(1.07)}}
+#phone.shake{animation:shk .5s}
+@keyframes shk{10%,50%,90%{transform:translateX(-5px)}30%,70%{transform:translateX(5px)}}
+.confetti{position:absolute;top:-12px;width:8px;height:14px;pointer-events:none;animation:cfall 3s linear forwards;z-index:30}
+@keyframes cfall{to{transform:translateY(900px) rotate(720deg);opacity:.8}}
+#tutShade{position:absolute;inset:0;z-index:48}
+#tutSpot{position:absolute;z-index:49;border:2px solid var(--gold);border-radius:12px;box-shadow:0 0 0 9999px #000a;pointer-events:none;transition:all .25s}
+#tutCard{position:absolute;z-index:50;background:#182231;border:1px solid var(--gold);border-radius:16px;padding:14px;box-shadow:0 10px 40px #000c}
+#tutCard h4{margin:2px 0 6px;font-size:16px}#tutCard p{margin:0 0 10px;font-size:14px;line-height:1.55}
+.tut-n{font-size:11px;color:var(--mut)}
+#tutCard .btns{display:flex;gap:6px;flex-wrap:nowrap}#tutCard .btns button{flex:1;padding:8px 4px;font-size:13px;white-space:nowrap}#tutCard .btns .primary{flex:1.4}
+.recgrid{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.reclist{display:flex;flex-direction:column;gap:6px}
+.recrow{display:flex;justify-content:space-between;gap:8px;background:#121924;border:1px solid #2f3c52;border-radius:12px;padding:8px 10px;font-size:13px}
+.recrow.best{border-color:var(--gold)}
+.recrow small{display:block;color:#7d8aa0;font-size:11px;margin-top:2px}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
 </style>
 </head>
 <body>
 <div id="phone">
   <header id="status">
-    <div class="srow1"><b id="sAge">22 歲</b><span id="sDate"></span><span id="sJob" class="chip"></span><span id="sTitle" class="chip gold hidden"></span><button id="btnSaveTop" class="iconbtn" title="存檔／讀檔">💾<small>存檔</small></button></div>
+    <div class="srow1"><b id="sAge">22 歲</b><span id="sDate"></span><span id="sJob" class="chip"></span><span id="sTitle" class="chip gold hidden"></span><button id="btnSound" class="iconbtn" title="音效">🔊</button><button id="btnSaveTop" class="iconbtn" title="存檔／讀檔">💾<small>存檔</small></button></div>
     <div class="sgrid">
       <div><label>淨資產</label><b id="sNet"></b></div>
       <div><label>現金</label><b id="sCash"></b></div>
@@ -342,11 +369,17 @@ details ul{margin:8px 0 0;padding-left:18px;line-height:1.7}
           <button id="btnExport">⬇ 匯出存檔代碼</button>
           <button id="btnImport">⬆ 匯入存檔代碼</button>
           <button id="btnHelp">❓ 遊戲說明</button>
+          <button id="btnTut">📖 新手教學</button>
           <button id="btnRestart">🔄 重新開始</button>
         </div>
         <p class="mut" style="margin:10px 0 0;font-size:12px">每年會自動存檔在這個瀏覽器。換裝置或清除瀏覽器資料前，請先匯出存檔代碼。</p>
       </div>
       </div><div class="colB">
+      <div class="card">
+        <h2>📜 歷代人生 <small id="recCount"></small></h2>
+        <div id="recBox"></div>
+        <button id="btnClearRec" style="margin-top:10px;font-size:12px;opacity:.7">🗑 清除歷代紀錄</button>
+      </div>
       <div class="card">
         <h2>🏆 成就與稱號 <small id="achCount"></small></h2>
         <p class="mut" style="margin:0 0 8px;font-size:12px">成就會永久收藏，跨局保留。點已解鎖的成就可設為稱號，顯示在狀態列。</p>
@@ -369,6 +402,8 @@ details ul{margin:8px 0 0;padding-left:18px;line-height:1.7}
   </nav>
 
   <div id="toast"></div>
+  <div id="yearFlash"></div>
+  <div id="tutShade" class="hidden"></div><div id="tutSpot" class="hidden"></div><div id="tutCard" class="hidden"></div>
   <div id="sheet" class="overlay sheet hidden"><div class="sheet-card" id="sheetCard"></div></div>
   <div id="modal" class="overlay hidden"><div class="card dlg"><h3 id="mTitle"></h3><p id="mText" style="margin:0;white-space:pre-line"></p><div class="btns" id="mBtns"></div></div></div>
   <div id="dlg" class="overlay hidden" style="z-index:32"><div class="card dlg"><h3 id="dTitle"></h3><div id="dBody"></div><div class="btns" id="dBtns"></div></div></div>
@@ -416,7 +451,7 @@ const EVENTS = [
     run(){ const x=C(30000); G.cash-=x; dH(-12); dM(-3); return [`🏥 生病住院 ${fmt(-x)}，健康 -12`,'bad']; } },
   { id:'accident', group:'全年齡', ages:[22,64], w:()=>3,
     run(){ const x=C(40000); G.cash-=x; dH(-10); dM(-4); return [`🚑 發生小車禍，醫藥與修車共 ${fmt(-x)}，健康 -10`,'bad']; } },
-  { id:'layoff', group:'全年齡', ages:[23,62], w:()=>3+(G.market.swan&&G.market.swan.recession?7:0),
+  { id:'layoff', group:'全年齡', ages:[23,62], w:()=>careerOf().safe?0:3+(G.market.swan&&G.market.swan.recession?7:0),
     run(){ const loss=salary()*.35; G.cash-=loss; dM(-10); if(G.level>0&&chance(.25)) G.level--;
       return [`📦 公司裁員，你被資遣！空窗期損失約 ${fmt(-loss)}，心情 -10（可能降級）`,'bad']; } },
   { id:'scam', group:'全年齡', ages:[22,64], w:()=>3,
@@ -488,7 +523,7 @@ const EVENTS = [
   { id:'baby', group:'30-40 歲', ages:[26,42], w:()=>(G.married&&!G.hadKid)?6:0, title:'👶 小生命',
     text:()=>`你們有了寶寶的計畫。養孩子之後約 22 年，每年多花 ${fmt(C(100000))}。`,
     choices:()=>[
-      { label:'A. 迎接新生命', run(){ const x=C(50000); G.cash-=x; G.hadKid=true; G.kidYears=22; dM(10); return [`🍼 小寶貝誕生！待產與用品 ${fmt(-x)}，心情 +10，往後 22 年生活費增加`,'good']; } },
+      { label:'A. 迎接新生命', run(){ const x=C(50000); G.cash-=x; G.hadKid=true; G.kids=1; G.kidYears=22; dM(10); return [`🍼 小寶貝誕生！待產與用品 ${fmt(-x)}，心情 +10，往後 22 年生活費增加`,'good']; } },
       { label:'B. 暫時不要', run(){ dM(-1); return ['🌿 決定暫時不生。','info']; } } ] },
   { id:'house', group:'30-40 歲', ages:[27,64], w:()=>(!hasSelf()&&G.props.length<MAX_PROPS&&liquid()>=HOUSE_BASE*G.houseIdx*.2*1.05)?5:0, title:'🏠 看到心儀的房子',
     text:()=>{ fx().houseL=makeListing('family'); const L=fx().houseL, t=buyTerms(L.price);
@@ -532,6 +567,102 @@ const EVENTS = [
       { label:'B. 賭一把，開自己的店', run(){
           const x=C(500000); G.cash-=x; fx().venture={left:3,inv:x,kind:'shop'}; dM(6);
           return [`🍽 你投入 ${fmt(-x)} 開了自己的小店，三年後見分曉（成功率會受職級、健康與心情影響）`,'info']; } } ] },
+
+
+  /* ================= 各職業專屬事件 ================= */
+  // 工程師
+  { id:'eng_ot', group:'工程師', ages:[22,60], w:()=>G.career==='engineer'?5:0,
+    run(){ const x=salary()*.08; G.cash+=x; dH(-8); dM(-3); return [`💻 專案死線連續爆肝加班，領到加班費與獎金 ${fmt(x,1)}，但健康 -8、心情 -3。`,'info']; } },
+  { id:'eng_rsu', group:'工程師', ages:[27,60], w:()=>(G.career==='engineer'&&G.level>=2)?3:0, title:'📈 員工分紅配股',
+    text:()=>`公司發放分紅：可以領現金 ${fmt(salary()*.5)}，或選擇領股票、賭公司明年的股價（可能翻倍，也可能腰斬）。`,
+    choices:()=>[
+      { label:'A. 領現金', run(){ const x=salary()*.5; G.cash+=x; dM(4); return [`💰 領了現金分紅 ${fmt(x,1)}，心情 +4`,'good']; } },
+      { label:'B. 領股票賭一把', run(){ const b=salary()*.5, r=Math.random();
+          if(r<.35){ const x=b*2.2; G.cash+=x; dM(10); return [`🚀 公司股價飆漲！分紅股票變現 ${fmt(x,1)}，心情 +10`,'good']; }
+          if(r<.75){ const x=b*1.0; G.cash+=x; dM(2); return [`😐 股價持平，分紅股票變現 ${fmt(x,1)}`,'info']; }
+          const x=b*.3; G.cash+=x; dM(-6); return [`📉 股價腰斬，分紅股票只剩 ${fmt(x,1)}，心情 -6`,'bad']; } } ] },
+  { id:'eng_cut', group:'工程師', ages:[26,58], w:()=>G.career==='engineer'?(2+(G.market.swan&&G.market.swan.recession?5:0)):0,
+    run(){ const x=salary()*.2; G.cash-=x; dM(-6); if(G.level>0&&chance(.15)) G.level--; return [`📦 科技業景氣反轉、部門縮編，你被降薪減班，損失約 ${fmt(-x)}，心情 -6。`,'bad']; } },
+  // 教師
+  { id:'teach_tutor', group:'教師', ages:[23,60], w:()=>G.career==='teacher'?4:0, title:'📚 兼課與家教',
+    text:()=>`認識的家長找你加開家教班，一年約可多賺 ${fmt(C(90000))}，但週末與晚上都要貢獻出來。`,
+    choices:()=>[
+      { label:'A. 接下家教班', run(){ const x=C(90000); G.cash+=x; dH(-3); dM(-2); return [`📝 假日也在備課，多賺 ${fmt(x,1)}，健康 -3、心情 -2`,'good']; } },
+      { label:'B. 好好享受寒暑假', run(){ dM(5); dH(2); return ['🏖 好好放鬆充電，心情 +5、健康 +2。','info']; } } ] },
+  { id:'teach_burn', group:'教師', ages:[22,60], w:()=>G.career==='teacher'?3:0,
+    run(){ dM(-8); dH(-3); return ['😵 班上出現棘手的親師衝突，輔導與會議纏身，心情 -8、健康 -3。','bad']; } },
+  { id:'teach_award', group:'教師', ages:[25,62], w:()=>(G.career==='teacher'&&G.level>=1)?2:0,
+    run(){ const x=C(50000); G.cash+=x; dM(10); return [`🏅 教學成果獲得表揚，獎金 ${fmt(x,1)}，學生寫來感謝卡，心情 +10。`,'good']; } },
+  // 業務
+  { id:'sales_deal', group:'業務', ages:[22,62], w:()=>G.career==='sales'?(3+G.level):0,
+    run(){ const x=salary()*rand(.3,.8); G.cash+=x; dM(8); return [`🤝 簽下年度大單！抽成與獎金 ${fmt(x,1)}，心情 +8。`,'good']; } },
+  { id:'sales_drink', group:'業務', ages:[22,60], w:()=>G.career==='sales'?4:0, title:'🍻 客戶應酬',
+    text:()=>`重要客戶邀你吃飯續攤，成交機會就在酒桌上，但你的肝在抗議。`,
+    choices:()=>[
+      { label:'A. 陪到最後一杯', run(){ const x=salary()*.15; G.cash+=x; dH(-8); dM(-2); return [`🥃 拿下訂單、獎金 ${fmt(x,1)}，但健康 -8、心情 -2。`,'info']; } },
+      { label:'B. 禮貌婉拒', run(){ dM(-1); return ['🙏 婉拒續攤，保住了健康，訂單被同事搶走。心情 -1。','info']; } } ] },
+  { id:'sales_bad', group:'業務', ages:[24,62], w:()=>G.career==='sales'?3:0,
+    run(){ const x=salary()*.2; G.cash-=x; dM(-6); return [`🧾 大客戶倒帳，抽成被追回 ${fmt(-x)}，心情 -6。`,'bad']; } },
+  // 公務員
+  { id:'civil_exam', group:'公務員', ages:[24,58], w:()=>(G.career==='civil'&&G.level<JOBS.length-1)?4:0, title:'📖 升等考試',
+    text:()=>`機關開放升官等訓練與考試，準備需要犧牲不少假日（報名與補習約 ${fmt(C(30000))}），考上就能升遷。`,
+    choices:()=>[
+      { label:'A. 認真準備', run(){ const x=C(30000); G.cash-=x; dH(-2); dM(-3);
+          if(chance(.5)&&G.level<JOBS.length-1){ G.level++; dM(10); return [`🎉 考上了！升為「${JOBS[G.level].t}」（花費 ${fmt(-x)}）`,'good']; }
+          return [`📕 這次沒考上，補習費 ${fmt(-x)} 付諸流水，心情 -3、健康 -2。`,'bad']; } },
+      { label:'B. 維持現狀', run(){ dM(1); return ['☕ 準時下班泡茶，心情 +1。','info']; } } ] },
+  { id:'civil_bonus', group:'公務員', ages:[22,64], w:()=>G.career==='civil'?4:0,
+    run(){ const x=salary()*.1; G.cash+=x; dM(4); return [`🏛 考績甲等，領到年終慰問與考績獎金 ${fmt(x,1)}，心情 +4。`,'good']; } },
+  { id:'civil_boring', group:'公務員', ages:[26,64], w:()=>G.career==='civil'?3:0,
+    run(){ dM(-4); return ['📑 每天都在蓋章、跑流程，人生的新鮮感也一起被蓋掉了。心情 -4。','info']; } },
+  // 護理師
+  { id:'nurse_night', group:'護理師', ages:[22,60], w:()=>G.career==='nurse'?5:0,
+    run(){ const x=C(30000); G.cash+=x; dH(-5); dM(-3); return [`🌙 連續大夜班，領夜班津貼 ${fmt(x,1)}，但健康 -5、心情 -3。`,'info']; } },
+  { id:'nurse_epid', group:'護理師', ages:[22,62], w:()=>G.career==='nurse'?2:0,
+    run(){ const x=C(80000); G.cash+=x; dH(-8); dM(-5); return [`😷 院內群聚感染，第一線輪值，領到防疫津貼 ${fmt(x,1)}，健康 -8、心情 -5。`,'info']; } },
+  { id:'nurse_poach', group:'護理師', ages:[25,58], w:()=>G.career==='nurse'?3:0, title:'💉 被挖角',
+    text:()=>`醫美診所開出更高的薪水挖角，工時比較正常，但要面對業績壓力。`,
+    choices:()=>[
+      { label:'A. 轉職過去', run(){ G.hopBonus=Math.min(.6,G.hopBonus+.12); dM(-2); dH(2); return ['💼 轉職成功，薪資行情 +12%、健康 +2，但要適應業績壓力，心情 -2。','good']; } },
+      { label:'B. 留在原醫院', run(){ dM(2); return ['🏥 你捨不得一起打拚的同事，心情 +2。','info']; } } ] },
+
+  /* ================= 家庭與人生事件 ================= */
+  { id:'housing_help', group:'家庭', ages:[26,40], w:()=>(!G.props.length&&!fx().helped)?2.5:0, title:'👪 爸媽想幫你付頭期款',
+    text:()=>`爸媽看你還在租屋，願意贊助 ${fmt(C(500000))} 當頭期款，但可能要多聽幾年「什麼時候結婚」的碎念。`,
+    choices:()=>[
+      { label:'A. 感謝收下', run(){ const x=C(500000); G.cash+=x; fx().helped=true; dM(-2); return [`🏠 爸媽贊助 ${fmt(x,1)}，被碎念一頓，心情 -2。`,'good']; } },
+      { label:'B. 婉拒，自己來', run(){ fx().helped=true; dM(3); return ['💪 你婉拒了，堅持靠自己，心情 +3。','info']; } } ] },
+  { id:'second_baby', group:'家庭', ages:[28,44], w:()=>(G.married&&G.hadKid&&(G.kids||1)<2&&G.kidYears>=12)?3:0, title:'👶 要不要生老二？',
+    text:()=>`老大需要玩伴，你們討論要不要再生一個。多一個孩子，育兒開銷會大幅增加。`,
+    choices:()=>[
+      { label:'A. 迎接二寶', run(){ const x=C(60000); G.cash-=x; G.kids=2; G.kidYears=22; dM(8); return [`🍼 家裡多了一個小天使！花費 ${fmt(-x)}，心情 +8，育兒開銷增加（再 22 年）。`,'good']; } },
+      { label:'B. 一個就夠了', run(){ return ['🌿 你們決定給老大全部的愛。','info']; } } ] },
+  { id:'kid_sick', group:'家庭', ages:[26,60], w:()=>G.kidYears>0?3:0,
+    run(){ const x=C(20000); G.cash-=x; dM(-3); return [`🤒 孩子半夜高燒送急診，醫藥與請假損失 ${fmt(-x)}，心情 -3。`,'bad']; } },
+  { id:'family_trip', group:'家庭', ages:[26,60], w:()=>(G.married&&G.hadKid&&G.kidYears>0)?3:0,
+    run(){ const x=C(60000); G.cash-=x; dM(10); dH(2); return [`🏕 全家人一起出遊 ${fmt(-x)}，留下滿滿的回憶，心情 +10、健康 +2。`,'good']; } },
+  { id:'spouse_biz', group:'家庭', ages:[28,55], w:()=>(G.married&&!fx().spouseBiz)?2.5:0, title:'🧑‍🍳 配偶想創業',
+    text:()=>`另一半想辭職開小店，需要 ${fmt(C(300000))} 的資金。成功的話家庭多一份收入，失敗的話……要先想好備案。`,
+    choices:()=>[
+      { label:'A. 全力支持', run(){ const x=C(300000); G.cash-=x; fx().spouseBiz=true;
+          if(chance(.4)){ const g=x*3; G.cash+=g; dM(10); return [`🎉 小店生意興隆！三年後回收 ${fmt(g,1)}（投入 ${fmt(-x)}），心情 +10。`,'good']; }
+          dM(-6); return [`📉 小店撐不到兩年就收了，投入的 ${fmt(-x)} 付諸流水，心情 -6。`,'bad']; } },
+      { label:'B. 勸他穩定上班', run(){ fx().spouseBiz=true; dM(-2); return ['🙁 對方有點失望，家裡氣氛安靜了幾天，心情 -2。','info']; } } ] },
+  { id:'pet', group:'家庭', ages:[24,58], w:()=>!fx().pet&&!fx().petDone?3:0, title:'🐶 領養毛小孩',
+    text:()=>`朋友的狗狗生了一窩小狗，一直問你要不要領養一隻。養寵物每年約 ${fmt(C(30000))}，但牠會陪你很多年。`,
+    choices:()=>[
+      { label:'A. 領養！', run(){ fx().pet={left:12}; dM(8); return ['🐕 家裡多了一位毛小孩，每年多花一點飼料與醫藥費，但天天都有人迎接你下班。心情 +8。','good']; } },
+      { label:'B. 先不要', run(){ fx().petDone=true; return ['🪴 你覺得自己還養不起另一條生命。','info']; } } ] },
+  { id:'parent_care', group:'家庭', ages:[40,58], w:()=>(!fx().parent&&!fx().parentDone)?4:0, title:'👵 父母需要長期照顧',
+    text:()=>`父母年紀大了，身體需要長期照顧。請外籍看護每年約 ${fmt(C(360000))}、安養機構約 ${fmt(C(500000))}，自己照顧則不用花錢，但會嚴重影響你的健康與心情。`,
+    choices:()=>[
+      { label:'A. 自己請假照顧', run(){ fx().parent={left:5,cost:0}; dH(-5); dM(-6); return ['🫂 你扛下照顧責任，沒有額外開銷，但身心俱疲：健康 -5、心情 -6。往後數年持續。','info']; } },
+      { label:'B. 請外籍看護', run(){ fx().parent={left:8,cost:C(360000)}; dM(-2); return [`🏡 請了看護，往後每年多支出約 ${fmt(C(360000))}。心情 -2。`,'info']; } },
+      { label:'C. 住進安養機構', run(){ fx().parent={left:10,cost:C(500000)}; dM(-3); return [`🏥 住進安養機構，往後每年多支出約 ${fmt(C(500000))}。心情 -3。`,'info']; } } ] },
+  { id:'inherit', group:'家庭', ages:[50,64], w:()=>(!fx().parent&&!fx().parentDone)?1.5:0,
+    run(){ const x=C(rand(300000,1200000)); G.cash+=x; fx().parentDone=true; G.stats.inherit=true; dM(-6); return [`🕊 長輩離世，留下一筆遺產 ${fmt(x,1)}。錢帶不來安慰，心情 -6。`,'info']; } },
+  { id:'kid_marry', group:'家庭', ages:[52,64], w:()=>(G.hadKid&&!fx().kidMarried)?2.5:0,
+    run(){ const x=C(150000); G.cash-=x; fx().kidMarried=true; dM(10); return [`💐 孩子結婚了！你包了大紅包、辦了喜宴，共 ${fmt(-x)}，心情 +10。`,'good']; } },
 
   /* ================= 40-50 歲（中年） ================= */
   { id:'midlife', group:'40-50 歲', ages:[40,50], w:()=>4, title:'🪞 中年危機',
@@ -865,6 +996,26 @@ const CAREERS = {
       { t:'三廚', sal:520000,  promo:.19 }, { t:'二廚', sal:650000,  promo:.14 },
       { t:'主廚', sal:900000,  promo:.09 }, { t:'店長', sal:1200000, promo:0 } ] },
 };
+CAREERS.engineer = { id:'engineer', code:'E', icon:'💻', name:'工程師', liv:1, hp:-.25, mood:0,
+    desc:'科技業工程師：起薪高、成長快，加班與縮編是日常（健康每年小幅下降），有機會領到員工分紅配股。景氣不好時要小心裁員潮。',
+    jobs:[ { t:'助理工程師', sal:440000, promo:.22 }, { t:'工程師', sal:570000, promo:.18 }, { t:'資深工程師', sal:760000, promo:.14 },
+           { t:'技術主管', sal:1010000, promo:.10 }, { t:'研發經理', sal:1380000, promo:.07 }, { t:'技術總監', sal:1930000, promo:0 } ] };
+CAREERS.teacher = { id:'teacher', code:'T', icon:'📚', name:'教師', liv:.98, hp:0, mood:.8,
+    desc:'穩定的教職：薪水不高、升遷慢，但有寒暑假與成就感（每年心情小幅回升）。可以接家教增加收入，也要面對親師壓力。',
+    jobs:[ { t:'代理教師', sal:430000, promo:.30 }, { t:'正式教師', sal:540000, promo:.15 }, { t:'資深教師', sal:650000, promo:.10 },
+           { t:'組長', sal:760000, promo:.08 }, { t:'主任', sal:900000, promo:.05 }, { t:'校長', sal:1060000, promo:0 } ] };
+CAREERS.sales = { id:'sales', code:'S', icon:'🤝', name:'業務', liv:1, hp:-.2, mood:0,
+    desc:'靠業績吃飯：升遷快、獎金多，應酬喝酒傷身，也可能遇到客戶倒帳。簽到大單時收入驚人。',
+    jobs:[ { t:'業務助理', sal:400000, promo:.26 }, { t:'業務專員', sal:500000, promo:.22 }, { t:'資深業務', sal:640000, promo:.17 },
+           { t:'業務主任', sal:860000, promo:.12 }, { t:'業務經理', sal:1150000, promo:.09 }, { t:'業務副總', sal:1700000, promo:0 } ] };
+CAREERS.civil = { id:'civil', code:'P', icon:'🏛', name:'公務員', liv:.97, hp:0, mood:.3, safe:true,
+    desc:'鐵飯碗：不會被裁員、薪水穩定、每年有考績獎金，但升遷慢、日子一成不變。可以靠升等考試往上爬。',
+    jobs:[ { t:'約僱人員', sal:450000, promo:.25 }, { t:'科員', sal:540000, promo:.12 }, { t:'股長', sal:640000, promo:.10 },
+           { t:'科長', sal:770000, promo:.07 }, { t:'專門委員', sal:900000, promo:.05 }, { t:'處長', sal:1060000, promo:0 } ] };
+CAREERS.nurse = { id:'nurse', code:'N', icon:'🩺', name:'護理師', liv:1, hp:-.3, mood:0,
+    desc:'醫院第一線：起薪不錯、需求穩定，但大夜班與感染風險讓健康每年下降得比較快。有夜班津貼，也可能被挖角。',
+    jobs:[ { t:'護理師', sal:520000, promo:.18 }, { t:'資深護理師', sal:600000, promo:.14 }, { t:'小組長', sal:700000, promo:.11 },
+           { t:'護理長', sal:850000, promo:.08 }, { t:'督導', sal:1000000, promo:.05 }, { t:'護理主任', sal:1150000, promo:0 } ] };
 let JOBS = CAREERS.office.jobs;                        // 目前職業的職級表（隨 G.career 切換）
 const setCareer = id => { JOBS = (CAREERS[id]||CAREERS.office).jobs; };
 const careerOf = () => CAREERS[G&&G.career] || CAREERS.office;
@@ -921,7 +1072,7 @@ const esc = s => String(s).replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':
  *  永久收藏（跨局保留的成就／結局／稱號）
  * ===================================================================== */
 const META_KEY='stockLifeSim.meta';
-let META={ach:{},endings:{},title:null,plays:0,best:null};
+let META={ach:{},endings:{},title:null,plays:0,best:null,runs:[],mute:false,tutDone:false};
 function loadMeta(){ try{ const t=localStorage.getItem(META_KEY); if(t) META=Object.assign(META,JSON.parse(t)); }catch(e){} }
 function saveMeta(){ try{ localStorage.setItem(META_KEY,JSON.stringify(META)); }catch(e){} }
 
@@ -944,7 +1095,7 @@ function newGame(opts={}){
     cash:START_CASH, health:85, mood:75,
     career: CAREERS[opts.career] ? opts.career : pick(Object.keys(CAREERS)),
     level:0, hopBonus:0, hopUsed:false, justHopped:false, stance:'balance',
-    married:false, hadKid:false, kidYears:0, props:[], listings:[], owned:{}, shopYear:{},
+    married:false, hadKid:false, kids:0, kidYears:0, props:[], listings:[], owned:{}, shopYear:{},
     margin:0, idx:idx0, fut:null,
     holdings:{}, dca:{}, prices:{}, chg:{}, since:{},
     hist:{ ages:[START_AGE], net:[START_CASH], idx:[idx0], house:[100] },
@@ -952,7 +1103,7 @@ function newGame(opts={}){
     market:null, lastMarket:null, lastSwanYear:-9, forcedNext:null, lastIdxChg:null,
     rhino:null, rhinoPeak:0,
     stats:{ marginCalls:0, swans:0, memeProfit:0, startupWin:false, houseBought:false, crisisHunter:false,
-            realizedLoss:0, levDoubles:0, levLiquidations:0, rhinoEscape:false, rhinos:0, histCrises:0, shopSpent:0, propDeals:0, propProfit:0, midN:0, midRight:0, shortWin:false },
+            realizedLoss:0, levDoubles:0, levLiquidations:0, rhinoEscape:false, rhinos:0, histCrises:0, shopSpent:0, propDeals:0, propProfit:0, midN:0, midRight:0, shortWin:false, filial:false, inherit:false, pet:false },
     ach:{}, fx:{}, over:false, busy:false,
   };
   G.eraScale = mode==='history';
@@ -1007,7 +1158,7 @@ function showCareerReveal(){
     <p style="margin:0 0 8px">${cr.desc}</p>
     <p style="margin:0 0 8px" class="mut">職級：${JOBS.map(x=>x.t).join(' → ')}</p>
     ${challengeCode()?`<p style="margin:0;text-align:center">🎲 挑戰碼 <b style="color:var(--gold);letter-spacing:1px">${challengeCode()}</b><br><small class="mut">朋友輸入同一組代碼，會遇到一模一樣的股市走勢</small></p>`:''}`,
-    buttons:[{label:'出發！',primary:true}] });
+    buttons:[{label:'出發！',primary:true,fn:maybeTutorial}] });
 }
 
 /* ---------- 年份 ---------- */
@@ -1067,6 +1218,7 @@ function showYearSummary(S, after){
     ${S.mid?`<p style="margin:10px 0 0">⚡ 年中事件：${esc(S.mid.replace(/^[^\s]+\s/,''))}</p>`:''}
     ${S.event?`<p style="margin:10px 0 0">🎲 年度事件：${esc(S.event.replace(/^[^\s]+\s/,''))}</p>`:''}
     <p class="mut" style="margin:8px 0 0">健康 ${Math.round(S.h0)} → ${Math.round(S.h1)}｜心情 ${Math.round(S.m0)} → ${Math.round(S.m1)}</p>`;
+  SFX.play(S.d>=0?'good':'bad');
   showDialog({title:`📒 ${S.yr?S.yr+' 年｜':''}${S.age} 歲年度結算`,body,buttons:[{label:`進入 ${G.age} 歲`,primary:true,fn:after}]});
 }
 
@@ -1375,7 +1527,7 @@ function doBuy(id, qty, useMargin){
   }
   G.cash-=c.self;
   const h=G.holdings[id]; if(h.qty===0) G.since[id]=G.year;
-  h.qty+=qty; h.cost+=c.gross+c.fee;
+  h.qty+=qty; h.cost+=c.gross+c.fee; SFX.play('buy');
   return {ok:true,msg:`買進 ${AM[id].name} ${qty.toLocaleString()} 股，花費 ${fmt(c.self)}${useMargin?`（融資 ${fmt(c.loan)}）`:''}，手續費 ${fmt(c.fee)}`};
 }
 function doSell(id, qty){
@@ -1388,7 +1540,7 @@ function doSell(id, qty){
   h.qty-=qty; h.cost-=costPart; if(h.qty===0) h.cost=0;
   G.since[id] = h.qty>0 ? G.year : null;              // 只要賣過就重新計算持有年數
   G.margin-=repay; if(G.margin<1) G.margin=0;
-  G.cash+=proceeds-repay;
+  G.cash+=proceeds-repay; SFX.play(profit>=0?'sell':'sellLoss');
   if(id==='MEME') G.stats.memeProfit+=profit;
   if(profit<0) G.stats.realizedLoss+=-profit;
   return {ok:true,msg:`賣出 ${a.name} ${qty.toLocaleString()} 股，實拿 ${fmt(proceeds-repay)}（損益 ${fmt(profit,1)}${repay>0?`，償還融資 ${fmt(repay)}`:''}）`};
@@ -1556,7 +1708,7 @@ function calcFinance(){
   const spouse=G.married ? 220000*W()*.92 : 0;
   let living=LIVING*LV()*(1+.15*G.level)*s.cost*careerOf().liv;
   if(G.married) living+=120000*LV();
-  if(G.kidYears>0) living+=100000*LV();
+  if(G.kidYears>0) living+=100000*LV()*((G.kids||1)>1?1.7:1);
   if(G.health<40) living+=30000*LV();
   if(hasSelf()) living-=RENT*LV();
   let housePay=0, houseCost=0, rent=0;
@@ -1607,10 +1759,20 @@ function tickFx(){
         : `📉 創業失敗（成功率 ${(p*100).toFixed(0)}%），累計投入的 ${fmt(-v.inv)} 全數泡湯，心情 -15`,'bad'); }
     } else log(`${v.kind==='shop'?'🍽 餐廳經營中':'🚀 創業進行中'}…（剩 ${v.left} 年，已投入 ${fmt(v.inv)}）`,'info');
   }
+  if(f.parent){
+    const pa=f.parent; if(pa.cost>0){ G.cash-=pa.cost; log(`🏡 照顧父母的年度開銷 ${fmt(-pa.cost)}。`,'info'); } else { dH(-1.5); dM(-1.5); }
+    pa.left--;
+    if(pa.left<=0){ f.parent=null; f.parentDone=true; G.stats.filial=true; const x=C(rand(300000,1200000)); G.cash+=x; G.stats.inherit=true; dM(-8);
+      log(`🕊 父母安詳離世，你陪伴了他們最後一程。留下的遺產 ${fmt(x,1)}，心情 -8。`,'info'); }
+  }
+  if(f.pet){
+    const x=C(30000); G.cash-=x; dM(2); dH(1); f.pet.left--;
+    if(f.pet.left<=0){ f.pet=null; f.petDone=true; G.stats.pet=true; dM(-6); log('🌈 陪伴多年的毛小孩離開了，你抱著牠的項圈哭了很久。心情 -6。','info'); }
+  }
   if(f.study>0){ f.study--; if(f.study===0){ G.hopBonus=Math.min(.6,G.hopBonus+.06); log('🎓 在職進修畢業，薪資行情 +6%！','good'); } }
 }
 function showChoice(ev, done){
-  G.busy=true; render();
+  G.busy=true; render(); SFX.play(ev.id==='mid'?'alarm':'choice'); if(ev.id==='mid') shake();
   $('#mTitle').textContent=ev.title+(ev.group?`　［${ev.group}］`:''); $('#mText').textContent=ev.text();
   const box=$('#mBtns'); box.innerHTML='';
   ev.choices().forEach((c,i) => {
@@ -1627,6 +1789,7 @@ function showChoice(ev, done){
 function endYear(){
   if(G.over||G.busy) return;
   G.busy=true; closeSheet();
+  SFX.play('year'); if(G.market.swan){ SFX.play('crash'); shake(); }
   // 灰犀牛：記錄泡沫期最高曝險，爆發年檢查是否已在高點套現
   const sh=riskShare();
   if(G.market.warn) G.rhinoPeak=Math.max(G.rhinoPeak||0, sh);
@@ -1647,7 +1810,7 @@ function endYear(){
 function finishYear(){
   const s=STANCES[G.stance];
   dH(s.health + careerOf().hp - Math.max(0,G.age-35)*.08);
-  dM(s.mood + (60-G.mood)*.1);
+  dM(s.mood + (careerOf().mood||0) + (60-G.mood)*.1);
   if(G.mood<20){ dH(-3); log('😞 長期低落的心情拖垮了身體，健康 -3。','bad'); }
   const J=JOBS[G.level];
   if(J.promo>0){
@@ -1684,6 +1847,7 @@ function finishYear(){
   render();
   saveTo('auto');
   startYearLedger();
+  flashYear(); if(sum) pulseNet(sum.d);
   if(sum && AUTO_SUMMARY) showYearSummary(sum, maybeAskEarlyRetire); else maybeAskEarlyRetire();
 }
 
@@ -1718,7 +1882,11 @@ const ACHS = [
   { id:'midmaster', n:'🧠 臨危不亂', d:'年中突發事件累計判斷正確 4 次（停損後續跌，或加碼／裝死後回升）', f:()=>G.stats.midRight>=4 },
   { id:'bear', n:'🐻 空頭獵人', d:'困難模式放空台指期，單年獲利 50% 以上', f:()=>!!G.stats.shortWin },
   { id:'early', n:'🏖 提早收工', d:'淨資產破億後，選擇提前退休', f:()=>!!G.stats.early },
-  { id:'topjob', n:'🏆 職涯登頂', d:'升到所屬職業的最高職級（總監／店長）', f:()=>G.level>=JOBS.length-1 },
+  { id:'bigfam', n:'👨‍👩‍👧‍👦 兒女成雙', d:'有兩個孩子', f:()=>(G.kids||0)>=2 },
+  { id:'filial', n:'🏮 孝親楷模', d:'陪伴父母走完最後一程', f:()=>!!G.stats.filial },
+  { id:'petlove', n:'🐶 毛孩陪伴', d:'與毛小孩相伴到終老', f:()=>!!G.stats.pet },
+  { id:'heir', n:'💰 家產傳承', d:'繼承一筆遺產', f:()=>!!G.stats.inherit },
+  { id:'topjob', n:'🏆 職涯登頂', d:'升到所屬職業的最高職級', f:()=>G.level>=JOBS.length-1 },
   { id:'healthy', n:'🧘 健康至上', d:'退休時資產一般（< 3,000 萬），但健康與心情都 ≥ 95', f:()=>G.age>=RETIRE_AGE&&netWorth()/K()<3e7&&G.health>=95&&G.mood>=95 },
   { id:'rhino',   n:'🦏 高點套現',   d:'灰犀牛爆發前，把重押的部位果斷出清', f:()=>G.stats.rhinoEscape },
   { id:'a4',  n:'🦢 黑天鵝倖存者', d:'經歷 2 次黑天鵝且仍活著', f:()=>G.stats.swans>=2 },
@@ -1792,6 +1960,7 @@ function endGame(kind){
   else E={id:'death',icon:'🕯',title:'英年早逝',text:()=>'身體先一步宣告停損。健康是所有資產的底層，它歸零的時候，其他數字都沒有意義。'};
   const newEnd=!META.endings[E.id];
   META.endings[E.id]=true;
+  recordRun({kind,early,E,real,nw});
   if(kind==='retire' && (META.best==null || real>META.best)) META.best=real;
   saveMeta();
   const got=ACHS.filter(a=>G.ach[a.id]);
@@ -1817,6 +1986,7 @@ function endGame(kind){
     <div>${got.length?got.map(a=>`<span class="chip gold" style="margin:2px">${a.n}</span>`).join(''):'<span class="mut">這局沒有解鎖成就</span>'}</div>
     <div class="btns"><button class="primary" id="btnShare">📤 分享成績卡</button><button id="btnAgain">再玩一次</button><button id="btnEndClose">看看我的人生</button></div>`;
   $('#endOverlay').classList.remove('hidden');
+  SFX.play(kind==='retire'?'win':'lose'); if(kind==='retire') confetti();
   $('#btnShare').onclick=()=>showShareCard();
   $('#btnAgain').onclick=()=>showStart();
   $('#btnEndClose').onclick=()=>{ $('#endOverlay').classList.add('hidden'); switchTab('life'); };
@@ -1868,7 +2038,7 @@ function switchTab(t){
   $('#screen').scrollTop=0;
   if(G) render();
 }
-function toast(t){ const el=$('#toast'); el.textContent=t; el.classList.add('show'); clearTimeout(toast._t); toast._t=setTimeout(()=>el.classList.remove('show'),2600); }
+function toast(t){ if(String(t).startsWith('🏆')) SFX.play('ach'); const el=$('#toast'); el.textContent=t; el.classList.add('show'); clearTimeout(toast._t); toast._t=setTimeout(()=>el.classList.remove('show'),2600); }
 function render(){
   if(!G) return;
   renderStatus();
@@ -2059,8 +2229,141 @@ function renderLife(){
   $('#lifeLog').innerHTML=recent.map(l=>`<div class="l ${l.c}">${esc(l.m)}</div>`).join('');
 }
 
+/* ---------- 音效（WebAudio 合成，免外部檔案；可靜音）---------- */
+const SFX=(()=>{
+  let ctx=null;
+  const ac=()=>{ if(!ctx){ try{ ctx=new (window.AudioContext||window.webkitAudioContext)(); }catch(e){ return null; } } if(ctx.state==='suspended'){ try{ ctx.resume(); }catch(e){} } return ctx; };
+  function tone(f,t0,d,type='sine',v=.1,f2){
+    const c=ac(); if(!c) return; const t=c.currentTime+t0, o=c.createOscillator(), g=c.createGain();
+    o.type=type; o.frequency.setValueAtTime(f,t); if(f2) o.frequency.exponentialRampToValueAtTime(f2,t+d);
+    g.gain.setValueAtTime(.0001,t); g.gain.exponentialRampToValueAtTime(v,t+.012); g.gain.exponentialRampToValueAtTime(.0001,t+d);
+    o.connect(g); g.connect(c.destination); o.start(t); o.stop(t+d+.03);
+  }
+  const arp=(fs,gap=.09,d=.18,type='triangle',v=.1)=>fs.forEach((f,i)=>tone(f,i*gap,d,type,v));
+  const P={
+    click:()=>tone(520,0,.04,'square',.025),
+    buy:()=>{ tone(880,0,.07,'square',.05); tone(1320,.07,.1,'square',.05); },
+    sell:()=>{ tone(1175,0,.07,'triangle',.08); tone(1568,.07,.14,'triangle',.08); },
+    sellLoss:()=>tone(330,0,.18,'triangle',.08,220),
+    year:()=>{ tone(392,0,.28,'sine',.07); tone(523,.12,.34,'sine',.06); },
+    good:()=>arp([523,659,784],.08,.16),
+    bad:()=>arp([392,330,262],.1,.2,'sawtooth',.05),
+    choice:()=>{ tone(660,0,.09,'sine',.08); tone(880,.1,.12,'sine',.08); },
+    alarm:()=>{ for(let i=0;i<3;i++) tone(i%2?600:880,i*.14,.12,'square',.06); },
+    crash:()=>{ tone(220,0,.7,'sawtooth',.09,45); tone(110,0,.7,'square',.05,35); },
+    ach:()=>arp([784,988,1175,1568],.07,.2,'triangle',.09),
+    win:()=>arp([523,659,784,1047,784,1047,1319],.11,.3,'triangle',.1),
+    lose:()=>arp([392,349,311,262],.2,.4,'sine',.09)
+  };
+  return { play(n){ if(META.mute||!P[n]) return; try{ P[n](); }catch(e){} } };
+})();
+const syncSound=()=>{ const b=$('#btnSound'); if(b){ b.textContent=META.mute?'🔇':'🔊'; b.title=META.mute?'音效：關':'音效：開'; } };
+
+/* ---------- 過場動畫（皆為不擋操作的裝飾）---------- */
+function flashYear(){
+  const el=$('#yearFlash'); if(!el||!G||G.over) return;
+  el.innerHTML=`<b>${G.mode==='history'?calYear()+' 年':'第 '+G.year+' 年'}</b><span>${G.age} 歲</span>`;
+  el.classList.remove('go'); void el.offsetWidth; el.classList.add('go');
+}
+function pulseNet(d){ const el=$('#sNet'); if(!el) return; el.classList.remove('pulseUp','pulseDn'); void el.offsetWidth; el.classList.add(d>=0?'pulseUp':'pulseDn'); }
+function shake(){ const el=$('#phone'); if(!el) return; el.classList.remove('shake'); void el.offsetWidth; el.classList.add('shake'); setTimeout(()=>el.classList.remove('shake'),600); }
+function confetti(){
+  const box=$('#endOverlay'); if(!box) return; box.querySelectorAll('.confetti').forEach(x=>x.remove());
+  const cols=['#f5c542','#ff5d5d','#2fcf8a','#4aa3ff','#c77dff'];
+  for(let i=0;i<42;i++){ const c=document.createElement('i'); c.className='confetti';
+    c.style.cssText=`left:${Math.random()*100}%;background:${cols[i%cols.length]};animation-delay:${(Math.random()*1.2).toFixed(2)}s;animation-duration:${(2.2+Math.random()*1.6).toFixed(2)}s`;
+    box.appendChild(c); }
+  setTimeout(()=>box.querySelectorAll('.confetti').forEach(x=>x.remove()),5200);
+}
+
+/* ---------- 新手引導 ---------- */
+const TUT_STEPS=[
+  { t:'👋 歡迎來到股海人生', b:'你從 22 歲出社會，到 65 歲退休，每年按一次「結束今年」。目標是讓資產最大化，並解鎖各種結局。這個教學約 1 分鐘，隨時可以略過。' },
+  { t:'📊 你的狀態列', sel:'#status', tab:'stock', b:'這裡是淨資產、現金、健康與心情。<b>健康歸零會死亡</b>，心情太低會影響升遷和健康；淨資產太負會破產。' },
+  { t:'📈 買賣股票', sel:'#quoteList', tab:'stock', b:'點個股就能買賣。注意：<b>年底才領薪水</b>，所以年初能動用的只有手上現金。想分散風險可以用定期定額、ETF 與債券。' },
+  { t:'📰 壓乎新聞', sel:'#tabs [data-tab="news"]', tab:'stock', b:'三位分析師各說各話，題材可能是真的也可能是假的。選舉、戰爭、泡沫警訊都會先出現在這裡。' },
+  { t:'🧭 人生規劃', sel:'#stances', tab:'life', b:'選擇生活態度：拼事業、平衡生活或養生享樂。也能在這裡看職業、跳槽和家庭狀況。' },
+  { t:'🛍 購物與房地產', sel:'#tabs [data-tab="shop"]', tab:'life', b:'花錢可以買心情和健康；房地產能自住、出租或炒房，但也有風險。融資與台指期槓桿更要小心，會斷頭或被強制平倉。' },
+  { t:'⏭ 結束今年', sel:'#btnNext', tab:'stock', b:'準備好就按這裡。系統會逐月模擬股市、結算薪水與開銷，並抽一個人生事件（結婚、生子、照顧父母、職場風波……），有時需要你做選擇。' },
+  { t:'🎯 小撇步', b:'① 先存一點現金當緩衝　② 別把整副身家押單一個股　③ 健康比錢重要　④ 資產破 1 億可以選擇提前退休。<br>之後想重看，可到「存檔／讀檔」頁點「📖 新手教學」。祝你人生順利！' },
+];
+let tutI=-1;
+function maybeTutorial(){ if(!META.tutDone) startTutorial(); }
+function startTutorial(){ closeDialog(); closeSheet(); tutI=0; tutShow(); }
+function tutEnd(done=true){
+  tutI=-1; ['#tutShade','#tutSpot','#tutCard'].forEach(s=>{ const e=$(s); if(e) e.classList.add('hidden'); });
+  if(done){ META.tutDone=true; saveMeta(); }
+  switchTab('stock');
+}
+function tutShow(){
+  const st=TUT_STEPS[tutI]; if(!st) return tutEnd();
+  if(st.tab) switchTab(st.tab);
+  const shade=$('#tutShade'), spot=$('#tutSpot'), card=$('#tutCard');
+  card.innerHTML=`<div class="tut-n">${tutI+1} / ${TUT_STEPS.length}</div><h4>${st.t}</h4><p>${st.b}</p>
+    <div class="btns"><button id="tutSkip">略過</button>${tutI>0?'<button id="tutPrev">◀ 上一步</button>':''}<button id="tutNext" class="primary">${tutI===TUT_STEPS.length-1?'開始玩！':'下一步 ▶'}</button></div>`;
+  shade.classList.remove('hidden'); card.classList.remove('hidden');
+  $('#tutSkip').onclick=()=>tutEnd(true);
+  if($('#tutPrev')) $('#tutPrev').onclick=()=>{ tutI--; tutShow(); };
+  $('#tutNext').onclick=()=>{ tutI++; if(tutI>=TUT_STEPS.length) tutEnd(true); else tutShow(); };
+  setTimeout(()=>{
+    if(tutI<0) return;
+    const phE=$('#phone'), pr=phE.getBoundingClientRect(), ph={left:pr.left+phE.clientLeft, top:pr.top+phE.clientTop, width:phE.clientWidth, height:phE.clientHeight}, el=st.sel?document.querySelector(st.sel):null;
+    const r=el?el.getBoundingClientRect():null, ok=r&&r.width>0&&r.height>0;
+    shade.style.background=ok?'transparent':'#000a';
+    spot.classList.toggle('hidden',!ok);
+    const cw=Math.min(340,ph.width-24); card.style.width=cw+'px';
+    let top=(ph.height-card.offsetHeight)/2, left=(ph.width-cw)/2;
+    if(ok){
+      const x=r.left-ph.left, y=r.top-ph.top, w=r.width, h=Math.min(r.height,ph.height*.5);
+      spot.style.cssText=`left:${x-4}px;top:${y-4}px;width:${w+8}px;height:${h+8}px`;
+      const below=y+h+12, above=y-card.offsetHeight-12;
+      top = below+card.offsetHeight<=ph.height-8 ? below : (above>=8 ? above : ph.height-card.offsetHeight-8);
+      left=Math.max(8,Math.min(x,ph.width-cw-8));
+    }
+    card.style.top=Math.max(8,top)+'px'; card.style.left=left+'px';
+  },80);
+}
+
+/* ---------- 歷代人生紀錄 ---------- */
+function recordRun({kind,early,E,real,nw}){
+  META.runs=META.runs||[];
+  META.runs.unshift({ t:Date.now(), kind, early:!!early, icon:E.icon, end:E.title, rank:rankOf(real,kind), nw, real, age:G.age,
+    career:G.career, job:JOBS[G.level].t, mode:G.mode, diff:G.diff, sy:G.startYear, code:challengeCode(),
+    ach:ACHS.filter(a=>G.ach[a.id]).length });
+  if(META.runs.length>100) META.runs.length=100;
+  saveMeta();
+}
+function renderRecords(){
+  const box=$('#recBox'); if(!box) return;
+  const runs=META.runs||[];
+  $('#recCount').textContent=runs.length?`${runs.length} 局`:'';
+  if(!runs.length){ box.innerHTML='<p class="mut" style="margin:0">還沒有完成的人生。每局結束（退休、健康歸零或破產）後，成績會永久記錄在這裡。</p>'; return; }
+  const ret=runs.filter(r=>r.kind==='retire'), early=ret.filter(r=>r.early).length;
+  const cnt=k=>runs.filter(r=>r.kind===k).length;
+  const bestRun=ret.reduce((b,r)=>(!b||r.real>b.real)?r:b,null);
+  const avg=ret.length?ret.reduce((t,r)=>t+r.real,0)/ret.length:null;
+  const byC=Object.keys(CAREERS).map(id=>{ const rs=runs.filter(r=>(r.career||'office')===id), rr=rs.filter(r=>r.kind==='retire');
+    return { id, n:rs.length, best:rr.length?Math.max(...rr.map(r=>r.real)):null }; });
+  const fav=byC.reduce((b,c)=>c.n>(b?b.n:0)?c:b,null);
+  const crTxt=id=>{ const c=CAREERS[id]||CAREERS.office; return c.icon+c.name; };
+  const modeTxt=r=>r.mode==='history'?`📜${r.sy}`:(DIFFS[r.diff]?DIFFS[r.diff].icon:'🎲');
+  box.innerHTML=`<div class="kv">
+      <span>完成人生</span><b>${runs.length} 局</b>
+      <span>🎉 退休</span><b>${ret.length} 局${early?`（含提前退休 ${early}）`:''}</b>
+      <span>🕯 健康歸零 / 🧾 破產</span><b>${cnt('death')} / ${cnt('bankrupt')}</b>
+      <span>🏆 最高退休成績</span><b>${bestRun?fmt(bestRun.real):'—'}</b>
+      <span>平均退休成績</span><b>${avg!=null?fmt(avg):'—'}</b>
+      <span>最常選的職業</span><b>${fav&&fav.n?crTxt(fav.id)+`（${fav.n} 局）`:'—'}</b></div>
+    <p style="margin:12px 0 6px"><b>各職業最佳退休成績</b>（22 歲幣值）</p>
+    <div class="recgrid">${byC.map(c=>`<div class="ach ${c.n?'on':''}" style="cursor:default"><b>${crTxt(c.id)}</b>${c.n?`${c.n} 局｜${c.best!=null?fmt(c.best):'—'}`:'尚未體驗'}</div>`).join('')}</div>
+    <p style="margin:12px 0 6px"><b>最近的人生</b></p>
+    <div class="reclist">${runs.slice(0,15).map(r=>`<div class="recrow ${bestRun&&r===bestRun?'best':''}">
+      <div><b>${r.icon} ${esc(r.rank)}${r.early?' 🏖':''}</b><small>${esc(crTxt(r.career||'office'))}・${esc(r.job)}｜${modeTxt(r)}｜${r.age} 歲${r.code?'｜'+esc(r.code):''}</small></div>
+      <div style="text-align:right"><b>${fmt(r.nw)}</b><small>${fmtTime(r.t)}｜${esc(r.end)}</small></div></div>`).join('')}</div>`;
+}
+
 /* ---------- 存檔 / 成就 ---------- */
-function renderSave(){
+function renderSave(){ renderRecords();
   const d=readSlot('manual');
   $('#saveInfo').innerHTML=`<h2>🎮 目前這局</h2><div class="kv">
     <span>模式</span><b>${G.mode==='history'?`📜 歷史模式（${G.startYear} 年出社會）`:`🎲 自由模式｜${D().icon}${D().name}`}</b>
@@ -2209,7 +2512,7 @@ function saveTo(slot){
 function readSlot(slot){ try{ const t=localStorage.getItem(SAVE_KEY+'.'+slot); return t?JSON.parse(t):null; }catch(e){ return null; } }
 function migrate(g){                                   // 相容舊版存檔
   if(!g.mh) g.mh={x:g.hist.ages.slice(), idx:g.hist.idx.slice()};
-  g.career=CAREERS[g.career]?g.career:'office'; g.eraScale=!!g.eraScale; if(g.retireAsk===undefined) g.retireAsk=null; g.noRetireAsk=!!g.noRetireAsk;
+  g.career=CAREERS[g.career]?g.career:'office'; g.eraScale=!!g.eraScale; if(g.kids==null) g.kids=g.hadKid?1:0; if(g.retireAsk===undefined) g.retireAsk=null; g.noRetireAsk=!!g.noRetireAsk;
   if(g.seed===undefined) g.seed=null; if(g.seed!=null && g.rs==null) g.rs=g.seed|0; if(g.fut && !g.fut.dir) g.fut.dir=1;
   g.mode=g.mode||'free'; g.diff=g.diff||'normal'; g.owned=g.owned||{}; g.shopYear=g.shopYear||{}; g.listings=g.listings||[];
   if(!g.props){ g.props=[];
@@ -2217,7 +2520,7 @@ function migrate(g){                                   // 相容舊版存檔
     delete g.house; }
   if(!g.hist.house) g.hist.house=g.hist.ages.map(()=>100*(g.houseIdx||1)); g.startYear=g.startYear||null; g.fut=g.fut||null; g.since=g.since||{};
   g.rhino=g.rhino||null; g.rhinoPeak=g.rhinoPeak||0; g.lastMarket=g.lastMarket||null;
-  g.stats=Object.assign({realizedLoss:0,levDoubles:0,levLiquidations:0,rhinoEscape:false,rhinos:0,histCrises:0,shopSpent:0,propDeals:0,propProfit:0,midN:0,midRight:0,shortWin:false,early:false},g.stats);
+  g.stats=Object.assign({realizedLoss:0,levDoubles:0,levLiquidations:0,rhinoEscape:false,rhinos:0,histCrises:0,shopSpent:0,propDeals:0,propProfit:0,midN:0,midRight:0,shortWin:false,early:false,filial:false,inherit:false,pet:false},g.stats);
   ASSETS.forEach(a=>{
     if(!g.holdings[a.id]) g.holdings[a.id]={qty:0,cost:0};
     if(g.dca[a.id]==null) g.dca[a.id]=0;
@@ -2402,6 +2705,11 @@ function init(){
 
   $('#btnNext').onclick=endYear;
   $('#btnRestart').onclick=()=>askConfirm('重新開始？','會回到模式選擇畫面，目前未存檔的進度會消失。',showStart,'重新開始','取消');
+  $('#btnSound').onclick=()=>{ META.mute=!META.mute; saveMeta(); syncSound(); if(!META.mute) SFX.play('good'); };
+  $('#btnTut').onclick=()=>startTutorial();
+  $('#btnClearRec').onclick=()=>askConfirm('清除歷代人生紀錄？','只會清除歷代人生列表與統計，成就與結局圖鑑不受影響。',()=>{ META.runs=[]; META.best=null; saveMeta(); render(); toast('🗑 已清除紀錄'); },'清除','取消');
+  document.addEventListener('click',e=>{ if(e.target.closest('button')) SFX.play('click'); },true);
+  syncSound();
   $('#btnHelp').onclick=()=>showDialog({title:'❓ 遊戲說明',body:HELP_HTML,buttons:[{label:'知道了',primary:true}]});
   $('#btnSave').onclick=()=>{
     if(G.busy||G.over) return toast('⚠ 目前無法存檔');
