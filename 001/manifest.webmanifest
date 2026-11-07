@@ -1,0 +1,26 @@
+{
+  "name": "股海人生模擬器",
+  "short_name": "股海人生",
+  "description": "22 歲到 65 歲的股市人生模擬",
+  "start_url": "./股海人生模擬器.html",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#0e131a",
+  "theme_color": "#0e131a",
+  "lang": "zh-TW",
+  "icons": [
+    {
+      "src": "icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
+}
