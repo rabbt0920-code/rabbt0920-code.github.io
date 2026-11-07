@@ -276,6 +276,7 @@ details ul{margin:8px 0 0;padding-left:18px;line-height:1.7}
 @media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
 @media (max-width:520px){#toast{top:8px;font-size:12px;max-width:94%;z-index:60}#tutCard{font-size:14px}#tutCard h4{font-size:15px}}
 @media (max-height:700px){.card.dlg{max-height:92%}#tutCard p{font-size:13px;margin-bottom:8px}}
+.startfoot{display:flex;flex-wrap:wrap;gap:8px;margin-top:14px;padding-top:12px;border-top:1px solid #273244}.startfoot button{flex:1;min-width:140px;padding:10px 6px;font-size:13px}.startfoot small{flex-basis:100%;text-align:center;font-size:12px}
 </style>
 </head>
 <body>
@@ -728,6 +729,8 @@ const EVENTS = [
 </script>
 <script>
 'use strict';
+/* 保留載入當下的原始頁面，供「下載桌面版」另存成單一 HTML 檔（此時尚未被遊戲畫面改動） */
+const SRC_HTML = '<!DOCTYPE html>\n' + document.documentElement.outerHTML;
 /* =====================================================================
  *  股海人生模擬器  v2（手機介面版）
  *  金額單位一律為「元」，顯示時自動轉成 萬 / 億。
@@ -2300,6 +2303,16 @@ function confetti(){
   setTimeout(()=>box.querySelectorAll('.confetti').forEach(x=>x.remove()),5200);
 }
 
+/* ---------- 下載桌面版（單一 HTML 檔）---------- */
+function downloadDesktop(){
+  try{
+    const blob=new Blob([SRC_HTML],{type:'text/html;charset=utf-8'}), a=document.createElement('a');
+    a.href=URL.createObjectURL(blob); a.download='股海人生模擬器.html'; document.body.appendChild(a); a.click();
+    setTimeout(()=>{ URL.revokeObjectURL(a.href); a.remove(); },1500);
+    toast('📥 開始下載：股海人生模擬器.html');
+  }catch(e){ toast('⚠ 下載失敗，請改用瀏覽器「另存網頁」'); }
+}
+
 /* ---------- 加到手機桌面（PWA）---------- */
 let installEvt=null;
 window.addEventListener('beforeinstallprompt',e=>{ e.preventDefault(); installEvt=e; });
@@ -2677,7 +2690,12 @@ function showStart(){
       <p class="mut" style="margin:8px 0 0;font-size:12px">📜 薪水、生活費、房價與購物物價都依當年台灣實際水準調整（起始資金同步換算）。</p>
     </div>
     <button class="primary big" id="btnBegin">開始人生</button>
-    <details><summary>怎麼玩？</summary>${HELP_HTML}</details>`;
+    <details><summary>怎麼玩？</summary>${HELP_HTML}</details>
+    <div class="startfoot">
+      <button id="btnDl">📥 下載桌面版</button>
+      <button id="btnInstall2">📲 加到手機桌面</button>
+      <small class="mut">桌面版是單一 HTML 檔，下載後雙擊用瀏覽器開啟即可，不需要網路。</small>
+    </div>`;
   const sync=()=>{
     document.querySelectorAll('#startCard .mode').forEach(b=>b.classList.toggle('on',b.dataset.mode===startSel.mode));
     document.querySelectorAll('#startCard .era').forEach(b=>b.classList.toggle('on',+b.dataset.year===startSel.year));
@@ -2702,6 +2720,8 @@ function showStart(){
     if(auto&&auto.G&&!auto.G.over) askConfirm('開始新的人生？','目前的自動存檔會在明年被覆蓋。\n（想保留可以先繼續遊戲並匯出存檔代碼）',go,'開始新遊戲','取消');
     else go();
   };
+  $('#btnDl').onclick=downloadDesktop;
+  $('#btnInstall2').onclick=showInstallHelp;
   if($('#btnContinue')) $('#btnContinue').onclick=()=>{ applySave(auto); log(`📂 已繼續自動存檔（${G.age} 歲）。`,'info'); render(); };
   sync();
   $('#start').classList.remove('hidden');
