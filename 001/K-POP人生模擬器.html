@@ -425,6 +425,7 @@ const Sim = {
     if (c.st.stam < 30) e *= .7; else if (c.st.stam < 50) e *= .9;
     if (c.st.mood > 70) e *= 1.08; else if (c.st.mood < 30) e *= .85;
     if ((c.hid.fatigue || 0) > 60) e *= .85;
+    if (c.staff) { if (k === 'dance') e *= 1 + .1 * (c.staff.dance || 0); if (k === 'vocal' || k === 'rap') e *= 1 + .1 * (c.staff.studio || 0); }
     if (c.pers === 'diligent') e *= 1.08;
     if (c.traits && c.traits.includes('perfect')) e *= 1.1;
     if (c.pers === 'rebel' && (k === 'rap' || k === 'charm')) e *= 1.12;
@@ -1160,12 +1161,17 @@ DATA.EVENTS = [
         g: ['爆料者被證實造謠，輿論大逆轉。', { scandal: -40, pop: 5, fans: 5000 }],
         k: ['部分內容被澄清，風波漸漸平息。', { scandal: -20, pop: -3 }],
         f: ['澄清反而越描越黑。', { scandal: 10, pop: -10, fans: -10000, eval: -8 }] } },
+      { t: s => `花錢請公關團隊壓下新聞（${U.money(Idol.prCost())}）`, req: s => s.car.money >= Idol.prCost(), need: '資金足夠支付公關費', check: { st: 'eval', diff: 34 }, out: {
+        g: ['公關團隊動用人脈，把話題轉到別的新聞上，這件事很快沉了下去。', s => ({ money: -Idol.prCost(), scandal: -45, pop: -2 })],
+        k: ['新聞壓下了大半，只剩零星討論。', s => ({ money: -Idol.prCost(), scandal: -30, pop: -4 })],
+        f: ['有人爆出「公關公司花錢封口」，風波反而越滾越大。', s => ({ money: -Idol.prCost(), scandal: 15, pop: -12, fans: -8000, eval: -5 })] } },
       { t: '沉默，暫停活動', txt: '你消失了一個月。回來時，大家好像都忘了。', fx: { scandal: -15, pop: -12, injury: 14, stress: -10 } }
     ] },
   { id: 'broadcast_slip', title: '直播事故', cd: 100, w: 4, cond: s => s.stage >= 2,
     text: s => `直播結束後，你以為鏡頭關了，跟${s.grp && s.grp.kind !== 'solo' ? '隊友' : '工作人員'}抱怨了一句「好累，不想播了」。鏡頭其實還開著。`,
     choices: [
       { t: '立刻開直播道歉', p: 'gentle', txt: '粉絲說「累就休息，我們懂」。', fx: { scandal: 2, pop: -1 } },
+      { t: s => `請公關公司處理（${U.money(Idol.prCost())}）`, req: s => s.car.money >= Idol.prCost(), need: '資金足夠支付公關費', txt: '公關公司很快讓片段下架，並安排了一篇「藝人其實很拚」的專訪。', fx: s => ({ money: -Idol.prCost(), scandal: -4, pop: 1 }) },
       { t: '當作沒發生', p: 'rebel', txt: '片段被剪輯成「偶像真面目」到處流傳。', fx: { scandal: 12, pop: -4 } },
       { t: '把它變成梗', p: 'social', check: { st: 'variety', diff: 50 }, out: {
         k: ['你下一次直播開場就說「今天也好累，但為了你們還是來了」，全場笑翻。', { fans: 4000, pop: 3, variety: 1 }],
@@ -4232,7 +4238,7 @@ Idol.newGame = function (o) {
   const nat = DATA.NATS[o.nat] ? o.nat : 'kr', ft = (DATA.FAMILY_NAT[nat] || {})[fam.id];
   const s = {
     nat, kor: DATA.NATS[nat].kor, familyDesc: ft ? ft[1] : fam.d,
-    mode: 'idol', ver: VER, name: o.name, g: o.g, av: Avatar.fix(o.av, o.g), age: 13, bd: { m: U.ri(1, 12), d: U.ri(1, 28) },
+    mode: 'idol', staff: { style: 0, dance: 0, studio: 0, home: 0 }, ver: VER, name: o.name, g: o.g, av: Avatar.fix(o.av, o.g), age: 13, bd: { m: U.ri(1, 12), d: U.ri(1, 28) },
     day: 0, apMax: 3, ap: 3, family: fam.id, familyName: ft ? ft[0] : fam.n, allow: fam.allow, traits: o.traits.slice(), pers: null,
     ab: {}, st: { stam: 100, mood: 70, stress: 15, health: 85 }, car: { fans: 0, fame: 0, pop: 0, eval: 40, money: fam.money },
     hid: { tal: {}, luck: 30 + U.ri(0, 50), grit: 30 + U.ri(0, 40), res: 30 + U.ri(0, 40), looks: 30 + U.ri(0, 50), scandal: 0, acad: 30 + U.ri(0, 40), team: 20, fatigue: 0, support: U.clamp(fam.support + U.ri(-8, 8)), fit: 0, p: { diligent: 0, social: 0, rebel: 0, gentle: 0 } },
@@ -4282,6 +4288,7 @@ Idol.fixNames = function (s) {
 Idol.fix = function (s) {
   const d = { logs: [], sns: [], awards: [], queue: [], hist: [], today: [], done: {}, cd: {}, flags: {}, exams: [], ranks: [], warn: 0, debutPts: 0, debutTries: 0, lastConcert: -999, adCount: 0, arcQ: [], arc: null, arcDone: {}, arcCd: -999, sick: 0, evSeen: {}, recentEv: [], chain: null, chainLast: null, chainQ: [], chainDone: {}, endorse: [], offer: null, lastSigned: null, brandBan: {}, brandLoyal: {}, mates: {}, fanName: '', followQ: [], cnt: {}, nat: 'kr', kor: 100, rev: { tal: {}, stats: {} } };
   for (const k in d) if (s[k] === undefined) s[k] = d[k];
+  if (!s.staff) s.staff = { style: 0, dance: 0, studio: 0, home: 0 };
   if (!s.coState) { s.coState = 'ok'; s.coName = null; s.coInc = 1; s.coFixed = 1; s.coEndo = 1; }
   if (s.chainNext === undefined) s.chainNext = s.day + 60;
   Idol.fixNames(s);
@@ -4322,7 +4329,7 @@ Idol.applyFx = function (fx) {
       if (v > 0 && I.traits.includes('topic')) v *= 1.25; if (v > 0 && I.traits.includes('face')) v *= 1.1;
       if (k === 'fans' && v > 0 && I.stage >= 2) v *= U.clamp(1 - I.car.fans / (2e6 + I.car.pop * 5e4), .03, 1); // 粉絲數有市場天花板
       const b = I.car[k]; I.car[k] = k === 'fans' ? Math.max(0, b + v) : U.clamp(b + v); out.push([k, I.car[k] - b]);
-    } else if (k === 'pop' || k === 'eval') { if (k === 'pop' && v > 0 && I.stage >= 2) v *= U.clamp(1 - I.car.pop / 115, .1, 1); const b = I.car[k]; I.car[k] = U.clamp(b + v); out.push([k, I.car[k] - b]); }
+    } else if (k === 'pop' || k === 'eval') { if (k === 'pop' && v > 0 && I.stage >= 2) v *= U.clamp(1 - I.car.pop / 115, .1, 1) * (1 + .06 * ((I.staff && I.staff.style) || 0)); const b = I.car[k]; I.car[k] = U.clamp(b + v); out.push([k, I.car[k] - b]); }
     else if (k === 'money') { I.car.money = Math.max(0, I.car.money + v); out.push([k, v]); }
     else if (DATA.HID.includes(k)) { let w = v; if (k === 'scandal' && w > 0) { if (I.pers === 'rebel') w *= 1.3; if (I.traits.includes('topic')) w *= 2; } I.hid[k] = U.clamp(I.hid[k] + w); hidden = true; }
     else if (k === 'aff') for (const id in v) { const key = id === '$npc' ? I._npc : id; if (key) Idol.addAff(key, v[id]); }
@@ -4551,7 +4558,7 @@ Idol.offerBrand = function (s) {
   if (s.offer && s.offer.id) return s.offer;
   const list = Idol.eligibleBrands(s); if (!list.length) return null;
   const b = U.wpick(list, x => (s.brandLoyal[x.id] ? 3 : 1) * (1 + (s.car.fame - x.fame) / 60) * (x.perk.looks ? .6 + s.hid.looks / 70 : 1));
-  const fee = Math.round((16000 + s.car.fame * 600 + s.car.pop * 400) * b.mult * U.rf(.9, 1.15));
+  const fee = Math.round((16000 + s.car.fame * 600 + s.car.pop * 400) * b.mult * U.rf(.9, 1.15) * (1 + .1 * ((s.staff && s.staff.style) || 0)));
   s.offer = { id: b.id, n: b.n, cat: b.cat, line: b.line, fee };
   return s.offer;
 };
@@ -4588,7 +4595,7 @@ Idol.endorseTick = function () {
   });
 };
 Idol.act_musicshow = function (a, o, push) {
-  const perf = Sim.weighted(I, { vocal: .3, dance: .3, charm: .25, acting: .15 }) * Sim.form(I);
+  const perf = Sim.weighted(I, { vocal: .3, dance: .3, charm: .25, acting: .15 }) * Sim.form(I) * (1 + .03 * ((I.staff && I.staff.dance) || 0));
   const fansScore = Math.log10(I.car.fans + 10) * 10;
   const mine = perf * .32 + I.promo.q * .28 + I.car.pop * .22 + fansScore * .18 + U.gauss() * 4;
   Idol.chartUpdate(false);
@@ -5011,11 +5018,13 @@ Idol.startPromo = function (concept, opt) {
   DATA.ABK.forEach(k => I.grp.avgAb[k] = U.clamp(Math.max(I.grp.avgAb[k], I.ab[k] * .8) + U.rf(.5, 3)));
   const base = Idol.groupQuality(c);
   const kb = I.grp.kind === 'band' ? ((I.ab.vocal + I.ab.acting) / 2 > 55 ? 4 : -2) : I.grp.kind === 'solo' ? 3 : I.grp.kind === 'mixed' ? 2 : 0;
-  const q = U.clamp(base * .6 + (I.rel.baiyu || 0) * .1 + I.hid.team * .1 + I.car.pop * .1 + U.rf(-6, 8) + (I.hid.luck - 50) / 10 + kb + F.qb, 5, 100);
+  let q = U.clamp(base * .6 + (I.rel.baiyu || 0) * .1 + I.hid.team * .1 + I.car.pop * .1 + U.rf(-6, 8) + (I.hid.luck - 50) / 10 + kb + F.qb, 5, 100);
+  const iv = Idol.invFx(opt.inv, q); q = U.clamp(q + iv.qb + 2.5 * ((I.staff && I.staff.studio) || 0), 5, 100);
+  if (opt.inv) Idol.log(iv.flop ? '🎛️ 追加預算的旗艦製作「過度雕琢」，成效不如預期。' : `🎛️ 追加製作預算（${Spend.INV[opt.inv].n}），專輯品質提升。`, iv.flop ? 'bad' : 'story');
   const nth = I.grp.albums.length;
   const names = ['首張迷你專輯', '第二張迷你專輯', '首張正規專輯', '夏季特別專輯', '冬季特別專輯', '第二張正規專輯', '第三張迷你專輯'];
   const name = opt.title ? opt.title : (nth === 0 ? '出道專輯' : names[Math.min(nth, names.length - 1)]) + '「' + c.n + '」';
-  const sales = Math.round((I.car.fans * .25 + 4000) * (.5 + q / 100) * U.rf(.85, 1.2) * F.sales);
+  const sales = Math.round((I.car.fans * .25 + 4000) * (.5 + q / 100) * U.rf(.85, 1.2) * F.sales * iv.sm);
   const pos = Math.max(1, Math.round(70 - (q * .5 + I.car.pop * .4 + I.car.fame * .2) + U.gauss() * 6));
   I.promo = { name, concept: c.id, fmt: opt.fmt || 'mini', start: I.day, end: I.day + F.days, gap: F.gap, winLog: [], q, wins: 0, shows: 0, sales, pos };
   { // 同期回歸的對手：撞期越多，打歌拿一位越難
@@ -5043,8 +5052,11 @@ Idol.release = function (o) {
   let cost = Idol.albumCost(fmt), sub = false;
   if (I.car.money < cost) { if (fmt === 'single') { cost = I.car.money; sub = true; } else return { err: '資金不足，無法發行這個規格' }; }
   let title = String(o.title || '').replace(/[<>"'`]/g, '').trim().slice(0, 20);
-  I.car.money -= cost; I.concept = c.id;
-  Idol.startPromo(c, { fmt, title });
+  const inv = Math.max(0, Math.min(3, +o.inv || 0)), icost = Idol.invCost(fmt, inv);
+  if (icost && I.car.money < cost + icost) return { err: '資金不足，無法追加製作預算' };
+  I.car.money -= cost + icost; I.concept = c.id;
+  Idol.startPromo(c, { fmt, title, inv });
+  if (icost) Idol.log(`💸 追加製作預算 ${U.money(icost)}。`);
   Idol.log(`💸 發行${F.n}製作費 ${U.money(cost)}${sub ? '（資金不足，其餘由公司負擔）' : ''}。`);
   return { ok: 1, cost };
 };
@@ -5376,7 +5388,7 @@ Idol.autoDays = function (n, plan, untilExam) {
  * IDOL UI：偶像模式的畫面、事件流程、操作綁定
  * ========================================================= */
 const IdolUI = { tab: 'home', cal: null, plan: 'balanced', npcPick: null };
-const ITABS = [['home', '🏠', '首頁'], ['plan', '📅', '行程'], ['stats', '📊', '能力'], ['cal', '🗓️', '日曆'], ['co', '🏢', '公司'], ['rel', '💞', '關係'], ['work', '🎬', '工作'], ['sns', '📱', '社群'], ['log', '📜', '紀錄'], ['save', '💾', '存檔']];
+const ITABS = [['home', '🏠', '首頁'], ['plan', '📅', '行程'], ['stats', '📊', '能力'], ['cal', '🗓️', '日曆'], ['co', '🏢', '公司'], ['rel', '💞', '關係'], ['work', '🎬', '工作'], ['spend', '💸', '開銷'], ['sns', '📱', '社群'], ['log', '📜', '紀錄'], ['save', '💾', '存檔']];
 const card = (title, body, cls = '') => `<section class="card ${cls}">${title ? `<h3>${title}</h3>` : ''}${body}</section>`;
 const gIcon = g => g === 'm' ? '🧑‍🎤' : '👩‍🎤';
 
@@ -5398,7 +5410,7 @@ Idol.render = function () {
     <div class="hdr-stats"><span>💰 ${U.money(I.car.money)}</span><span>💗 ${U.num(I.car.fans)}</span><span class="apdots">${Array.from({ length: I.apMax }, (_, i) => `<i class="${i < I.ap ? 'on' : ''}"></i>`).join('')}</span></div>
     ${Theme.btn()}<button class="btn ghost sm" data-act="app.menu">☰</button></header>`;
   const tabs = `<nav class="tabs">${ITABS.map(([id, ic, n]) => `<button class="tab ${IdolUI.tab === id ? 'on' : ''}" data-act="i.tab" data-t="${id}"><span>${ic}</span>${n}</button>`).join('')}</nav>`;
-  const fn = { home: tHome, plan: tPlan, stats: tStats, cal: tCal, co: tCo, rel: tRel, work: tWork, sns: tSns, log: tLog, save: tSave }[IdolUI.tab];
+  const fn = { home: tHome, plan: tPlan, stats: tStats, cal: tCal, co: tCo, rel: tRel, work: tWork, spend: () => Spend.tSpend(), sns: tSns, log: tLog, save: tSave }[IdolUI.tab];
   root.innerHTML = `<div class="game idol">${hdr}${tabs}<main class="content">${fn()}</main></div>`;
   Layout.centerTab();
   if (I.queue.length && !UI.isOpen()) setTimeout(Idol.flush, 30);
@@ -5674,6 +5686,7 @@ Idol.flush = function () {
       <div class="cc-sec" style="padding:4px 0"><h4>1. 專輯名稱 <small>最多 20 字，留空由公司取名</small></h4><input type="text" id="albName" maxlength="20" placeholder="例如：Blue Hour"></div>
       <div class="cc-sec" style="padding:4px 0"><h4>2. 專輯概念</h4><div class="cc-traits">${cs}</div></div>
       <div class="cc-sec" style="padding:4px 0"><h4>3. 專輯規格</h4><div class="cc-traits">${fs}</div></div>
+      ${I.stage >= 2 ? `<div class="cc-sec" style="padding:4px 0"><h4>4. 追加製作預算 <small>費用為所選規格製作費的倍數，品質越高、效果越遞減</small></h4><div class="cc-traits">${Spend.INV.map((v, i) => `<label class="cc-trait"><input type="radio" name="ali" value="${i}" ${i === 0 ? 'checked' : ''}><span class="cc-tb"><b>${v.n}${i ? ' ×' + v.x : ''}</b><em>${v.d}</em></span></label>`).join('')}</div></div>` : ''}
       <div class="btn-row"><button class="btn pink" data-act="i.release">確認製作並發行</button></div>`, { cls: 'event' });
     return;
   }
@@ -5727,7 +5740,8 @@ ACT['i.reltab'] = d => { IdolUI.relTab = d.t; Idol.render(); };
 ACT['i.release'] = () => {
   const c = document.querySelector('input[name=alc]:checked'), f = document.querySelector('input[name=alf]:checked'), t = document.getElementById('albName');
   if (!c || !f) return UI.toast('請選擇概念與規格', 'bad');
-  const r = Idol.release({ concept: c.value, fmt: f.value, title: t ? t.value : '' });
+  const iv = document.querySelector('input[name=ali]:checked');
+  const r = Idol.release({ concept: c.value, fmt: f.value, title: t ? t.value : '', inv: iv ? +iv.value : 0 });
   if (r.err) return UI.toast(r.err, 'bad');
   I.queue.shift(); UI.close(); Idol.save('auto'); Idol.render(); Idol.flush();
 };
@@ -5737,9 +5751,13 @@ ACT['i.act'] = d => {
     UI.modal(`<h3>與誰互動？</h3><div class="choices">${list}</div><div class="btn-row"><button class="btn ghost" data-act="u.close">取消</button></div>`); return;
   }
   if (d.id === 'social') return ACT['i.post']();
+  if (d.id === 'concert' && !d.tier) {
+    const T = Idol.concertTiers, list = Object.keys(T).map(k => { const v = T[k], c = Idol.concertCost(k), off = !v.ok() || I.car.money < c; return `<button class="choice" data-act="i.concert" data-tier="${k}" ${off ? 'disabled' : ''}><b>${v.ic} ${v.n}</b><small>${v.d}｜成本 ${U.money(c)}｜容量約 ${U.num(v.cap())}｜票價 ×${v.price}</small>${!v.ok() ? `<small>需要：${v.need}</small>` : I.car.money < c ? '<small>資金不足</small>' : ''}</button>`; }).join('');
+    UI.modal(`<h3>演唱會規格</h3><p class="sub">規格越大收益越高，但賣不滿會虧損。目前資金 ${U.money(I.car.money)}，粉絲 ${U.num(I.car.fans)}，人氣 ${Math.round(I.car.pop)}。</p><div class="choices">${list}</div><div class="btn-row"><button class="btn ghost" data-act="u.close">取消</button></div>`); return;
+  }
   UI.close();
   I._concert = null; I._show = null;
-  const r = Idol.doAct(d.id, { npc: d.npc, mate: d.mate }); if (!r) return;
+  const r = Idol.doAct(d.id, { npc: d.npc, mate: d.mate, tier: d.tier }); if (!r) return;
   const t = I.today[I.today.length - 1];
   if (d.id === 'concert' && I._concert) { Idol.render(); return ConcertFx.show(I._concert); }
   if (d.id === 'musicshow' && I._show) { Idol.render(); return ShowFx.show(I._show, t.eff.filter(([k]) => k !== 'stam' && k !== 'stress').slice(0, 4)); }
@@ -5827,7 +5845,7 @@ const ConcertFx = (function () {
     UI.modal(`<div class="cf-wrap"><div class="cf-stage">${stage(c.tickets, c.perf)}<div class="cf-me">${Avatar.svg(I.av, 74, I.g)}</div><div class="cf-flash"></div></div>
       <div class="cf-count"><small>現場觀眾</small><b id="cfN">0</b></div>
       <p class="cf-line">${quote}</p>
-      <div class="chips cf-chips" id="cfChips" style="opacity:0"><span class="delta up">票房 ${U.money(c.inc)}</span><span class="delta up">粉絲 +${U.num(c.fans)}</span><span class="delta up">人氣 +3</span><span class="delta up">表現 ${grade}</span></div>
+      <div class="chips cf-chips" id="cfChips" style="opacity:0"><span class="delta">${c.ic || ''} ${c.tier || ''}</span><span class="delta up">票房 ${U.money(c.inc)}</span><span class="delta">成本 ${U.money(c.cost || 0)}</span><span class="delta ${c.net >= 0 ? 'up' : 'bad'}">淨收益 ${c.net >= 0 ? '' : '-'}${U.money(Math.abs(c.net || 0))}</span><span class="delta up">粉絲 +${U.num(c.fans)}</span><span class="delta up">表現 ${grade}</span></div>
       <div class="btn-row"><button class="btn pink" data-act="u.close">謝幕 🎤</button></div></div>`, { cls: 'cf' });
     const el = document.getElementById('cfN'), ch = document.getElementById('cfChips'); if (!el) return;
     const t0 = performance.now(), dur = 2600;
@@ -5874,6 +5892,152 @@ const ShowFx = (function () {
   return { show };
 })();
 
+/* ===== spend.js ===== */
+/* ============================================================
+   花錢系統（出道後）：專輯追加預算、演唱會規格、月費制專屬團隊、宣傳預算、
+   危機公關、粉絲回饋、健康與生活。所有開銷都隨資產與粉絲規模放大，
+   效果有邊際遞減或風險，避免變成「必買加成」。
+   ============================================================ */
+const Spend = (function () {
+  // 資產規模倍率：與專輯製作費同一套算法，錢與粉絲越多，花費越高
+  const mult = () => 1 + Math.max(0, I.stage - 2) * .9 + Math.min(6, I.car.fans / 1.5e6) + Math.min(4, I.car.money / 2e7);
+  const cost = base => Math.round(base * mult());
+  const STAFF = {
+    style: { n: '專屬造型團隊', i: '💄', fee: [0, 40000, 110000, 250000], d: ['沒有專屬團隊', '人氣成長 +6%、代言酬勞 +10%', '人氣成長 +12%、代言酬勞 +20%', '人氣成長 +18%、代言酬勞 +30%'] },
+    dance: { n: '專屬舞蹈老師', i: '🩰', fee: [0, 40000, 110000, 250000], d: ['沒有專屬老師', '舞蹈訓練 +10%、舞台表現 +3%', '舞蹈訓練 +20%、舞台表現 +6%', '舞蹈訓練 +30%、舞台表現 +9%'] },
+    studio: { n: '專屬錄音室', i: '🎙️', fee: [0, 50000, 130000, 300000], d: ['使用公司共用錄音室', '歌唱／饒舌訓練 +10%、專輯品質 +2.5', '歌唱／饒舌訓練 +20%、專輯品質 +5', '歌唱／饒舌訓練 +30%、專輯品質 +7.5'] },
+    home: { n: '住宿升級', i: '🏠', fee: [0, 30000, 90000, 200000], d: ['公司宿舍', '每晚壓力 -0.5、體力 +1', '每晚壓力 -1、體力 +2', '每晚壓力 -1.5、體力 +3、生病機率下降'] }
+  };
+  const lv = k => (I.staff && I.staff[k]) || 0;
+  const fee = () => Object.keys(STAFF).reduce((n, k) => n + STAFF[k].fee[lv(k)], 0);
+  const feeScaled = () => Math.round(fee() * (1 + Math.max(0, I.stage - 3) * .4));
+
+  /* ---- 專輯追加預算 ---- */
+  const INV = [
+    { n: '不追加', x: 0, d: '照標準製作' },
+    { n: '請知名作曲家', x: 1.2, d: '品質 +5、銷量 +10%' },
+    { n: '海外錄音＋高規格 MV', x: 3.5, d: '品質 +9、銷量 +25%' },
+    { n: '全明星旗艦製作', x: 9, d: '品質 +13、銷量 +40%，但有 15% 機率「製作過度」成效減半' }
+  ];
+  Idol.invCost = (fmt, t) => Math.round(Idol.albumCost(fmt) * (INV[t] ? INV[t].x : 0));
+  Idol.invFx = function (t, q) {
+    t = t || 0; if (!t) return { qb: 0, sm: 1, flop: false };
+    let qb = [0, 5, 9, 13][t] * (1 - q / 140), sm = [1, 1.1, 1.25, 1.4][t], flop = false;
+    if (t === 3 && U.chance(.15)) { flop = true; qb *= .5; sm = 1.05; }
+    return { qb, sm, flop };
+  };
+
+  /* ---- 演唱會規格 ---- */
+  const TIERS = {
+    small: { n: '小型場館', ic: '🎪', frac: .5, cap: () => 12000, price: 40, pop: 2, fame: 1.5, fans: .4, d: '安全穩妥，場館小、票價低，幾乎不會虧。', ok: () => true },
+    mid: { n: '大型體育館', ic: '🏟️', frac: .45, cap: () => 15000 + I.car.pop * 300, price: 50, pop: 3, fame: 2.5, fans: .5, d: '標準規格，票房與人氣兼顧。', ok: () => true },
+    dome: { n: '巨蛋＋特效舞台', ic: '🌟', frac: .55, cap: () => 60000 + I.car.pop * 500, price: 100, pop: 5, fame: 4, fans: .6, d: '最高收益，但賣不滿會虧損、傷人氣。', ok: () => I.car.fans >= 300000 && I.car.pop >= 40, need: '粉絲 ≥ 30 萬、人氣 ≥ 40' }
+  };
+  Idol.concertTiers = TIERS; Idol.concertCost = k => Math.round(TIERS[k].cap() * TIERS[k].price * TIERS[k].frac); // 成本約為「賣滿票房」的一半，賣不滿就會虧
+  Idol.concertTier = function (k) {
+    let t = TIERS[k] && TIERS[k].ok() ? k : 'mid';
+    if (I.car.money < Idol.concertCost(t)) t = I.car.money >= Idol.concertCost('small') ? 'small' : 'small';
+    return t;
+  };
+  Idol.act_concert = function (a, o, push) {
+    I.lastConcert = I.day;
+    const k = Idol.concertTier(o.tier), T = TIERS[k], cap = T.cap();
+    const c = Math.min(Idol.concertCost(k), I.car.money);
+    const perf = Sim.weighted(I, { vocal: .3, dance: .3, charm: .2, acting: .1, variety: .1 }) * Sim.form(I) * (1 + .03 * lv('dance'));
+    const demand = I.car.fans * .12 * (.7 + perf / 150) + I.car.pop * 150;
+    const tickets = Math.round(Math.min(cap, demand)), fill = tickets / cap;
+    const rev = Math.round(tickets * T.price), net = rev - c;
+    I.car.money = Math.max(0, I.car.money - c); push('money', -c);
+    const good = fill >= .7, flop = k === 'dome' && fill < .5;
+    const fx = { money: rev, pop: flop ? -1.5 : good ? T.pop : T.pop * .6, fame: flop ? 0 : T.fame, fans: Math.round(tickets * T.fans * (flop ? .5 : 1)), eval: flop ? -2 : 3, mood: flop ? -4 : 10 };
+    const r = Idol.applyFx(fx); r.out.forEach(([kk, v]) => push(kk, v));
+    I._concert = { tickets, inc: rev, cost: c, net, perf, fill, tier: T.n, ic: T.ic, flop, fans: fx.fans };
+    Idol.log(`${T.ic} 舉辦演唱會（${T.n}），${U.num(tickets)} 名觀眾（${Math.round(fill * 100)}%），票房 ${U.money(rev)}、成本 ${U.money(c)}，淨收益 ${U.money(net)}。`, net >= 0 ? 'win' : 'bad');
+    Idol.checkStage();
+    return flop ? `巨蛋有大片空位……票房不如預期，淨虧損 ${U.money(-net)}。` : `演唱會落幕，${U.num(tickets)} 名觀眾齊聲呼喊你的名字。`;
+  };
+
+  /* ---- 月費與每日效果 ---- */
+  const origMonthly = Idol.monthly;
+  Idol.monthly = function () {
+    if (I.stage >= 2 && I.staff) {
+      let f = feeScaled();
+      while (f > I.car.money && Object.keys(STAFF).some(k => lv(k) > 0)) {
+        const k = Object.keys(STAFF).filter(x => lv(x) > 0).sort((a, b) => STAFF[b].fee[lv(b)] - STAFF[a].fee[lv(a)])[0];
+        I.staff[k]--; Idol.log(`💸 資金不足，${STAFF[k].n} 被迫降一級。`, 'bad'); f = feeScaled();
+      }
+      if (f > 0) { I.car.money = Math.max(0, I.car.money - f); Idol.log(`🛠️ 專屬團隊月費 ${U.money(f)}。`); }
+    }
+    return origMonthly.apply(this, arguments);
+  };
+  const origNight = Idol.nightly;
+  Idol.nightly = function () {
+    origNight.apply(this, arguments);
+    const h = lv('home'); if (h) { I.st.stress = U.clamp(I.st.stress - .5 * h); I.st.stam = U.clamp(I.st.stam + h); if (h >= 3 && I.sick > 0 && U.chance(.15)) I.sick--; }
+  };
+
+  /* ---- 宣傳預算 ---- */
+  const CAMP = {
+    chart: { n: '榜單行銷', i: '📊', base: 400000, d: '首週銷量 +12%、榜單名次上升、人氣 +1.5' },
+    viral: { n: '網路病毒行銷', i: '📱', base: 250000, d: '粉絲 +3%、人氣 +1' },
+    tv: { n: '電視與戶外廣告', i: '📺', base: 700000, d: '知名度 +3、人氣 +2、銷量 +8%' }
+  };
+  Idol.camp = function (id) {
+    const C = CAMP[id], p = I.promo; if (!C) return;
+    if (!p) return UI.toast('目前沒有宣傳期', 'bad');
+    p.camp = p.camp || {}; if (p.camp[id]) return UI.toast('這次宣傳期已經投放過了', 'bad');
+    const c = cost(C.base); if (I.car.money < c) return UI.toast('金錢不足', 'bad');
+    I.car.money -= c; p.camp[id] = 1;
+    const n = Object.keys(p.camp).length, k = n === 1 ? 1 : n === 2 ? .75 : .55; // 同一波宣傳，越投越不划算
+    let fx;
+    if (id === 'chart') { p.sales = Math.round(p.sales * (1 + .12 * k)); I.salesInc = Math.round((I.salesInc || 0) + p.sales * .02); p.pos = Math.max(1, Math.round(p.pos * (1 - .2 * k))); fx = { pop: 1.5 * k }; }
+    else if (id === 'viral') fx = { fans: Math.round(I.car.fans * .03 * k) + 500, pop: 1 * k };
+    else { p.sales = Math.round(p.sales * (1 + .08 * k)); fx = { fame: 3 * k, pop: 2 * k }; }
+    Idol.applyFx(fx); Idol.log(`📣 投放「${C.n}」，花費 ${U.money(c)}。`, 'story');
+    UI.toast(`${C.i} ${C.n}已上線${n > 1 ? '（效果因同波重複而打折）' : ''}`); Idol.render();
+  };
+
+  /* ---- 粉絲回饋與生活 ---- */
+  const LIFE = {
+    gift: { n: '粉絲應援禮物箱', i: '🎁', base: 200000, cd: 30, d: '粉絲 +1.2%、人氣 +0.6、心情 +4' },
+    charity: { n: '公益捐款', i: '💝', base: 600000, cd: 90, d: '醜聞 -5、知名度 +1.5、人氣 +1、公司評價 +1' },
+    anniv: { n: '出道紀念企劃', i: '🎉', base: 1200000, cd: 180, d: '粉絲 +3%、人氣 +1.5、心情 +6' },
+    checkup: { n: '私人健檢與保養', i: '🩺', base: 150000, cd: 30, d: '健康 +12、壓力 -8、傷病恢復加快' },
+    family: { n: '資助家人', i: '👨‍👩‍👧', base: 300000, cd: 180, d: '家人支持 +4、心情 +6、壓力 -5' }
+  };
+  Idol.life = function (id) {
+    const L = LIFE[id]; if (!L) return;
+    const last = I.cd['life_' + id] ?? -9999; if (I.day - last < L.cd) return UI.toast(`冷卻中（還要 ${L.cd - (I.day - last)} 天）`, 'bad');
+    const c = cost(L.base); if (I.car.money < c) return UI.toast('金錢不足', 'bad');
+    I.car.money -= c; I.cd['life_' + id] = I.day;
+    const fx = { gift: { fans: Math.round(I.car.fans * .012) + 300, pop: .6, mood: 4 }, charity: { scandal: -5, fame: 1.5, pop: 1, eval: 1 }, anniv: { fans: Math.round(I.car.fans * .03) + 800, pop: 1.5, mood: 6 }, checkup: { health: 12, stress: -8 }, family: { support: 4, mood: 6, stress: -5 } }[id];
+    Idol.applyFx(fx); if (id === 'checkup') { I.injury = Math.max(0, I.injury - 3); if (I.sick > 0) I.sick = Math.max(0, I.sick - 2); }
+    Idol.log(`${L.i} ${L.n}，花費 ${U.money(c)}。`, 'story'); UI.toast(`${L.i} ${L.n}完成`); Idol.render();
+  };
+  Idol.prCost = () => cost(300000);
+
+  /* ---- 介面 ---- */
+  const ok = (cond, s) => cond ? '' : ' disabled';
+  function tSpend() {
+    if (I.stage < 2) return card('🔒 出道後解鎖', `<p>正式出道後，你可以投資專屬團隊、宣傳預算、粉絲回饋與生活品質。</p>`);
+    const f = feeScaled(), m = I.car.money;
+    const staff = Object.keys(STAFF).map(k => { const S = STAFF[k], l = lv(k), nx = S.fee[l + 1] !== undefined ? Math.round(S.fee[l + 1] * (1 + Math.max(0, I.stage - 3) * .4)) : null; return `<div class="act"><div class="ai">${S.i}</div><div class="ab"><b>${S.n} Lv.${l}</b><small>${S.d[l]}</small><small class="cost">月費 ${U.money(Math.round(S.fee[l] * (1 + Math.max(0, I.stage - 3) * .4)))}${nx !== null ? ' · 升級後 ' + U.money(nx) + '：' + S.d[l + 1] : ' · 已滿級'}</small></div><div class="btn-row" style="gap:6px"><button class="btn sm ghost" data-act="i.staff" data-k="${k}" data-d="-1"${ok(l > 0)}>−</button><button class="btn sm" data-act="i.staff" data-k="${k}" data-d="1"${ok(nx !== null && m >= nx * 3)}>＋</button></div></div>`; }).join('');
+    const p = I.promo;
+    const camp = Object.keys(CAMP).map(k => { const C = CAMP[k], c = cost(C.base), done = p && p.camp && p.camp[k]; return `<div class="act ${!p || done ? 'off' : ''}"><div class="ai">${C.i}</div><div class="ab"><b>${C.n}</b><small>${C.d}</small><small class="cost">${U.money(c)}${done ? ' · 本次已投放' : ''}</small></div><button class="btn sm" data-act="i.camp" data-id="${k}"${ok(p && !done && m >= c)}>${!p ? '無宣傳期' : done ? '已投放' : '投放'}</button></div>`; }).join('');
+    const life = Object.keys(LIFE).map(k => { const L = LIFE[k], c = cost(L.base), left = L.cd - (I.day - (I.cd['life_' + k] ?? -9999)); return `<div class="act ${left > 0 ? 'off' : ''}"><div class="ai">${L.i}</div><div class="ab"><b>${L.n}</b><small>${L.d}</small><small class="cost">${U.money(c)} · 冷卻 ${L.cd} 天</small></div><button class="btn sm" data-act="i.life" data-id="${k}"${ok(left <= 0 && m >= c)}>${left > 0 ? left + ' 天' : '執行'}</button></div>`; }).join('');
+    return `<div class="grid2"><div class="col">${card('💰 資金概況', `<div class="kpis"><div><b>${U.money(m)}</b><small>目前資金</small></div><div><b>${U.money(f)}</b><small>團隊月費</small></div></div><p class="sub">錢越多，各項花費也越高。效果有邊際遞減，重複投放與過度投資會打折或有風險。專輯追加預算在「發片」時選擇，演唱會規格在「舉辦演唱會」時選擇。</p>`)}
+      ${card('🛠️ 專屬團隊與住宿（月費制）', `<div class="acts">${staff}</div>`)}</div>
+      <div class="col">${card('📣 宣傳預算（每波宣傳期限一次）', `<div class="acts">${camp}</div>`)}
+      ${card('💝 粉絲回饋與生活', `<div class="acts">${life}</div>`)}</div></div>`;
+  }
+  IdolUI.tabs = IdolUI.tabs || {}; IdolUI.tabs.spend = tSpend;
+  return { STAFF, lv, fee, cost, tSpend, TIERS, INV };
+})();
+ACT['i.staff'] = d => { const k = d.k, S = Spend.STAFF[k]; if (!S) return; I.staff = I.staff || {}; const l = Spend.lv(k), n = l + (+d.d); if (n < 0 || n > 3) return; I.staff[k] = n; Idol.log(`${S.i} ${S.n}調整為 Lv.${n}。`, 'story'); Idol.render(); };
+ACT['i.camp'] = d => Idol.camp(d.id);
+ACT['i.life'] = d => Idol.life(d.id);
+ACT['i.concert'] = d => { UI.close(); ACT['i.act']({ id: 'concert', tier: d.tier }); };
+
 /* ===== tutorial.js ===== */
 /* ============================================================
    新手引導：聚光燈 + 說明卡，會切換到對應分頁並標出實際的按鈕與區塊。
@@ -5903,6 +6067,7 @@ const Tut = (function () {
     { sel: '.rank', tab: 'co', title: '公司評鑑與 KPOP 榜單', text: '出道後有兩種排名：<b>公司內部評鑑</b>（和公司其他藝人比，影響公司評價）與 <b>KPOP 榜單</b>（第一年新人榜，之後依女團／男團／個人分榜）。<b>同類對手太強，會讓你人氣與粉絲流失、收入與代言減少。</b>' },
     { sel: '.acts', tab: 'work', title: '工作：打歌、綜藝、見面會、廣告', text: '每項工作消耗 AP 與體力，帶來<b>收入、人氣與粉絲</b>。打歌只在宣傳期的週四～日；綜藝與見面會適合補粉絲；廣告賺錢但看形象。' },
     { sel: '.grid2 .col .card', tab: 'work', title: '發片與宣傳期', text: '在「公司」分頁或工作頁製作並<b>發行專輯</b>：品質看你的能力與製作投資，發行後進入宣傳期，首週銷量決定榜單與獎項。' },
+    { sel: '.tabs .tab[data-t="spend"]', tab: 'spend', title: '開銷：把錢花在刀口上', text: '「開銷」分頁可投資<b>專屬造型／舞蹈／錄音團隊與住宿（月費）</b>、宣傳預算、粉絲回饋與健康。<b>發片時能追加製作預算</b>，演唱會也有小型／體育館／巨蛋三種規格：規格越大賺越多，但賣不滿會虧。' },
     { title: '品牌代言', text: '人氣達標後會有廣告商找上門，<b>代言一次簽一年</b>，每月有固定收入，但<b>形象受損或風波</b>可能被解約。同類別品牌不能重複簽。' },
     { sel: '.tabs .tab[data-t="rel"]', tab: 'rel', title: '隊友與團體', text: '團體出道後「關係」分頁多了<b>🎤 隊友</b>。隊友默契影響舞台表現與風波，經常互動、化解矛盾很重要。' },
     { sel: '.hdr-stats', tab: 'home', title: '收支與人氣流失', text: '每月有<b>薪水與專輯分潤收入</b>，也有固定支出（宿舍、造型、經紀）。人氣偶像之後，<b>人氣與粉絲會逐月自然流失</b>，要靠作品和曝光維持。' },
