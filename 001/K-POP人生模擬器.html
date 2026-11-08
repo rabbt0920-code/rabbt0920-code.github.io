@@ -7653,19 +7653,19 @@ MgrUI.applyChoice = function (i) {
   if (ch.check) { grade = Mgr.roll(ch.check.st, ch.check.diff); const o = ch.out; const e = o[grade] || (grade === 'b' ? (o.f || o.k) : grade === 'g' ? (o.k || o.g) : grade === 'k' ? (o.k || o.g || o.f) : (o.f || o.k)); txt = e[0]; fx = e[1]; }
   if (typeof fx === 'function') fx = fx(M, ctx);
   if (typeof fx === 'function') fx = fx(M, ctx);
-  const lines = Mgr.applyFx(fx || {}, ctx); Mgr.log(`【${ev.title}】${Mgr.fmt(ch.t, ctx).replace(/<[^>]+>/g, '')}`);
+  const lines = Mgr.applyFx(fx || {}, ctx); Mgr.log(`【${Mgr.fmt(ev.title, ctx)}】${Mgr.fmt(ch.t, ctx).replace(/<[^>]+>/g, '')}`);
   M.evMem = M.evMem || {}; if (M.evMem[ev.id] == null) M.evMem[ev.id] = i; // 只記住第一次的選擇
   return { ev, ch, txt, lines, grade, ctx };
 };
 MgrUI.autoChoose = function (i) {
   const r = MgrUI.applyChoice(i);
-  UI.toast(`⚡ ${r.ev.title}：${Mgr.fmt(r.ch.t, r.ctx).replace(/<[^>]+>/g, '')}`, 'ok');
+  UI.toast(`⚡ ${Mgr.fmt(r.ev.title, r.ctx)}：${Mgr.fmt(r.ch.t, r.ctx).replace(/<[^>]+>/g, '')}`, 'ok');
   Mgr.save('auto'); Mgr.render();
 };
 ACT['m.choose'] = d => {
   const { ev, ch, txt, lines, grade, ctx } = MgrUI.applyChoice(+d.i);
   const g = grade ? { g: '✨ 大成功', k: '👍 成功', f: '😓 失敗', b: '💥 大失敗' }[grade] : '結果';
-  UI.modal(`<div class="ev-tag">${g}</div><h3>${ev.title}</h3><p class="pre">${Mgr.fmt(txt, ctx)}</p><div class="chips">${lines.map(l => `<span class="delta hint">${U.esc(l)}</span>`).join('')}</div><div class="btn-row"><button class="btn" data-act="m.next2">繼續</button></div>`, { cls: 'event' });
+  UI.modal(`<div class="ev-tag">${g}</div><h3>${Mgr.fmt(ev.title, ctx)}</h3><p class="pre">${Mgr.fmt(txt, ctx)}</p><div class="chips">${lines.map(l => `<span class="delta hint">${U.esc(l)}</span>`).join('')}</div><div class="btn-row"><button class="btn" data-act="m.next2">繼續</button></div>`, { cls: 'event' });
   Mgr.save('auto');
 };
 ACT['m.next2'] = () => { UI.close(); Mgr.render(); Mgr.flush(); };
