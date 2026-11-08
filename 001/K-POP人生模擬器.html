@@ -1332,6 +1332,7 @@ DATA.M.ENDINGS = {
   small: ['小而美的工作室', '六年過去，公司沒有成為巨頭，但仍有幾個孩子因為你的指導站上了舞台。你的名字沒有出現在新聞，卻出現在他們的感謝名單裡。'],
   mid: ['業界的中堅力量', '你的公司成為業界認可的中型企劃社，有穩定的團體、穩定的粉絲，也有穩定的口碑。'],
   big: ['新一代大型經紀公司', '你的團體登上榜單與頒獎台，你的公司成為業界無法忽視的名字。'],
+  retire: ['傳奇經紀人・功成身退', '公司早已站上頂端：多座大賞、橫跨國界的藝人、一整個世代的偶像都從你手中起步。你把鑰匙交還給徐敘雅，她紅著眼眶說：「謝謝你，拯救了這裡。」\n\n你拖著行李箱走出大樓，沒有掌聲，也沒有鎂光燈。只有一群被你帶大的孩子，在三樓的窗邊朝你揮手。\n\n人們說，那一年的首爾，有一位經紀人在最輝煌的時候轉身離開，從此成了業界的傳說。'],
   legend: ['K-POP 的傳奇製作人', '多座大賞、多個世代的偶像、一家橫跨國界的公司——六年前那個只有一間練習室的你，已經改寫了這個產業。']
 };
 const MT = (m, id) => m.roster.find(t => t.id === id);
@@ -7504,7 +7505,7 @@ function mHome() {
     <div class="col">
     ${card('本週行動點數', `<div class="apbig">${Array.from({ length: M.apMax }, (_, i) => `<i class="${i < M.ap ? 'on' : ''}"></i>`).join('')}<span>${M.ap} / ${M.apMax}</span></div><div class="btn-row"><button class="btn pink" data-act="m.end">結束本週 ➜</button></div>`)}
     ${card('待辦與提醒', `<ul class="notes">${nt.map(x => `<li>${x}</li>`).join('') || '<li>一切平靜。</li>'}</ul>`)}
-    ${card('任期目標', `<p>在 <b>${END_WEEK}</b> 週（約 6 年）內，把公司經營成業界的名字。<br>剩餘 <b>${END_WEEK - M.week}</b> 週。${nxt ? `<br>下一階段「${nxt.n}」：聲望 ${nxt.rep}${M.co.tier === 0 ? '，且需有團體出道' : ''}。` : ''}</p>
+    ${card('任期目標', `<p>在 <b>${END_WEEK}</b> 週（約 6 年）內，把公司經營成業界的名字。<br>剩餘 <b>${END_WEEK - M.week}</b> 週。${nxt ? `<br>下一階段「${nxt.n}」：聲望 ${nxt.rep}${M.co.tier === 0 ? '，且需有團體出道' : ''}。` : ''}</p>${M.co.tier >= 3 ? '<div class="btn-row"><button class="btn ghost" data-act="m.retire">🏖️ 功成身退（提前退休）</button></div><p class="sub">公司已是頂級娛樂帝國，你可以在此刻光榮退休，直接迎向傳奇結局。</p>' : ''}
       <p class="sub">出道 ${M.hist.debuts} 團 · 一位 ${M.hist.wins} 次 · 獎項 ${M.hist.awards} 座 · 最高銷量 ${U.num(M.hist.bestSales)}</p>`)}</div></div>`;
 }
 function mRoster() {
@@ -7680,6 +7681,11 @@ Mgr.takeLeave = function () {
   Mgr.log('你給自己放了一天假，睡到自然醒。', 'story'); UI.toast('休假一天：壓力 -14、精力 +15'); Mgr.save('auto'); Mgr.render();
 };
 ACT['m.leave'] = () => Mgr.takeLeave();
+ACT['m.retire'] = () => {
+  if (M.co.tier < 3 || M.over) return;
+  UI.modal(`<h3>🏖️ 功成身退</h3><p class="sub">你的公司已是頂級娛樂帝國，距離任期結束還有 ${END_WEEK - M.week} 週。要把公司交給徐敘雅與新的團隊，光榮退休嗎？<br>退休後遊戲將直接進入結局，並解鎖「傳奇經紀人」成就。</p><div class="btn-row"><button class="btn ghost" data-act="u.close">再做一陣子</button><button class="btn pink" data-act="m.retire2">確定退休</button></div>`, { cls: 'small' });
+};
+ACT['m.retire2'] = () => { UI.close(); if (M.co.tier < 3 || M.over) return; M.retire = { early: END_WEEK - M.week }; Mgr.ending('retire'); Mgr.render(); };
 ACT['m.audition'] = () => Mgr.audition();
 ACT['m.scout1'] = () => Mgr.scoutOne();
 ACT['m.sign'] = d => Mgr.sign(+d.id);
@@ -7726,7 +7732,7 @@ Mgr.renderEnding = function (root) {
   const YL = M.yearLog || [], lab = YL.map(x => '第' + x.yr + '年');
   const charts = YL.length ? card('📈 歷年經營', `<h4>公司聲望</h4>${IdolUI.lineChart(lab, [{ name: '聲望', color: '#ff5fa2', pts: YL.map(x => x.rep) }], { min: 0, max: 100, label: '歷年聲望折線圖' })}${YL.some(x => x.corank) ? `<h4>業界排名</h4>${IdolUI.lineChart(lab, [{ name: '公司排名', color: '#10b981', pts: YL.map(x => x.corank) }], { rank: true, label: '歷年公司排名折線圖' })}` : ''}<h4>公司資金（億）</h4>${IdolUI.lineChart(lab, [{ name: '資金', color: '#6c63ff', pts: YL.map(x => x.funds / 1e6) }], { min: 0, fmt: v => v.toFixed(1), label: '歷年資金折線圖' })}`) : '';
   const e = DATA.M.ENDINGS[M.over] || ['任期結束', '']; const meta = (Store.get('mgr', 'meta') || { state: { endings: {} } }).state.endings;
-  root.innerHTML = `<div class="game mgr"><main class="content ending">${card('', `<div class="endhero"><div class="endav">${Avatar.svg(Avatar.seeded(M.name, M.g), 150, M.g, false)}</div><div><div class="ev-tag">結局</div><h1>${e[0]}</h1><small class="sub">經紀人 ${U.esc(M.name)}</small></div></div><p class="pre big">${e[1]}</p>
+  root.innerHTML = `<div class="game mgr"><main class="content ending">${card('', `<div class="endhero"><div class="endav">${Avatar.svg(Avatar.seeded(M.name, M.g), 150, M.g, false)}</div><div><div class="ev-tag">結局</div><h1>${e[0]}</h1><small class="sub">經紀人 ${U.esc(M.name)}</small></div></div><p class="pre big">${e[1]}${M.over === 'retire' && M.retire ? `\n\n你比原訂任期提早了 ${M.retire.early} 週（約 ${(M.retire.early / 52).toFixed(1)} 年）功成身退。` : ''}</p>
     <div class="kpis"><div><b>${M.week}</b><small>經營週數</small></div><div><b>${Mgr.tier().n}</b><small>公司規模</small></div><div><b>${Math.round(M.co.rep)}</b><small>聲望</small></div><div><b>${M.hist.debuts}</b><small>出道團體</small></div><div><b>${M.hist.awards}</b><small>獎項</small></div></div>
     <p class="sub">一位 ${M.hist.wins} 次 · 最高銷量 ${U.num(M.hist.bestSales)} · 累計營收 ${U.money(M.hist.income)}</p><p class="sub">已收集結局：${Object.keys(meta).map(k => DATA.M.ENDINGS[k][0]).join('、')}</p>`)}
     ${charts}
@@ -7911,6 +7917,7 @@ const Ach = (() => {
     ['m_rank3', 'mgr', 2, '📊', '業界前三', '年度娛樂公司排行進入前三名。', () => M.coRank && M.coRank.rank <= 3],
     ['m_rank1', 'mgr', 3, '🥇', '業界龍頭', '年度娛樂公司排行拿下第一名。', () => M.coRank && M.coRank.rank === 1],
     ['m_renew', 'mgr', 2, '✍️', '留住人才', '成功與旗下藝人續約 3 次。', () => (M.hist.renews || 0) >= 3],
+    ['m_retire', 'mgr', 3, '🏖️', '傳奇經紀人', '公司成為頂級娛樂帝國後，提前功成身退。', () => M.over === 'retire' || metaEnd('mgr').retire > 0],
     ['m_end_legend', 'mgr', 3, '🌟', 'K-POP 傳奇製作人', '走到「K-POP 的傳奇製作人」結局。', () => M.over === 'legend' || metaEnd('mgr').legend > 0],
     ['m_end_big', 'mgr', 2, '🏙️', '新一代大型經紀公司', '走到「新一代大型經紀公司」以上結局。', () => ['big', 'legend'].some(k => M.over === k || metaEnd('mgr')[k] > 0)],
     ['m_end_bk', 'mgr', 1, '📉', '倒閉也是經驗', '體驗一次公司破產結局。', () => M.over === 'bankrupt' || metaEnd('mgr').bankrupt > 0],
