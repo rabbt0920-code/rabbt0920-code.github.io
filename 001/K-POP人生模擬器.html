@@ -219,6 +219,74 @@ button,.tab,.choice,.btn{touch-action:manipulation}
 .tut-tip h4{margin:2px 0 6px;font-size:1rem;color:var(--pink)}.tut-tip p{margin:0 0 10px;font-size:.9rem;line-height:1.6}.tut-n{font-size:.72rem;color:var(--sub)}
 .tut-btns{display:flex;gap:8px;justify-content:flex-end;align-items:center}.tut-btns .btn{min-height:38px}.tut-btns [data-tut=skip]{margin-right:auto}
 
+/* 演唱會動畫 */
+.cf-wrap{text-align:center}
+.cf-stage{position:relative;border-radius:16px;overflow:hidden;line-height:0;box-shadow:0 8px 24px rgba(90,40,160,.35)}
+.cf-svg{width:100%;height:auto;display:block}
+.cf-me{position:absolute;left:50%;bottom:34%;transform:translateX(-50%);animation:cfBounce 1s ease-in-out infinite;filter:drop-shadow(0 4px 8px rgba(0,0,0,.5))}
+.cf-me svg{display:block}
+.cf-flash{position:absolute;inset:0;background:#fff;opacity:0;pointer-events:none;animation:cfFlash 3.2s ease-out 1}
+.cf-beam{transform-box:view-box;transform-origin:50% 0;mix-blend-mode:screen;opacity:.55}
+.cf-beam.b1{animation:cfSweep 3s ease-in-out infinite alternate}
+.cf-beam.b2{animation:cfSweep 2.4s ease-in-out infinite alternate-reverse}
+.cf-beam.b3{animation:cfSweep 3.4s ease-in-out infinite alternate}
+.cf-beam{transform-origin:inherit}
+.cf-stick{transform-box:fill-box;animation:cfSway 1.2s ease-in-out infinite alternate}
+.cf-glow{animation:cfGlow 1.2s ease-in-out infinite alternate}
+.cf-fw{transform-box:fill-box;transform-origin:center;opacity:0;animation:cfFw 3.5s ease-out infinite}
+.cf-eq{fill:#ff9ad2;transform-box:fill-box;transform-origin:50% 100%;animation:cfEq .5s ease-in-out infinite alternate}
+.cf-count{margin:12px 0 2px}
+.cf-count small{display:block;color:var(--sub,#8a85a8);font-size:12px}
+.cf-count b{font-size:34px;font-variant-numeric:tabular-nums;letter-spacing:1px;color:#ff4fa3;transition:transform .3s}
+.cf-count b.done{transform:scale(1.12)}
+.cf-line{margin:6px 0 8px}
+.cf-chips{justify-content:center}
+@keyframes cfSweep{from{transform:rotate(-22deg)}to{transform:rotate(22deg)}}
+@keyframes cfSway{from{transform:rotate(-12deg)}to{transform:rotate(12deg)}}
+@keyframes cfGlow{from{opacity:.55}to{opacity:1}}
+@keyframes cfBounce{0%,100%{transform:translateX(-50%) translateY(0)}50%{transform:translateX(-50%) translateY(-6px)}}
+@keyframes cfFw{0%{opacity:0;transform:scale(.1)}12%{opacity:1}60%{opacity:.9;transform:scale(1.5)}100%{opacity:0;transform:scale(1.9)}}
+@keyframes cfEq{from{transform:scaleY(.25)}to{transform:scaleY(1.6)}}
+@keyframes cfFlash{0%{opacity:.9}20%{opacity:0}100%{opacity:0}}
+@media (prefers-reduced-motion:reduce){.cf-me,.cf-beam,.cf-stick,.cf-glow,.cf-fw,.cf-eq,.cf-flash{animation:none}.cf-fw{opacity:.6}}
+
+/* 打歌舞台動畫（3 秒） */
+.sf-wrap{text-align:center}
+.sf-title{font-size:13px;color:var(--sub,#8a85a8);margin-bottom:6px}
+.sf-stage{position:relative;border-radius:16px;overflow:hidden;line-height:0;box-shadow:0 8px 24px rgba(40,50,140,.35)}
+.sf-svg{width:100%;height:auto;display:block}
+.sf-row{position:absolute;left:0;right:0;bottom:14%;display:flex;justify-content:center;align-items:flex-end;gap:6px}
+.sf-me,.sf-mate{display:block;animation:sfDance .55s ease-in-out infinite alternate;filter:drop-shadow(0 4px 6px rgba(0,0,0,.5))}
+.sf-me{order:2}.sf-mate.m0{order:1}.sf-mate.m1{order:3}.sf-mate.m2{order:4}
+.sf-ring{transform-box:fill-box;transform-origin:center;animation:sfRing 1s ease-out infinite;opacity:.8}
+.sf-eq{transform-box:fill-box;transform-origin:50% 100%;animation:sfEq .45s ease-in-out infinite alternate}
+.sf-lamp{transform-box:view-box;transform-origin:50% 0;animation:sfLamp 1.4s ease-in-out infinite alternate}
+.sf-lamp.l2{animation-direction:alternate-reverse}
+.sf-dot{animation:sfBlink 1s steps(2) infinite}
+.sf-conf{animation-name:sfFall;animation-timing-function:linear;animation-fill-mode:both;animation-iteration-count:1}
+.sf-board{margin:12px 2px 4px;display:grid;gap:7px}
+.sf-line{display:grid;grid-template-columns:86px 1fr 34px;gap:8px;align-items:center;font-size:12px;text-align:left}
+.sf-line span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.sf-line b{text-align:right;font-variant-numeric:tabular-nums}
+.sf-track{height:10px;border-radius:6px;background:rgba(140,130,190,.22);overflow:hidden}
+.sf-fill{height:100%;width:100%;border-radius:6px;transform-origin:left;transform:scaleX(0);animation:sfGrow .9s cubic-bezier(.2,.8,.2,1) 1.3s forwards}
+.sf-fill.me{background:linear-gradient(90deg,#ff7ac0,#ff4fa3);--s:var(--a)}
+.sf-fill.rv{background:linear-gradient(90deg,#7ad7ff,#5b8dff);--s:var(--b)}
+.sf-verdict{margin:10px 0 2px;font-size:22px;font-weight:800;opacity:0;transform:scale(.6);animation:sfPop .5s cubic-bezier(.3,1.6,.5,1) 2.3s forwards}
+.sf-verdict.win{color:#f0a500}.sf-verdict.lose{font-size:16px;color:var(--sub,#8a85a8)}
+.sf-after{opacity:0;animation:sfShow .5s ease 3s forwards;pointer-events:none}
+.sf-after .btn{pointer-events:auto}
+@keyframes sfDance{from{transform:translateY(0) rotate(-3deg)}to{transform:translateY(-7px) rotate(3deg)}}
+@keyframes sfRing{0%{transform:scale(.6);opacity:.9}100%{transform:scale(1.6);opacity:0}}
+@keyframes sfEq{from{transform:scaleY(.3)}to{transform:scaleY(1.7)}}
+@keyframes sfLamp{from{transform:rotate(-14deg)}to{transform:rotate(14deg)}}
+@keyframes sfBlink{50%{opacity:.15}}
+@keyframes sfFall{0%{transform:translateY(0) rotate(0);opacity:1}100%{transform:translateY(215px) rotate(300deg);opacity:.9}}
+@keyframes sfGrow{to{transform:scaleX(var(--s,1))}}
+@keyframes sfPop{to{opacity:1;transform:scale(1)}}
+@keyframes sfShow{to{opacity:1}}
+@media (prefers-reduced-motion:reduce){.sf-me,.sf-mate,.sf-ring,.sf-eq,.sf-lamp,.sf-dot{animation:none}.sf-fill{animation-duration:.01s;animation-delay:0s}.sf-verdict,.sf-after{animation-delay:0s}}
+
 </style>
 </head>
 <body>
@@ -349,6 +417,8 @@ const Sim = {
     const tal = c.hid.tal[k] ?? 1, cur = c.ab[k];
     let e = .30 * base * tal * Math.pow(Math.max(.05, 1 - cur / 105), 1.4);
     e *= U.clamp((Math.min(100, 50 + 38 * tal) - cur) / 18, .06, 1); // 天賦決定能力上限
+    // 高分段額外衰減：65 以下不影響，80 約減半，92 剩三成，之後降到約 15%
+    if (cur > 65) e *= cur < 80 ? 1 - (cur - 65) / 15 * .5 : cur < 92 ? .5 - (cur - 80) / 12 * .2 : Math.max(.15, .3 - (cur - 92) / 8 * .15);
     if (c.st.stress > 70) e *= .78; else if (c.st.stress > 50) e *= .92;
     if (c.sick > 0) e *= .65;
     if ((k === 'variety' || k === 'rap') && (c.kor ?? 100) < 60) e *= .55 + .45 * (c.kor ?? 100) / 60;
@@ -4521,11 +4591,17 @@ Idol.act_musicshow = function (a, o, push) {
   const perf = Sim.weighted(I, { vocal: .3, dance: .3, charm: .25, acting: .15 }) * Sim.form(I);
   const fansScore = Math.log10(I.car.fans + 10) * 10;
   const mine = perf * .32 + I.promo.q * .28 + I.car.pop * .22 + fansScore * .18 + U.gauss() * 4;
-  const rival = 40 + I.stage * 7 + Math.min(10, (I.day - I.grp.debutDay) / 365 * 1.5) + U.gauss() * 6 + (I.promo.wins >= 2 ? 3 : 0);
+  Idol.chartUpdate(false);
+  const base = 46 + I.stage * 5 + Math.min(8, (I.day - I.grp.debutDay) / 365 * 1.5) + Math.min(8, (I.chart.gap || 0) * .12) + U.gauss() * 6 + (I.promo.wins >= 4 ? 7 : I.promo.wins >= 2 ? 4 : 0);
+  let rival = base, rname = U.pick(I.chart.rivals.slice(0, 8)).name;
+  let bossScore = null;
+  (I.promo.cb || []).forEach(c => { const s = c.boss ? 26 + c.pw * .56 + U.gauss() * 4 : 24 + c.pw * .55 + (c.pw >= 70 ? 3 : 0) + U.gauss() * 5; if (c.boss) bossScore = s; if (s > rival) { rival = s; rname = c.name; } });
   I.promo.shows++;
+  I._show = { win: mine > rival, boss: bossScore !== null && mine > bossScore ? I.promo.boss : (bossScore !== null ? I.promo.boss : null), beatBoss: bossScore !== null && mine > bossScore && mine > rival, mine: Math.round(mine), rival: Math.round(rival), rname, show: U.pick(DATA.SHOWS), n: I.promo.shows };
   if (mine > rival) {
     I.promo.wins++; I.grp.wins++; (I.promo.winLog = I.promo.winLog || []).push(I.day);
     const r = Idol.applyFx({ pop: 2.5, fame: 2, fans: Math.round(2500 * (1 + I.stage) * U.rf(.8, 1.3)), eval: 2, mood: 8 }); r.out.forEach(([k, v]) => push(k, v));
+    if (I._show.beatBoss && !(I.promo.bossBeaten)) { I.promo.bossBeaten = true; const rb = Idol.applyFx({ pop: 4, fame: 4, fans: Math.round(I.car.fans * .06), eval: 4, mood: 10 }); rb.out.forEach(([k, v]) => push(k, v)); Idol.log(`👑 你在打歌舞台上擊敗了 ${I.promo.boss}！整個業界都在談論這場對決。`, 'win'); I.flags['beat_' + I.promo.boss] = true; }
     Idol.log(`🏆 在 ${U.pick(DATA.SHOWS)} 拿下一位！（累計 ${I.grp.wins} 次）`, 'win');
     Idol.checkStage();
     return `🏆 打歌舞台大成功，拿下一位！`;
@@ -4539,6 +4615,7 @@ Idol.act_concert = function (a, o, push) {
   const tickets = Math.round(Math.min(I.car.fans * .12, 15000 + I.car.pop * 300) * (.7 + perf / 150));
   const inc = Math.round(tickets * 50);
   const r = Idol.applyFx({ money: inc, pop: 3, fame: 2.5, fans: Math.round(tickets * .5), eval: 3, mood: 10 }); r.out.forEach(([k, v]) => push(k, v));
+  I._concert = { tickets, inc, perf, fans: Math.round(tickets * .5) };
   Idol.log(`🏟️ 舉辦演唱會，共 ${U.num(tickets)} 名觀眾，酬勞 ${U.money(inc)}。`, 'win');
   Idol.checkStage();
   return `演唱會落幕，${U.num(tickets)} 名觀眾齊聲呼喊你的名字。`;
@@ -4646,7 +4723,12 @@ const RIVAL_NAMES = {
 };
 const ARTIST_GROUPS = [].concat(RIVAL_NAMES.gf, RIVAL_NAMES.gm, RIVAL_NAMES.band, RIVAL_NAMES.mixed);
 // 依類型與性別取得對手名稱（自己的團名與已使用的名字會排除）
-const rivalPool = (cat, used) => (RIVAL_NAMES[cat] || []).filter(n => !used.has(n) && !(I.grp && I.grp.name === n));
+// 路線大魔王：男團出道第三年迎戰軍白期結束回歸的宇宙天團 BXS；女團則是 AESPAIR
+Idol.boss = function () {
+  if (!I || !I.grp || I.grp.kind !== 'group') return null;
+  return I.g === 'm' ? { name: 'BXS', pw: 96, big: '宇宙天團' } : { name: 'AESPAIR', pw: 92, big: '全球女團' };
+};
+const rivalPool = (cat, used) => { const B = Idol.boss(); return (RIVAL_NAMES[cat] || []).filter(n => !used.has(n) && !(I.grp && I.grp.name === n) && !(B && B.name === n)); };
 Idol.reviewName = th => th.n.replace('考核', '評鑑').replace('綜合大考', '綜合評鑑');
 Idol.mkArtist = function (used) {
   const kind = U.pick(['solo', 'solo', 'solo', 'group', 'group', 'group', 'band', 'mixed']);
@@ -4717,6 +4799,13 @@ Idol.chartUpdate = function (monthly) {
     C.rivals.sort((a, b) => b.pw - a.pw);
     if (C.rivals[C.rivals.length - 1].pw < 20 && U.chance(.5)) { C.rivals.pop(); C.rivals.push(Idol.chartMk(used, false)); }
   }
+  { const B = Idol.boss();
+    if (B && yrs >= 2) {
+      let r = C.rivals.find(x => x.name === B.name);
+      if (!r) { if (C.rivals.length >= 14) C.rivals.pop(); r = { name: B.name, pw: B.pw, fans: 0, trend: 0, hot: 0, boss: true }; C.rivals.push(r); }
+      r.pw = Math.max(82, U.clamp(B.pw + U.rf(-1.2, 1.8) - Math.max(0, yrs - 4) * 3, 0, 99)); r.fans = Math.round(Math.pow(10, 3.2 + r.pw / 22)); r.trend = 0; r.hot = 0; r.boss = true;
+      C.rivals.sort((a, b) => b.pw - a.pw);
+    } }
   const me = Idol.playerPw();
   const all = C.rivals.map(r => ({ name: r.name, pw: r.pw, fans: r.fans })).concat([{ name: I.grp ? I.grp.name : I.name, pw: me, fans: I.car.fans, me: true }]).sort((a, b) => b.pw - a.pw);
   C.rank = all.findIndex(r => r.me) + 1; C.total = all.length; C.top = all.slice(0, 10);
@@ -4929,6 +5018,16 @@ Idol.startPromo = function (concept, opt) {
   const sales = Math.round((I.car.fans * .25 + 4000) * (.5 + q / 100) * U.rf(.85, 1.2) * F.sales);
   const pos = Math.max(1, Math.round(70 - (q * .5 + I.car.pop * .4 + I.car.fame * .2) + U.gauss() * 6));
   I.promo = { name, concept: c.id, fmt: opt.fmt || 'mini', start: I.day, end: I.day + F.days, gap: F.gap, winLog: [], q, wins: 0, shows: 0, sales, pos };
+  { // 同期回歸的對手：撞期越多，打歌拿一位越難
+    Idol.chartUpdate(false);
+    const top = I.chart.rivals.filter(r => !r.boss).slice(0, 10), nCb = U.wpick([0, 1, 2, 3], x => [22, 40, 30, 8][x]); let cb = [];
+    for (let i = 0; i < nCb && top.length > cb.length; i++) { const pool = top.filter(r => !cb.includes(r)); cb.push(U.wpick(pool, r => 1 + r.pw / 25)); }
+    const B = Idol.boss(), yp = (I.day - I.grp.debutDay) / 365, br = B && I.chart.rivals.find(r => r.name === B.name);
+    if (br && yp >= 2 && yp < 3) cb = [br].concat(cb).slice(0, 3); // 第三年的回歸一定會撞上大魔王
+    I.promo.cb = cb.map(r => ({ name: r.name, pw: Math.round(r.pw), boss: !!r.boss }));
+    if (br && yp >= 2 && yp < 3) { I.promo.boss = B.name; Idol.log(`👹 ${B.name} 與你同週回歸！這是${I.g === 'm' ? '男團' : '女團'}路線的大魔王。`, 'bad'); }
+    if (cb.length) Idol.log(`⚔️ 本次回歸與 ${cb.map(r => r.name).join('、')} 撞期，打歌競爭會更激烈。`, 'story');
+  }
   I.grp.albums.push({ name, q: Math.round(q), sales, day: I.day, pos, fmt: opt.fmt || 'mini' }); I.grp.sales += sales;
   const r = Idol.applyFx({ fans: Math.round((sales * .08 + 800) * F.hype), fame: (Math.max(0, 5 - pos / 15) + 1) * F.hype, pop: (Math.max(0, 6 - pos / 10) + 1) * F.hype, eval: pos <= 10 ? 4 : 1, mood: 6, stress: F.stress });
   I.queue.push({ t: 'msg', title: `💿 發行：${name}`, text: `首週銷量 ${U.num(sales)} 張，音源榜最高 #${pos}。\n宣傳期 ${F.days} 天（每週四～日有音樂節目可以「打歌」）。專輯品質 ${Math.round(q)} / 100。\n\n小提醒：宣傳期內，到「工作」頁安排打歌，更容易拿到一位。`, chips: Idol.chips(r) });
@@ -5155,6 +5254,8 @@ Idol.runMonth = function (plan) {
 Idol.monthly = function () {
   if (I.stage < 2) return;
   // 收入：固定薪資＋專輯分紅（分紅逐月遞減，不會永遠領）
+  { const B = Idol.boss(), yp = I.grp ? (I.day - I.grp.debutDay) / 365 : 0;
+    if (B && yp >= 2 && !I.flags.bossAnn) { I.flags.bossAnn = true; I.queue.push({ t: 'msg', title: B.name === 'BXS' ? '🌌 BXS 結束軍白期，宣布回歸' : '🔥 AESPAIR 宣布全新專輯回歸', text: B.name === 'BXS' ? `${B.big} BXS 的最後一位成員退伍，經紀公司宣布全員完整體回歸。\n全球粉絲徹夜刷榜，業界人士私下說：「今年所有人的回歸，都得和他們撞期。」\n\n你出道滿兩年，即將迎來第三年。這會是男團路線最大的一場硬仗。` : `${B.big} AESPAIR 結束世界巡演，宣布全新專輯回歸，各大榜單的預告已經佔滿版面。\n業界人士說：「這一年，所有女團都得面對他們。」\n\n你出道滿兩年，即將迎來第三年。這會是女團路線最大的一場硬仗。`, chips: '' }); } }
   Idol.chartUpdate(true); const cp = Idol.chartPressure();
   const sb = Math.round((I.salesInc || 0) * .6); I.salesInc = Math.round((I.salesInc || 0) * .6);
   const inc = Math.round(([0, 0, 12000, 50000, 200000][I.stage] + sb) * cp.inc * (I.coInc || 1));
@@ -5210,9 +5311,10 @@ Idol.awards = function () {
   const score = I.car.pop * .5 + I.car.fame * .25 + (I.lastSales ? Math.min(25, Math.log10(I.lastSales + 1) * 5) : 0) - I.hid.scandal * .3;
   const debutRecent = I.grp && I.day - I.grp.debutDay < 400;
   const won = [];
-  if (debutRecent && U.chance(U.clamp(score / 70, .05, .9))) won.push('最佳新人獎');
-  if (I.stage >= 2 && score > 38 && U.chance(U.clamp((score - 30) / 60, .05, .8))) won.push('本賞（唱片）');
-  if (I.stage >= 3 && score > 66 && U.chance(U.clamp((score - 58) / 50, .05, .5))) won.push('年度大賞');
+  Idol.chartUpdate(false); const rk = I.chart.rank, rf = rk <= 1 ? 1 : rk === 2 ? .7 : rk === 3 ? .5 : rk <= 6 ? .3 : .15; // 同類榜單名次越低，拿獎越難
+  if (debutRecent && U.chance(U.clamp(score / 80, .05, .8) * rf)) won.push('最佳新人獎');
+  if (I.stage >= 2 && score > 42 && U.chance(U.clamp((score - 34) / 70, .04, .6) * rf)) won.push('本賞（唱片）');
+  if (I.stage >= 3 && score > 70 && U.chance(U.clamp((score - 62) / 60, .03, .4) * rf)) won.push('年度大賞');
   const r = Idol.applyFx(won.length ? { pop: 2 + won.length * 1.5, fame: 2 + won.length, fans: 5000 * won.length * (1 + I.stage), eval: 4, mood: 12 } : { mood: -2 });
   won.forEach(n => I.awards.push({ y, n }));
   I.queue.push({ t: 'msg', title: `🏆 ${y} 年終頒獎典禮`, text: won.length ? `你獲得了：${won.join('、')}！\n站在台上，你想起第一次走進練習室的那天。` : '今年的典禮上，你只是坐在台下鼓掌。但你告訴自己：明年，換我。', chips: Idol.chips(r) });
@@ -5466,7 +5568,7 @@ function tWork() {
   if (I.stage < 2) return card('🔒 出道後解鎖', `<p>正式出道後，你才能參加音樂節目、綜藝、見面會與廣告拍攝。<br>目前階段：${DATA.STAGES[I.stage]}。${I.stage === 1 ? '通過季度出道評估即可出道。' : '先升上預備組、累積月考成績。'}</p>`);
   const ids = ['musicshow', 'varshow', 'fanmeet', 'live', 'ad', 'concert'];
   const p = I.promo;
-  return `<div class="grid2"><div class="col">${card('宣傳期', p ? `<h4>《${U.esc(p.name)}》</h4><p>專輯品質 ${Math.round(p.q)} · 首週銷量 ${U.num(p.sales)} · 榜單 #${p.pos}<br>打歌 ${p.shows} 次 · 一位 ${p.wins} 次 · 剩 ${Math.max(0, p.end - I.day)} 天</p>` : `<p class="sub">目前沒有宣傳期。${I.grp ? '下次回歸約 ' + Math.max(0, Math.ceil((I.grp.next - I.day) / 7)) + ' 週後。' : ''}</p>`)}
+  return `<div class="grid2"><div class="col">${card('宣傳期', p ? `<h4>《${U.esc(p.name)}》</h4><p>專輯品質 ${Math.round(p.q)} · 首週銷量 ${U.num(p.sales)} · 榜單 #${p.pos}<br>打歌 ${p.shows} 次 · 一位 ${p.wins} 次 · 剩 ${Math.max(0, p.end - I.day)} 天${p.cb && p.cb.length ? '<br>⚔️ 同期回歸：' + p.cb.map(c => (c.boss ? '👹 ' : '') + U.esc(c.name) + '（實力 ' + c.pw + '）').join('、') : ''}</p>` : `<p class="sub">目前沒有宣傳期。${I.grp ? '下次回歸約 ' + Math.max(0, Math.ceil((I.grp.next - I.day) / 7)) + ' 週後。' : ''}</p>`)}
     ${card('工作', `<div class="acts">${ids.map(actCard).join('')}</div>`)}
     ${card('🤝 品牌代言（一次簽一年）', (I.endorse || []).length ? `<ul class="notes">${I.endorse.map(c => `<li><b>${U.esc(c.n)}</b>（${c.cat}）<br>剩 ${Math.max(0, c.end - I.day)} 天 · 已拍 ${c.done}/${c.shots} 次 · 每次酬勞 ${U.money(c.per)}${c.sched.filter(d => d <= I.day).length > c.done ? ' · <b>📸 待拍攝</b>' : (c.done < c.shots ? ' · 下次拍攝約 ' + Cal.short(c.sched.find(d => d > I.day) || c.end) : '')}</li>`).join('')}</ul>` : '<p class="sub">目前沒有代言合約。知名度提高後，品牌會陸續找上門。</p>')}</div>
     <div class="col">${card('活動規則', '<ul class="notes"><li>打歌只在宣傳期的週四～日，成績取決於舞台、專輯品質、人氣與粉絲。</li><li>演唱會需人氣偶像階段、體力 60 以上，每 60 天一次。</li><li>品牌代言一次簽一年，最多同時兩份、同類別不重複；期間有 4 次拍攝，未完成會被索賠。</li><li>薪水每月 1 日入帳，會依銷量有分紅。</li></ul>')}</div></div>`;
@@ -5636,8 +5738,11 @@ ACT['i.act'] = d => {
   }
   if (d.id === 'social') return ACT['i.post']();
   UI.close();
+  I._concert = null; I._show = null;
   const r = Idol.doAct(d.id, { npc: d.npc, mate: d.mate }); if (!r) return;
   const t = I.today[I.today.length - 1];
+  if (d.id === 'concert' && I._concert) { Idol.render(); return ConcertFx.show(I._concert); }
+  if (d.id === 'musicshow' && I._show) { Idol.render(); return ShowFx.show(I._show, t.eff.filter(([k]) => k !== 'stam' && k !== 'stress').slice(0, 4)); }
   UI.toast(`${DATA.ACTIONS[d.id].i} ${DATA.ACTIONS[d.id].n}：` + (t.eff.filter(([k]) => k !== 'stam' && k !== 'stress').slice(0, 3).map(([k, v]) => `${DATA.LABEL[k]}${v > 0 ? '+' : ''}${Math.abs(v) >= 100 ? U.num(v) : U.f1(v)}`).join(' ') || '完成'));
   Idol.render();
 };
@@ -5686,6 +5791,88 @@ Idol.renderEnding = function (root) {
     ${card('命運揭曉：你的隱藏數值', `<div class="hgrid">${hid}${tal}</div><p class="sub">個性：${I.pers ? DATA.PERS[I.pers].n : '未確定'}</p>`)}
     <div class="btn-row"><button class="btn" data-act="i.restart2">回到主選單</button></div></main></div>`;
 };
+
+
+/* ---------- 演唱會向量動畫：舞台、聚光燈、螢光棒人海、煙火，數字跳動後顯示成果 ---------- */
+const ConcertFx = (function () {
+  const rnd = (a, b) => a + Math.random() * (b - a);
+  function stage(tickets, perf) {
+    const dens = Math.max(14, Math.min(70, Math.round(14 + Math.log10(tickets + 10) * 12)));
+    let sticks = '';
+    for (let i = 0; i < dens; i++) {
+      const row = i % 3, x = rnd(8, 352), y = 176 + row * 14 + rnd(-3, 3), h = 70 + rnd(0, 140), d = rnd(0, 1.6);
+      sticks += `<g class="cf-stick" style="animation-delay:${d.toFixed(2)}s;transform-origin:${x.toFixed(0)}px ${y + 12}px"><rect x="${x.toFixed(0)}" y="${(y - 10).toFixed(0)}" width="2.6" height="12" rx="1.2" fill="hsl(${h},95%,68%)"/><circle cx="${(x + 1.3).toFixed(0)}" cy="${(y - 11).toFixed(0)}" r="3.2" fill="hsl(${h},95%,72%)" class="cf-glow"/><circle cx="${(x + 1.3).toFixed(0)}" cy="${(y + 3).toFixed(0)}" r="6" fill="#0a0818"/></g>`;
+    }
+    let fw = '';
+    [[70, 55, 0], [290, 48, .9], [180, 38, 1.7], [120, 80, 2.4], [250, 78, 3.1]].forEach(([cx, cy, dl], k) => {
+      const col = ['#ff8ac8', '#ffe27a', '#8adfff', '#b99bff', '#9dffc2'][k]; let rays = '';
+      for (let a = 0; a < 12; a++) { const r = a * Math.PI / 6; rays += `<line x1="0" y1="0" x2="${(Math.cos(r) * 22).toFixed(1)}" y2="${(Math.sin(r) * 22).toFixed(1)}" stroke="${col}" stroke-width="2" stroke-linecap="round"/>`; }
+      fw += `<g transform="translate(${cx},${cy})"><g class="cf-fw" style="animation-delay:${dl}s">${rays}<circle r="3" fill="${col}"/></g></g>`;
+    });
+    let eq = ''; for (let i = 0; i < 14; i++) eq += `<rect class="cf-eq" x="${112 + i * 10.5}" y="50" width="6" height="22" rx="2" style="animation-delay:${(i * .09).toFixed(2)}s"/>`;
+    return `<svg class="cf-svg" viewBox="0 0 360 230" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="演唱會舞台動畫">
+      <defs><linearGradient id="cfbg" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#1a1240"/><stop offset=".7" stop-color="#3a1b66"/><stop offset="1" stop-color="#150d2e"/></linearGradient>
+      <linearGradient id="cfbeam" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#fff" stop-opacity=".75"/><stop offset="1" stop-color="#fff" stop-opacity="0"/></linearGradient>
+      <linearGradient id="cfstage" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ff7ac0"/><stop offset="1" stop-color="#7d4bd8"/></linearGradient></defs>
+      <rect width="360" height="230" fill="url(#cfbg)"/>
+      <g class="cf-stars">${Array.from({ length: 16 }, () => `<circle cx="${rnd(6, 354).toFixed(0)}" cy="${rnd(4, 60).toFixed(0)}" r="${rnd(.6, 1.4).toFixed(1)}" fill="#fff" opacity=".7"/>`).join('')}</g>
+      <rect x="100" y="40" width="160" height="40" rx="6" fill="#0d0a22" stroke="#ff9ad2" stroke-width="1.5"/>${eq}
+      <g class="cf-beams"><polygon class="cf-beam b1" points="60,0 30,170 110,170" fill="url(#cfbeam)"/><polygon class="cf-beam b2" points="180,0 150,170 210,170" fill="url(#cfbeam)"/><polygon class="cf-beam b3" points="300,0 250,170 330,170" fill="url(#cfbeam)"/></g>
+      <polygon points="70,150 290,150 330,176 30,176" fill="url(#cfstage)"/><rect x="30" y="176" width="300" height="5" fill="#2a1357"/>
+      ${fw}${sticks}</svg>`;
+  }
+  function show(c) {
+    const grade = c.perf >= 70 ? 'S' : c.perf >= 55 ? 'A' : c.perf >= 40 ? 'B' : 'C';
+    const quote = { S: '全場安可聲不斷，今晚是傳說級的舞台！', A: '氣氛熱烈，粉絲們的聲音幾乎要掀翻屋頂。', B: '演出順利，大家帶著笑容離場。', C: '雖然有些小失誤，粉絲仍然給了你溫暖的掌聲。' }[grade];
+    UI.modal(`<div class="cf-wrap"><div class="cf-stage">${stage(c.tickets, c.perf)}<div class="cf-me">${Avatar.svg(I.av, 74, I.g)}</div><div class="cf-flash"></div></div>
+      <div class="cf-count"><small>現場觀眾</small><b id="cfN">0</b></div>
+      <p class="cf-line">${quote}</p>
+      <div class="chips cf-chips" id="cfChips" style="opacity:0"><span class="delta up">票房 ${U.money(c.inc)}</span><span class="delta up">粉絲 +${U.num(c.fans)}</span><span class="delta up">人氣 +3</span><span class="delta up">表現 ${grade}</span></div>
+      <div class="btn-row"><button class="btn pink" data-act="u.close">謝幕 🎤</button></div></div>`, { cls: 'cf' });
+    const el = document.getElementById('cfN'), ch = document.getElementById('cfChips'); if (!el) return;
+    const t0 = performance.now(), dur = 2600;
+    const tick = now => {
+      const e = document.getElementById('cfN'); if (!e) return;
+      const k = Math.min(1, (now - t0) / dur), v = Math.round(c.tickets * (1 - Math.pow(1 - k, 3)));
+      e.textContent = U.num(v);
+      if (k < 1) requestAnimationFrame(tick); else { if (ch) { ch.style.transition = 'opacity .5s'; ch.style.opacity = 1; } e.classList.add('done'); }
+    };
+    requestAnimationFrame(tick);
+  }
+  return { show };
+})();
+
+
+/* ---------- 打歌舞台動畫（3 秒）：直播中、舞台演出、得分對決、宣布名次 ---------- */
+const ShowFx = (function () {
+  function scene(w) {
+    const rings = [0, 1, 2, 3].map(i => `<circle class="sf-ring" cx="180" cy="62" r="${16 + i * 15}" style="animation-delay:${(i * .25).toFixed(2)}s" fill="none" stroke="hsl(${300 + i * 25},90%,70%)" stroke-width="2"/>`).join('');
+    const bars = Array.from({ length: 24 }, (_, i) => `<rect class="sf-eq" x="${20 + i * 14}" y="104" width="8" height="26" rx="3" style="animation-delay:${((i * 37) % 10) / 20}s" fill="hsl(${200 + i * 6},90%,68%)"/>`).join('');
+    let conf = ''; if (w) for (let i = 0; i < 26; i++) { const x = (Math.random() * 350 + 5).toFixed(0), c = ['#ffd84a', '#ff7ac0', '#7ad7ff', '#b49bff', '#8dffb0'][i % 5]; conf += `<rect class="sf-conf" x="${x}" y="-8" width="5" height="9" fill="${c}" style="animation-delay:${(2.1 + Math.random() * .7).toFixed(2)}s;animation-duration:${(1.2 + Math.random()).toFixed(2)}s"/>`; }
+    return `<svg class="sf-svg" viewBox="0 0 360 200" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="打歌舞台動畫">
+      <defs><linearGradient id="sfbg" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#101a45"/><stop offset="1" stop-color="#2a1458"/></linearGradient>
+      <linearGradient id="sffl" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#3b2a7a"/><stop offset="1" stop-color="#1a1040"/></linearGradient></defs>
+      <rect width="360" height="200" fill="url(#sfbg)"/>${rings}
+      <g class="sf-lamp l1"><polygon points="40,0 10,150 90,150" fill="#8ad7ff" opacity=".28"/></g><g class="sf-lamp l2"><polygon points="320,0 270,150 350,150" fill="#ff9ad2" opacity=".28"/></g>
+      <rect x="0" y="150" width="360" height="50" fill="url(#sffl)"/><g opacity=".75">${bars}</g>
+      <rect x="10" y="8" width="62" height="20" rx="5" fill="#d8223f"/><circle class="sf-dot" cx="22" cy="18" r="4" fill="#fff"/><text x="31" y="22.5" font-size="11" font-weight="700" fill="#fff" font-family="sans-serif">ON AIR</text>
+      ${conf}</svg>`;
+  }
+  function show(c, eff) {
+    const mem = (I.grp && I.grp.kind !== 'solo' ? I.grp.members.slice(1, 4) : []).map(m => m.split('（')[0]);
+    const mini = mem.map((n, i) => `<i class="sf-mate m${i}" style="animation-delay:${(i * .15).toFixed(2)}s">${Avatar.mini(n, I.g, 44)}</i>`).join('');
+    const mx = Math.max(c.mine, c.rival, 1), a = Math.max(.25, c.mine / mx), b = Math.max(.25, c.rival / mx);
+    const chips = eff.map(([k, v]) => `<span class="delta up">${DATA.LABEL[k]} ${v > 0 ? '+' : ''}${Math.abs(v) >= 100 ? U.num(v) : U.f1(v)}</span>`).join('');
+    UI.modal(`<div class="sf-wrap"><div class="sf-title">📺 ${c.show} 現場直播 · 第 ${c.n} 次舞台</div>
+      <div class="sf-stage">${scene(c.win)}<div class="sf-row">${mini}<i class="sf-me">${Avatar.svg(I.av, 66, I.g)}</i></div></div>
+      <div class="sf-board" style="--a:${a.toFixed(3)};--b:${b.toFixed(3)}">
+        <div class="sf-line"><span>你 ${U.esc(I.grp ? I.grp.name : I.name)}</span><div class="sf-track"><div class="sf-fill me"></div></div><b>${c.mine}</b></div>
+        <div class="sf-line"><span>${U.esc(c.rname)}</span><div class="sf-track"><div class="sf-fill rv"></div></div><b>${c.rival}</b></div></div>
+      <div class="sf-verdict ${c.win ? 'win' : 'lose'}">${c.win ? (c.beatBoss ? `👑 擊敗 ${U.esc(c.boss)}，一位！` : '🏆 一位！') : `差 ${Math.max(1, c.rival - c.mine)} 分${c.boss ? '，' + U.esc(c.boss) + ' 太強了' : '，下次再來'}`}</div>
+      <div class="sf-after"><div class="chips" style="justify-content:center">${chips}</div><div class="btn-row"><button class="btn pink" data-act="u.close">下台 🎤</button></div></div></div>`, { cls: 'sf' });
+  }
+  return { show };
+})();
 
 /* ===== tutorial.js ===== */
 /* ============================================================
