@@ -1,0 +1,316 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>人生模擬器遊戲館</title>
+<meta name="description" content="人生模擬器一次玩：股海、修仙、魔法學院、武俠江湖、K-POP 偶像，持續更新中。">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+TC:wght@600;900&family=Noto+Sans+TC:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#0e0d14;
+    --panel:#17151f;
+    --line:#2a2735;
+    --text:#f1eee8;
+    --muted:#9c97a8;
+    --gold:#e8c27a;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html{scroll-behavior:smooth}
+  body{
+    background:var(--bg);
+    color:var(--text);
+    font-family:"Noto Sans TC",system-ui,sans-serif;
+    min-height:100vh;
+    line-height:1.6;
+    background-image:
+      radial-gradient(ellipse 80% 50% at 50% -10%, rgba(232,194,122,.12), transparent 60%),
+      radial-gradient(circle at 1px 1px, rgba(255,255,255,.035) 1px, transparent 0);
+    background-size:auto, 22px 22px;
+  }
+  .wrap{max-width:1180px;margin:0 auto;padding:0 24px}
+
+  /* Header */
+  header{padding:72px 0 40px;text-align:center}
+  .eyebrow{
+    display:inline-block;font-size:13px;letter-spacing:.35em;color:var(--gold);
+    border:1px solid rgba(232,194,122,.35);border-radius:999px;padding:6px 16px;margin-bottom:22px
+  }
+  h1{
+    font-family:"Noto Serif TC",serif;font-weight:900;
+    font-size:clamp(40px,7vw,76px);line-height:1.1;letter-spacing:.04em
+  }
+  h1 span{
+    background:linear-gradient(100deg,#f6dfae,#e8c27a 40%,#c98a4b);
+    -webkit-background-clip:text;background-clip:text;color:transparent
+  }
+  .sub{color:var(--muted);margin-top:18px;font-size:17px}
+
+  /* Toolbar */
+  .toolbar{
+    display:flex;flex-wrap:wrap;gap:10px;justify-content:center;align-items:center;
+    margin:34px 0 8px
+  }
+  .chip{
+    background:transparent;color:var(--muted);border:1px solid var(--line);
+    padding:8px 18px;border-radius:999px;font:inherit;font-size:14px;cursor:pointer;
+    transition:all .2s
+  }
+  .chip:hover{color:var(--text);border-color:#4a4558}
+  .chip.on{background:var(--text);color:var(--bg);border-color:var(--text)}
+  .dice{
+    background:linear-gradient(100deg,#f6dfae,#e8c27a);color:#2a1d08;border:none;
+    padding:9px 20px;border-radius:999px;font:inherit;font-weight:700;font-size:14px;cursor:pointer;
+    margin-left:6px;transition:transform .15s
+  }
+  .dice:hover{transform:translateY(-2px)}
+  .dice:active{transform:scale(.97)}
+
+  /* Grid */
+  .grid{
+    display:grid;grid-template-columns:repeat(auto-fill,minmax(330px,1fr));
+    gap:22px;padding:30px 0 80px
+  }
+  .card{
+    --c1:#444;--c2:#222;--accent:#fff;
+    position:relative;display:flex;flex-direction:column;
+    background:var(--panel);border:1px solid var(--line);border-radius:20px;
+    overflow:hidden;text-decoration:none;color:inherit;
+    transition:transform .25s ease, border-color .25s, box-shadow .25s;
+  }
+  .card:hover{
+    transform:translateY(-6px);border-color:var(--accent);
+    box-shadow:0 18px 50px -18px var(--accent)
+  }
+  .card.hide{display:none}
+  .card.picked{animation:pick 1.4s ease}
+  @keyframes pick{
+    0%,100%{box-shadow:0 0 0 0 transparent}
+    30%,60%{box-shadow:0 0 0 4px var(--accent),0 0 60px -6px var(--accent)}
+  }
+  .cover{
+    height:170px;position:relative;overflow:hidden;
+    background:linear-gradient(135deg,var(--c1),var(--c2));
+    display:flex;align-items:center;justify-content:center
+  }
+  .cover .glyph{
+    font-family:"Noto Serif TC",serif;font-weight:900;font-size:128px;line-height:1;
+    color:rgba(255,255,255,.13);position:absolute;right:-8px;bottom:-26px;letter-spacing:-.05em;
+    transition:transform .4s
+  }
+  .card:hover .glyph{transform:scale(1.08) rotate(-3deg)}
+  .cover .emoji{font-size:62px;filter:drop-shadow(0 6px 14px rgba(0,0,0,.35));position:relative;z-index:1;transition:transform .3s}
+  .card:hover .emoji{transform:translateY(-4px) scale(1.06)}
+  .no{
+    position:absolute;left:18px;top:14px;font-size:12px;letter-spacing:.2em;
+    color:rgba(255,255,255,.75);font-weight:700
+  }
+  .body{padding:22px 22px 20px;display:flex;flex-direction:column;flex:1}
+  .tags{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:10px}
+  .tag{
+    font-size:12px;padding:2px 10px;border-radius:999px;
+    background:color-mix(in srgb,var(--accent) 16%,transparent);color:var(--accent)
+  }
+  .card h2{font-family:"Noto Serif TC",serif;font-size:24px;font-weight:900;letter-spacing:.03em}
+  .card p{color:var(--muted);font-size:15px;margin-top:8px;flex:1}
+  .play{
+    margin-top:18px;display:flex;align-items:center;justify-content:space-between;
+    border-top:1px dashed var(--line);padding-top:14px;font-weight:700;font-size:15px;color:var(--accent)
+  }
+  .play .arrow{transition:transform .2s}
+  .card:hover .arrow{transform:translateX(5px)}
+
+  .chip small{opacity:.55;font-size:12px;margin-left:2px}
+  .new{
+    position:absolute;right:14px;top:12px;z-index:2;font-size:11px;font-weight:700;letter-spacing:.15em;
+    background:var(--accent);color:#111;padding:3px 10px;border-radius:999px
+  }
+  .card.soon{
+    --c1:#1c1a26;--c2:#1c1a26;--accent:#6d6780;
+    border-style:dashed;cursor:default
+  }
+  .card.soon .cover{background:repeating-linear-gradient(135deg,#1c1a26 0 14px,#211e2c 14px 28px)}
+  .card.soon:hover{transform:none;box-shadow:none;border-color:#4a4558}
+  .card.soon .emoji{opacity:.6}
+
+  footer{
+    border-top:1px solid var(--line);padding:28px 0 40px;text-align:center;
+    color:var(--muted);font-size:13px
+  }
+
+  /* Toast */
+  .toast{
+    position:fixed;left:50%;bottom:28px;transform:translate(-50%,120px);
+    background:var(--text);color:var(--bg);padding:12px 22px;border-radius:999px;
+    font-weight:700;font-size:15px;transition:transform .35s cubic-bezier(.2,.9,.3,1.3);z-index:10;
+    box-shadow:0 10px 30px rgba(0,0,0,.4);white-space:nowrap
+  }
+  .toast.show{transform:translate(-50%,0)}
+
+  @media (max-width:520px){
+    header{padding:52px 0 26px}
+    .grid{grid-template-columns:1fr}
+    .cover{height:140px}
+  }
+  @media (prefers-reduced-motion:reduce){
+    *{transition:none!important;animation:none!important}
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <div class="eyebrow">LIFE SIMULATOR ARCADE</div>
+    <h1>人生<span>模擬器</span>遊戲館</h1>
+    <p class="sub"><b id="count" style="color:var(--gold)">5</b> 種人生，一鍵投胎。今天，你想活成誰？</p>
+
+    <nav class="toolbar" id="toolbar" aria-label="分類篩選"></nav>
+  </header>
+
+  <main class="grid" id="grid"></main>
+</div>
+
+<footer>
+  <div class="wrap">© 人生模擬器遊戲館 · 遊戲皆可免費遊玩，於新分頁開啟 · 持續更新中</div>
+</footer>
+
+<div class="toast" id="toast"></div>
+
+<script>
+/* =========================================================
+   ★ 遊戲清單 ★  新增遊戲只要在這裡加一筆，其餘全部自動產生
+   ---------------------------------------------------------
+   title   遊戲名稱
+   url     遊戲網址
+   emoji   封面圖示
+   glyph   封面背景大字（一個字）
+   tags    分類標籤，第一組會出現在上方篩選列
+   desc    一兩句簡介
+   cta     按鈕文字
+   theme   [主色, 副色, 強調色]
+   isNew   true 會顯示 NEW 標籤（選填）
+   ========================================================= */
+const BASE = 'https://rabbt0920-code.github.io/001/';
+
+const GAMES = [
+  {
+    title:'股海人生模擬器', url:BASE+'股海人生模擬器.html',
+    emoji:'📈', glyph:'股', tags:['現代','投資理財'],
+    desc:'從小資族起步，在紅綠K線間載浮載沉。是翻身財富自由，還是住進套房？',
+    cta:'進入股海', theme:['#0f3d2e','#7a1f24','#4fd18b']
+  },
+  {
+    title:'投胎修仙模擬器', url:BASE+'投胎修仙模擬器.html',
+    emoji:'☯️', glyph:'仙', tags:['古風','奇幻','修仙'],
+    desc:'投胎看命，靈根看天。煉氣、築基、結丹……一路逆天改命，問道長生。',
+    cta:'踏上仙途', theme:['#1d3b3a','#3b2a5c','#8fe0cf']
+  },
+  {
+    title:'穿越霍格華茲模擬器', url:BASE+'穿越霍格華茲模擬器.html',
+    emoji:'🪄', glyph:'魔', tags:['穿越','奇幻','魔法學院'],
+    desc:'一覺醒來收到入學通知書。上課、交友、闖禍，寫下屬於你的魔法學院歲月。',
+    cta:'啟程入學', theme:['#1a1f4a','#4a2a12','#f0c45c']
+  },
+  {
+    title:'穿越燕雲十六聲模擬器', url:BASE+'穿越燕雲十六聲模擬器.html',
+    emoji:'⚔️', glyph:'俠', tags:['穿越','古風','武俠'],
+    desc:'穿越亂世燕雲，刀光劍影之間結交英雄、捲入紛爭，走出你的江湖路。',
+    cta:'仗劍江湖', theme:['#3a0f12','#141414','#ff6b5e']
+  },
+  {
+    title:'K-POP人生模擬器', url:BASE+'K-POP人生模擬器.html',
+    emoji:'🎤', glyph:'星', tags:['現代','偶像養成','經營'],
+    desc:'當練習生拚出道，或當經紀人打造天團——兩種模式，一條星光大道。',
+    cta:'準備出道', theme:['#5b1a4f','#1f2a6b','#ff8fd0']
+  },
+  // ↓ 新遊戲複製上面任一筆貼在這裡即可
+];
+
+/* 上方篩選列要顯示的分類（留空 [] 則自動從所有標籤產生） */
+const FILTERS = ['穿越','古風','奇幻','現代'];
+
+/* 是否在最後顯示「敬請期待」卡片 */
+const SHOW_COMING_SOON = true;
+/* ========================================================= */
+
+const grid = document.getElementById('grid');
+const toolbar = document.getElementById('toolbar');
+const toast = document.getElementById('toast');
+const esc = s => String(s).replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+
+function render(){
+  grid.innerHTML = GAMES.map((g,i)=>`
+    <a class="card" href="${encodeURI(g.url)}" target="_blank" rel="noopener"
+       data-tags="${esc(g.tags.join(' '))}"
+       style="--c1:${g.theme[0]};--c2:${g.theme[1]};--accent:${g.theme[2]}">
+      <div class="cover">
+        <span class="no">NO.${String(i+1).padStart(2,'0')}</span>
+        ${g.isNew ? '<span class="new">NEW</span>' : ''}
+        <span class="emoji">${g.emoji}</span><span class="glyph">${esc(g.glyph)}</span>
+      </div>
+      <div class="body">
+        <div class="tags">${g.tags.map(t=>`<span class="tag">${esc(t)}</span>`).join('')}</div>
+        <h2>${esc(g.title)}</h2>
+        <p>${esc(g.desc)}</p>
+        <div class="play">${esc(g.cta||'開始遊戲')} <span class="arrow">→</span></div>
+      </div>
+    </a>`).join('') + (SHOW_COMING_SOON ? `
+    <div class="card soon" data-tags="">
+      <div class="cover"><span class="emoji">✨</span><span class="glyph">新</span></div>
+      <div class="body">
+        <h2>更多人生，即將登場</h2>
+        <p>新的模擬器正在製作中，敬請期待下一次投胎。</p>
+        <div class="play">Coming Soon <span class="arrow">…</span></div>
+      </div>
+    </div>` : '');
+
+  const filters = FILTERS.length ? FILTERS : [...new Set(GAMES.flatMap(g=>g.tags))];
+  toolbar.innerHTML =
+    `<button class="chip on" data-filter="all">全部 <small>${GAMES.length}</small></button>` +
+    filters.map(f=>{
+      const n = GAMES.filter(g=>g.tags.includes(f)).length;
+      return `<button class="chip" data-filter="${esc(f)}">${esc(f)} <small>${n}</small></button>`;
+    }).join('') +
+    `<button class="dice" id="dice">🎲 隨機投胎</button>`;
+
+  document.getElementById('count').textContent = GAMES.length;
+}
+
+let toastTimer;
+function showToast(msg){
+  toast.textContent = msg;
+  toast.classList.add('show');
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(()=>toast.classList.remove('show'), 2600);
+}
+
+render();
+
+toolbar.addEventListener('click', e=>{
+  const chip = e.target.closest('.chip');
+  const cards = [...grid.querySelectorAll('.card')];
+  if(chip){
+    toolbar.querySelectorAll('.chip').forEach(c=>c.classList.remove('on'));
+    chip.classList.add('on');
+    const f = chip.dataset.filter;
+    cards.forEach(card=>{
+      const isSoon = card.classList.contains('soon');
+      const show = f==='all' ? true : (!isSoon && card.dataset.tags.split(' ').includes(f));
+      card.classList.toggle('hide', !show);
+    });
+  }
+  if(e.target.closest('#dice')){
+    const pool = cards.filter(c=>!c.classList.contains('hide') && !c.classList.contains('soon'));
+    if(!pool.length) return;
+    const pick = pool[Math.floor(Math.random()*pool.length)];
+    cards.forEach(c=>c.classList.remove('picked'));
+    void pick.offsetWidth;
+    pick.classList.add('picked');
+    pick.scrollIntoView({behavior:'smooth',block:'center'});
+    showToast('命運之輪轉到了：' + pick.querySelector('h2').textContent + '！點卡片開玩');
+  }
+});
+</script>
+</body>
+</html>
