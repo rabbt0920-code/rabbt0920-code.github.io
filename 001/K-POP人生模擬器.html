@@ -722,7 +722,7 @@ ACT['av.rand'] = () => {
  * 金錢單位：1 = ₩100（顯示時換算）
  * ========================================================= */
 const DATA = {};
-DATA.CO = 'STARLIGHT 娛樂';
+DATA.CO = 'STARLIGHT 娛樂'; DATA.CO0 = DATA.CO;
 DATA.RIVAL = 'ECLIPSE 娛樂';
 
 DATA.ABIL = [['vocal', '歌唱', '🎤'], ['dance', '舞蹈', '💃'], ['rap', '饒舌', '🎧'], ['acting', '表演', '🎭'], ['charm', '魅力', '✨'], ['variety', '綜藝', '😂']];
@@ -1869,6 +1869,674 @@ DATA.M.EVENTS = [
       ] }
   );
 
+  DATA.M.EVENTS.push(...E);
+})();
+
+/* ===== data_mgr3.js ===== */
+/* =========================================================
+ * 經紀人模式事件擴充（三）：依「經紀人 100 件日常挑戰」整理
+ * 分類：作息體力 / 藝人管理 / 粉絲安全 / 媒體電視台 / 公司內部 / 法律職涯
+ * 語法同 data_mgr2.js；與既有事件重複或相近者（跟蹤、手機規定、家長電話、挖角、倦怠、戀愛等）不再重寫
+ * ========================================================= */
+(function () {
+  const dg = m => m.groups.filter(g => g.status !== 'prep');
+  const hasG = m => dg(m).length > 0;
+  const deb = m => m.roster.filter(t => t.stage >= 2);
+  const E = [];
+  E.push(
+  /* ───────── 一、作息與體力 ───────── */
+  { id: 'my_dawn', w: 4, cd: 14, cond: hasG, pick: null, title: '凌晨三點的造型',
+    text: '打歌日的造型預約在凌晨三點。你兩點就得出門去接人、確認現場，前一晚只睡了兩小時。',
+    choices: [
+      { t: '全程陪同，咬牙撐住', txt: '造型順利完成，藝人看到你黑眼圈很重，默默遞來一瓶熱咖啡。', fx: { me: { stress: 6, energy: -16 }, all: { loyalty: 2 } } },
+      { t: '請資深員工代跑現場', req: m => Object.values(m.co.staff).some(Boolean), need: '需有專任員工', txt: '員工把流程處理得很穩，你多睡了兩小時。', fx: { me: { stress: -3, energy: 6 } } },
+      { t: '改約早上，與造型師協調', check: { st: 'biz', diff: 30 }, out: {
+        g: ['造型師答應調整，換成你付一筆加班費。', { funds: -8000, me: { stress: -4 } }],
+        k: ['只能提前一小時，勉強省了點力氣。', { me: { energy: -6 } }],
+        f: ['對方不太高興，說下次不再幫你排。', { rep: -1, me: { stress: 4 } }] } }
+    ] },
+  { id: 'my_drive', w: 4, cd: 16, cond: hasG, pick: null, title: '疲勞駕駛',
+    text: '連續跑完三個電視台，已經是清晨五點。你的眼皮一直往下掉，方向盤好像越來越重。',
+    choices: [
+      { t: '停在休息站瞇二十分鐘', txt: '醒來時藝人們都睡著了。你深呼吸，重新上路。', fx: { me: { stress: -2, energy: 5 } } },
+      { t: '繼續開，快到了', check: { st: 'coach', diff: 34 }, out: {
+        g: ['平安抵達，但你清楚這只是運氣。', { me: { stress: 4, energy: -10 } }],
+        k: ['險些擦撞，嚇得全車人都醒了。', { me: { stress: 10, energy: -10 }, all: { stress: 5 } }],
+        f: ['輕微擦撞護欄，車子需要維修，藝人被嚇到了。', { funds: -25000, me: { stress: 12 }, all: { stress: 8, mood: -4 }, rep: -1 }] } },
+      { t: '請公司派另一位司機來接手', req: m => m.co.funds >= 15000, need: '資金 ≥ 1.5 萬', txt: '司機趕到，你坐上副駕駛，睡了這幾週來最安穩的一覺。', fx: { funds: -15000, me: { stress: -8, energy: 12 } } }
+    ] },
+  { id: 'my_meal', w: 4, cd: 12, pick: null, title: '車上的便當',
+    text: '又是一個沒吃午餐的日子。你手裡只剩一個冷掉的飯糰，後座的孩子們卻遞了半份泡麵過來：「經紀人也要吃。」',
+    choices: [
+      { t: '收下，大家一起吃', txt: '擠在車上吃泡麵的畫面，成了大家日後最常提起的回憶。', fx: { me: { stress: -4 }, all: { mood: 3, loyalty: 2 } } },
+      { t: '婉拒，讓他們先吃飽', txt: '你胃痛了一整晚，但孩子們狀態很好。', fx: { me: { stress: 3, energy: -5 }, all: { stress: -2 } } }
+    ] },
+  { id: 'my_midnight', w: 4, cd: 14, pick: null, title: '休假日的半夜電話',
+    text: '難得的休假日，凌晨一點手機響了：是社長，要你立刻確認明天一早的通告內容。',
+    choices: [
+      { t: '馬上處理，回覆社長', txt: '你在被窩裡改完所有時程。社長只回了一個「OK」。', fx: { trust: 2, me: { stress: 5, energy: -8 } } },
+      { t: '回覆「明早第一件事處理」', check: { st: 'pr', diff: 28 }, out: {
+        g: ['社長理解了，還說你不必這麼拼。', { trust: 1, me: { stress: -2 } }],
+        k: ['社長沒說什麼，但語氣有點冷。', {}],
+        f: ['社長認為你不夠積極。', { trust: -3, me: { stress: 4 } }] } },
+      { t: '關機睡覺', txt: '你睡了難得安穩的一覺。隔天社長在晨會上點了你的名。', fx: { trust: -4, me: { stress: -8, energy: 12 } } }
+    ] },
+  { id: 'my_cold_wait', w: 3, cd: 18, cond: hasG, pick: dg, title: '{g}的寒流等待',
+    text: '寒流來襲，{g}要在戶外錄製節目外景，攝影棚外頭只有零度。成員們站在風口等著輪到自己。',
+    choices: [
+      { t: '準備暖暖包與熱飲，守在一旁', req: m => m.co.funds >= 6000, need: '資金 ≥ 0.6 萬', txt: '孩子們捧著熱可可笑開了，錄影也格外順利。', fx: { funds: -6000, all: { mood: 4, stress: -3 }, g: { team: 2 } } },
+      { t: '向工作人員爭取室內候場', check: { st: 'pr', diff: 28 }, out: {
+        g: ['導播答應讓大家在休息室暖身。', { g: { team: 2 }, rep: 1 }],
+        k: ['只拿到一間小房間，勉強能待著。', {}],
+        f: ['對方嫌你多事，成員們凍到發抖。', { all: { stress: 5, mood: -4 }, rep: -1 }] } },
+      { t: '要成員們忍一忍', txt: '成員們凍得牙齒打顫，其中一人隔天發了燒。', fx: { all: { stress: 4, mood: -3 }, g: { team: -2 } } }
+    ] },
+  { id: 'my_luggage', w: 3, cd: 20, cond: hasG, pick: dg, title: '{g}的行李遺失',
+    text: '海外行程抵達機場，{g}的表演服裝箱子卻沒有出現在轉盤上。明天晚上就是演出。',
+    choices: [
+      { t: '緊急向航空公司追查', check: { st: 'pr', diff: 30 }, out: {
+        g: ['服裝箱在半夜被找到，趕上彩排。', { rep: 1, me: { stress: 4 } }],
+        k: ['箱子在演出前一小時才送到。', { me: { stress: 8 }, all: { stress: 3 } }],
+        f: ['箱子不見了。', { funds: -30000, all: { stress: 4 }, me: { stress: 8 } }] } },
+      { t: '直接在當地緊急採購替代服裝', req: m => m.co.funds >= 30000, need: '資金 ≥ 3 萬', txt: '你們在深夜的商場搶購，隔天的舞台意外有一種新鮮感。', fx: { funds: -30000, g: { fame: 1 } } }
+    ] },
+  { id: 'my_backstage', w: 3, cd: 16, cond: hasG, pick: dg, title: '{g}的後台休息室',
+    text: '音樂節目的後台休息室擠了五組藝人，悶熱又狹窄。{g}的成員只能蹲在走道邊換服裝、對詞。',
+    choices: [
+      { t: '用外套隔出一個小空間', txt: '你和助理用外套圍出臨時更衣區，成員們感激地點頭。', fx: { all: { stress: -2, loyalty: 2 } } },
+      { t: '向電視台抱怨休息室不足', check: { st: 'pr', diff: 30 }, out: {
+        g: ['PD 臨時調出一間小會議室給你們。', { g: { team: 2 }, rep: 1 }],
+        k: ['對方敷衍地道了歉。', {}],
+        f: ['PD 覺得你太難搞，往後鏡頭可能不好拿。', { rep: -2 }] } },
+      { t: '忍耐一下就過去了', txt: '成員們什麼也沒說，只是臉色都不太好看。', fx: { all: { stress: 3 } } }
+    ] },
+  { id: 'my_jetlag', w: 3, cd: 24, cond: m => dg(m).some(g => g.fans > 15000), pick: dg, title: '{g}的時差',
+    text: '{g}剛從海外巡演回國，馬上要上電視台。成員們的眼神渙散，連詞都記不太清了。',
+    choices: [
+      { t: '向電視台申請延後一天', check: { st: 'pr', diff: 32 }, out: {
+        g: ['對方同意延後，成員們好好睡了一覺。', { all: { stress: -6, mood: 3 } }],
+        k: ['只延後半天，勉強能用。', { all: { stress: -2 } }],
+        f: ['不僅沒延後，還被說不夠專業。', { rep: -2, all: { stress: 4 } }] } },
+      { t: '用能量飲料與咖啡硬撐過去', txt: '演出勉強完成，但後台有人頭暈得蹲了下去。', fx: { all: { stress: 6, mood: -3 }, g: { team: -1 } } }
+    ] },
+
+  /* ───────── 二、藝人個人管理 ───────── */
+  { id: 'my_diet_order', w: 4, cd: 16, cond: m => deb(m).length > 0, pick: deb, title: '{t}的減重指令',
+    text: '回歸在即，公司要求{t}在兩週內減重。{t}在體重計前沉默了很久，眼眶有點紅。',
+    choices: [
+      { t: '請營養師排菜單，保持健康節奏', req: m => m.co.funds >= 10000, need: '資金 ≥ 1 萬', txt: '{t}慢慢調整，狀態比預期更好，也沒有再哭。', fx: { funds: -10000, t: { mood: 6, stress: -4, loyalty: 4 } } },
+      { t: '向公司爭取放寬要求', check: { st: 'biz', diff: 30 }, out: {
+        g: ['上層同意放寬，{t}感動地道了謝。', { t: { loyalty: 10, mood: 8 }, trust: -1 }],
+        k: ['只放寬一點，{t}還是得硬撐。', { t: { mood: 2 } }],
+        f: ['被駁回，還被說你太袒護藝人。', { trust: -3, t: { mood: -3 } }] } },
+      { t: '嚴格執行指令', txt: '{t}達標了，但整個人看起來沒有精神。', fx: { t: { stress: 10, mood: -8, loyalty: -4 } } }
+    ] },
+  { id: 'my_spoiler', w: 3, cd: 22, cond: hasG, pick: dg, title: '{g}的回歸資訊外洩',
+    text: '{g}的概念照與回歸日期在回歸前夕出現在網路論壇上。粉絲們在討論，媒體也在轉載。',
+    choices: [
+      { t: '立即調查來源，追查內部洩漏者', check: { st: 'coach', diff: 30 }, out: {
+        g: ['你找出是外包廠商的疏失，對方道歉並賠償。', { funds: 12000, rep: 1, skill: { pr: .2 } }],
+        k: ['沒找到明確來源，只能加強保密規定。', { me: { stress: 4 } }],
+        f: ['調查過程鬧得內部人心惶惶。', { all: { mood: -2 }, me: { stress: 6 } }] } },
+      { t: '乾脆提前官方公開', txt: '你反過來掌握了話題，粉絲反應不錯。', fx: { g: { fans: 2000, fame: 1 }, rep: 1 } },
+      { t: '裝作沒看到', txt: '消息傳開後社長問起，你有點答不上來。', fx: { trust: -2 } }
+    ] },
+  { id: 'my_oversleep', w: 5, cd: 8, cond: m => deb(m).length > 0, pick: deb, title: '叫不醒的{t}',
+    text: '早上六點，你敲了十分鐘的宿舍門，{t}還是沒有起床。今天有重要的通告，再十分鐘就要出發。',
+    choices: [
+      { t: '耐心喊醒，幫{t.p}準備早餐', txt: '{t}迷迷糊糊地洗了臉，吃著早餐的路上又睡著了，但準時出門。', fx: { t: { mood: 3, loyalty: 3 }, me: { energy: -4 } } },
+      { t: '嚴厲訓話', txt: '{t}被嚇醒，但整天都沒什麼精神。', fx: { t: { mood: -6, stress: 5 } } },
+      { t: '讓{t.p}多睡十分鐘，提前跟現場打招呼', check: { st: 'pr', diff: 26 }, out: {
+        g: ['現場理解，{t}也睡得很飽。', { t: { mood: 6, stress: -3 } }],
+        k: ['稍微遲到，只被唸了幾句。', {}],
+        f: ['遲到被當場點名。', { rep: -1, t: { mood: -5 } }] } }
+    ] },
+  { id: 'my_passport', w: 3, cd: 24, cond: hasG, pick: deb, title: '{t}的護照不見了',
+    text: '出國前一天，你清點證件才發現{t}的護照怎麼找也找不到。你記得上次是你收進包包裡的。',
+    choices: [
+      { t: '翻遍行李、宿舍、車上', check: { st: 'scout', diff: 24 }, out: {
+        g: ['在後座縫隙找到了，你鬆了一口氣。', { me: { stress: 3 } }],
+        k: ['找了兩小時，才在外套口袋找到。', { me: { stress: 6, energy: -8 } }],
+        f: ['怎麼都找不到，只能重辦。', { funds: -12000, me: { stress: 8 }, rep: -1 }] } },
+      { t: '直接前往補辦', req: m => m.co.funds >= 12000, need: '資金 ≥ 1.2 萬', txt: '加急辦理順利趕上航班，你也被提醒日後要建立證件清單。', fx: { funds: -12000, me: { stress: 4 } } }
+    ] },
+  { id: 'my_bar', w: 3, cd: 20, cond: m => deb(m).length > 0, pick: deb, title: '{t}出現在酒吧',
+    text: '你接到匿名來電：「你們家的{t}剛剛進了江南的一間酒吧。」那裡的狗仔很多。',
+    choices: [
+      { t: '親自趕去把{t.p}帶回來', check: { st: 'coach', diff: 28 }, out: {
+        g: ['你在狗仔到達前把{t}帶走，{t.p}也承諾不再犯。', { t: { loyalty: 6, scandal: 0 } }],
+        k: ['{t}被拍到背影，但沒有明顯證據。', { t: { scandal: 6 } }],
+        f: ['{t}被拍到正臉，流言開始傳開。', { t: { scandal: 14, mood: -6 }, rep: -2 }] } },
+      { t: '打電話請{t.p}自己離開', txt: '{t}說她只是跟朋友聚餐，但你還是覺得該立下新規矩。', fx: { t: { scandal: 4, loyalty: -2 } } }
+    ] },
+  { id: 'my_dark_mood', w: 4, cd: 16, cond: m => m.roster.some(t => t.st.mood < 38), pick: m => m.roster.filter(t => t.st.mood < 38), title: '{t}的低潮',
+    text: '最近{t}很少說話，吃飯時總是看著窗外。有一天你在練習室外聽到{t.p}小聲地說：「我什麼都做不好。」',
+    choices: [
+      { t: '安排專業心理諮商', req: m => m.co.funds >= 15000, need: '資金 ≥ 1.5 萬', txt: '諮商師陪{t}聊了好幾次，狀態逐漸穩定下來。', fx: { funds: -15000, t: { mood: 18, stress: -14, loyalty: 8 } } },
+      { t: '陪{t.p}散步聊一晚', check: { st: 'coach', diff: 32 }, out: {
+        g: ['{t}終於哭了出來，說了很多積壓的話。', { t: { mood: 16, stress: -12, loyalty: 10 }, skill: { coach: 1 } }],
+        k: ['{t}沒有說太多，但有笑了一點。', { t: { mood: 6 } }],
+        f: ['{t}說「我沒事」，把你關在門外。', { t: { mood: -2 }, me: { stress: 4 } }] } },
+      { t: '給{t.p}放兩天假', txt: '{t}回家待了幾天，回來時看起來好多了，但還是有點心事。', fx: { t: { mood: 8, stress: -8 } } }
+    ] },
+  { id: 'my_gap', w: 3, cd: 20, cond: m => m.roster.some(t => t.age <= 16), pick: m => m.roster.filter(t => t.age <= 16), title: '聽不懂的流行語',
+    text: '{t}跟同伴聊天時，講了一串你完全聽不懂的流行語。你點了點頭，結果大家笑成一團，因為你完全答非所問。',
+    choices: [
+      { t: '誠實承認：「我完全沒聽懂」', txt: '{t}笑著教你，半個小時後你們聊得很開心。', fx: { all: { mood: 3 }, t: { loyalty: 6 }, me: { stress: -3 } } },
+      { t: '回去偷偷上網惡補', txt: '你下次用上了流行語，孩子們差點笑到岔氣，但氣氛更近了。', fx: { all: { loyalty: 2, mood: 2 }, skill: { pr: .2 } } }
+    ] },
+  { id: 'my_diva', w: 4, cd: 20, cond: m => deb(m).some(t => t.car.pop >= 35), pick: m => deb(m).filter(t => t.car.pop >= 35), title: '{t}開始耍大牌',
+    text: '{t}人氣大漲後，開始對行程挑三揀四，還在後台對造型師不太客氣。有工作人員悄悄來向你抱怨。',
+    choices: [
+      { t: '私下好好談一次', check: { st: 'coach', diff: 34 }, out: {
+        g: ['{t}紅著臉道歉，說自己最近有點飄。', { t: { loyalty: 8, mood: 2 }, skill: { coach: .5 } }],
+        k: ['{t}口頭答應，但態度沒有明顯改變。', {}],
+        f: ['{t}覺得你不懂{t.p}的壓力，關係變得緊張。', { t: { loyalty: -8, mood: -4 } }] } },
+      { t: '在團體面前當眾提醒', txt: '{t}臉色一沉，之後幾天都不理你。', fx: { t: { loyalty: -6, mood: -8 }, all: { mood: -1 } } },
+      { t: '向工作人員道歉並贈禮', req: m => m.co.funds >= 5000, need: '資金 ≥ 0.5 萬', txt: '你替{t}補了人情，風波慢慢平息。', fx: { funds: -5000, rep: 1, me: { stress: 3 } } }
+    ] },
+  { id: 'my_dorm_habits', w: 4, cd: 12, pick: null, cond: m => m.roster.length >= 3, title: '宿舍的衛生大戰',
+    text: '宿舍的洗衣機旁堆了一座衣服山，廚房的鍋碗瓢盆從昨晚就沒有人洗。孩子們互相指責是對方弄的。',
+    choices: [
+      { t: '排輪值表，貼在冰箱上', txt: '大家一開始抱怨，但輪值表的效果出乎意料地好。', fx: { all: { stress: -1, mood: 1 }, skill: { coach: .3 } } },
+      { t: '請清潔阿姨每週來打掃', req: m => m.co.funds >= 8000, need: '資金 ≥ 0.8 萬', txt: '宿舍乾淨了，孩子們開心地說好像住進飯店。', fx: { funds: -8000, all: { mood: 3 } } },
+      { t: '讓他們自己解決', txt: '三天後宿舍臭得連你都受不了。', fx: { all: { mood: -3, stress: 3 } } }
+    ] },
+  { id: 'my_privacy', w: 3, cd: 24, pick: m => m.roster.filter(t => t.age >= 15), cond: m => m.roster.some(t => t.age >= 15), title: '{t}的日記',
+    text: '你整理練習室時發現{t}遺落了一本筆記本，攤開的那一頁寫滿了對未來的不安。你不確定該不該把它交還給{t.p}。',
+    choices: [
+      { t: '原封不動交還，什麼都不說', txt: '{t}收下時看了你一眼，輕輕說了聲謝謝。', fx: { t: { loyalty: 8, mood: 2 } } },
+      { t: '交還，並找機會談談', check: { st: 'coach', diff: 28 }, out: {
+        g: ['{t}鼓起勇氣說出心事，你們談了很久。', { t: { loyalty: 12, mood: 10, stress: -8 } }],
+        k: ['{t}有點尷尬，但還是點了頭。', { t: { loyalty: 3 } }],
+        f: ['{t}覺得被偷看，變得很防備。', { t: { loyalty: -8, mood: -5 } }] } }
+    ] },
+  { id: 'my_allergy', w: 3, cd: 22, pick: null, cond: m => m.roster.length >= 3, title: '聚餐的過敏原',
+    text: '公司聚餐時，餐廳端上的一道菜裡含有堅果。你突然想起，有一位成員對堅果嚴重過敏。',
+    choices: [
+      { t: '馬上換菜並檢查所有餐點', txt: '你及時攔住了。有人鬆了口氣，有人覺得你太緊張，但沒有人出事。', fx: { all: { loyalty: 2 }, me: { stress: 2 } } },
+      { t: '安排全員做一次飲食偏好登記', txt: '你做了一張全員飲食表，以後出餐都會先對照。', fx: { skill: { coach: .3 }, all: { loyalty: 1 } } },
+      { t: '大意了，沒發現', txt: '那位成員吃了一口後臉色發白，緊急送醫，幸好很快好轉。', fx: { funds: -10000, all: { stress: 6, mood: -4 }, rep: -2, me: { stress: 10 } } }
+    ] },
+  { id: 'my_styling', w: 3, cd: 20, cond: m => deb(m).length > 0, pick: deb, title: '{t}的私服',
+    text: '{t}機場照流出，穿的卻是與贊助品牌競爭的品牌。品牌公關已經來電詢問。',
+    choices: [
+      { t: '向品牌道歉並承諾補償曝光', check: { st: 'pr', diff: 28 }, out: {
+        g: ['品牌接受了道歉，還多給了新的合作機會。', { rep: 2, funds: 12000 }],
+        k: ['品牌勉強接受。', { rep: 0 }],
+        f: ['品牌表示考慮終止合作。', { rep: -3, funds: -15000 }] } },
+      { t: '說這只是巧合', txt: '品牌顯然不太相信，往後的聯繫都變冷了。', fx: { rep: -2 } }
+    ] },
+  { id: 'my_minor', w: 4, cd: 18, cond: m => m.roster.some(t => t.age <= 17), pick: m => m.roster.filter(t => t.age <= 17), title: '{t}的功課',
+    text: '{t}的班導師打來電話：這學期缺課太多，若再不補考，可能會被留級。{t}在電話那頭低著頭不說話。',
+    choices: [
+      { t: '調整行程，專心補功課', txt: '你和老師協調好補課時間，{t}連續三天都在練習室寫作業。', fx: { t: { mood: 4, loyalty: 6 }, all: { stress: 1 } } },
+      { t: '請家教，邊練習邊補課', req: m => m.co.funds >= 12000, need: '資金 ≥ 1.2 萬', txt: '家教老師每天傍晚來，{t}的成績慢慢追上了。', fx: { funds: -12000, t: { mood: 6, loyalty: 8 } } },
+      { t: '先把行程排滿，功課以後再說', txt: '{t}沒有反駁，但眼神黯了下去。學校的警告信寄到了家長手上。', fx: { t: { mood: -8, loyalty: -5 }, rep: -1 } }
+    ] },
+  { id: 'my_stage_hurt', w: 4, cd: 14, cond: hasG, pick: dg, title: '{g}舞台上的意外',
+    text: '演出中，{g}的一名成員在轉換位置時扭到腳踝，卻咬著牙把整首歌跳完。下台後她痛得說不出話。',
+    choices: [
+      { t: '立即叫救護車', txt: '醫院檢查是輕微韌帶拉傷，需要休養。你讓她安心養傷。', fx: { funds: -10000, all: { loyalty: 3 }, g: { team: 2 } } },
+      { t: '先冰敷處理，晚點再就醫', check: { st: 'coach', diff: 28 }, out: {
+        g: ['冰敷後狀況好轉，隔天檢查沒什麼大礙。', { all: { stress: -1 } }],
+        k: ['隔天腫得更嚴重，只好去急診。', { funds: -10000, me: { stress: 4 } }],
+        f: ['傷勢拖延，休養時間因此變長。', { funds: -15000, g: { team: -3 }, me: { stress: 8 } }] } },
+      { t: '讓她繼續下一場', txt: '她笑著說沒事，但演出結束後根本站不起來。粉絲在社群上都在心疼她。', fx: { g: { fans: -1500 }, all: { loyalty: -8, mood: -6 }, rep: -3 } }
+    ] },
+  { id: 'my_faint', w: 3, cd: 18, cond: m => deb(m).length > 0, pick: deb, title: '{t}在後台昏倒',
+    text: '長時間彩排後，{t}在後台忽然臉色蒼白、冷汗直流，接著倒在你面前。',
+    choices: [
+      { t: '叫救護車，並通知{t.p}的家人', txt: '診斷是過勞加低血糖，需要休養。家人感謝你的處理。', fx: { funds: -12000, t: { injury: 3, loyalty: 6 }, rep: 0 } },
+      { t: '先平躺休息，補充糖水', check: { st: 'coach', diff: 26 }, out: {
+        g: ['{t}醒來後狀況好轉，你立刻安排休息。', { t: { mood: 2, loyalty: 4 }, skill: { coach: .5 } }],
+        k: ['{t}好轉後硬要繼續，你只好讓她再休息一下。', { t: { stress: 4 } }],
+        f: ['狀況沒有改善，才叫救護車，延誤了處理。', { funds: -15000, t: { loyalty: -4, injury: 4 }, me: { stress: 8 } }] } }
+    ] },
+
+  /* ───────── 三、粉絲與安全 ───────── */
+  { id: 'my_airport', w: 4, cd: 16, cond: m => dg(m).some(g => g.fans > 8000), pick: m => dg(m).filter(g => g.fans > 8000), title: '{g}的機場人潮',
+    text: '{g}抵達機場時，人潮突然湧上前，推擠中有粉絲被擠倒，成員也被拉扯著衣服。保全一下子失去控制。',
+    choices: [
+      { t: '用身體擋在成員前面，護送離開', check: { st: 'coach', diff: 30 }, out: {
+        g: ['你當了人牆，成員平安上車，你肩膀卻瘀青了。', { me: { stress: 6, energy: -8 }, all: { loyalty: 6 }, rep: 1 }],
+        k: ['成員安全，但場面一度失控，有人受了輕傷。', { me: { stress: 8 }, rep: -1 }],
+        f: ['有人被推倒受傷，新聞稿跟著出現。', { funds: -15000, rep: -3, all: { stress: 6 } }] } },
+      { t: '請機場警方協助封閉動線', req: m => m.co.rep >= 15, need: '聲望 ≥ 15', txt: '警方迅速疏散了人群，成員們安全離場。', fx: { rep: 1, all: { stress: -1 } } }
+    ] },
+  { id: 'my_threat', w: 3, cd: 24, cond: m => dg(m).some(g => g.fans > 15000), pick: m => dg(m).filter(g => g.fans > 15000), title: '{g}收到的恐嚇信',
+    text: '粉絲信件區夾著一個匿名包裹，裡面是一封充滿惡意的信與破碎的玻璃片。上面寫著{g}的成員名字。',
+    choices: [
+      { t: '立刻報警，並加強警戒', req: m => m.co.funds >= 15000, need: '資金 ≥ 1.5 萬', txt: '警方以恐嚇案介入調查，數週後鎖定嫌疑人。', fx: { funds: -15000, rep: 1, all: { stress: 3 } } },
+      { t: '瞞住成員，自己處理', txt: '成員之後得知這件事，對你的隱瞞很不高興。', fx: { all: { loyalty: -5, mood: -3 }, me: { stress: 6 } } },
+      { t: '公開聲明零容忍，呼籲粉絲協助', check: { st: 'pr', diff: 30 }, out: {
+        g: ['粉絲們自發檢舉，網路上很快鎖定嫌疑人。', { g: { fans: 2500 }, rep: 2 }],
+        k: ['聲明獲得關注，但沒有新線索。', { g: { fans: 500 } }],
+        f: ['聲明引來模仿者，騷擾變多了。', { all: { stress: 6 }, rep: -2 }] } }
+    ] },
+  { id: 'my_ticket_leak', w: 3, cd: 22, cond: m => dg(m).some(g => g.fans > 12000), pick: m => dg(m).filter(g => g.fans > 12000), title: '{g}的行程被賣',
+    text: '社群上出現「{g}的行程情報」收費帳號，內容連飯店房號都對得上。顯然有人把資料賣了出去。',
+    choices: [
+      { t: '追查內部誰洩漏資料', check: { st: 'scout', diff: 28 }, out: {
+        g: ['你查出是外包司機私下販售，立即終止合作。', { rep: 1, skill: { pr: .3 } }],
+        k: ['查到範圍縮小到兩個人，無法確定。', { me: { stress: 4 } }],
+        f: ['查了一圈沒結果，內部彼此猜忌。', { all: { mood: -2 }, me: { stress: 6 } }] } },
+      { t: '全面更換飯店與路線', req: m => m.co.funds >= 25000, need: '資金 ≥ 2.5 萬', txt: '你更換了所有安排，之後再也沒有類似的情報出現。', fx: { funds: -25000, all: { stress: -2 } } }
+    ] },
+  { id: 'my_fan_gift', w: 4, cd: 14, cond: m => dg(m).some(g => g.fans > 6000), pick: m => dg(m).filter(g => g.fans > 6000), title: '{g}的應援禮物',
+    text: '{g}的後台堆滿了粉絲送來的禮物與食物，有的包裝已經被拆開過。你得決定怎麼處理。',
+    choices: [
+      { t: '全部檢查、登記，再交給成員', txt: '你花了一下午整理，成員們開心收下禮物，粉絲也感受到被重視。', fx: { g: { fans: 800 }, all: { mood: 3 }, me: { energy: -5 } } },
+      { t: '食物一律不收，只收卡片', txt: '安全是安全了，但有粉絲在論壇抱怨公司沒收禮物。', fx: { g: { fans: -400 }, rep: -1 } },
+      { t: '全部交給成員自行處理', txt: '其中一份食物讓成員拉了一晚上肚子。', fx: { all: { stress: 4, mood: -3 }, funds: -3000 } }
+    ] },
+  { id: 'my_netcomment', w: 4, cd: 12, cond: hasG, pick: dg, title: '{g}的網路評價',
+    text: '你滑著論壇，看到一則一萬讚的貼文：「{g}真的太做作，唱得也不怎麼樣。」留言區一片叫好。',
+    choices: [
+      { t: '冷處理，不要回應', txt: '一週後風向自己轉了。你的壓力也慢慢緩下來。', fx: { me: { stress: 2 } } },
+      { t: '提醒成員別看留言', txt: '成員們理解了，但還是有人偷偷地看。', fx: { all: { mood: -1 }, me: { stress: 2 } } },
+      { t: '用優質內容回應：發布練習室精華', req: m => m.co.funds >= 5000, need: '資金 ≥ 0.5 萬', txt: '練習室影片反應很好，輿論回暖。', fx: { funds: -5000, g: { fans: 1200, fame: 1 } } }
+    ] },
+  { id: 'my_fansign', w: 4, cd: 14, cond: m => dg(m).some(g => g.fans > 5000), pick: m => dg(m).filter(g => g.fans > 5000), title: '{g}的簽售會',
+    text: '簽售會的隊伍拖得很長，有粉絲想多講幾句話。時間過去了，後面的人開始焦躁，現場氣氛緊繃。',
+    choices: [
+      { t: '溫和提醒每人限時，並向後面的人說明', check: { st: 'pr', diff: 28 }, out: {
+        g: ['粉絲們理解，現場井然有序。', { g: { fans: 1500 }, rep: 1 }],
+        k: ['有人抱怨，但活動勉強順利結束。', { g: { fans: 300 } }],
+        f: ['有人當場情緒爆發，引起騷動。', { g: { fans: -1200 }, rep: -2 }] } },
+      { t: '加開時間，讓大家都簽完', txt: '活動延長了一小時，成員們累壞了但粉絲很開心。', fx: { g: { fans: 1500 }, all: { stress: 5, mood: 2 } } }
+    ] },
+  { id: 'my_stage_rush', w: 3, cd: 20, cond: m => dg(m).some(g => g.fans > 15000), pick: m => dg(m).filter(g => g.fans > 15000), title: '{g}的現場秩序',
+    text: '公開演出進行到一半，有粉絲翻過欄杆衝向舞台。現場保全只有四位，人群開始往前湧。',
+    choices: [
+      { t: '請主辦方暫停演出，疏導人群', check: { st: 'pr', diff: 32 }, out: {
+        g: ['演出暫停十分鐘，秩序恢復後順利完成。', { rep: 2 }],
+        k: ['演出被迫縮短，但沒有人受傷。', { rep: 0 }],
+        f: ['現場混亂，有人受傷，被媒體大幅報導。', { rep: -4, funds: -20000 }] } },
+      { t: '直接要求成員退場', txt: '成員安全離開，但活動現場被迫中止，部分粉絲很失望。', fx: { g: { fans: -1000 }, rep: -1 } }
+    ] },
+  { id: 'my_smile', w: 3, cd: 14, cond: hasG, pick: deb, title: '{t}的機場表情',
+    text: '連續三天沒睡好的{t}下機時臉色很臭，被拍下的照片在網上被標上「態度不佳」的標籤。',
+    choices: [
+      { t: '發聲明替{t.p}說明行程辛苦', check: { st: 'pr', diff: 26 }, out: {
+        g: ['粉絲心疼，貼文反而獲得很多支持。', { t: { fans: 800, mood: 3 } }],
+        k: ['聲明沒有帶起風向，但也沒擴大。', {}],
+        f: ['被說是找藉口，風波持續發酵。', { t: { scandal: 6, mood: -4 } }] } },
+      { t: '私下提醒{t.p}要管理表情', txt: '{t}點頭說會注意，但眼裡有些委屈。', fx: { t: { mood: -2, loyalty: 1 } } }
+    ] },
+  { id: 'my_paparazzi', w: 3, cd: 20, cond: m => deb(m).length > 0, pick: deb, title: '{t}被偷拍',
+    text: '{t}在私人場所被大砲相機拍下，照片已被某家媒體取得。對方來電：「要不要買下這批照片？」',
+    choices: [
+      { t: '拒絕並尋求法律途徑', req: m => m.co.funds >= 15000, need: '資金 ≥ 1.5 萬', txt: '律師函發出，媒體最後撤下了照片。', fx: { funds: -15000, t: { loyalty: 6, scandal: -2 }, rep: 1 } },
+      { t: '出錢買下', req: m => m.co.funds >= 40000, need: '資金 ≥ 4 萬', txt: '你付了一筆封口費，風波壓下去了，但你知道這不是長久之計。', fx: { funds: -40000, t: { scandal: -2 } } },
+      { t: '不理會', txt: '照片被刊出，{t}的私生活被議論了一週。', fx: { t: { scandal: 10, mood: -7 }, rep: -2 } }
+    ] },
+
+  /* ───────── 四、電視台與媒體 ───────── */
+  { id: 'my_pd', w: 4, cd: 18, cond: hasG, pick: dg, title: '{g}與強勢的 PD',
+    text: '某電視台的資深 PD 約你吃飯，說「{g}有潛力，但需要有人帶一把」。他的暗示很明顯。',
+    choices: [
+      { t: '準備禮物與餐會，維持關係', req: m => m.co.funds >= 15000, need: '資金 ≥ 1.5 萬', txt: '餐會上氣氛融洽，之後{g}的節目機會多了不少。', fx: { funds: -15000, g: { fame: 2, fans: 1500 }, rep: 1 } },
+      { t: '禮貌婉拒，只談工作', check: { st: 'pr', diff: 32 }, out: {
+        g: ['PD 對你的專業印象深刻，反而更願意合作。', { g: { fame: 2 }, rep: 2 }],
+        k: ['PD 態度冷淡，但沒有為難你。', {}],
+        f: ['PD 被冒犯了，之後{g}的通告少了很多。', { g: { fame: -2 }, rep: -2 }] } }
+    ] },
+  { id: 'my_screen_time', w: 4, cd: 14, cond: hasG, pick: dg, title: '{g}的鏡頭份量',
+    text: '綜藝剪輯出來後，{g}在畫面裡只剩兩個鏡頭，其中一個還是背影。成員們都很失落。',
+    choices: [
+      { t: '向製作組反映，並提供額外素材', check: { st: 'pr', diff: 30 }, out: {
+        g: ['製作組願意補拍幾個個人訪問，下一集鏡頭增加。', { g: { fame: 2, fans: 1000 } }],
+        k: ['製作組答應下次注意。', { g: { fame: 1 } }],
+        f: ['被說是爭鏡頭，節目組態度冷淡。', { rep: -2 }] } },
+      { t: '鼓勵成員下次更主動', txt: '成員們互相打氣，下一次錄影反應明顯進步。', fx: { all: { mood: 2 }, g: { team: 2 } } }
+    ] },
+  { id: 'my_prerecord', w: 3, cd: 18, cond: hasG, pick: dg, title: '{g}的打歌佈景',
+    text: '打歌節目預錄前，你發現舞台佈景與你們事先提供的設計圖完全不同，燈光也不對。',
+    choices: [
+      { t: '與舞台組當場協調調整', check: { st: 'biz', diff: 30 }, out: {
+        g: ['舞台組配合你調整，舞台效果比原來更好。', { g: { fame: 2 } }],
+        k: ['只改了一半，勉強可以演出。', {}],
+        f: ['舞台組嫌你囉唆，演出品質大打折扣。', { g: { fame: -1 }, rep: -1 }] } },
+      { t: '依現場條件調整編舞', txt: '成員們臨時改了位置，意外跳出了新的亮點。', fx: { g: { team: 2 }, all: { stress: 3 } } }
+    ] },
+  { id: 'my_interview', w: 3, cd: 20, cond: hasG, pick: dg, title: '{g}的獨家採訪',
+    text: '兩家媒體同時要求{g}的獨家專訪，雙方都強調「只給我們」。你得決定怎麼分配。',
+    choices: [
+      { t: '兩家都答應，錯開內容', check: { st: 'pr', diff: 32 }, out: {
+        g: ['兩家都滿意，口碑極好。', { g: { fame: 2, fans: 1500 }, rep: 2 }],
+        k: ['其中一家有些不滿。', { g: { fame: 1 } }],
+        f: ['雙方都覺得被敷衍，各自寫了不太友善的報導。', { rep: -3 }] } },
+      { t: '選規模較大的一家', txt: '另一家雖有怨言，但大媒體的曝光很可觀。', fx: { g: { fame: 2, fans: 1200 }, rep: -1 } }
+    ] },
+  { id: 'my_ban', w: 2, cd: 30, cond: m => dg(m).some(g => g.fame > 45), pick: m => dg(m).filter(g => g.fame > 45), title: '{g}被抽掉的行程',
+    text: '一早就接到電話：某電視台突然抽掉了{g}所有的通告，沒有任何說明。你隱約聽說跟某位大人物有關。',
+    choices: [
+      { t: '追查原因，找中間人說情', check: { st: 'pr', diff: 36 }, out: {
+        g: ['你查出是誤會一場，重新取得通告。', { g: { fame: 1 }, rep: 1 }],
+        k: ['查不出原因，但另一家電視台接了位。', { g: { fame: -1 } }],
+        f: ['對方暗示要你們「識相點」，風向很不友善。', { rep: -2, g: { fame: -3 }, me: { stress: 8 } }] } },
+      { t: '轉往網路平台與自製內容', txt: '你把重心轉到網路，意外找到了新的觀眾群。', fx: { g: { fans: 1500, fame: -1 }, skill: { biz: .3 } } }
+    ] },
+  { id: 'my_senior_visit', w: 4, cd: 16, cond: m => m.groups.some(g => g.status !== 'prep' && g.fame < 40), pick: m => m.groups.filter(g => g.status !== 'prep' && g.fame < 40), title: '{g}的後台拜會',
+    text: '新人時期，你帶著{g}在電視台後台一間間拜會前輩與 PD。有的熱情、有的冷淡，有的甚至沒開門。',
+    choices: [
+      { t: '誠心鞠躬，一間間拜訪', txt: '儘管累，成員們的禮貌讓幾位前輩印象深刻。', fx: { g: { fame: 2 }, rep: 1, all: { stress: 3 } } },
+      { t: '只拜訪重要對象，節省時間', txt: '時間省下來了，但有幾位前輩覺得被冷落。', fx: { g: { fame: 1 }, rep: 0 } },
+      { t: '準備點心當作見面禮', req: m => m.co.funds >= 4000, need: '資金 ≥ 0.4 萬', txt: '點心讓幾位前輩笑開了，之後在後台總會跟成員多聊幾句。', fx: { funds: -4000, g: { fame: 2 }, rep: 1 } }
+    ] },
+  { id: 'my_red_carpet', w: 3, cd: 24, cond: m => dg(m).some(g => g.fame > 35), pick: m => dg(m).filter(g => g.fame > 35), title: '{g}的紅毯順序',
+    text: '頒獎典禮前夕，主辦方通知{g}的紅毯順序被排在後段，表演時段也在早場。別組藝人則被排在前面。',
+    choices: [
+      { t: '向主辦方爭取更好的位置', check: { st: 'pr', diff: 34 }, out: {
+        g: ['主辦方同意調整，{g}站上更顯眼的位置。', { g: { fame: 3 }, rep: 2 }],
+        k: ['只調整了表演順序，紅毯維持原樣。', { g: { fame: 1 } }],
+        f: ['被說是「藝人太難搞」，印象受損。', { rep: -3 }] } },
+      { t: '接受安排，專心準備表演', txt: '早場的表演被評為「最穩的舞台之一」，成員們鬆了口氣。', fx: { g: { fame: 1 }, all: { mood: 2 } } }
+    ] },
+  { id: 'my_mv_delay', w: 4, cd: 16, cond: hasG, pick: dg, title: '{g}的 MV 拍攝延誤',
+    text: 'MV 拍攝比預定時間多了六小時，成員們凌晨還在拍。下午還有一個預定好的廣告拍攝。',
+    choices: [
+      { t: '與廣告方協調改期', check: { st: 'biz', diff: 30 }, out: {
+        g: ['廣告方體諒，雙方順利調整時間。', { rep: 1 }],
+        k: ['廣告方答應改期，但要求打折。', { funds: -8000 }],
+        f: ['廣告方很不滿，要求賠償。', { funds: -20000, rep: -2 }] } },
+      { t: '讓成員繼續撐到天亮', txt: '成員們拍完 MV 又趕去廣告，累到在休息時間直接睡在地上。', fx: { all: { stress: 8, mood: -4 }, g: { team: -1 } } }
+    ] },
+  { id: 'my_live_slip', w: 3, cd: 20, cond: m => deb(m).length > 0, pick: deb, title: '{t}的直播失言',
+    text: '直播時{t}一時說錯了話，被網友解讀成對某位前輩的不敬。留言區瞬間炸開。',
+    choices: [
+      { t: '立刻發布道歉聲明', txt: '你和{t}一起寫好聲明，態度誠懇，風波漸漸平息。', fx: { t: { scandal: 2, mood: -3, loyalty: 3 }, rep: 0 } },
+      { t: '親自帶{t.p}登門向前輩道歉', check: { st: 'pr', diff: 30 }, out: {
+        g: ['前輩接受道歉，還主動替{t}說了好話。', { t: { fame: 2, loyalty: 8 }, rep: 2 }],
+        k: ['前輩冷淡地點頭。', { t: { loyalty: 3 } }],
+        f: ['前輩根本不見你們，被媒體拍到。', { t: { scandal: 8 }, rep: -2 }] } },
+      { t: '堅持說是被曲解', txt: '爭議越演越烈，連其他無關的人也開始評論。', fx: { t: { scandal: 12, mood: -6 }, rep: -3 } }
+    ] },
+  { id: 'my_sub', w: 3, cd: 20, cond: hasG, pick: dg, title: '{g}臨時代班',
+    text: '一個大型音樂節目原定嘉賓臨時缺席，製作組打來電話問{g}能否在三小時內到場代班。',
+    choices: [
+      { t: '接下，全員緊急出動', txt: '成員們狼狽地趕到現場，卻意外成為當晚最有話題的一組。', fx: { g: { fame: 3, fans: 2500 }, all: { stress: 6 }, rep: 1 } },
+      { t: '婉拒，行程已排滿', txt: '製作組找了別組。你偶爾還是會想，那或許是個機會。', fx: { all: { stress: -1 } } }
+    ] },
+  { id: 'my_foreign_press', w: 3, cd: 24, cond: m => dg(m).some(g => g.fame > 40), pick: m => dg(m).filter(g => g.fame > 40), title: '{g}的外媒訪問',
+    text: '海外記者在訪問中問到一個帶有文化爭議的問題。成員們愣住，翻譯也不敢直接翻。',
+    choices: [
+      { t: '搶先接過問題，婉轉化解', check: { st: 'pr', diff: 32 }, out: {
+        g: ['你的回答機智又得體，外媒讚賞，影片被廣泛轉載。', { g: { fame: 3, fans: 2000 }, rep: 2 }],
+        k: ['場面平順收場。', { g: { fame: 1 } }],
+        f: ['你的回答被斷章取義，引發小爭議。', { rep: -3 }] } },
+      { t: '請成員自行回答', txt: '成員的回答稍嫌生硬，但誠實，反而得到了不少好感。', fx: { g: { fame: 1 }, all: { stress: 3 } } }
+    ] },
+  { id: 'my_unpaid', w: 3, cd: 24, cond: m => dg(m).some(g => g.fame > 30), pick: m => dg(m).filter(g => g.fame > 30), title: '{g}的演出尾款',
+    text: '{g}的商演已經結束兩個月，主辦方仍以各種理由拖延支付尾款。合約上白紙黑字寫著付款期限。',
+    choices: [
+      { t: '寄出存證信函，準備訴訟', req: m => m.co.funds >= 10000, need: '資金 ≥ 1 萬', txt: '主辦方立刻改口，一週內付清款項。', fx: { funds: 28000, rep: 1 } },
+      { t: '親自上門協商', check: { st: 'biz', diff: 30 }, out: {
+        g: ['主辦方補付全額並賠禮。', { funds: 35000, skill: { biz: .5 } }],
+        k: ['拿回了七成，雙方不再往來。', { funds: 20000 }],
+        f: ['被拒於門外，款項石沉大海。', { me: { stress: 6 } }] } },
+      { t: '算了，不想撕破臉', txt: '你嘆了口氣，把這筆當作學費。', fx: { funds: -5000, trust: -1 } }
+    ] },
+  { id: 'my_copyright', w: 3, cd: 24, cond: hasG, pick: dg, title: '{g}的翻唱版權',
+    text: '{g}準備在公開演出翻唱一首經典歌曲，臨時發現這首歌的版權還沒完成取得授權。',
+    choices: [
+      { t: '緊急聯絡版權方取得授權', check: { st: 'biz', diff: 28 }, out: {
+        g: ['對方迅速授權，只收取合理費用。', { funds: -6000, rep: 1 }],
+        k: ['授權費高出預期，但趕上了。', { funds: -18000 }],
+        f: ['趕不及授權，只好臨時換歌。', { g: { fame: -1 }, all: { stress: 4 } }] } },
+      { t: '改唱自己的歌', txt: '成員們換了歌，雖然少了驚喜，但演出順利完成。', fx: { all: { stress: 2 } } }
+    ] },
+  { id: 'my_selfcontent', w: 4, cd: 14, cond: hasG, pick: dg, title: '{g}的自製頻道',
+    text: '公司考慮開設{g}的 YouTube 頻道，企劃團隊提了兩個方向：搞笑日常，以及專業幕後紀錄。',
+    choices: [
+      { t: '搞笑日常，走親和路線', req: m => m.co.funds >= 8000, need: '資金 ≥ 0.8 萬', txt: '頻道的首支影片爆紅，粉絲大喊「想看更多」。', fx: { funds: -8000, g: { fans: 4000, fame: 2, team: 2 } } },
+      { t: '專業幕後紀錄，走質感路線', req: m => m.co.funds >= 12000, need: '資金 ≥ 1.2 萬', txt: '影片品質高，但流量一般，鐵粉很喜歡。', fx: { funds: -12000, g: { fans: 1500, fame: 3 } } },
+      { t: '暫緩，專心主業', txt: '你把重心放回音樂，頻道企劃暫時擱置。', fx: {} }
+    ] },
+  { id: 'my_taboo', w: 4, cd: 14, cond: hasG, pick: dg, title: '{g}的專訪題綱',
+    text: '專訪前，你拿到記者的題綱，裡頭有幾題涉及戀愛、政治立場和舊黑料，問題很尖銳。',
+    choices: [
+      { t: '與記者溝通刪除敏感題目', check: { st: 'pr', diff: 28 }, out: {
+        g: ['記者同意調整，專訪順利進行。', { rep: 1, g: { fame: 1 } }],
+        k: ['只刪了一題，其他題目你交代成員委婉回答。', {}],
+        f: ['對方覺得你干涉採訪，之後報導語氣不太友善。', { rep: -2 }] } },
+      { t: '提前演練可能的回答', txt: '成員們練習了半小時，面對尖銳問題時都沉著應對。', fx: { g: { fame: 2 }, skill: { pr: .3 }, all: { stress: 2 } } }
+    ] },
+  { id: 'my_ad_demand', w: 4, cd: 14, cond: hasG, pick: dg, title: '{g}的廣告主要求',
+    text: '廣告主在拍攝現場追加了不在合約內的要求：加拍三支短影片、另外參加一場直播，且都不加價。',
+    choices: [
+      { t: '拒絕並引用合約條款', check: { st: 'biz', diff: 30 }, out: {
+        g: ['廣告主退讓，反而更尊重你們。', { rep: 2, skill: { biz: .4 } }],
+        k: ['廣告主不太高興，但按照合約完成。', {}],
+        f: ['廣告主氣沖沖地離席，後續合作告吹。', { rep: -3, funds: -12000 }] } },
+      { t: '同意部分要求，換取下次合作機會', txt: '成員們累了一些，但廣告主承諾下次提高預算。', fx: { all: { stress: 4 }, rep: 1, funds: 8000 } }
+    ] },
+
+  /* ───────── 五、公司內部 ───────── */
+  { id: 'my_kpi', w: 4, cd: 20, cond: m => m.week > 20, pick: null, title: '高層的 KPI',
+    text: '董事會剛開完，社長把你叫進辦公室，丟下一份報表：「這季銷量和音源成績不如預期，下季目標再提高兩成。」',
+    choices: [
+      { t: '接下目標，承諾全力以赴', txt: '你鞠躬離開辦公室，晚上對著報表發了好一陣子呆。', fx: { trust: 3, me: { stress: 8 } } },
+      { t: '拿出數據，說明目標不合理', check: { st: 'biz', diff: 32 }, out: {
+        g: ['社長看了你的分析，點頭同意調整。', { trust: 3, skill: { biz: .5 } }],
+        k: ['社長只答應微調。', { trust: 0 }],
+        f: ['社長認為你在找藉口。', { trust: -4, me: { stress: 6 } }] } }
+    ] },
+  { id: 'my_dept', w: 4, cd: 14, cond: hasG, pick: dg, title: '{g}的部門之爭',
+    text: '造型、行銷、音樂製作三個部門對{g}新專輯的概念吵得不可開交，各自都覺得對方不懂。會議室裡氣氛凝重。',
+    choices: [
+      { t: '逐一聽完，歸納共識', check: { st: 'pr', diff: 28 }, out: {
+        g: ['你整理出三方都能接受的方案，會議竟然提早結束。', { g: { team: 2, fame: 1 }, rep: 1, skill: { pr: .4 } }],
+        k: ['折衷方案讓大家半信半疑。', {}],
+        f: ['沒人滿意，會議無疾而終。', { me: { stress: 6 } }] } },
+      { t: '直接拍板：由你決定', txt: '三個部門各有不滿，但專輯順利推進。', fx: { rep: -1, trust: 1 } }
+    ] },
+  { id: 'my_budget', w: 4, cd: 14, cond: hasG, pick: null, title: '行程預算不足',
+    text: '本月的車馬費與餐費預算已經超支，卻還有三個行程要跑。財務部要求你「想辦法」。',
+    choices: [
+      { t: '縮減行程，精簡人力', txt: '你刪減了幾個不重要的通告，預算被控制住了。', fx: { g: { fame: -1 }, me: { stress: 3 } } },
+      { t: '自掏腰包補貼', req: m => m.co.funds >= 5000, need: '資金 ≥ 0.5 萬', txt: '你悄悄補貼了一些，沒讓成員知道。', fx: { funds: -5000, me: { stress: 2 } } },
+      { t: '與財務部協商追加預算', check: { st: 'biz', diff: 30 }, out: {
+        g: ['財務部同意追加預算，還稱讚你有數據。', { trust: 2 }],
+        k: ['只追加一半，勉強夠用。', {}],
+        f: ['被拒絕，你還被叫去訓話。', { trust: -2, me: { stress: 5 } }] } }
+    ] },
+  { id: 'my_receipts', w: 4, cd: 10, pick: null, cond: m => m.week > 4, title: '堆積如山的單據',
+    text: '你的包包裡塞滿了加油發票、便當收據與停車費單據，財務部提醒：「這個月底前不報帳就當作廢。」',
+    choices: [
+      { t: '熬夜整理所有單據', txt: '你在深夜把所有單據分類貼好，隔天交給了財務部。', fx: { me: { stress: 3, energy: -8 }, trust: 1 } },
+      { t: '請員工幫忙整理', req: m => Object.values(m.co.staff).some(Boolean), need: '需有專任員工', txt: '員工很快就處理完畢，你省下了不少時間。', fx: { me: { stress: -2 } } },
+      { t: '放棄報帳', txt: '你默默吞下了幾千元的損失，心裡有點不是滋味。', fx: { funds: -4000, me: { stress: 3 } } }
+    ] },
+  { id: 'my_turnover', w: 3, cd: 22, cond: m => Object.values(m.co.staff).some(Boolean), pick: null, title: '員工又要離職了',
+    text: '公司裡的專任員工遞上辭呈：「這份工作太累，我想換個環境。」這已經是今年的第二位。',
+    choices: [
+      { t: '挽留，提出加薪與假期', req: m => m.co.funds >= 20000, need: '資金 ≥ 2 萬', txt: '員工被你的誠意打動，決定留下。', fx: { funds: -20000, all: { loyalty: 2 }, rep: 1 } },
+      { t: '祝福並辦理交接', txt: '你替他寫了推薦信。離開那天他給了你一個擁抱。', fx: { me: { stress: 4 }, rep: 0 } },
+      { t: '由你兼任這個職位', txt: '你多了一份工作，每天都忙得喘不過氣。', fx: { me: { stress: 10, energy: -10 }, trust: 1 } }
+    ] },
+  { id: 'my_clash', w: 4, cd: 14, cond: m => dg(m).length >= 1 && m.groups.length >= 1, pick: dg, title: '{g}的行程撞期',
+    text: '同一天，{g}的團體通告與成員的個人行程在時間上撞在一起，兩邊都不願意放人。',
+    choices: [
+      { t: '以團體為優先', txt: '個人行程被取消，成員有點失落，但整體團體運作更穩定。', fx: { g: { team: 2 }, all: { loyalty: -1 } } },
+      { t: '與個人行程方協商改期', check: { st: 'biz', diff: 28 }, out: {
+        g: ['對方答應延後，兩全其美。', { rep: 1, skill: { biz: .3 } }],
+        k: ['只能挪出半天，成員們全程趕場。', { all: { stress: 4 } }],
+        f: ['兩邊都不開心。', { rep: -2, all: { stress: 4 } }] } }
+    ] },
+  { id: 'my_faction', w: 3, cd: 30, cond: m => m.week > 40, pick: null, title: '派系的邀請',
+    text: '公司裡兩位高層為了接班人暗中角力，同時邀請你「站隊」。你的下一步會影響你在公司的位置。',
+    choices: [
+      { t: '站在 A 副社長那一邊', txt: '你獲得了額外預算，但也得罪了另一邊。', fx: { funds: 20000, trust: -2, rep: 0 } },
+      { t: '站在 B 常務這一邊', txt: '他承諾未來提拔你，但眼下沒有實質好處。', fx: { trust: 2, me: { stress: 3 } } },
+      { t: '保持中立，只談業務', check: { st: 'pr', diff: 34 }, out: {
+        g: ['雙方都認為你專業，反而重用你。', { trust: 3, rep: 1 }],
+        k: ['沒得罪任何人，也沒有得到任何好處。', {}],
+        f: ['兩邊都覺得你不夠忠誠。', { trust: -4, me: { stress: 6 } }] } }
+    ] },
+  { id: 'my_visa', w: 3, cd: 24, cond: m => dg(m).some(g => g.fame > 35), pick: m => dg(m).filter(g => g.fame > 35), title: '{g}的簽證',
+    text: '{g}的海外巡演在即，某國的工作簽證卻遲遲沒有核發，對方窗口只說「還在審查」。',
+    choices: [
+      { t: '請當地主辦方協助催辦', check: { st: 'biz', diff: 32 }, out: {
+        g: ['簽證在出發前一天核發。', { me: { stress: 4 } }],
+        k: ['簽證縮短了天數，行程需要壓縮。', { funds: -8000 }],
+        f: ['簽證沒有通過，演出取消。', { funds: -30000, rep: -3, g: { fame: -1 } }] } },
+      { t: '找專業簽證代辦', req: m => m.co.funds >= 15000, need: '資金 ≥ 1.5 萬', txt: '代辦業者很有經驗，簽證順利核發。', fx: { funds: -15000 } }
+    ] },
+  { id: 'my_planb', w: 3, cd: 20, cond: hasG, pick: dg, title: '{g}的備用方案',
+    text: '大型演出前一週，氣象局發布颱風警報。你意識到沒有準備任何備用方案。',
+    choices: [
+      { t: '連夜擬定室內備案，並預約場地', req: m => m.co.funds >= 20000, need: '資金 ≥ 2 萬', txt: '颱風來襲，你們順利轉移到室內場地，演出成功。', fx: { funds: -20000, g: { fame: 2 }, rep: 2, skill: { biz: .4 } } },
+      { t: '祈禱颱風轉向', txt: '颱風登陸，演出被迫取消，損失慘重。', fx: { funds: -25000, rep: -2, g: { fans: -800 } } }
+    ] },
+  { id: 'my_intern', w: 3, cd: 24, cond: m => m.week > 20, pick: null, title: '實習經紀人',
+    text: '公司派了一位實習經紀人跟著你。他很認真，但今天在現場把藝人的服裝送錯場地，造成了小延誤。',
+    choices: [
+      { t: '耐心指導，並替他向現場道歉', txt: '實習生滿臉感激，之後做事更謹慎。你也因此學到不少帶人的方法。', fx: { skill: { coach: .4 }, rep: 0, me: { stress: 2 } } },
+      { t: '當場訓斥，下不為例', txt: '實習生眼眶紅著離開，隔週遞了辭呈。', fx: { me: { stress: 2 }, rep: 0 } },
+      { t: '承擔責任，不讓他背鍋', txt: '社長看到你的做法，點頭但沒說話。', fx: { trust: 1, me: { stress: 3 } } }
+    ] },
+  { id: 'my_resource_fight', w: 3, cd: 24, cond: m => m.groups.filter(g => g.status !== 'prep').length >= 2, pick: null, title: '行銷預算的爭奪',
+    text: '年度行銷預算只剩一筆。另一位經紀人同樣想為他帶的團體爭取，你們在會議上正面交鋒。',
+    choices: [
+      { t: '用成績數據說服大家', check: { st: 'biz', diff: 32 }, out: {
+        g: ['你的數據讓預算委員會點頭。', { funds: 20000, trust: 2 }],
+        k: ['預算被對半分。', { funds: 10000 }],
+        f: ['預算被對方拿走。', { trust: -2 }] } },
+      { t: '讓出預算，換取下次支持', txt: '對方很驚訝，並承諾之後會幫你一把。', fx: { trust: 1, rep: 1 } }
+    ] },
+  { id: 'my_contract_check', w: 3, cd: 24, cond: hasG, pick: dg, title: '{g}的合約條款',
+    text: '你在翻閱{g}的商業合約時，發現某個贊助商沒有按照條款提供應有的曝光。如果不追究，之後可能變成習慣。',
+    choices: [
+      { t: '正式發函要求履行', check: { st: 'biz', diff: 28 }, out: {
+        g: ['對方立即補上曝光，態度也更尊重。', { rep: 1, funds: 8000 }],
+        k: ['對方敷衍補上一部分。', {}],
+        f: ['對方不滿，往後不再合作。', { rep: -1, funds: -8000 }] } },
+      { t: '私下提醒對方窗口', txt: '窗口客氣地道了歉，之後曝光增加了一些。', fx: { rep: 1 } }
+    ] },
+
+  /* ───────── 六、法律、危機與職涯 ───────── */
+  { id: 'my_enlist', w: 3, cd: 40, cond: m => m.roster.some(t => t.g === 'm' && t.age >= 17 && t.stage >= 2), pick: m => m.roster.filter(t => t.g === 'm' && t.age >= 17 && t.stage >= 2), title: '{t}的入伍日期',
+    text: '{t}收到入伍通知，時間就在下個月。團體的行程、專輯排程都要因此調整。',
+    choices: [
+      { t: '安排告別演出，風光送行', req: m => m.co.funds >= 30000, need: '資金 ≥ 3 萬', txt: '告別演出現場粉絲哭成一片，{t}也紅了眼眶。', fx: { funds: -30000, t: { loyalty: 15, mood: 10, fans: 3000 }, rep: 1 } },
+      { t: '低調送行，專注調整團體行程', txt: '你重新規劃了企劃表，團體仍在軌道上。', fx: { t: { loyalty: 5 }, me: { stress: 5 }, skill: { biz: .3 } } },
+      { t: '向相關部門申請延後入伍', check: { st: 'pr', diff: 38 }, out: {
+        g: ['申請獲准，延後一年入伍。', { t: { loyalty: 6 }, rep: 1 }],
+        k: ['沒獲准，但爭取到較有利的日期。', {}],
+        f: ['被駁回，還引起不必要的輿論。', { rep: -2, t: { scandal: 6 } }] } }
+    ] },
+  { id: 'my_lawsuit', w: 3, cd: 30, cond: hasG, pick: dg, title: '{g}的誹謗官司',
+    text: '網路上有人散布關於{g}的不實言論，造成嚴重的名譽損害。法務問你是否要提告。',
+    choices: [
+      { t: '提告，並整理證據', req: m => m.co.funds >= 20000, need: '資金 ≥ 2 萬', txt: '經過數週調查，法院判決對方賠償，並公開道歉。', fx: { funds: -5000, g: { fans: 1500 }, rep: 2, skill: { pr: .4 } } },
+      { t: '發聲明，不訴諸法律', txt: '聲明得到粉絲支持，爭議逐漸平息。', fx: { g: { fans: 500 }, rep: 0 } },
+      { t: '忽視，等待輿論過去', txt: '謠言越傳越多，你開始後悔。', fx: { g: { fans: -1500 }, rep: -2 } }
+    ] },
+  { id: 'my_dui', w: 2, cd: 40, cond: m => deb(m).length > 0, pick: deb, title: '{t}酒後駕車的傳聞',
+    text: '深夜電話：「{t}好像被警察攔下來了。」你趕到現場，{t}臉色蒼白地站在路邊。',
+    choices: [
+      { t: '協助配合調查，並公開道歉', txt: '你與{t}一起面對媒體鞠躬道歉，雖然風波難以避免，但態度被看在眼裡。', fx: { t: { scandal: 18, loyalty: 4, mood: -10 }, rep: -4, funds: -15000 } },
+      { t: '嘗試私下和解，壓下新聞', check: { st: 'pr', diff: 40 }, out: {
+        g: ['事件被壓下，沒有被報導。', { t: { scandal: 6, mood: -4 }, funds: -25000 }],
+        k: ['部分媒體還是報了，但規模不大。', { t: { scandal: 12 }, rep: -3, funds: -20000 }],
+        f: ['試圖掩蓋被揭發，輿論炸鍋。', { t: { scandal: 30 }, rep: -8, funds: -30000 }] } }
+    ] },
+  { id: 'my_rumor', w: 4, cd: 14, cond: hasG, pick: dg, title: '{g}的假新聞',
+    text: '有帳號貼出一組偽造對話截圖，指稱{g}的成員之間互相霸凌。留言迅速累積，粉絲們一片混亂。',
+    choices: [
+      { t: '蒐集證據，與法務發出聲明', check: { st: 'pr', diff: 30 }, out: {
+        g: ['你提出時間軸與原始檔案，謠言被當場戳破。', { g: { fans: 2500 }, rep: 2 }],
+        k: ['聲明發出後，爭議逐漸降溫。', { g: { fans: 300 } }],
+        f: ['證據不夠有力，風波持續。', { g: { fans: -2000 }, rep: -2 }] } },
+      { t: '請成員直播現身說明', txt: '成員親自出面，粉絲心疼又感動。', fx: { g: { fans: 1200, team: 2 }, all: { stress: 4 } } }
+    ] },
+  { id: 'my_taboo_politics', w: 2, cd: 40, cond: m => dg(m).some(g => g.fame > 40), pick: m => dg(m).filter(g => g.fame > 40), title: '{g}的敏感手勢',
+    text: '{g}在海外演出的某個舞蹈動作，被網友解讀成冒犯當地的宗教象徵。外媒開始報導。',
+    choices: [
+      { t: '立即聲明並誠懇道歉', txt: '你們迅速發出道歉聲明，爭議在一週內降溫。', fx: { rep: -1, g: { fans: -500 }, skill: { pr: .3 } } },
+      { t: '解釋是巧合，並提出編舞細節', check: { st: 'pr', diff: 36 }, out: {
+        g: ['解釋被接受，網友轉而同情成員。', { g: { fans: 1500 }, rep: 1 }],
+        k: ['風波平息，但印象有些微損傷。', { rep: -1 }],
+        f: ['被認為辯解，反彈更大。', { rep: -4, g: { fans: -2500 } }] } }
+    ] },
+  { id: 'my_medical_privacy', w: 3, cd: 24, cond: m => m.roster.some(t => t.stage >= 2), pick: deb, title: '{t}的病歷',
+    text: '有媒體記者聯絡你，聲稱掌握了{t}的就診紀錄。他的語氣客氣，卻暗示「如果不想被報導，可以談談」。',
+    choices: [
+      { t: '報警並委託律師', req: m => m.co.funds >= 15000, need: '資金 ≥ 1.5 萬', txt: '你保護了{t}的隱私，記者最後撤回消息。', fx: { funds: -15000, t: { loyalty: 12, mood: 4 }, rep: 1 } },
+      { t: '與記者協商，換取不報導', check: { st: 'pr', diff: 36 }, out: {
+        g: ['記者同意不報導，條件只是日後給他獨家。', { t: { loyalty: 6 }, rep: 0 }],
+        k: ['記者提出一筆封口費。', { funds: -20000, t: { loyalty: 4 } }],
+        f: ['協商破裂，報導照樣刊出。', { t: { scandal: 8, mood: -8, loyalty: -4 }, rep: -3 }] } }
+    ] },
+  { id: 'my_promoter_ran', w: 2, cd: 40, cond: m => dg(m).some(g => g.fame > 40), pick: m => dg(m).filter(g => g.fame > 40), title: '{g}的海外承辦商跑路',
+    text: '{g}抵達海外後，才發現承辦商人間蒸發，飯店沒訂、場地沒簽、合約上的聯絡電話也成了空號。',
+    choices: [
+      { t: '緊急聯絡大使館與當地華人商會', check: { st: 'scout', diff: 34 }, out: {
+        g: ['商會介紹新的場地與飯店，演出勉強完成。', { funds: -25000, rep: 1 }],
+        k: ['取消演出，但平安返國。', { funds: -35000, rep: -1 }],
+        f: ['滯留數天，損失慘重。', { funds: -50000, rep: -3, all: { stress: 10 } }] } },
+      { t: '包機撤離，立即回國', req: m => m.co.funds >= 40000, need: '資金 ≥ 4 萬', txt: '你當機立斷，成員們平安回家。雖損失不小，但沒人受傷。', fx: { funds: -40000, all: { stress: 4 }, rep: 0 } }
+    ] },
+  { id: 'my_lowpay', w: 3, cd: 40, cond: m => m.week > 30, pick: null, title: '薪水單上的數字',
+    text: '月底的薪水單上，加班費那一欄一如往常寫著「0」。對面桌的朋友轉行去了科技公司，薪水是你的兩倍。',
+    choices: [
+      { t: '向社長提出調薪', check: { st: 'biz', diff: 34 }, out: {
+        g: ['社長被你的成績說服，調高了你的待遇。', { trust: 3 }],
+        k: ['社長答應考慮，但沒有下文。', {}],
+        f: ['社長冷冷說：「想賺錢就別做這行。」', { trust: -3, me: { stress: 8 } }] } },
+      { t: '默默吞下，繼續努力', txt: '你把薪水單塞進抽屜，打開了明天的行程表。', fx: { me: { stress: 4 } } },
+      { t: '開始偷偷看其他公司的職缺', txt: '你瀏覽了幾份履歷，又關掉頁面。你心裡明白自己還捨不得。', fx: { me: { stress: -2 } } }
+    ] },
+  { id: 'my_respect', w: 3, cd: 24, pick: null, cond: m => m.week > 12, title: '「跑腿的」',
+    text: '一位來訪的外部人士看到你扛著行李箱，隨口說：「你們公司的司機真辛苦。」你還沒來得及開口，成員們就笑著替你澄清了。',
+    choices: [
+      { t: '笑著說：「我是他們的經紀人」', txt: '對方尷尬地道歉，成員們卻覺得與有榮焉。', fx: { all: { loyalty: 3, mood: 2 } } },
+      { t: '不在意，繼續搬行李', txt: '成員們默默跟了上來，幫你一起提袋子。', fx: { all: { loyalty: 4 }, me: { stress: -2 } } }
+    ] },
+  { id: 'my_member_exit', w: 2, cd: 40, cond: m => m.groups.some(g => g.status !== 'prep' && g.members.length >= 4), pick: m => m.groups.filter(g => g.status !== 'prep' && g.members.length >= 4), title: '{g}的成員要離團',
+    text: '一位成員突然要求提前解約，理由是「想嘗試別的人生」。團員們得知後全都紅了眼眶，粉絲社群已經開始流傳風聲。',
+    choices: [
+      { t: '尊重意願，協助平和離團', txt: '你安排了溫暖的告別，粉絲們雖然傷心，但給予了祝福。', fx: { g: { fans: -1500, team: -3 }, all: { mood: -3 } } },
+      { t: '挽留並提供轉型機會', check: { st: 'coach', diff: 34 }, out: {
+        g: ['成員被說服，留下來並重新找回目標。', { g: { team: 4 }, all: { loyalty: 4 } }],
+        k: ['成員留下，但態度依然搖擺。', { g: { team: 1 } }],
+        f: ['成員堅持離開，局面更尷尬。', { g: { team: -4, fans: -2500 }, rep: -1 }] } }
+    ] },
+  { id: 'my_scapegoat', w: 3, cd: 24, cond: hasG, pick: dg, title: '替{g}道歉',
+    text: '直播中{g}的設備出了問題，畫面中斷了十分鐘。社長在群組裡寫：「這是誰的責任？」所有人都沒有回答。',
+    choices: [
+      { t: '由你承擔責任，向外道歉', txt: '你寫下道歉文。社長點頭，成員們則默默替你倒了一杯茶。', fx: { trust: 1, rep: 0, all: { loyalty: 4 }, me: { stress: 6 } } },
+      { t: '調查真正原因，提出改善報告', check: { st: 'coach', diff: 30 }, out: {
+        g: ['你找出是設備租賃商的問題，並提出完整改善方案。', { trust: 3, rep: 1 }],
+        k: ['找不出明確原因，但你的報告態度獲得肯定。', { trust: 1 }],
+        f: ['報告被認為在推卸責任。', { trust: -3 }] } }
+    ] },
+  { id: 'my_credit', w: 3, cd: 30, cond: m => m.groups.some(g => g.status !== 'prep' && g.fame > 40), pick: m => m.groups.filter(g => g.status !== 'prep' && g.fame > 40), title: '台前與台後',
+    text: '{g}拿下了重要的獎項，聚光燈下成員們泣不成聲地致詞。你站在後台的暗處，看著大家被圍繞在掌聲中。',
+    choices: [
+      { t: '安靜地站著，替他們高興', txt: '成員下台後第一個衝過來抱住你：「沒有你就沒有今天！」', fx: { all: { loyalty: 6, mood: 5 }, me: { stress: -8 } } },
+      { t: '提前準備好慶功宴，讓大家好好慶祝', req: m => m.co.funds >= 15000, need: '資金 ≥ 1.5 萬', txt: '深夜的慶功宴上，所有人都記得你的名字。', fx: { funds: -15000, all: { loyalty: 6, mood: 6, stress: -5 }, me: { stress: -6 } } }
+    ] },
+  { id: 'my_headhunt', w: 2, cd: 50, cond: m => m.week > 60 && m.co.rep >= 20, pick: null, title: '獵頭的名片',
+    text: '一位陌生人在公司附近與你搭話，遞上名片：「我們是大型企業的人資，您的資歷我們很感興趣。薪水是現在的兩倍，週末不用加班。」',
+    choices: [
+      { t: '收下名片，認真考慮', txt: '你在回家的路上把名片翻來覆去看了很多遍，最後還是放進了抽屜。', fx: { me: { stress: -3 } } },
+      { t: '婉拒：「我還有一個團要帶」', txt: '你笑著搖頭。這份固執讓你自己都覺得有點好笑。', fx: { trust: 1, me: { stress: -2 } } },
+      { t: '把這件事告訴社長，要求條件更好', check: { st: 'biz', diff: 36 }, out: {
+        g: ['社長震驚，隔天就為你加了薪。', { trust: 2, funds: 10000 }],
+        k: ['社長承諾考慮，但之後沒有下文。', {}],
+        f: ['社長認為你不忠誠，態度冷淡了許多。', { trust: -5 }] } }
+    ] },
+  { id: 'my_burnout_dream', w: 3, cd: 30, cond: m => m.me.stress >= 55, pick: null, title: '你的夢',
+    text: '你夢見自己仍在機場，抱著三十個行李箱，成員們一個個消失在安檢口。你被鬧鐘驚醒時，才發現枕頭是濕的。',
+    choices: [
+      { t: '請半天假，好好吃頓飯', txt: '你坐在窗邊慢慢吃完了一整份定食，這是這個月來第一次好好吃飯。', fx: { me: { stress: -12, energy: 8 } } },
+      { t: '洗把臉繼續上班', txt: '你告訴自己這只是壓力太大。鏡子裡的人看起來比實際年齡老了一些。', fx: { me: { stress: 4 } } },
+      { t: '找朋友聊聊', txt: '朋友聽完沒有給建議，只說：「辛苦了。」你鼻子一酸。', fx: { me: { stress: -10 } } }
+    ] }
+  );
   DATA.M.EVENTS.push(...E);
 })();
 
@@ -5551,6 +6219,7 @@ const card = (title, body, cls = '') => `<section class="card ${cls}">${title ? 
 const gIcon = g => g === 'm' ? '🧑‍🎤' : '👩‍🎤';
 
 Idol.start = function (state) {
+  DATA.CO = DATA.CO0;
   I = state; Idol.fix(I); IdolUI.tab = 'home'; IdolUI.cal = null; window.__mode = 'idol';
   Idol.render();
 };
@@ -6464,10 +7133,11 @@ Mgr.mkTrainee = function (o) {
 
 /* ---------- 新遊戲 ---------- */
 Mgr.newGame = function (o) {
+  if (o.co) DATA.CO = o.co;
   const m = {
     mode: 'mgr', ver: VER, name: o.name, g: o.g, day: 0, week: 0, ap: 5, apMax: 5,
     me: { energy: 100, stress: 10, trust: 60, skill: { scout: 1, coach: 1, pr: 1, biz: 1 }, xp: {} },
-    co: { name: DATA.CO, funds: 2500000, rep: 12, tier: 0, fac: { practice: 1, studio: 1, dorm: 1 }, staff: { vocal: false, dance: false, stylist: false, pr: false } },
+    co: { name: o.co || DATA.CO, funds: 2500000, rep: 12, tier: 0, fac: { practice: 1, studio: 1, dorm: 1 }, staff: { vocal: false, dance: false, stylist: false, pr: false } },
     roster: [], groups: [], market: [], flags: {}, logs: [], queue: [], nextId: 1, hist: { debuts: 0, wins: 0, awards: 0, albums: 0, bestSales: 0, income: 0 }, over: null, lowFunds: 0, last: [], did: {}, followQ: [], cnt: {}, cdE: {}
   };
   M = m;
@@ -6791,7 +7461,7 @@ Mgr.save = function (slot) { return Store.put('mgr', slot, M, `${M.name}｜${Mgr
 /* =========================================================
  * 介面
  * ========================================================= */
-Mgr.start = function (state) { M = Mgr.fix(state); window.__mode = 'mgr'; MgrUI.tab = 'home'; Mgr.render(); };
+Mgr.start = function (state) { M = Mgr.fix(state); DATA.CO = (M.co && M.co.name) || DATA.CO0; window.__mode = 'mgr'; MgrUI.tab = 'home'; Mgr.render(); };
 Mgr.render = function () {
   const root = document.getElementById('screen'); if (!root || !M) return;
   if (M.over && !M.queue.length) return Mgr.renderEnding(root);
@@ -7349,12 +8019,14 @@ ACT['app.mgr.new'] = () => { if (!App.mgrUnlocked()) return UI.toast('請先在�
 };
 ACT['app.mgr.new2'] = () => { if (!App.mgrUnlocked()) return UI.toast('請先在偶像模式通關一次（一代偶像／頂級藝人結局）', 'bad');
   UI.modal(`<h3>🧑‍💼 經紀人模式：新遊戲</h3><label class="fld">你的名字<input id="nm" maxlength="8" value="金經紀"></label>
-    <p class="sub">你將接手 STARLIGHT 娛樂——一間只有四名練習生、帳戶 ${U.money(2500000)} 的小型工作室。任期六年（${END_WEEK} 週）。</p>
+    <label class="fld">公司名稱<input id="co" maxlength="12" value="STARLIGHT 娛樂"></label>
+    <p class="sub">你將接手這間公司——一間只有四名練習生、帳戶 ${U.money(2500000)} 的小型工作室。任期六年（${END_WEEK} 週）。</p>
     <div class="btn-row"><button class="btn ghost" data-act="u.close">取消</button><button class="btn pink" data-act="app.mgr.go">就任</button></div>`, { cls: 'small' });
 };
 ACT['app.mgr.go'] = () => { if (!App.mgrUnlocked()) return UI.toast('請先在偶像模式通關一次（一代偶像／頂級藝人結局）', 'bad');
-  const nm = document.getElementById('nm').value.trim(); if (!nm) return UI.toast('請輸入名字', 'bad');
-  UI.close(); Store.del('mgr', 'bak'); const m = Mgr.newGame({ name: nm, g: 'f' }); Mgr.start(m); Mgr.save('auto');
+  const cl = v => v.replace(/[<>&"'`]/g, '').trim(), nm = cl(document.getElementById('nm').value); if (!nm) return UI.toast('請輸入名字', 'bad');
+  const co = cl(document.getElementById('co').value) || DATA.CO0;
+  UI.close(); Store.del('mgr', 'bak'); const m = Mgr.newGame({ name: nm, g: 'f', co }); Mgr.start(m); Mgr.save('auto');
 };
 ACT['app.mgr.cont'] = () => { if (!App.mgrUnlocked()) return UI.toast('請先在偶像模式通關一次（一代偶像／頂級藝人結局）', 'bad'); const l = Store.latest('mgr'); if (!l) return; Mgr.start(l.p.state); };
 
