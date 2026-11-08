@@ -1356,6 +1356,426 @@ DATA.M.EVENTS = [
     ] }
 ];
 
+/* ===== data_mgr2.js ===== */
+/* =========================================================
+ * 經紀人模式事件擴充：因果事件組、門檻事件、日常事件
+ * fx 新增：follow:{id,delay:[週,週],cause} 後續事件 / cnt 計數 / recruit:{q,g} 招募新練習生
+ * 選項可寫 need:'文字' 說明解鎖條件；req 與 fx 可以是函式 (m, ctx)
+ * ========================================================= */
+(function () {
+  const idle = m => m.roster.filter(t => t.stage < 2);
+  const debuted = m => m.groups.filter(g => g.status !== 'prep');
+  const gfans = (ctx, k) => Math.max(300, Math.round(ctx.g.fans * k));
+  const E = [];
+
+  /* ---------------- 因果 1：催逼訓練 → 受傷 → 家長 ---------------- */
+  E.push(
+    { id: 'mx_push', w: 5, cd: 8, pick: m => m.roster.filter(t => t.age <= 17 && t.st.stam > 50), title: '要不要加練？',
+      text: '月底評鑑將近，{t}主動來找你：「經紀人，我想加練。我不想被淘汰。」{t.p}的眼睛下面已經有些黑眼圈。',
+      choices: [
+        { t: '同意，並安排額外的特訓', txt: '{t}眼神發亮，一連幾週都最早到、最晚走。', fx: { t: { ab: { vocal: 1.2, dance: 1.2 }, stress: 8, mood: 4 }, me: { energy: -6 }, follow: { id: 'mx_injury', delay: [2, 4], cause: '你之前同意讓{t}額外加練，近期的訓練量明顯超出了身體負荷。' } } },
+        { t: '婉拒，要求{t.p}按照計畫休息', check: { st: 'coach', diff: 24 }, out: {
+          g: ['{t}雖然有些不甘，但聽進去了。「我明白了，我會把體力顧好。」', { t: { stress: -5, loyalty: 6, mood: 2 } }],
+          k: ['{t}點點頭，沒有多說。', { t: { loyalty: 2 } }],
+          f: ['{t}覺得你不相信{t.p}的努力，晚上偷偷跑回練習室。', { t: { loyalty: -5, stress: 5 } }] } }
+      ] },
+    { id: 'mx_injury', w: 0, cd: 10, pick: m => m.roster, title: '練習室的悶哼聲',
+      text: '練習室傳來一聲悶哼。{t}按著腳踝坐在地板上，臉色發白：「沒事……休息一下就好。」但腫起的範圍已經很明顯。',
+      choices: [
+        { t: '立刻送醫，全面休養', txt: '醫生說是輕微韌帶拉傷，休養三週即可。{t}眼眶泛紅，但鬆了口氣。', fx: { funds: -12000, t: { injury: 21, loyalty: 8, stress: -3 }, follow: { id: 'mx_parent_call', delay: [1, 2], cause: '{t}受傷的消息傳到家長那裡。' } } },
+        { t: '讓{t.p}休息一下，趕進度', check: { st: 'coach', diff: 30 }, out: {
+          g: ['{t}貼上貼布繼續練，居然沒惡化。你鬆了一口氣。', { t: { stress: 4, mood: -2 } }],
+          k: ['{t}勉強撐著完成了進度，但腳踝越來越腫。', { t: { injury: 14, stress: 6, loyalty: -4 } }],
+          f: ['{t}在隔天的練習中再度受傷，這次比較嚴重。', { funds: -18000, t: { injury: 35, loyalty: -12, mood: -8 }, rep: -1, follow: { id: 'mx_parent_call', delay: [1, 2], cause: '{t}因為勉強練習而加重傷勢，家長非常生氣。' } }] } }
+      ] },
+    { id: 'mx_parent_call', w: 0, cd: 10, pick: m => m.roster, title: '家長的電話',
+      text: '{t}的家長打電話到公司：「我女兒／兒子受傷了，你們到底是怎麼管理的？」電話那頭的語氣很不客氣。',
+      choices: [
+        { t: '親自登門拜訪，說明處理方式', check: { st: 'pr', diff: 24 }, out: {
+          g: ['家長看到你帶去的醫療報告與賠禮，語氣緩和下來：「謝謝你把孩子放在心上。」', { t: { loyalty: 10 }, rep: 1, me: { stress: 3 } }],
+          k: ['家長仍有不滿，但接受了你的說明。', { t: { loyalty: 3 }, me: { stress: 4 } }],
+          f: ['家長堅持要帶孩子回家休養一段時間。', { t: { mood: -6, loyalty: -4 }, rep: -1, me: { stress: 6 } }] } },
+        { t: '請公司法務發出書面說明', txt: '對方收到信件之後沒有再聯絡，但{t}告訴你，爸媽對你很失望。', fx: { t: { loyalty: -5 } } }
+      ] }
+  );
+
+  /* ---------------- 因果 2：師徒制 → 成長回報 ---------------- */
+  E.push(
+    { id: 'mx_mentor', w: 4, cd: 12, pick: m => m.roster.filter(t => t.stage >= 0 && t.hid.pot > 60), title: '前輩願意當導師',
+      cond: m => m.groups.some(g => g.status !== 'prep'),
+      text: '你旗下已經出道的藝人{g}之中，有人主動表示願意擔任{t}的導師：「我也是這樣被帶大的。」但需要在行程中擠出時間。',
+      choices: [
+        { t: '安排固定的師徒時間', req: m => m.co.funds >= 10000, need: '資金 ≥ 1 萬', txt: '前輩每週和{t}一起練習兩次，還分享了很多業界的經驗談。', fx: { funds: -10000, t: { ab: { vocal: .8, charm: 1.2, variety: .8 }, mood: 6, loyalty: 4 }, follow: { id: 'mx_mentor_payoff', delay: [4, 8], cause: '你之前安排前輩擔任{t}的導師。' } } },
+        { t: '請前輩只在空閒時指導', txt: '前輩偶爾傳授一些小技巧，{t}學到了一些，但稱不上顯著。', fx: { t: { ab: { charm: .4 }, mood: 2 } } }
+      ] },
+    { id: 'mx_mentor_payoff', w: 0, cd: 20, pick: m => m.roster, title: '導師的推薦信',
+      text: '前輩把你叫到一旁：「{t}的進步，我都看在眼裡。我跟製作公司提了一下，對方想看看{t.p}的表現。」',
+      choices: [
+        { t: '把握機會，安排{t.p}試鏡', check: { st: 'scout', diff: 28 }, out: {
+          g: ['試鏡很成功，{t}拿到了一支廣告的小角色。', { funds: 25000, t: { fame: 3, fans: 800, mood: 10 }, rep: 2 }],
+          k: ['{t}雖然沒拿到角色，但留下了好印象。', { t: { fame: 1, mood: 4 } }],
+          f: ['{t}太緊張，表現失常。前輩幫你打圓場。', { t: { mood: -5 } }] } },
+        { t: '再等等，先把基礎打穩', txt: '你婉謝了邀約。前輩笑著說：「穩一點也好。」', fx: { t: { ab: { vocal: .6, dance: .6 }, loyalty: 3 } } }
+      ] }
+  );
+
+  /* ---------------- 因果 3：取消粉絲活動 → 粉絲抗議 ---------------- */
+  E.push(
+    { id: 'mx_fanmeet_cancel', w: 4, cd: 14, pick: m => m.groups.filter(g => g.status !== 'prep' && g.fans > 3000), title: '見面會的場地問題',
+      text: '{g}的粉絲見面會前一週，場地方突然通知因設備安全問題要取消。更換場地要重新付一筆費用，時間也很趕。',
+      choices: [
+        { t: '花錢更換場地，如期舉辦', req: m => m.co.funds >= 40000, need: '資金 ≥ 4 萬', txt: '你連夜跑遍場地租借商，最後在隔壁區找到了替代場地。見面會順利舉行。', fx: (m, c) => ({ funds: -40000, g: { fans: gfans(c, .04), pop: 1.5 }, rep: 1 }) },
+        { t: '取消活動，發公告道歉', txt: '公告發出後，粉絲留言一片失望。', fx: { g: { pop: -1.5 }, follow: { id: 'mx_fan_protest', delay: [1, 3], cause: '你之前取消了{g}的粉絲見面會。' } } },
+        { t: '改成線上直播見面會', check: { st: 'pr', diff: 26 }, out: {
+          g: ['線上直播的互動反而很熱烈，粉絲說「這樣也很特別」。', (m, c) => ({ g: { fans: gfans(c, .03), pop: 1 }, rep: 1 })],
+          k: ['直播順利完成，雖然熱度不如現場。', (m, c) => ({ g: { fans: gfans(c, .01) } })],
+          f: ['直播畫質和收音出了狀況，粉絲不太滿意。', { g: { pop: -1 }, follow: { id: 'mx_fan_protest', delay: [1, 3], cause: '{g}的線上見面會出了狀況。' } }] } }
+      ] },
+    { id: 'mx_fan_protest', w: 0, cd: 14, pick: m => m.groups, title: '粉絲的集體抗議',
+      text: '公司樓下出現了一排粉絲送來的抗議花圈與標語：「還我見面會」「給我們一個交代」。媒體記者也聞風而來。',
+      choices: [
+        { t: '親自出面，向粉絲鞠躬道歉', check: { st: 'pr', diff: 28 }, out: {
+          g: ['你誠懇的態度讓粉絲們安靜下來，有人甚至紅了眼眶：「我們只是想見他們。」', (m, c) => ({ g: { fans: gfans(c, .02), pop: 1 }, rep: 1 })],
+          k: ['粉絲們慢慢散去，部分人仍有怨言。', { g: { pop: -.5 } }],
+          f: ['你的道歉被斷章取義剪成短片，輿論又吵了一波。', (m, c) => ({ g: { pop: -2, fans: -gfans(c, .01) }, rep: -1 })] } },
+        { t: '加辦一場免費的補償活動', req: m => m.co.funds >= 50000, need: '資金 ≥ 5 萬', txt: '補償活動的氣氛很溫暖，粉絲說：「我們選擇繼續相信你們。」', fx: (m, c) => ({ funds: -50000, g: { fans: gfans(c, .03), pop: 2 }, rep: 1 }) }
+      ] }
+  );
+
+  /* ---------------- 因果 4：投資人 → 投資人的要求 ---------------- */
+  E.push(
+    { id: 'mx_investor', w: 3, cd: 30, cond: m => m.co.rep >= 20 && m.co.funds < 600000, pick: null, title: '神祕投資人',
+      because: m => `公司聲望 ${Math.round(m.co.rep)}、帳上資金偏少`,
+      text: '一位自稱做地產的中年男子拜訪公司：「我看好你們的潛力，願意投資 40 萬，只要簽一份協議。」協議上有一條條款你需要多留意。',
+      choices: [
+        { t: '接受投資，簽下協議', txt: '帳戶一下子寬裕了許多。但你隱約覺得，這筆錢不會白拿。', fx: { funds: 400000, flag: 'investor_in', follow: { id: 'mx_investor_demand', delay: [6, 10], cause: '你之前接受了那位地產投資人的資金。' } } },
+        { t: '請律師審核條款，談判後再簽', check: { st: 'biz', diff: 32 }, out: {
+          g: ['你成功刪掉了干涉條款，投資金額還多了 10 萬。', { funds: 500000, rep: 1, trust: 2 }],
+          k: ['條款有所修改，投資金額維持原樣。', { funds: 400000, flag: 'investor_in', follow: { id: 'mx_investor_demand', delay: [8, 12], cause: '你之前談判後接受了地產投資人的資金。' } }],
+          f: ['對方覺得你太計較，撤回了提議。', { me: { stress: 3 } }] } },
+        { t: '婉拒，保持公司獨立', txt: '男子聳聳肩留下名片：「想通了再聯絡。」', fx: { trust: 1 } }
+      ] },
+    { id: 'mx_investor_demand', w: 0, cd: 40, pick: null, title: '投資人的「建議」',
+      text: '投資人帶著幾位朋友來公司開會：「我覺得下一組新團要走某種風格，我已經幫你們選好了概念和幾位成員。」他說話的語氣不像是在商量。',
+      choices: [
+        { t: '據理力爭，維護自己的專業', check: { st: 'biz', diff: 34 }, out: {
+          g: ['你用數據與市場分析說服了他。他沉默許久：「……你比我想的更有想法。」', { rep: 2, trust: 3, me: { stress: 4 } }],
+          k: ['雙方各退一步，折衷了方案。', { me: { stress: 5 } }],
+          f: ['談判破裂，投資人要求提前撤資一部分。', { funds: -200000, rep: -2, me: { stress: 8 } }] } },
+        { t: '先順著對方，私下調整', txt: '你表面答應，私下偷偷改了企劃。投資人起初沒發現，但你的壓力很大。', fx: { me: { stress: 7 }, trust: -2 } },
+        { t: '買回股份，結束合作', req: m => m.co.funds >= 450000, need: '資金 ≥ 45 萬', txt: '你付出一筆溢價，把股份買了回來。公司重新回到你手中。', fx: { funds: -450000, rep: 1, trust: 2 } }
+      ] }
+  );
+
+  /* ---------------- 因果 5：綜藝試水溫 → 固定通告 ---------------- */
+  E.push(
+    { id: 'mx_variety_guest', w: 5, cd: 10, pick: m => m.roster.filter(t => t.ab.variety > 18 && t.stage >= 1), title: '綜藝節目臨時缺人',
+      text: '一檔熱門綜藝的製作人臨時缺來賓，打電話到公司問能不能讓{t}頂上，錄影是明天。時間很趕，{t}沒有任何準備。',
+      choices: [
+        { t: '答應，今晚為{t.p}緊急特訓', check: { st: 'coach', diff: 28 }, out: {
+          g: ['{t}的表現又自然又搞笑，導演當場說想再邀請{t.p}。', { t: { fame: 3, fans: 1200, mood: 10, ab: { variety: 1.5 } }, follow: { id: 'mx_variety_regular', delay: [3, 6], cause: '你之前讓{t}臨時頂上綜藝來賓，表現令人驚喜。' } }],
+          k: ['{t}表現中規中矩，沒有出錯，也沒有太大亮點。', { t: { fame: 1, fans: 300, ab: { variety: .6 } } }],
+          f: ['{t}錄影時嚇得不敢說話，剪輯時幾乎被剪光。', { t: { mood: -8, stress: 6 } }] } },
+        { t: '婉拒，說明還沒準備好', txt: '製作人表示遺憾：「那下次吧。」', fx: { rep: -.5 } }
+      ] },
+    { id: 'mx_variety_regular', w: 0, cd: 20, pick: m => m.roster, title: '固定來賓的邀約',
+      text: '綜藝節目組傳來訊息：「{t}的反應很棒，我們想請{t.p}擔任接下來八週的固定來賓。」這會占用不少訓練時間。',
+      choices: [
+        { t: '接下邀約，並重新調整訓練計畫', txt: '{t}每週都有一個固定的曝光機會，網路上也開始出現屬於{t.p}的粉絲討論串。', fx: { funds: 20000, t: { fame: 4, fans: 2500, ab: { variety: 1.2, charm: .8 }, stress: 6 }, rep: 1 } },
+        { t: '婉拒，保留訓練時間', txt: '你說：「我想讓{t.p}先把基本功練好。」製作人尊重你的決定。', fx: { t: { ab: { vocal: .5, dance: .5 }, loyalty: 2 } } }
+      ] }
+  );
+
+  /* ---------------- 因果 6：媒體專訪 → 後續報導 ---------------- */
+  E.push(
+    { id: 'mx_press', w: 4, cd: 14, cond: m => m.co.rep >= 10, pick: null, title: '雜誌專訪',
+      text: '一本知名娛樂雜誌想為你和{rival}做對比專題。記者問了不少關於公司經營與練習生待遇的問題，你需要小心措辭。',
+      choices: [
+        { t: '誠實說出公司的困難與願景', check: { st: 'pr', diff: 28 }, out: {
+          g: ['你真誠的態度讓記者很有好感，專題標題寫著「小公司的大野心」。', { rep: 3, trust: 2, follow: { id: 'mx_press_after', delay: [2, 4], cause: '你之前接受了雜誌專訪，誠實談了公司的處境。' } }],
+          k: ['專訪平順，報導中規中矩。', { rep: 1 }],
+          f: ['你說漏了一些內部資訊，被記者放大寫成花邊新聞。', { rep: -2, me: { stress: 6 } }] } },
+        { t: '只談正面成果，不談困難', txt: '報導很漂亮，但讀起來像公關稿。', fx: { rep: 1 } },
+        { t: '婉拒專訪', txt: '記者失望地離開：「那我們只能自己想像了。」', fx: {} }
+      ] },
+    { id: 'mx_press_after', w: 0, cd: 30, pick: null, title: '求職者湧入',
+      text: '雜誌專題刊出之後，公司信箱塞滿了求職和練習生報名的信件，有人甚至直接在門口排隊。',
+      choices: [
+        { t: '逐一面試，挑出最亮眼的一位', check: { st: 'scout', diff: 26 }, out: {
+          g: ['你在眾多申請者中挖到一位璞玉。', { recruit: { q: 1 }, rep: 1 }],
+          k: ['你挑到一位資質不錯的新人。', { recruit: { q: 0 } }],
+          f: ['面試耗了一整天，卻沒有特別出色的人。', { me: { stress: 4 } }] } },
+        { t: '先擱置，等資源比較充裕時再說', txt: '你把這批履歷放進文件夾，也許將來用得到。', fx: {} }
+      ] }
+  );
+
+  /* ---------------- 因果 7：家庭貧困 → 資助 → 感謝 ---------------- */
+  E.push(
+    { id: 'mx_family_trouble', w: 3, cd: 20, pick: m => m.roster.filter(t => t.hid.loyalty > 30), title: '{t}家裡的難處',
+      text: '{t}支支吾吾地來找你：「經紀人，我家裡最近出了點事……爸爸的店週轉不過來。請問公司能不能……先預支一點薪水？」',
+      choices: [
+        { t: '預支 3 萬，並寫下借據', req: m => m.co.funds >= 30000, need: '資金 ≥ 3 萬', txt: '{t}深深鞠躬，眼淚掉在合約上：「我會努力還給公司的。」', fx: { funds: -30000, t: { loyalty: 12, mood: 6, stress: -4 }, follow: { id: 'mx_family_thanks', delay: [8, 14], cause: '你之前預支薪水幫助{t}的家人度過難關。' } } },
+        { t: '請公司社工聯絡家人，了解狀況', check: { st: 'pr', diff: 22 }, out: {
+          g: ['社工幫忙協調到一筆政府補助，{t}的家人暫時度過難關。', { t: { loyalty: 8, mood: 5 }, rep: 1 }],
+          k: ['社工提供了一些資訊，{t}仍然有些擔心。', { t: { loyalty: 3 } }],
+          f: ['對方覺得被冒犯，{t}夾在中間很為難。', { t: { loyalty: -3, mood: -4 } }] } },
+        { t: '婉拒，說明公司制度不允許', txt: '{t}點了點頭：「我明白。」之後的幾天，{t.p}話明顯少了。', fx: { t: { loyalty: -8, mood: -5 } } }
+      ] },
+    { id: 'mx_family_thanks', w: 0, cd: 30, pick: m => m.roster, title: '{t}家人的謝禮',
+      text: '{t}的爸媽特地從老家搭火車來公司，帶來一大袋自家做的小菜與年糕：「謝謝你們照顧孩子，也謝謝你當時的幫助。」{t}站在旁邊，眼睛有些紅。',
+      choices: [
+        { t: '收下，並邀請全家一起吃飯', txt: '你們坐在公司的小會議室裡聊了很久。{t}說：「我想一輩子在這裡。」', fx: { t: { loyalty: 18, mood: 12, stress: -8 }, rep: 1 } },
+        { t: '婉拒禮物，但請對方安心', txt: '你把小菜分給了所有練習生。{t}的家人鬆了一口氣。', fx: { t: { loyalty: 10, mood: 6 }, all: { mood: 2 } } }
+      ] }
+  );
+
+  /* ---------------- 因果 8：手機管制 → 宿舍氣氛 ---------------- */
+  E.push(
+    { id: 'mx_phone_rule', w: 3, cd: 24, pick: null, cond: m => m.roster.length >= 4, title: '宿舍手機規定',
+      text: '最近練習生們都沉迷手機，影響練習進度。有老師建議你頒布「練習期間禁用手機」的新規定。',
+      choices: [
+        { t: '實施嚴格的手機管制', txt: '練習效率確實變高，但宿舍的氣氛明顯變差。', fx: { all: { stress: 3, mood: -3 }, follow: { id: 'mx_phone_leak', delay: [2, 5], cause: '你之前實施了嚴格的手機管制，練習生們的不滿正在累積。' } } },
+        { t: '只限制練習時段，其餘時間自由', check: { st: 'coach', diff: 22 }, out: {
+          g: ['大家都能接受，還主動提出互相提醒的方法。', { all: { mood: 2, loyalty: 2 }, trust: 1 }],
+          k: ['規定平順執行，偶爾有人偷滑。', {}],
+          f: ['規定形同虛設，老師很頭痛。', { me: { stress: 3 } }] } },
+        { t: '不干涉，讓練習生自己管理', txt: '你相信他們會自律。有人做得很好，也有人持續荒廢。', fx: { all: { mood: 2 } } }
+      ] },
+    { id: 'mx_phone_leak', w: 0, cd: 20, pick: m => m.roster, title: '宿舍的偷拍影片',
+      text: '有練習生偷偷把宿舍的生活影片上傳到網路，內容有些難為情，還抱怨了公司的規定。影片被轉了上千次。',
+      choices: [
+        { t: '約談當事人，說明後果', check: { st: 'coach', diff: 28 }, out: {
+          g: ['{t}紅著臉道歉：「我太衝動了，對不起。」你們一起想出了補救方案。', { t: { loyalty: 6, scandal: 3 }, rep: 0 }],
+          k: ['{t}承認錯誤，影片也在隔天被刪除。', { t: { scandal: 5, mood: -4 }, rep: -1 }],
+          f: ['{t}情緒激動地頂嘴，場面變得很難看。', { t: { loyalty: -8, scandal: 8 }, rep: -2 }] } },
+        { t: '發一份公開聲明，承諾改善宿舍環境', req: m => m.co.funds >= 30000, need: '資金 ≥ 3 萬', txt: '你用一筆預算改善了宿舍的設備，也修正了不合理的規定。網友反應溫和。', fx: { funds: -30000, rep: 1, all: { mood: 5, loyalty: 3 } } }
+      ] }
+  );
+
+  /* ---------------- 因果 9：與對手公司合作 → 挖角 ---------------- */
+  E.push(
+    { id: 'mx_collab', w: 3, cd: 24, pick: m => m.groups.filter(g => g.status !== 'prep' && g.fame >= 8), cond: m => m.co.rep >= 25, title: '{rival} 的合作邀約',
+      text: '{rival} 的製作人傳來訊息，希望你的 {g} 與他們旗下的藝人一起推出一首合作單曲，雙方分擔製作費。',
+      choices: [
+        { t: '接受合作，共同發行', req: m => m.co.funds >= 40000, need: '資金 ≥ 4 萬', txt: '合作單曲上市之後，兩邊的粉絲互相引流，熱度大增。', fx: (m, c) => ({ funds: -40000, g: { pop: 3, fans: gfans(c, .06), fame: 2 }, rep: 2, follow: { id: 'mx_rival_poach', delay: [4, 8], cause: '你之前與 {rival} 合作發行單曲，對方有機會看到你旗下藝人的實力。' } }) },
+        { t: '婉拒，專心做自己的作品', txt: '對方禮貌地表示理解。', fx: { trust: 1 } }
+      ] },
+    { id: 'mx_rival_poach', w: 0, cd: 24, pick: m => m.roster.filter(t => t.stage >= 1), title: '合作夥伴的「暗示」',
+      text: '合作結束沒多久，{rival} 的經紀人私下找上{t}：「我們欣賞你的才華，我們開出的條件，比你現在的公司好得多。」{t}把這件事告訴了你。',
+      choices: [
+        { t: '感謝{t.p}的誠實，並提高待遇', req: m => m.co.funds >= 50000, need: '資金 ≥ 5 萬', txt: '你當場提高了{t}的分紅比例。{t}說：「我只是想讓你知道，我選你。」', fx: { funds: -50000, t: { loyalty: 18, mood: 8 }, trust: 1 } },
+        { t: '提醒{t.p}合約還在，但不強迫', check: { st: 'pr', diff: 30 }, out: {
+          g: ['{t}想了一晚，隔天說：「我留下。」', { t: { loyalty: 8 } }],
+          k: ['{t}沒有表態，氣氛有些微妙。', { t: { loyalty: -2 } }],
+          f: ['{t}覺得你不夠重視{t.p}，最終選擇離開。', { t: { leave: 1 }, rep: -2 }] } }
+      ] }
+  );
+
+  /* ---------------- 因果 10：新人試演 → 小爆紅 → 負面 ---------------- */
+  E.push(
+    { id: 'mx_demo', w: 4, cd: 12, pick: m => m.roster.filter(t => t.ab.vocal > 22 || t.ab.rap > 22), title: '{t}的自創曲',
+      text: '{t}怯生生地遞來一個隨身碟：「這是我寫的歌，不知道……可不可以給你聽聽？」你按下播放，旋律意外地抓耳。',
+      choices: [
+        { t: '安排錄音，上傳到官方頻道', req: m => m.co.funds >= 15000, need: '資金 ≥ 1.5 萬', check: { st: 'scout', diff: 26 }, out: {
+          g: ['歌曲上傳後迅速累積點擊，許多人留言問「這是誰唱的？」', { funds: -15000, t: { fame: 3, fans: 2000, mood: 12, ab: { vocal: .8 } }, follow: { id: 'mx_demo_backlash', delay: [2, 4], cause: '你之前讓{t}的自創曲爆紅，這也吸引了不少批評。' } }],
+          k: ['點擊數穩定成長，粉絲留言溫暖。', { funds: -15000, t: { fame: 1, fans: 500, mood: 6 } }],
+          f: ['歌曲沒什麼人聽，{t}有些失落。', { funds: -15000, t: { mood: -4 } }] } },
+        { t: '給{t.p}一些建議，請{t.p}再打磨', txt: '{t}把你的每一個建議都抄在筆記本裡：「我會改到你滿意為止。」', fx: { t: { ab: { vocal: .6 }, loyalty: 4, mood: 2 } } }
+      ] },
+    { id: 'mx_demo_backlash', w: 0, cd: 20, pick: m => m.roster, title: '抄襲疑雲',
+      text: '有網友指出{t}的歌曲前奏「很像某首老歌」，討論串瞬間爆量。有人替{t.p}辯護，也有人說「新人不要太狂」。',
+      choices: [
+        { t: '公開創作手稿與錄音過程，證明原創', check: { st: 'pr', diff: 28 }, out: {
+          g: ['你放出的手稿和錄音檔讓風向反轉，連原創作者都留言支持。', { t: { fame: 3, fans: 2500, scandal: -4, mood: 8 }, rep: 1 }],
+          k: ['爭議平息，大部分人接受了說法。', { t: { scandal: 2 } }],
+          f: ['證據被說「太晚拿出來」，爭議持續了一陣。', { t: { scandal: 8, mood: -6 }, rep: -1 }] } },
+        { t: '直接下架歌曲，低調處理', txt: '風波在一週後漸漸冷卻，但{t}很自責。', fx: { t: { mood: -8, scandal: 2, loyalty: -2 } } }
+      ] }
+  );
+
+  /* ---------------- 門檻事件 ---------------- */
+  E.push(
+    { id: 'mx_flash', w: 4, cd: 14, pick: m => m.groups.filter(g => g.status !== 'prep' && g.fame >= 3), title: '{g}的戶外快閃表演',
+      text: (m, c) => `企劃部提議讓 {g} 在${c.g.fame >= 30 ? '首爾市中心的廣場' : '大學路的步行街'}辦一場突擊式的快閃表演，不事先公布地點。${c.g.fans >= 80000 ? '以他們現在的人氣，現場很可能被擠到水洩不通，必須有嚴密的安全計畫。' : '現場大概會有幾百位路人與粉絲圍觀。'}`,
+      choices: [
+        { t: '大型快閃：加派保全，舞台設備全配', req: (m, c) => c.g.fame >= 15 && m.co.funds >= 60000, need: '團體知名度 ≥ 15、資金 ≥ 6 萬', check: { st: 'biz', diff: 30 }, out: {
+          g: ['人潮擠滿了廣場，影片在一夜之間被轉發了數十萬次。', (m, c) => ({ funds: -60000, g: { fans: gfans(c, .08), pop: 4, fame: 4 }, rep: 3 })],
+          k: ['演出順利，現場氣氛熱烈，沒有出現安全問題。', (m, c) => ({ funds: -60000, g: { fans: gfans(c, .04), pop: 2, fame: 2 }, rep: 1 })],
+          f: ['人潮超出預期，保全一度失控，演出被迫提前結束。', (m, c) => ({ funds: -60000, g: { pop: -1, fame: 1 }, rep: -2, me: { stress: 8 } })] } },
+        { t: '小型快閃：輕裝上陣，只帶音響', req: m => m.co.funds >= 8000, need: '資金 ≥ 0.8 萬', check: { st: 'pr', diff: 22 }, out: {
+          g: ['路人隨手拍下的影片意外爆紅。', (m, c) => ({ funds: -8000, g: { fans: gfans(c, .03), pop: 2 }, rep: 1 })],
+          k: ['表演平穩，路人給了不少掌聲。', (m, c) => ({ funds: -8000, g: { fans: gfans(c, .012), pop: .8 } })],
+          f: ['音響出了狀況，影片被剪成搞笑片段。', { funds: -8000, g: { pop: -.8 } }] } },
+        { t: '取消，風險太高', txt: '你覺得時機還不夠成熟，決定先觀望。', fx: { me: { stress: -2 } } }
+      ] },
+    { id: 'mx_award_open', w: 3, cd: 24, pick: m => m.groups.filter(g => g.status !== 'prep' && g.pop >= 40), title: '頒獎典禮的開場邀約',
+      because: (m, c) => `{g}的人氣已達 ${Math.round(c.g.pop)}`,
+      text: '年度音樂頒獎典禮的製作團隊邀請 {g} 擔綱開場表演，現場五千名觀眾，全國直播。製作人說：「舞台很大，但也很危險。」',
+      choices: [
+        { t: '接受，並投入大筆預算打造舞台', req: (m, c) => m.co.funds >= 120000 && c.g.team >= 45, need: '資金 ≥ 12 萬、團隊默契 ≥ 45', check: { st: 'biz', diff: 32 }, out: {
+          g: ['燈光、火花與編舞完美融合，開場表演成了當晚最大的話題。', (m, c) => ({ funds: -120000, g: { pop: 6, fame: 6, fans: gfans(c, .1) }, rep: 4 })],
+          k: ['表演穩穩扛下開場的重任。', (m, c) => ({ funds: -120000, g: { pop: 3, fame: 3, fans: gfans(c, .05) }, rep: 2 })],
+          f: ['舞台機關出了狀況，整體稍顯混亂。', { funds: -120000, g: { pop: -2 }, rep: -2 }] } },
+        { t: '接受，但用最精簡的預算', req: m => m.co.funds >= 30000, need: '資金 ≥ 3 萬', txt: '雖然預算有限，但你們把重心放在表演本身，也博得了不少好評。', fx: (m, c) => ({ funds: -30000, g: { pop: 1.5, fame: 1.5, fans: gfans(c, .02) }, rep: 1 }) },
+        { t: '婉拒，這個位置太冒險', txt: '製作團隊找了別的藝人頂替。', fx: { rep: -1 } }
+      ] },
+    { id: 'mx_overseas', w: 3, cd: 30, pick: m => m.groups.filter(g => g.status !== 'prep' && g.fans >= 60000), title: '海外巡演邀約',
+      because: (m, c) => `{g}的粉絲已達 ${U.num(c.g.fans)}`,
+      text: '日本與東南亞的演出商同時向公司遞出邀請，希望 {g} 前往舉辦巡演。成員的簽證、語言與體力都會是挑戰。',
+      choices: [
+        { t: '接下完整巡演，全力以赴', req: (m, c) => m.co.funds >= 100000 && c.g.team >= 50, need: '資金 ≥ 10 萬、團隊默契 ≥ 50', check: { st: 'biz', diff: 34 }, out: {
+          g: ['巡演場場爆滿，海外粉絲熱情到讓成員感動落淚。', (m, c) => ({ funds: 160000, g: { fans: gfans(c, .12), pop: 4, fame: 6, team: 4 }, rep: 5 })],
+          k: ['巡演順利，收支打平，也累積了海外人氣。', (m, c) => ({ funds: 20000, g: { fans: gfans(c, .05), fame: 3 }, rep: 2 })],
+          f: ['舟車勞頓加上行程混亂，有成員在途中生病，後半場取消。', { funds: -60000, g: { pop: -2, team: -3 }, rep: -3, all: { stress: 5 } }] } },
+        { t: '只辦單場試水溫', req: m => m.co.funds >= 40000, need: '資金 ≥ 4 萬', txt: '單場演出順利，反應不錯，也讓你累積了海外巡演的經驗。', fx: (m, c) => ({ funds: 0, g: { fans: gfans(c, .02), fame: 1.5 }, rep: 1, skill: { biz: .3 } }) },
+        { t: '婉拒，先專注國內', txt: '你覺得時機未到，把行程留給國內活動。', fx: {} }
+      ] },
+    { id: 'mx_label_deal', w: 3, cd: 40, cond: m => m.co.rep >= 40, pick: null, title: '大型唱片公司的結盟提案',
+      because: m => `公司聲望已達 ${Math.round(m.co.rep)}`,
+      text: '一間大型唱片公司的代表約你吃飯：「你的公司成長很快。我們願意提供發行與通路支援，換取部分分潤。」',
+      choices: [
+        { t: '接受結盟，換取通路與資金', txt: '你們簽下了合作備忘錄。未來的每張專輯都會有更多曝光，但也要分出一部分收益。', fx: { funds: 300000, rep: 3, flag: 'label_deal', trust: 1 } },
+        { t: '提出更有利的條件，反覆談判', check: { st: 'biz', diff: 36 }, out: {
+          g: ['你談下了通路支援，分潤比例卻比原先低了一半。對方苦笑：「你是我見過最會談的人。」', { funds: 250000, rep: 4, flag: 'label_deal', skill: { biz: .5 } }],
+          k: ['雙方各讓一步，簽下了合作備忘錄。', { funds: 250000, rep: 2, flag: 'label_deal' }],
+          f: ['談判破局，對方轉向了別的公司。', { rep: -1, me: { stress: 5 } }] } },
+        { t: '婉拒，維持獨立', txt: '代表理解地點點頭：「獨立是一種驕傲，也是一種代價。」', fx: { trust: 2, rep: 1 } }
+      ] },
+    { id: 'mx_funds_crisis', w: 5, cd: 16, cond: m => m.co.funds < 100000, pick: null, title: '帳戶見底',
+      because: m => `帳戶只剩 ${U.money(m.co.funds)}`,
+      text: '月底結算時，會計把報表遞到你桌上：「接下來兩個月的房租、薪水、器材分期，帳上的錢只夠撐一半。」',
+      choices: [
+        { t: '縮減開支，暫停所有非必要支出', txt: '你砍掉了行銷、造型和部分差旅預算。公司安靜了許多，大家都很努力地撐著。', fx: { funds: 40000, all: { mood: -3 }, rep: -1 } },
+        { t: '向社長申請臨時週轉金', req: m => m.me.trust >= 55, need: '社長信任 ≥ 55', txt: '社長沉默了一會兒，簽了批准單：「別讓我失望。」', fx: { funds: 120000, trust: -5 } },
+        { t: '接下一檔高報酬但形象不佳的通告', check: { st: 'biz', diff: 26 }, out: {
+          g: ['通告順利完成，酬勞豐厚，也沒有引起太多批評。', { funds: 150000, rep: -1 }],
+          k: ['通告勉強完成，酬勞到手，但被一些人說「不挑工作」。', { funds: 100000, rep: -2 }],
+          f: ['通告引發了爭議，酬勞還被延遲支付。', { funds: 30000, rep: -4, all: { mood: -4 } }] } }
+      ] },
+    { id: 'mx_burnout', w: 5, cd: 14, cond: m => m.me.stress >= 68, pick: null, title: '你的疲憊',
+      because: m => `你的壓力已達 ${Math.round(m.me.stress)}`,
+      text: '深夜的辦公室只剩你一個人，電腦螢幕上的行程表密密麻麻。你揉著太陽穴，才發現自己已經連續三天沒好好吃過一餐。',
+      choices: [
+        { t: '放自己一天假，去海邊走走', txt: '海風很冷，卻讓腦袋清醒了許多。你打電話給朋友聊了很久。', fx: { me: { stress: -18, energy: 15 } } },
+        { t: '喝杯咖啡，繼續工作', txt: '你把進度趕完了，但整個人像被抽乾一樣。', fx: { me: { stress: 5, energy: -12 }, trust: 1 } },
+        { t: '委託資深員工分擔部分工作', req: m => m.co.rep >= 20, need: '公司聲望 ≥ 20', txt: '員工們很樂意幫忙，你第一次覺得自己不是一個人在撐。', fx: { me: { stress: -10, energy: 8 }, all: { loyalty: 2 } } }
+      ] },
+    { id: 'mx_audition_boom', w: 4, cd: 20, cond: m => m.co.rep >= 12 && m.roster.length < 10, pick: null, title: '公開徵選的規模',
+      because: m => `公司聲望 ${Math.round(m.co.rep)}，吸引到更多報名者`,
+      text: '公司的名聲讓今年的公開徵選報名人數創了新高。你需要決定這次徵選要辦多大。',
+      choices: [
+        { t: '大型公開徵選（設備、評審、廣告）', req: m => m.co.funds >= 80000, need: '資金 ≥ 8 萬', check: { st: 'scout', diff: 28 }, out: {
+          g: ['現場來了幾百人，你一次挑中兩位潛力新人。', { funds: -80000, recruit: { q: 1 }, rep: 2, follow: { id: 'mx_new_talent', delay: [3, 6], cause: '你之前舉辦大型公開徵選時挑中了這位新人。' } }],
+          k: ['你挑中了一位資質不錯的新人。', { funds: -80000, recruit: { q: 0 }, rep: 1 }],
+          f: ['報名者眾多，卻沒有真正的亮點。', { funds: -80000, rep: -1 }] } },
+        { t: '小型內部徵選（只在校園與社群貼公告）', req: m => m.co.funds >= 15000, need: '資金 ≥ 1.5 萬', txt: '報名者不多，但你還是挑到一位肯吃苦的新人。', fx: { funds: -15000, recruit: { q: 0 } } },
+        { t: '這次不辦', txt: '你覺得目前人手與預算都不夠，決定下次再說。', fx: {} }
+      ] },
+    { id: 'mx_new_talent', w: 0, cd: 30, pick: m => m.roster.filter(t => t.age <= 15), title: '新人的第一次舞台',
+      text: '你帶著{t}到公司練習室做第一次試演。{t}雖然緊張，眼神卻異常堅定。其他練習生圍在旁邊，有人期待，也有人帶著審視。',
+      choices: [
+        { t: '請{t.p}自由發揮，不要有壓力', check: { st: 'coach', diff: 26 }, out: {
+          g: ['{t}一站上去就像換了個人。其他練習生都安靜了，接著爆出掌聲。', { t: { mood: 12, loyalty: 8, fame: 1, ab: { charm: 1.5 } }, all: { mood: 2 } }],
+          k: ['{t}表現平穩，大家給了溫暖的鼓勵。', { t: { mood: 6, loyalty: 4 } }],
+          f: ['{t}緊張到忘詞，眼眶紅了。你走過去輕拍{t.p}的肩。', { t: { mood: -4, loyalty: 2 } }] } },
+        { t: '先幫{t.p}安排一位前輩帶領', txt: '前輩拉著{t}的手一起上場。氣氛輕鬆，{t}也慢慢放鬆。', fx: { t: { mood: 6, loyalty: 5, ab: { charm: .6 } } } }
+      ] }
+  );
+
+  /* ---------------- 日常事件 ---------------- */
+  E.push(
+    { id: 'mx_dorm_noise', w: 5, cd: 8, pick: m => m.roster, title: '宿舍的口角',
+      text: '宿舍傳來爭吵聲。{t}和室友為了一件小事吵了起來，房門被甩得砰砰作響。',
+      choices: [
+        { t: '分別約談，聽雙方說法', check: { st: 'coach', diff: 22 }, out: {
+          g: ['你聽完雙方的說法，替他們找到了折衷的辦法。兩人握手言和。', { t: { loyalty: 6, mood: 4 }, all: { mood: 1 } }],
+          k: ['衝突暫時平息。', { t: { mood: 1 } }],
+          f: ['雙方各執一詞，宿舍氣氛仍有些緊繃。', { t: { stress: 4 } }] } },
+        { t: '請他們自己解決', txt: '兩人冷戰了一個星期，之後才不了了之。', fx: { t: { mood: -3, stress: 3 } } }
+      ] },
+    { id: 'mx_teacher_conflict', w: 4, cd: 14, pick: m => m.roster.filter(t => t.age >= 13), cond: m => m.co.staff.vocal || m.co.staff.dance, title: '老師與練習生的摩擦',
+      text: '你的專任老師向你抱怨：「{t}最近態度很散漫，連續三次遲到。」另一邊，{t}也私下抱怨老師太嚴厲。',
+      choices: [
+        { t: '先和{t.p}談，了解真正的原因', check: { st: 'coach', diff: 24 }, out: {
+          g: ['原來{t}最近睡眠不足，因為家裡有事。你替{t.p}調整了課表，老師也表示理解。', { t: { loyalty: 8, stress: -4 }, trust: 1 }],
+          k: ['{t}說了幾句真心話，兩邊都有了台階下。', { t: { loyalty: 3 } }],
+          f: ['{t}什麼都不肯說，老師的不滿持續。', { t: { loyalty: -2 }, me: { stress: 3 } }] } },
+        { t: '支持老師，要求{t.p}道歉', txt: '{t}鞠躬道歉，但臉色很難看。老師稍稍消氣。', fx: { t: { loyalty: -5, mood: -4 } } }
+      ] },
+    { id: 'mx_exam_week', w: 4, cd: 12, pick: m => m.roster.filter(t => t.age <= 17), title: '期末考週',
+      text: '學校的期末考週到了。{t}的書包裡塞滿了參考書，卻也有一堆沒練完的舞蹈動作。',
+      choices: [
+        { t: '准假，讓{t.p}專心準備考試', txt: '{t}考完試後感激地說：「謝謝你，我不想放棄學業。」', fx: { t: { loyalty: 6, mood: 4, stress: -3 }, rep: 0 } },
+        { t: '請{t.p}利用零碎時間兩邊兼顧', check: { st: 'coach', diff: 26 }, out: {
+          g: ['{t}把時間安排得緊湊卻有效率，成績和訓練兩邊都沒落下。', { t: { ab: { dance: .6 }, stress: 5, loyalty: 4 } }],
+          k: ['{t}兩邊都有一點進步，也有一點疲憊。', { t: { stress: 6 } }],
+          f: ['{t}兩邊都失手，成績與訓練進度都退步了。', { t: { stress: 9, mood: -6, loyalty: -3 } }] } }
+      ] },
+    { id: 'mx_equipment_broken', w: 4, cd: 10, pick: null, title: '器材壞了',
+      text: '錄音室的主要音響在今天早上突然冒煙，技師說修理費不便宜，也可以考慮直接換新的。',
+      choices: [
+        { t: '修好它', req: m => m.co.funds >= 15000, need: '資金 ≥ 1.5 萬', txt: '技師修了整整一天，音響總算恢復了。', fx: { funds: -15000 } },
+        { t: '換新設備', req: m => m.co.funds >= 60000, need: '資金 ≥ 6 萬', txt: '新設備音質更好，練習生們都很開心。', fx: { funds: -60000, all: { mood: 3 }, skill: { biz: .1 } } },
+        { t: '暫時不用，改用較舊的設備', txt: '練習生們抱怨音質不好，進度也慢了一些。', fx: { all: { mood: -2 } } }
+      ] },
+    { id: 'mx_member_conflict', w: 4, cd: 10, pick: m => m.groups.filter(g => g.team < 50 && g.members.length >= 3), title: '{g}的隊內不合',
+      because: (m, c) => `{g}的團隊默契只有 ${Math.round(c.g.team)}`,
+      text: '{g}的成員因為站位和分詞的問題吵了起來，有人半夜離開宿舍，還有人在社群上發了意味深長的貼文。',
+      choices: [
+        { t: '召開團隊會議，一起制定規則', check: { st: 'coach', diff: 28 }, out: {
+          g: ['你讓每個人輪流發言，也一起訂出了新的分詞原則。會議結束時，大家都笑了。', { g: { team: 8 }, all: { mood: 1 } }],
+          k: ['會議雖然氣氛緊繃，但大家都願意再試試。', { g: { team: 3 } }],
+          f: ['會議中有人情緒失控，場面更糟了。', { g: { team: -4 }, me: { stress: 5 } }] } },
+        { t: '安排團體旅行，讓大家放鬆一下', req: m => m.co.funds >= 40000, need: '資金 ≥ 4 萬', txt: '你們到海邊玩了兩天。回來之後，成員之間的氣氛明顯溫暖了許多。', fx: { funds: -40000, g: { team: 10 }, all: { stress: -6, mood: 5 } } }
+      ] },
+    { id: 'mx_debut_jitters', w: 4, cd: 12, pick: m => m.groups.filter(g => g.status === 'prep'), title: '{g}的出道前夕',
+      text: '距離出道還有幾週，{g}的成員們開始出現焦慮：有人失眠、有人食慾不振，也有人反覆問你「我們真的準備好了嗎」。',
+      choices: [
+        { t: '安排一次輕鬆的聚餐，讓大家吐吐苦水', req: m => m.co.funds >= 8000, need: '資金 ≥ 0.8 萬', txt: '大家一邊吃一邊聊，笑聲不斷。最後有人說：「我現在比較不怕了。」', fx: { funds: -8000, g: { team: 5 }, all: { stress: -5 } } },
+        { t: '加強練習，讓自信從實力來', txt: '成員們練到筋疲力盡，但眼神裡多了一份篤定。', fx: { g: { team: 2 }, all: { stress: 4, mood: -1 } } }
+      ] },
+    { id: 'mx_year_start', w: 5, cd: 40, cond: m => Cal.date(m.day).m === 1, pick: null, title: '新年的計畫',
+      text: '新年第一週，公司舉辦了小小的聚餐。社長舉杯：「今年也要拜託大家。經紀人，你有什麼新年願望想跟大家說？」',
+      choices: [
+        { t: '「今年要有一組新團體出道！」', p: 'diligent', txt: '大家鼓掌歡呼。你知道，這句話會變成接下來一整年的壓力。', fx: { me: { stress: 4 }, all: { mood: 4, loyalty: 2 }, trust: 1 } },
+        { t: '「希望每個人都健康平安。」', txt: '你的話讓許多人紅了眼眶。有人悄悄地抹了抹眼角。', fx: { all: { mood: 5, loyalty: 3 }, me: { stress: -3 } } },
+        { t: '「今年要把帳戶餘額翻倍。」', txt: '會計小姐笑著說「加油」，然後悄悄把一疊帳單放到你的桌上。', fx: { funds: 20000, me: { stress: 3 } } }
+      ] },
+    { id: 'mx_rookie_fanletter', w: 4, cd: 10, pick: m => m.roster.filter(t => t.car.fans > 300), title: '第一封粉絲信',
+      text: '信箱裡有一封來自陌生人的信，信封上寫著：「給{t}」。寄信人說自己是在街頭聽到{t}的歌，然後哭了。',
+      choices: [
+        { t: '親手交給{t}，並提醒{t.p}好好回信', txt: '{t}讀信時一句話都沒說，把信小心地收進口袋。接下來幾天，{t.p}的練習異常認真。', fx: { t: { mood: 10, loyalty: 6, ab: { vocal: .4 }, fans: 100 } } },
+        { t: '先替{t.p}審核內容，再轉交', txt: '你確認信件沒有問題之後轉交給了{t}。', fx: { t: { mood: 6 } } }
+      ] },
+    { id: 'mx_staff_demand', w: 3, cd: 24, cond: m => Object.values(m.co.staff).some(Boolean), pick: null, title: '員工要求加薪',
+      text: '專任老師們聯名遞上一份信：「物價上漲，希望公司能調整薪資。」信裡的語氣很客氣，但態度很明確。',
+      choices: [
+        { t: '同意加薪，建立信任', req: m => m.co.funds >= 40000, need: '資金 ≥ 4 萬', txt: '員工們很感激。接下來幾個月，教學品質明顯提升。', fx: { funds: -40000, all: { mood: 2 }, rep: 1, skill: { coach: .2 } } },
+        { t: '協商：用績效獎金代替加薪', check: { st: 'biz', diff: 26 }, out: {
+          g: ['你提出的績效獎金制度讓雙方都滿意。', { funds: -10000, rep: 1, skill: { biz: .3 } }],
+          k: ['員工勉強接受，但有些不滿。', { funds: -15000 }],
+          f: ['員工們覺得被敷衍，其中一位遞出了辭呈。', { rep: -1, me: { stress: 4 } }] } },
+        { t: '婉拒，說明公司現況', txt: '員工們沉默了一會兒，沒有再多說。接下來一個月，辦公室的氣氛有些微妙。', fx: { all: { mood: -2 }, rep: -1 } }
+      ] },
+    { id: 'mx_charity', w: 3, cd: 30, cond: m => m.co.rep >= 20, pick: m => m.groups.filter(g => g.status !== 'prep'), title: '{g}的公益活動',
+      text: '兒童基金會邀請 {g} 擔任公益大使，參加一系列探訪活動。沒有酬勞，但意義重大。',
+      choices: [
+        { t: '全員參加，拍攝紀錄短片', req: m => m.co.funds >= 10000, need: '資金 ≥ 1 萬', txt: '孩子們拉著成員的手唱歌，現場很多人都落了淚。短片上傳後獲得了很多好評。', fx: (m, c) => ({ funds: -10000, g: { pop: 2, team: 4, fans: gfans(c, .02) }, rep: 3 }) },
+        { t: '只捐款，不出席', txt: '基金會收下了捐款，說了聲謝謝。', fx: { funds: -20000, rep: 1 } },
+        { t: '婉拒', txt: '你覺得行程已經夠滿了。', fx: {} }
+      ] },
+    { id: 'mx_sasaeng', w: 3, cd: 18, pick: m => m.groups.filter(g => g.status !== 'prep' && g.fans > 20000), title: '跟蹤的私生飯',
+      text: '{g}的成員反映，最近幾天總覺得被人跟蹤。保全調出監視器，發現同一個人影出現在宿舍附近三次。',
+      choices: [
+        { t: '加派保全，報警處理', req: m => m.co.funds >= 20000, need: '資金 ≥ 2 萬', txt: '警方介入調查，之後再也沒出現類似的人影。成員們這才鬆了口氣。', fx: { funds: -20000, g: { team: 2 }, all: { stress: -3 } } },
+        { t: '更換宿舍與行程', req: m => m.co.funds >= 40000, need: '資金 ≥ 4 萬', txt: '你們悄悄搬到新的宿舍，並調整了行程路線。新生活逐漸安穩。', fx: { funds: -40000, all: { stress: -5, mood: 3 } } },
+        { t: '先觀察，不要驚動對方', txt: '你選擇靜觀其變。三天後，那名跟蹤者在宿舍門口被成員撞見，場面一度失控。', fx: { all: { stress: 8, mood: -6 }, rep: -2 } }
+      ] }
+  );
+
+  DATA.M.EVENTS.push(...E);
+})();
+
 /* ===== data_ev2.js ===== */
 /* ============================================================
    追加事件池：疾病／受傷（由健康度決定出現機率）、練習生日常、出道後工作與生活。
@@ -4809,7 +5229,7 @@ function tSave() {
   const au = Store.info('idol', 'auto'), bk = Store.info('idol', 'bak');
   return `<div class="grid2"><div class="col">${card('自動存檔', `<p>每天結束時自動存檔，關閉瀏覽器後重新開啟可從主選單「繼續遊戲」。<br><small>自動檔：${au ? new Date(au.t).toLocaleString() : '無'}　備份檔：${bk ? new Date(bk.t).toLocaleString() : '無'}</small></p><div class="btn-row"><button class="btn sm" data-act="i.save" data-s="auto">立即自動存檔</button><button class="btn sm ghost" data-act="i.load" data-s="bak" ${bk ? '' : 'disabled'}>讀取備份檔</button></div>`)}${card('手動存檔', slots)}</div>
   <div class="col">${card('匯出／匯入', `<p class="sub">複製下方文字可備份存檔；貼上別處的存檔文字後按匯入。</p><textarea id="exp" rows="5" placeholder="存檔文字">${''}</textarea><div class="btn-row wrap"><button class="btn sm" data-act="i.export">匯出到文字框</button><button class="btn sm ghost" data-act="i.import">匯入</button></div>`)}
-  ${card('新手引導', `<p class="sub">重看一次畫面介紹：行動點數、月考、事件與因果。</p><button class="btn" data-act="tut.replay">🎓 重看新手引導</button>`)}
+  ${card('新手引導', `<p class="sub">重看一次畫面介紹：行動點數、月考、事件與因果。</p><button class="btn" data-act="tut.replay">🎓 重看新手引導</button> <button class="btn" data-act="tut.replay2">🎤 重看出道後引導</button>`)}
   ${card('重新開始', `<p class="sub">放棄目前的偶像人生，回到主選單重新開始（會要求確認）。</p><button class="btn danger" data-act="i.restart">重新開始</button>`)}</div></div>`;
 }
 
@@ -5015,9 +5435,10 @@ Idol.renderEnding = function (root) {
    第一次開新遊戲、簽約流程結束後自動詢問；之後可在「存檔」分頁重看。
    ============================================================ */
 const Tut = (function () {
-  const KEY = 'kpop_sim_tut_done';
+  const KEY = 'kpop_sim_tut_done', KEY2 = 'kpop_sim_tut2_done';
   const done = () => { try { return !!localStorage.getItem(KEY); } catch (e) { return !!Tut._m; } };
-  const mark = () => { try { localStorage.setItem(KEY, '1'); } catch (e) { Tut._m = true; } if (typeof I !== 'undefined' && I && I.flags) I.flags.tut = 1; };
+  const done2 = () => { try { return !!localStorage.getItem(KEY2); } catch (e) { return !!Tut._m2; } };
+  const mark = () => { if (set === 2) { try { localStorage.setItem(KEY2, '1'); } catch (e) { Tut._m2 = true; } if (typeof I !== 'undefined' && I && I.flags) I.flags.tut2 = 1; return; } try { localStorage.setItem(KEY, '1'); } catch (e) { Tut._m = true; } if (typeof I !== 'undefined' && I && I.flags) I.flags.tut = 1; };
   const STEPS = [
     { title: '歡迎來到 K-POP 人生模擬器', text: '你是 13 歲的練習生。<b>目標</b>：在 <b>15～16 歲</b>通過出道評估、站上舞台；17 歲生日前還沒出道，就會被淘汰。<br>接下來用 1 分鐘帶你認識畫面。' },
     { sel: '.hdr-stats', tab: 'home', title: '金錢、粉絲、行動點數', text: '💰 金錢用來買課程、道具與發片；💗 粉絲是出道後的核心；<b>三個圓點是今天的行動點數（AP）</b>，每天 3 點，安排行程會消耗。' },
@@ -5031,7 +5452,19 @@ const Tut = (function () {
     { sel: '.tabs .tab[data-t="save"]', tab: 'save', title: '存檔與設定', text: '遊戲每天自動存檔；「存檔」分頁有 3 個手動欄位與匯出。頂部的 🌙 可切換深色模式，☰ 回主選單。<br>之後想重看這份引導，也在「存檔」分頁。' },
     { title: '出發吧！', text: '出道後會有<b>公司評鑑、發行專輯、打歌、廣告代言、演唱會</b>，還有粉絲與風波事件在等你。祝你一路站上頂點！' }
   ];
-  let i = 0, root = null, timer = null;
+  const STEPS2 = [
+    { title: '恭喜出道！第二段引導', text: '出道只是起點。接下來要經營的是<b>人氣、粉絲、作品與口碑</b>。這段引導帶你認識出道後的賺錢與成長方式。' },
+    { sel: '.rank', tab: 'co', title: '公司評鑑與排名', text: '出道後改為<b>定期評鑑</b>，和其他出道藝人比綜合實力。評價高才能拿到更好的資源，也是晉升<b>人氣偶像</b>的依據。' },
+    { sel: '.acts', tab: 'work', title: '工作：打歌、綜藝、見面會、廣告', text: '每項工作消耗 AP 與體力，帶來<b>收入、人氣與粉絲</b>。打歌只在宣傳期的週四～日；綜藝與見面會適合補粉絲；廣告賺錢但看形象。' },
+    { sel: '.grid2 .col .card', tab: 'work', title: '發片與宣傳期', text: '在「公司」分頁或工作頁製作並<b>發行專輯</b>：品質看你的能力與製作投資，發行後進入宣傳期，首週銷量決定榜單與獎項。' },
+    { title: '品牌代言', text: '人氣達標後會有廣告商找上門，<b>代言一次簽一年</b>，每月有固定收入，但<b>形象受損或風波</b>可能被解約。同類別品牌不能重複簽。' },
+    { sel: '.tabs .tab[data-t="rel"]', tab: 'rel', title: '隊友與團體', text: '團體出道後「關係」分頁多了<b>🎤 隊友</b>。隊友默契影響舞台表現與風波，經常互動、化解矛盾很重要。' },
+    { sel: '.hdr-stats', tab: 'home', title: '收支與人氣流失', text: '每月有<b>薪水與專輯分潤收入</b>，也有固定支出（宿舍、造型、經紀）。人氣偶像之後，<b>人氣與粉絲會逐月自然流失</b>，要靠作品和曝光維持。' },
+    { title: '風波與因果', text: '出道後的事件更有分量：緋聞、網路輿論、粉絲糾紛、合約問題。<b>你過去的選擇會回頭找你</b>，事件裡的 <b>🔗 因果</b> 小字會告訴你前因。處理好反而能漲粉。' },
+    { title: '最終目標：頂級藝人', text: '條件大致為：<b>人氣 ≥ 85、粉絲 ≥ 200 萬、獲獎 ≥ 6 座（含 ≥ 2 座年度大賞）</b>。也可以在人氣偶像後隨時功成身退，迎接結局。祝你站上頂點！' }
+  ];
+  let i = 0, root = null, timer = null, set = 1;
+  const list = () => set === 2 ? STEPS2 : STEPS;
 
   function ensure() {
     if (root) return root;
@@ -5048,12 +5481,12 @@ const Tut = (function () {
     if (finished && typeof UI !== 'undefined') UI.toast('新手引導完成！可在「存檔」分頁重看', 'ok');
   }
   function show(n) {
-    i = Math.max(0, Math.min(STEPS.length - 1, n)); const s = STEPS[i];
+    const L = list(); i = Math.max(0, Math.min(L.length - 1, n)); const s = L[i];
     ensure();
     if (s.tab && IdolUI.tab !== s.tab) { IdolUI.tab = s.tab; Idol.render(); window.scrollTo(0, 0); }
     const tip = root.querySelector('.tut-tip');
-    const last = i === STEPS.length - 1;
-    tip.innerHTML = `<div class="tut-n">${i + 1} / ${STEPS.length}</div><h4>${s.title}</h4><p>${s.text}</p>
+    const last = i === L.length - 1;
+    tip.innerHTML = `<div class="tut-n">${i + 1} / ${L.length}</div><h4>${s.title}</h4><p>${s.text}</p>
       <div class="tut-btns"><button type="button" class="btn ghost sm" data-tut="skip">${last ? '' : '跳過'}</button>${i > 0 ? '<button type="button" class="btn ghost sm" data-tut="prev">上一步</button>' : ''}<button type="button" class="btn pink sm" data-tut="${last ? 'done' : 'next'}">${last ? '開始遊戲' : '下一步'}</button></div>`;
     if (last) tip.querySelector('[data-tut=skip]').remove();
     clearTimeout(timer);
@@ -5062,7 +5495,7 @@ const Tut = (function () {
     timer = setTimeout(place, 60);
   }
   function place() {
-    if (!root) return; const s = STEPS[i], spot = root.querySelector('.tut-spot'), tip = root.querySelector('.tut-tip');
+    if (!root) return; const s = list()[i], spot = root.querySelector('.tut-spot'), tip = root.querySelector('.tut-tip');
     const el = s.sel && document.querySelector(s.sel);
     const W = window.innerWidth, H = window.innerHeight;
     let r = null; if (el) { const b = el.getBoundingClientRect(); if (b.width > 0 && b.height > 0) r = b; }
@@ -5076,13 +5509,22 @@ const Tut = (function () {
     const lx = Math.min(Math.max(10, left + sw / 2 - tw / 2), W - tw - 10);
     tip.style.cssText = `left:${lx}px;top:${Math.max(8, ty)}px`;
   }
-  function start() { UI.close(); show(0); }
+  function start() { UI.close(); set = 1; show(0); }
+  function start2() { UI.close(); set = 2; show(0); }
   function offer() {
     UI.modal(`<div class="ev-tag">🎓 新手引導</div><h3>要看一下新手引導嗎？</h3><p>約 1 分鐘，帶你認識行動點數、月考、事件與因果。之後也能在「存檔」分頁重看。</p>
       <div class="btn-row"><button class="btn ghost" data-act="tut.skip">我會了，跳過</button><button class="btn pink" data-act="tut.start">開始引導</button></div>`, { cls: 'small' });
   }
+  function offer2() {
+    UI.modal(`<div class="ev-tag">🎓 出道後引導</div><h3>要看一下出道後的玩法嗎？</h3><p>約 1 分鐘，介紹評鑑、發片、打歌、廣告代言、粉絲與風波因果，以及頂級藝人的條件。之後可在「存檔」分頁重看。</p>
+      <div class="btn-row"><button class="btn ghost" data-act="tut.skip2">跳過</button><button class="btn pink" data-act="tut.start2">開始引導</button></div>`, { cls: 'small' });
+  }
   function check() {
     if (window.__mode !== 'idol' || typeof I === 'undefined' || !I || I.over || root) return;
+    if (I.stage >= 2 && I.day > 1) {
+      if ((I.flags && I.flags.tut2) || done2() || I.queue.length || UI.isOpen()) return;
+      I.flags.tut2 = 1; offer2(); return;
+    }
     if (I.day > 1 || (I.flags && I.flags.tut) || done()) return;
     if (I.queue.length || UI.isOpen()) return;
     I.flags.tut = 1; offer();
@@ -5092,11 +5534,14 @@ const Tut = (function () {
     const k = b.dataset.tut;
     if (k === 'next') show(i + 1); else if (k === 'prev') show(i - 1); else if (k === 'skip') close(false); else if (k === 'done') close(true);
   });
-  return { start, show, check, offer, close, done };
+  return { start, start2, show, check, offer, offer2, close, done };
 })();
 ACT['tut.start'] = () => Tut.start();
 ACT['tut.skip'] = () => { UI.close(); try { localStorage.setItem('kpop_sim_tut_done', '1'); } catch (e) { } };
-ACT['tut.replay'] = () => { IdolUI.tab = 'home'; Idol.render(); Tut.show(0); };
+ACT['tut.start2'] = () => Tut.start2();
+ACT['tut.skip2'] = () => { UI.close(); try { localStorage.setItem('kpop_sim_tut2_done', '1'); } catch (e) { } };
+ACT['tut.replay2'] = () => { IdolUI.tab = 'home'; Idol.render(); Tut.start2(); };
+ACT['tut.replay'] = () => { IdolUI.tab = 'home'; Idol.render(); Tut.start(); };
 
 /* ===== manager.js ===== */
 /* =========================================================
@@ -5113,7 +5558,7 @@ const SKX = [0, 12, 32, 60, 100];
 const BENCH = a => a <= 10 ? 8 : ({ 11: 11, 12: 15, 13: 22, 14: 29, 15: 36, 16: 43, 17: 49 }[a] || 52);
 
 Mgr.fmt = function (t, ctx = {}) {
-  if (typeof t === 'function') t = t(M);
+  if (typeof t === 'function') t = t(M, ctx);
   return String(t ?? '').replace(/\{(t|g|rival)(\.p)?\}/g, (m, k, p) => {
     if (k === 'rival') return DATA.RIVAL;
     if (k === 't') { const T = ctx.t; return T ? (p ? (T.g === 'm' ? '他' : '她') : U.esc(T.name)) : '某人'; }
@@ -5155,7 +5600,7 @@ Mgr.newGame = function (o) {
     mode: 'mgr', ver: VER, name: o.name, g: o.g, day: 0, week: 0, ap: 5, apMax: 5,
     me: { energy: 100, stress: 10, trust: 60, skill: { scout: 1, coach: 1, pr: 1, biz: 1 }, xp: {} },
     co: { name: DATA.CO, funds: 2500000, rep: 12, tier: 0, fac: { practice: 1, studio: 1, dorm: 1 }, staff: { vocal: false, dance: false, stylist: false, pr: false } },
-    roster: [], groups: [], market: [], flags: {}, logs: [], queue: [], nextId: 1, hist: { debuts: 0, wins: 0, awards: 0, albums: 0, bestSales: 0, income: 0 }, over: null, lowFunds: 0, last: [], did: {}
+    roster: [], groups: [], market: [], flags: {}, logs: [], queue: [], nextId: 1, hist: { debuts: 0, wins: 0, awards: 0, albums: 0, bestSales: 0, income: 0 }, over: null, lowFunds: 0, last: [], did: {}, followQ: [], cnt: {}, cdE: {}
   };
   M = m;
   [[12, 'f'], [13, 'm'], [14, 'f'], [15, 'm']].forEach(([a, g], i) => m.roster.push(Mgr.mkTrainee({ age: a, g, q: i === 2 ? .5 : 0 })));
@@ -5164,7 +5609,7 @@ Mgr.newGame = function (o) {
   return m;
 };
 Mgr.fix = function (m) {
-  const d = { logs: [], queue: [], flags: {}, market: [], last: [], did: {}, lowFunds: 0 };
+  const d = { logs: [], queue: [], flags: {}, market: [], last: [], did: {}, lowFunds: 0, followQ: [], cnt: {}, cdE: {} };
   for (const k in d) if (m[k] === undefined) m[k] = d[k];
   M = m; m.roster.forEach(Mgr.refresh); return m;
 };
@@ -5202,6 +5647,9 @@ Mgr.applyFx = function (fx, ctx) {
     else if (k === 'g' && ctx.g) { const G = ctx.g; for (const s in v) G[s] = s === 'fans' ? Math.max(0, G.fans + v[s]) : U.clamp(G[s] + v[s], 0, 100); out.push(`${G.name}：${Object.entries(v).map(([a, n]) => `${{ pop: '人氣', fans: '粉絲', fame: '知名度', team: '默契' }[a]}${n > 0 ? '+' : ''}${n}`).join(' ')}`); }
     else if (k === 'skill') for (const s in v) Mgr.exp(s, v[s] * 12);
     else if (k === 'flag') M.flags[v] = true;
+    else if (k === 'cnt') { for (const c in v) M.cnt[c] = (M.cnt[c] || 0) + v[c]; }
+    else if (k === 'follow') (Array.isArray(v) ? v : [v]).forEach(f => M.followQ.push({ id: f.id, due: M.week + U.ri((f.delay || [2, 6])[0], (f.delay || [2, 6])[1]), cause: f.cause || null, tid: ctx.t ? ctx.t.id : null, gid: ctx.g ? ctx.g.id : null }));
+    else if (k === 'recruit') { if (M.roster.length < Mgr.tier().cap) { const T = Mgr.mkTrainee({ age: U.ri(12, 15), q: v.q || 0, g: v.g }); M.roster.push(T); Mgr.refresh && Mgr.refresh(T); out.push(`新練習生加入：${T.name}`); Mgr.log(`新練習生 ${T.name} 加入公司。`, 'story'); } else out.push('宿舍已滿，無法再收練習生'); }
   }
   Mgr.processLeaving();
   return out;
@@ -5398,6 +5846,7 @@ Mgr.endWeek = function () {
   if (t.m === 12 && t.d >= 22 && !M.flags['aw' + t.y]) { M.flags['aw' + t.y] = true; Mgr.awards(); }
   Mgr.checkTier();
   if (U.chance(.6)) Mgr.rollEvent();
+  Mgr.followTick();
   // 破產與結局
   if (M.co.funds < 0) { M.lowFunds++; if (M.lowFunds === 1) M.queue.push({ t: 'msg', title: '⚠️ 資金赤字', text: '帳戶餘額為負。連續赤字 4 週，公司將無法營運。快接工作、減少支出，或請社長增資。' }); } else M.lowFunds = 0;
   if (M.lowFunds >= 4) M.queue.push({ t: 'end', key: 'bankrupt' });
@@ -5434,11 +5883,27 @@ Mgr.awards = function () {
   if (lines.length) { M.queue.push({ t: 'msg', title: `🏆 ${y} 年終頒獎典禮`, text: lines.join('\n') }); lines.forEach(l => l.startsWith('🏆') && Mgr.log(l, 'win')); }
 };
 Mgr.rollEvent = function () {
-  const evs = DATA.M.EVENTS.filter(e => !e.cond || e.cond(M)).map(e => { const tg = e.pick ? e.pick(M) : null; return { e, tg }; }).filter(x => !x.e.pick || (x.tg && x.tg.length));
-  const pickd = U.wpick(evs, x => x.e.w - (M.cdE && M.cdE[x.e.id] && M.week - M.cdE[x.e.id] < 6 ? 99 : 0)); if (!pickd) return;
-  M.cdE = M.cdE || {}; M.cdE[pickd.e.id] = M.week;
+  M.cdE = M.cdE || {};
+  const ok = e => e.w > 0 && !(M.cdE[e.id] != null && M.week - M.cdE[e.id] < (e.cd || 6));
+  const evs = DATA.M.EVENTS.filter(e => ok(e) && (!e.cond || e.cond(M))).map(e => { const tg = e.pick ? e.pick(M) : null; return { e, tg }; }).filter(x => !x.e.pick || (x.tg && x.tg.length));
+  const pickd = U.wpick(evs, x => x.e.w); if (!pickd) return;
+  M.cdE[pickd.e.id] = M.week;
   const tg = pickd.tg ? U.pick(pickd.tg) : null;
   M.queue.push({ t: 'mev', id: pickd.e.id, tid: tg && tg.members ? null : (tg ? tg.id : null), gid: tg && tg.members ? tg.id : null });
+};
+// 因果：選擇之後的幾週，後續事件會帶著「因果」小字出現
+Mgr.followTick = function () {
+  if (!M.followQ || !M.followQ.length) return;
+  const due = M.followQ.filter(f => f.due <= M.week); if (!due.length) return;
+  M.followQ = M.followQ.filter(f => f.due > M.week);
+  due.forEach(f => {
+    const ev = DATA.M.EVENTS.find(e => e.id === f.id); if (!ev) return;
+    const T = f.tid ? MT(M, f.tid) : null, G = f.gid ? M.groups.find(g => g.id === f.gid) : null;
+    if (ev.pick && !T && !G) return;
+    if (ev.cond && !ev.cond(M, { t: T, g: G })) return;
+    if (M.queue.some(q => q.id === f.id)) return;
+    M.queue.push({ t: 'mev', id: f.id, tid: T ? T.id : null, gid: G ? G.id : null, cause: f.cause });
+  });
 };
 Mgr.ending = function (key) {
   if (M.over) return; M.over = key; M.queue = [];
@@ -5554,8 +6019,9 @@ Mgr.flush = function () {
     const ev = DATA.M.EVENTS.find(e => e.id === q.id), T = q.tid ? MT(M, q.tid) : null, G = q.gid ? M.groups.find(g => g.id === q.gid) : null;
     if ((ev.pick && !T && !G) || !ev) { M.queue.shift(); return Mgr.flush(); }
     MgrUI.cur = { ev, T, G, ctx: { t: T, g: G } };
-    const ch = ev.choices.map((c, i) => { const off = c.req && !c.req(M); return `<button class="choice" data-act="m.choose" data-i="${i}" ${off ? 'disabled' : ''}>${Mgr.fmt(c.t, MgrUI.cur.ctx)}${c.check ? `<small>🎲 檢定：${SKILLS[c.check.st]}</small>` : ''}${off ? '<small>條件不足</small>' : ''}</button>`; }).join('');
-    return UI.modal(`<div class="ev-tag">📖 事件</div><h3>${ev.title}</h3><p class="pre">${Mgr.fmt(ev.text, MgrUI.cur.ctx)}</p><div class="choices">${ch}</div>`, { cls: 'event' });
+    const ch = ev.choices.map((c, i) => { const off = c.req && !c.req(M, MgrUI.cur.ctx); return `<button class="choice" data-act="m.choose" data-i="${i}" ${off ? 'disabled' : ''}>${Mgr.fmt(c.t, MgrUI.cur.ctx)}${c.check ? `<small>🎲 檢定：${SKILLS[c.check.st]}</small>` : ''}${off ? `<small>${c.need ? '需要：' + c.need : '條件不足'}</small>` : ''}</button>`; }).join('');
+    const why = q.cause || (ev.because ? ev.because(M, MgrUI.cur.ctx) : null);
+    return UI.modal(`<div class="ev-tag">📖 事件</div><h3>${Mgr.fmt(ev.title, MgrUI.cur.ctx)}</h3><p class="pre">${Mgr.fmt(ev.text, MgrUI.cur.ctx)}</p>${why ? `<p class="cause">🔗 因果：${Mgr.fmt(why, MgrUI.cur.ctx)}</p>` : ''}<div class="choices">${ch}</div>`, { cls: 'event' });
   }
   if (q.t === 'report') {
     return UI.modal(`<div class="ev-tag">📋 月度報告</div><h3>練習生成長報告</h3><ol class="rank mini">${q.list.map((x, i) => `<li><span>${gradeChip(x.rating)}</span><b>${U.esc(x.name)}</b><small>${x.age}歲 · ${['練習生', '預備組', '已出道'][x.stage]}</small><em>${x.ovr}</em></li>`).join('')}</ol><p class="sub">評級依據同年齡的基準值。S/A 表示已有出道實力。</p><div class="btn-row"><button class="btn" data-act="m.next">繼續</button></div>`, { cls: 'event' });
@@ -5579,6 +6045,8 @@ ACT['m.choose'] = d => {
   const { ev, ctx } = MgrUI.cur; M.queue.shift();
   const ch = ev.choices[+d.i]; let txt = ch.txt, fx = ch.fx, grade = null;
   if (ch.check) { grade = Mgr.roll(ch.check.st, ch.check.diff); const o = ch.out; const e = o[grade] || (grade === 'b' ? (o.f || o.k) : grade === 'g' ? (o.k || o.g) : grade === 'k' ? (o.k || o.g || o.f) : (o.f || o.k)); txt = e[0]; fx = e[1]; }
+  if (typeof fx === 'function') fx = fx(M, ctx);
+  if (typeof fx === 'function') fx = fx(M, ctx);
   const lines = Mgr.applyFx(fx || {}, ctx); Mgr.log(`【${ev.title}】${Mgr.fmt(ch.t, ctx).replace(/<[^>]+>/g, '')}`);
   const g = grade ? { g: '✨ 大成功', k: '👍 成功', f: '😓 失敗', b: '💥 大失敗' }[grade] : '結果';
   UI.modal(`<div class="ev-tag">${g}</div><h3>${ev.title}</h3><p class="pre">${Mgr.fmt(txt, ctx)}</p><div class="chips">${lines.map(l => `<span class="delta hint">${U.esc(l)}</span>`).join('')}</div><div class="btn-row"><button class="btn" data-act="m.next2">繼續</button></div>`, { cls: 'event' });
