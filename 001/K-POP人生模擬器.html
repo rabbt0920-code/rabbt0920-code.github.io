@@ -425,6 +425,7 @@ const Sim = {
     if (c.st.stam < 30) e *= .7; else if (c.st.stam < 50) e *= .9;
     if (c.st.mood > 70) e *= 1.08; else if (c.st.mood < 30) e *= .85;
     if ((c.hid.fatigue || 0) > 60) e *= .85;
+    if (c.grp && c.grp.myRole) { const rb = { '主唱': 'vocal', '主舞': 'dance', '主饒舌': 'rap', '門面擔當': 'charm' }[c.grp.myRole]; if (rb === k) e *= 1.08; }
     if (c.staff) { if (k === 'dance') e *= 1 + .1 * (c.staff.dance || 0); if (k === 'vocal' || k === 'rap') e *= 1 + .1 * (c.staff.studio || 0); }
     if (c.pers === 'diligent') e *= 1.08;
     if (c.traits && c.traits.includes('perfect')) e *= 1.1;
@@ -2037,7 +2038,7 @@ DATA.M.EVENTS = [
         { t: '把壓力轉成動力，加強排練', p: 'diligent', txt: '你把每一個細節都再抠一遍，狀態很緊繃，但表現確實變好了。', fx: { vocal: .6, dance: .6, stress: 6, grit: 2 } },
         { t: '約朋友出去喝杯咖啡放鬆', p: 'social', txt: '朋友一句「不管結果如何，我們都在」讓你鬆了一口氣。', fx: { stress: -10, mood: 6, support: 2 } }
       ] },
-    { id: 'award_nominee', title: '被提名了', cd: 200, w: 4, cond: s => s.stage >= 2 && s.car.pop >= 15,
+    { id: 'award_nominee', title: '被提名了', cd: 200, w: 4, cond: s => s.stage >= 2 && s.car.pop >= 15 && s.grp && s.day - s.grp.debutDay < 330 && !s.flags.rookieAwardDone,
       text: '頒獎典禮的新人獎提名名單出爐了，你的名字在其中。粉絲們興奮得像是已經得獎了一樣。',
       choices: [
         { t: '發文感謝，並請粉絲不要有壓力', p: 'gentle', txt: '你的貼文被大量轉發，粉絲們說「不管結果，都支持你」。', fx: { fans: s => af(s, .008) + 300, mood: 4, pop: 1 } },
@@ -2412,7 +2413,22 @@ DATA.BRAND_LIST = [
   { id: 'travel', n: '航空公司「天空航空」', cat: '旅遊', fame: 35, stage: 3, mult: 1.9, perk: { fame: .5 }, line: '想邀請你出任形象大使，拍攝一系列海外取景廣告。' },
   { id: 'bank', n: '金融品牌「新光銀行」', cat: '金融', fame: 48, stage: 3, mult: 2.4, perk: { eval: .8 }, ageMin: 19, line: '希望你的穩重形象能為品牌加分，想簽下年度代言。' },
   { id: 'lux', n: '精品品牌「AURA」', cat: '精品', fame: 45, stage: 3, mult: 3, perk: { pop: .8, fame: .6 }, line: '要找新的亞洲區品牌大使，資源與曝光都很驚人。' },
-  { id: 'car', n: '汽車品牌「Veloce」', cat: '汽車', fame: 55, stage: 3, mult: 3.3, perk: { pop: .6, fame: .8 }, line: '新車款想用你當年度代言人，預算相當可觀。' }
+  { id: 'car', n: '汽車品牌「Veloce」', cat: '汽車', fame: 55, stage: 3, mult: 3.3, perk: { pop: .6, fame: .8 }, line: '新車款想用你當年度代言人，預算相當可觀。' },
+  /* —— 出道期新增 —— */
+  { id: 'cvs', n: '連鎖便利商店「OneStop」', cat: '便利商店', fame: 9, stage: 2, mult: .75, perk: { fans: 1 }, line: '想請你拍攝新品系列廣告，全國門市都會貼上你的海報。' },
+  { id: 'snack', n: '零食品牌「脆脆樂」', cat: '零食', fame: 11, stage: 2, mult: .85, perk: { variety: .3, fans: 1 }, line: '想找親和力高的藝人，做一系列輕鬆搞笑的零食廣告。' },
+  { id: 'coffee', n: '連鎖咖啡「晨豆咖啡」', cat: '咖啡', fame: 14, stage: 2, mult: 1, perk: { charm: .2, fans: 1 }, line: '想請你當聯名杯套的主角，門市會舉辦限定活動。' },
+  { id: 'stream', n: '音樂串流「SoundWave」', cat: '音樂串流', fame: 16, stage: 2, mult: 1.1, perk: { vocal: .3, pop: .2 }, line: '想邀你擔任年度推薦藝人，首頁橫幅與專屬歌單都會給你。' },
+  { id: 'acc', n: '飾品品牌「GLINT」', cat: '配件', fame: 24, stage: 2, mult: 1.35, perk: { charm: .3, looks: .3 }, line: '想請你演繹新一季的銀飾系列，風格偏街頭與潮流。' },
+  /* —— 人氣偶像新增 —— */
+  { id: 'hotel', n: '國際飯店「Grand Meridia」', cat: '飯店', fame: 38, stage: 3, mult: 2.1, perk: { fame: .5, eval: .4 }, line: '想請你當亞洲區的形象大使，會在海外取景拍攝。' },
+  { id: 'vod', n: '影音平台「Streamix」', cat: '影音平台', fame: 36, stage: 3, mult: 2, perk: { pop: .5, fame: .4 }, line: '想邀請你主持獨家原創節目，並擔任年度代言人。' },
+  { id: 'liquor', n: '威士忌品牌「Oakline」', cat: '酒類', fame: 40, stage: 3, mult: 2.4, perk: { eval: .5, fame: .4 }, ageMin: 19, line: '想請你演繹成熟質感的年度形象，只在海外與機上免稅店曝光。' },
+  { id: 'jewel', n: '珠寶品牌「Lumière」', cat: '珠寶', fame: 50, stage: 3, mult: 3, perk: { pop: .6, looks: .4 }, line: '想請你配戴高級珠寶系列走秀，整季的主視覺都是你。' },
+  { id: 'watch', n: '腕錶品牌「CHRONO」', cat: '腕錶', fame: 52, stage: 3, mult: 3.2, perk: { fame: .7, eval: .5 }, line: '想讓你成為新款機械錶的亞洲大使，簽約金相當可觀。' },
+  /* —— 高奢品牌（與 AURA 同為「精品」品類，同時只能簽一個） —— */
+  { id: 'lw', n: '高奢品牌「LW」', cat: '精品', fame: 62, stage: 3, mult: 4.2, perk: { pop: 1, fame: 1 }, line: '總部點名要你出任亞太區品牌大使，同時邀你出席巴黎時裝週。' },
+  { id: 'hermos', n: '高奢品牌「Hermos」', cat: '精品', fame: 70, stage: 3, mult: 4.8, perk: { pop: 1.2, fame: 1.4, eval: .8 }, line: '百年皮件品牌首次邀請亞洲藝人，擔任全球形象大使。' }
 ];
 DATA.ALBUM_FORMATS = {
   single: { n: '單曲專輯', ic: '💿', cost: 6000, sales: .45, qb: -3, days: 10, gap: [38, 52], hype: .55, stress: 3, trk: '1～2 首歌，製作快、成本低' },
@@ -2425,8 +2441,8 @@ DATA.ALBUM_FORMATS = {
   const act = s => (s.endorse || []).length > 0;
   DATA.EVENTS.push(
     { id: 'endorse', title: s => { const o = Idol.offerBrand(s); return o ? `代言邀約：${o.cat}` : '代言邀約'; }, cd: 40, w: 7,
-      cond: s => s.stage >= 2 && (s.endorse || []).length < 2 && (s.car.fame >= 8) && Idol.eligibleBrands(s).length > 0 && U.chance(Idol.chartPressure().endo * (s.coEndo || 1)),
-      text: s => { const o = Idol.offerBrand(s); return o ? `${o.n}的行銷團隊找上門：「${o.line}」\n合約為期一整年，期間需配合 4 次廣告拍攝。簽約金 ${U.money(o.fee)}，每次拍攝另有酬勞。${(s.endorse || []).length ? '\n（你目前已有一份代言合約，同時最多只能有兩份，同類別也不能重複。）' : ''}` : '有品牌想找你代言。'; },
+      cond: s => s.stage >= 2 && (s.endorse || []).length < (s.stage >= 3 ? 5 : 2) && (s.car.fame >= 8) && Idol.eligibleBrands(s).length > 0 && U.chance(Idol.chartPressure().endo * (s.coEndo || 1)),
+      text: s => { const o = Idol.offerBrand(s); return o ? `${o.n}的行銷團隊找上門：「${o.line}」\n合約為期一整年，期間需配合 4 次廣告拍攝。簽約金 ${U.money(o.fee)}，每次拍攝另有酬勞。${(s.endorse || []).length ? `\n（你目前已有 ${s.endorse.length} 份代言合約，同時最多 ${s.stage >= 3 ? 5 : 2} 份，同類別也不能重複。）` : ''}` : '有品牌想找你代言。'; },
       choices: [
         { t: '簽下一年代言合約', txt: s => { const c = s.lastSigned; return c ? `合約簽好了！簽約金 ${U.money(c.fee)} 已入帳。接下來一年要配合 4 次廣告拍攝，時間到了會在「工作」頁出現。` : '合約簽好了。'; }, fx: { endorseSign: 1, mood: 6 } },
         { t: '談判提高酬勞', p: 'social', check: { st: 'pop', diff: 42 }, out: {
@@ -2510,6 +2526,13 @@ Object.assign(DATA.ACTIONS, {
   mate_meal: { n: '一起吃宵夜', i: '🍜', ap: 1, stam: 4, stress: -8, mood: 8, money: -300, minStage: 2, mate: 1, d: '花費 ₩3 萬，邊吃邊聊。' },
   mate_practice: { n: '一起加練', i: '🔁', ap: 1, stam: 14, stress: 3, gain: { vocal: .2, dance: .3, charm: .1 }, minStage: 2, mate: 1, d: '練習室裡互相指正，也練出默契。' },
   mate_gift: { n: '送小禮物', i: '🎁', ap: 1, stam: 2, stress: -3, mood: 4, money: -1500, minStage: 2, mate: 1, d: '花費 ₩15 萬，送隊友一份心意。' }
+});
+
+Object.assign(DATA.ACTIONS, {
+  mate_teach_vocal: { n: '教唱歌', i: '🎤', ap: 1, stam: 10, stress: 2, mood: 1, minStage: 2, mate: 1, d: '帶隊友練聲、抓音準，提高隊友歌唱，拉高團隊素質。' },
+  mate_teach_dance: { n: '教舞蹈', i: '💃', ap: 1, stam: 12, stress: 2, mood: 1, minStage: 2, mate: 1, d: '逐段拆解動作、糾正姿勢，提高隊友舞蹈。' },
+  mate_teach_rap: { n: '教饒舌', i: '🎧', ap: 1, stam: 10, stress: 2, mood: 1, minStage: 2, mate: 1, d: '練咬字與節奏，提高隊友饒舌。' },
+  mate_teach_charm: { n: '教鏡頭表現', i: '✨', ap: 1, stam: 8, stress: 1, mood: 2, minStage: 2, mate: 1, d: '對鏡頭練表情與氣場，提高隊友魅力。' }
 });
 
 /* ===== data_ev3.js ===== */
@@ -4288,6 +4311,7 @@ Idol.fixNames = function (s) {
 Idol.fix = function (s) {
   const d = { logs: [], sns: [], awards: [], queue: [], hist: [], today: [], done: {}, cd: {}, flags: {}, exams: [], ranks: [], warn: 0, debutPts: 0, debutTries: 0, lastConcert: -999, adCount: 0, arcQ: [], arc: null, arcDone: {}, arcCd: -999, sick: 0, evSeen: {}, recentEv: [], chain: null, chainLast: null, chainQ: [], chainDone: {}, endorse: [], offer: null, lastSigned: null, brandBan: {}, brandLoyal: {}, mates: {}, fanName: '', followQ: [], cnt: {}, nat: 'kr', kor: 100, rev: { tal: {}, stats: {} } };
   for (const k in d) if (s[k] === undefined) s[k] = d[k];
+  if (s.grp && !s.grp.myRole && s.grp.kind) { const sv = I; I = s; try { s.grp.myRole = Idol.pickMyRole(); } finally { I = sv; } }
   if (!s.staff) s.staff = { style: 0, dance: 0, studio: 0, home: 0 };
   if (!s.coState) { s.coState = 'ok'; s.coName = null; s.coInc = 1; s.coFixed = 1; s.coEndo = 1; }
   if (s.chainNext === undefined) s.chainNext = s.day + 60;
@@ -4602,13 +4626,13 @@ Idol.act_musicshow = function (a, o, push) {
   const base = 46 + I.stage * 5 + Math.min(8, (I.day - I.grp.debutDay) / 365 * 1.5) + Math.min(8, (I.chart.gap || 0) * .12) + U.gauss() * 6 + (I.promo.wins >= 4 ? 7 : I.promo.wins >= 2 ? 4 : 0);
   let rival = base, rname = U.pick(I.chart.rivals.slice(0, 8)).name;
   let bossScore = null;
-  (I.promo.cb || []).forEach(c => { const s = c.boss ? 26 + c.pw * .56 + U.gauss() * 4 : 24 + c.pw * .55 + (c.pw >= 70 ? 3 : 0) + U.gauss() * 5; if (c.boss) bossScore = s; if (s > rival) { rival = s; rname = c.name; } });
+  (I.promo.cb || []).forEach(c => { const s = c.boss ? 92 + (c.pw - 96) * .5 + U.gauss() * 3 : 24 + c.pw * .55 + (c.pw >= 70 ? 3 : 0) + U.gauss() * 5; if (c.boss) bossScore = s; if (s > rival) { rival = s; rname = c.name; } });
   I.promo.shows++;
   I._show = { win: mine > rival, boss: bossScore !== null && mine > bossScore ? I.promo.boss : (bossScore !== null ? I.promo.boss : null), beatBoss: bossScore !== null && mine > bossScore && mine > rival, mine: Math.round(mine), rival: Math.round(rival), rname, show: U.pick(DATA.SHOWS), n: I.promo.shows };
   if (mine > rival) {
-    I.promo.wins++; I.grp.wins++; (I.promo.winLog = I.promo.winLog || []).push(I.day);
+    I.promo.wins++; I.grp.wins++; I.flags.yWins = (I.flags.yWins || 0) + 1; (I.promo.winLog = I.promo.winLog || []).push(I.day);
     const r = Idol.applyFx({ pop: 2.5, fame: 2, fans: Math.round(2500 * (1 + I.stage) * U.rf(.8, 1.3)), eval: 2, mood: 8 }); r.out.forEach(([k, v]) => push(k, v));
-    if (I._show.beatBoss && !(I.promo.bossBeaten)) { I.promo.bossBeaten = true; const rb = Idol.applyFx({ pop: 4, fame: 4, fans: Math.round(I.car.fans * .06), eval: 4, mood: 10 }); rb.out.forEach(([k, v]) => push(k, v)); Idol.log(`👑 你在打歌舞台上擊敗了 ${I.promo.boss}！整個業界都在談論這場對決。`, 'win'); I.flags['beat_' + I.promo.boss] = true; }
+    if (I._show.beatBoss && !(I.promo.bossBeaten)) { I.promo.bossBeaten = true; I.flags.yBoss = (I.flags.yBoss || 0) + 1; const rb = Idol.applyFx({ pop: 4, fame: 4, fans: Math.round(I.car.fans * .06), eval: 4, mood: 10 }); rb.out.forEach(([k, v]) => push(k, v)); Idol.log(`👑 你在打歌舞台上擊敗了 ${I.promo.boss}！整個業界都在談論這場對決。`, 'win'); I.flags['beat_' + I.promo.boss] = true; }
     Idol.log(`🏆 在 ${U.pick(DATA.SHOWS)} 拿下一位！（累計 ${I.grp.wins} 次）`, 'win');
     Idol.checkStage();
     return `🏆 打歌舞台大成功，拿下一位！`;
@@ -4920,7 +4944,7 @@ Idol.doDebut = function (info) {
   let names = [I.name].concat(ms.map(m => m.name));
   if (kind === 'band') names = names.map((n, i) => `${n}（${BAND_ROLES[i] || '客席'}）`);
   I.grp = { kind, name, members: names, npcMembers: ms.filter(m => m.npc).map(m => m.npc), wins: 0, albums: [], sales: 0, next: I.day + 7, debutDay: I.day + 7, avgAb: null, contractEnd: I.day + 7 + 365 * 7, contractNo: 1 };
-  I.stage = 2; I.debutPts = 0; Idol.initArtists(); I.chart = null;
+  I.stage = 2; I.debutPts = 0; Idol.initArtists(); I.chart = null; I.mates = {}; I.grp.myRole = Idol.pickMyRole();
   Idol.purgeQueue();
   const fx = { eval: 10, fans: 3000, fame: 6, pop: 8, mood: 20, money: 3000 };
   if (kind === 'solo') { fx.fame += 3; fx.fans = 2000; }
@@ -4928,7 +4952,7 @@ Idol.doDebut = function (info) {
   if (kind === 'band') { fx.fans = 2000; fx.eval += 3; }
   const r = Idol.applyFx(fx);
   const who = kind === 'solo' ? `你將以「${name}」之名單飛出道` : `${names.join('、')}——${DATA.CO} 的新企劃（團名將由全員投票決定）`;
-  I.queue.unshift({ t: 'msg', title: kind === 'solo' ? `🎉 正式出道：${name}` : '🎉 正式出道',  text: `公司內部會議決定了你的出道型態：\n${F.ic}【${F.n}】${F.d}\n\n${who}，將於一週後發行出道專輯。\n\n你不再是練習生了。公司為你安排了專屬的${kind === 'solo' ? '個人練習室與編舞老師' : '團體練習室、編舞老師與專屬行程團隊'}，不用再和練習生們擠在同一個空間。\n\n📜 新人時期的專屬合約為期 7 年，到期前公司會與你討論續約或解散。\n\n【解鎖】出道後的工作（音樂節目、綜藝、見面會、廣告）、每月薪水、年終頒獎。`, chips: Idol.chips(r) });
+  I.queue.unshift({ t: 'msg', title: kind === 'solo' ? `🎉 正式出道：${name}` : '🎉 正式出道',  text: `公司內部會議決定了你的出道型態：\n${F.ic}【${F.n}】${F.d}\n\n${who}，將於一週後發行出道專輯。${I.grp.myRole && kind !== 'solo' ? `\n你在團體中的定位是【${I.grp.myRole}】。` : ''}\n\n你不再是練習生了。公司為你安排了專屬的${kind === 'solo' ? '個人練習室與編舞老師' : '團體練習室、編舞老師與專屬行程團隊'}，不用再和練習生們擠在同一個空間。\n\n📜 新人時期的專屬合約為期 7 年，到期前公司會與你討論續約或解散。\n\n【解鎖】出道後的工作（音樂節目、綜藝、見面會、廣告）、每月薪水、年終頒獎。`, chips: Idol.chips(r) });
   if (kind === 'solo') Idol.log(`以${F.n}「${name}」正式出道！`, 'win');
   else I.queue.push({ t: 'gname', cands });
   I.queue.push({ t: 'fname' });
@@ -4959,6 +4983,24 @@ Idol.setFanName = function (nm, first) {
   if (first) { const r = Idol.applyFx({ fans: 600, mood: 5 }); I.queue.unshift({ t: 'msg', title: `💖 粉絲名稱：${nm}`, text: `從今天起，你的粉絲就叫「${nm}」。\n粉絲後援會把這個名字印上了第一批應援物。`, chips: Idol.chips(r) }); }
   return true;
 };
+/* ---------- 自己的定位（隊長、主唱、主舞…）：出道時依能力決定，不與隊友重複 ---------- */
+Idol.ROLE_INFO = {
+  '隊長': ['👑', '帶領全隊、協調大小事。團隊默契成長較快。'], '主唱': ['🎤', '團體的聲音核心。歌唱訓練成長 +8%。'], '主舞': ['💃', '舞台上的視覺焦點。舞蹈訓練成長 +8%。'],
+  '主饒舌': ['🎧', '負責 Rap 與創作段落。饒舌訓練成長 +8%。'], '門面擔當': ['✨', '團體的臉蛋與話題度。魅力訓練成長 +8%。'], '忙內': ['🍼', '最年輕的成員，最受寵愛。心情恢復較快。'],
+  '單飛藝人': ['🌟', '舞台與榮耀都由你一個人扛起。'], '吉他手': ['🎸', '樂團的旋律支柱。'], '貝斯手': ['🎸', '樂團的低頻靈魂。'], '鼓手': ['🥁', '樂團的節奏心臟。'], '鍵盤手': ['🎹', '樂團的和聲色彩。'], '客席': ['🎼', '樂團的客席成員。']
+};
+Idol.ROLE_AB = { '主唱': 'vocal', '主舞': 'dance', '主饒舌': 'rap', '門面擔當': 'charm' };
+Idol.pickMyRole = function () {
+  const g = I.grp; if (!g) return null;
+  if (g.kind === 'solo') return '單飛藝人';
+  const own = g.members[0] || ''; if (own.includes('（')) return own.split('（')[1].replace('）', '');
+  const used = Object.values(I.mates || {}).map(m => m.role), a = I.ab;
+  const cands = DATA.MATE_POS.filter(p => !used.includes(p));
+  if (!cands.length) return '成員';
+  const sc = { '主唱': a.vocal, '主舞': a.dance, '主饒舌': a.rap, '門面擔當': a.charm * .5 + I.hid.looks * .5, '隊長': 28 + I.hid.team * .35 + I.hid.grit * .3 + (I.age >= 16 ? 8 : 0), '忙內': I.age <= 15 ? 62 : 30 };
+  return U.wpick(cands, c => Math.pow(Math.max(1, (sc[c] || 30) - 25), 2));
+};
+Idol.myRole = function () { if (!I.grp) return null; if (!I.grp.myRole) I.grp.myRole = Idol.pickMyRole(); return I.grp.myRole; };
 /* ---------- 隊友 ---------- */
 Idol.hasMates = () => !!(I.grp && I.grp.kind !== 'solo' && I.grp.members.length >= 2);
 Idol.ensureMates = function () {
@@ -4966,7 +5008,7 @@ Idol.ensureMates = function () {
   I.mates = I.mates || {};
   const mem = I.grp.members.slice(1), names = mem.map(m => m.split('（')[0]);
   Object.keys(I.mates).forEach(k => { if (!names.includes(k)) delete I.mates[k]; });
-  const pos = U.shuffle(DATA.MATE_POS.slice());
+  const pos = U.shuffle(DATA.MATE_POS.filter(p => p !== (I.grp && I.grp.myRole)));
   mem.forEach((full, i) => {
     const nm = names[i]; if (I.mates[nm]) return;
     const role = full.includes('（') ? full.split('（')[1].replace('）', '') : (pos.pop() || '成員');
@@ -5007,7 +5049,7 @@ Idol.act_mate_gift = (a, o, push) => Idol.mateDo('mate_gift', o, push);
 /* ---------- 回歸與宣傳期 ---------- */
 Idol.groupQuality = function (concept) {
   const c = concept || DATA.CONCEPTS[0];
-  let avg = 0, tw = 0; for (const k in c.w) { avg += c.w[k] * (I.ab[k] * .45 + (I.grp.avgAb ? I.grp.avgAb[k] : I.ab[k] * .8) * .55); tw += c.w[k]; }
+  let avg = 0, tw = 0; for (const k in c.w) { avg += c.w[k] * (I.ab[k] * .45 + ((I.grp.avgAb ? I.grp.avgAb[k] : I.ab[k] * .8) + Idol.teamBoost(k)) * .55); tw += c.w[k]; }
   return avg / tw;
 };
 Idol.startPromo = function (concept, opt) {
@@ -5018,7 +5060,7 @@ Idol.startPromo = function (concept, opt) {
   DATA.ABK.forEach(k => I.grp.avgAb[k] = U.clamp(Math.max(I.grp.avgAb[k], I.ab[k] * .8) + U.rf(.5, 3)));
   const base = Idol.groupQuality(c);
   const kb = I.grp.kind === 'band' ? ((I.ab.vocal + I.ab.acting) / 2 > 55 ? 4 : -2) : I.grp.kind === 'solo' ? 3 : I.grp.kind === 'mixed' ? 2 : 0;
-  let q = U.clamp(base * .6 + (I.rel.baiyu || 0) * .1 + I.hid.team * .1 + I.car.pop * .1 + U.rf(-6, 8) + (I.hid.luck - 50) / 10 + kb + F.qb, 5, 100);
+  let q = U.clamp(Idol.teamSynergy() + base * .6 + (I.rel.baiyu || 0) * .1 + I.hid.team * .1 + I.car.pop * .1 + U.rf(-6, 8) + (I.hid.luck - 50) / 10 + kb + F.qb, 5, 100);
   const iv = Idol.invFx(opt.inv, q); q = U.clamp(q + iv.qb + 2.5 * ((I.staff && I.staff.studio) || 0), 5, 100);
   if (opt.inv) Idol.log(iv.flop ? '🎛️ 追加預算的旗艦製作「過度雕琢」，成效不如預期。' : `🎛️ 追加製作預算（${Spend.INV[opt.inv].n}），專輯品質提升。`, iv.flop ? 'bad' : 'story');
   const nth = I.grp.albums.length;
@@ -5104,6 +5146,70 @@ Idol.freeze = function (days) {
 Idol.disband = function () {
   if (!I.grp) return;
   if (I.grp.kind !== 'solo') { Idol.log(`💔 ${I.grp.name} 正式解散。`, 'bad'); I.grp.formerName = I.grp.name; I.grp.name = I.name; I.grp.members = [I.name]; I.grp.kind = 'solo'; Idol.purgeQueue(); }
+};
+
+/* ---------- 指導隊友：隊友各自有「指導成長」，平均值會提高團隊素質 ---------- */
+const TEACH = { mate_teach_vocal: 'vocal', mate_teach_dance: 'dance', mate_teach_rap: 'rap', mate_teach_charm: 'charm' };
+Idol.TEACH = TEACH;
+Idol.teamBoost = function (k) {
+  if (!Idol.hasMates()) return 0;
+  const l = Object.values(I.mates || {}); if (!l.length) return 0;
+  return l.reduce((a, m) => a + ((m.tr && m.tr[k]) || 0), 0) / l.length;
+};
+Idol.teamSynergy = function () { // 隊友平均好感帶來的默契加成（品質 +0～3）
+  if (!Idol.hasMates()) return 0;
+  const l = Object.values(I.mates || {}); if (!l.length) return 0;
+  const av = l.reduce((a, m) => a + Idol.mateAff(m), 0) / l.length;
+  return U.clamp((av - 40) / 40 * 3, 0, 3);
+};
+Idol.mateAbility = (m, k) => Math.round(U.clamp(((I.grp && I.grp.avgAb && I.grp.avgAb[k]) != null ? I.grp.avgAb[k] : I.ab[k] * .8) + ((m.tr && m.tr[k]) || 0)));
+Idol.teachDo = function (id, o, push) {
+  const k = TEACH[id]; Idol.ensureMates();
+  const m = I.mates[o.mate]; if (!m) return '找不到這位隊友。';
+  m.tr = m.tr || {}; const cur = m.tr[k] || 0, A = DATA.ABN[k];
+  const cnt = I.today.filter(t => t.mate === o.mate).length;
+  const roleHit = { vocal: '主唱', dance: '主舞', rap: '主饒舌', charm: '門面擔當' }[k] === m.role;
+  const aff = Idol.mateAff(m);
+  let g = .9 * U.rf(.8, 1.3) * (1 - cur / 28) * U.clamp(I.ab[k] / 60, .5, 1.4) * (.6 + aff / 100 * .8) * (1 - Math.min(.6, cnt * .25));
+  if (roleHit) g *= 1.3;
+  if (DATA.MATE_PERS[m.pers].best === 'practice') g *= 1.25;
+  g = Math.max(.1, g); m.tr[k] = Math.min(26, cur + g);
+  const dAff = 2 * (1 - Math.min(.6, cnt * .25));
+  if (m.npc) Idol.addAff(m.npc, dAff); else m.aff = U.clamp(m.aff + dAff);
+  const r = Idol.applyFx({ team: .5 }); r.out.forEach(([kk, v]) => push(kk, v));
+  const line = U.pick(DATA.MATE_PERS[m.pers].lines.practice); m.last = line;
+  const now = Idol.mateAbility(m, k);
+  return `指導${m.name}的${A}：${A}提升到 ${now}（+${g.toFixed(1)}）。${line}`;
+};
+Object.keys(TEACH).forEach(id => { Idol['act_' + id] = (a, o, push) => Idol.teachDo(id, o, push); });
+
+/* ---------- 付違約金單飛（人氣偶像之後） ---------- */
+Idol.soloFee = function () {
+  const yrs = Math.max(0, ((I.grp.contractEnd || I.day) - I.day) / 365);
+  return Math.max(1500000, Math.round((I.car.money * .3 + yrs * 450000) / 10000) * 10000);
+};
+Idol.soloWhy = function () {
+  if (!I.grp || I.grp.kind === 'solo') return '你已經是單人活動';
+  if (I.stage < 3) return '成為人氣偶像後才能談單飛';
+  if (I.arc || I.chain) return '目前有進行中的重大劇情，稍後再談';
+  if (I.car.money < Idol.soloFee()) return `金錢不足（需 ${U.money(Idol.soloFee())}）`;
+  return null;
+};
+Idol.goSolo = function () {
+  const why = Idol.soloWhy(); if (why) { UI.toast(why, 'bad'); return false; }
+  const fee = Idol.soloFee(), old = I.grp.name, mates = Object.values(I.mates || {});
+  I.car.money -= fee;
+  mates.forEach(m => { if (m.npc) I.rel[m.npc] = Math.max(0, (I.rel[m.npc] || 0) - 18); });
+  const lost = Math.round(I.car.fans * .35);
+  const r = Idol.applyFx({ fans: -lost, pop: -5, eval: -6, team: -20, stress: 8, mood: -3 });
+  I.grp.formerName = old; I.grp.name = I.name; I.grp.members = [I.name]; I.grp.npcMembers = []; I.grp.kind = 'solo'; I.grp.myRole = null; I.grp.avgAb = null;
+  I.mates = {}; I.promo = null; I.chart = null; I.flags.wentSolo = true; I.flags.soloDay = I.day;
+  I.grp.contractEnd = I.day + 365 * 3; I.grp.contractNo = (I.grp.contractNo || 1) + 1; I.grp.renewFor = I.grp.contractEnd;
+  I.grp.next = I.day + 30;
+  Idol.purgeQueue();
+  Idol.log(`💸 支付違約金 ${U.money(fee)}，脫離 ${old} 單飛。`, 'story');
+  I.queue.push({ t: 'msg', title: '🕊️ 單飛', text: `你向公司遞出單飛申請，並支付了 ${U.money(fee)} 的違約金。\n${old} 的隊友們各有各的心情，有人祝福，有人沉默。粉絲也分成了兩派，約 ${U.num(lost)} 位粉絲選擇留在團體。\n\n從今天起，你以「${I.name}」之名個人活動：沒有隊友分擔舞台，但也不必再配合團體的行程。簽下了新的三年合約。\n\n⚠ 團體的專屬大魔王不會再與你交鋒，榜單改為個人榜。`, chips: Idol.chips(r) });
+  return true;
 };
 Idol.startArc = function (a) {
   const mate = a.mate ? U.pick(I.grp.members.slice(1)).split('（')[0] : null;
@@ -5320,16 +5426,22 @@ Idol.endDay = function () {
 };
 Idol.awards = function () {
   const lines = []; const y = Cal.date(I.day).y;
-  const score = I.car.pop * .5 + I.car.fame * .25 + (I.lastSales ? Math.min(25, Math.log10(I.lastSales + 1) * 5) : 0) - I.hid.scandal * .3;
-  const debutRecent = I.grp && I.day - I.grp.debutDay < 400;
+  const yW = I.flags.yWins || 0, yB = I.flags.yBoss || 0;
+  const showBonus = Math.min(14, yW * 1.3 + yB * 5); // 今年打歌一位次數（擊敗大魔王加倍）換算成頒獎分數
+  const score = I.car.pop * .5 + I.car.fame * .25 + (I.lastSales ? Math.min(25, Math.log10(I.lastSales + 1) * 5) : 0) - I.hid.scandal * .3 + showBonus;
+  const debutRecent = I.grp && I.day - I.grp.debutDay < 365 && !I.flags.rookieAwardDone; // 新人獎只限出道第一年
   const won = [];
-  Idol.chartUpdate(false); const rk = I.chart.rank, rf = rk <= 1 ? 1 : rk === 2 ? .7 : rk === 3 ? .5 : rk <= 6 ? .3 : .15; // 同類榜單名次越低，拿獎越難
+  Idol.chartUpdate(false); const rk = I.chart.rank; let rf = rk <= 1 ? 1 : rk === 2 ? .7 : rk === 3 ? .5 : rk <= 6 ? .3 : .15; // 同類榜單名次越低，拿獎越難
+  const rfUp = Math.min(.25, yW * .03 + yB * .08); rf = Math.min(1, rf + rfUp); // 打歌常贏可抵銷一部分名次劣勢
   if (debutRecent && U.chance(U.clamp(score / 80, .05, .8) * rf)) won.push('最佳新人獎');
+  if (I.grp && I.day - I.grp.debutDay >= 300) I.flags.rookieAwardDone = true;
   if (I.stage >= 2 && score > 42 && U.chance(U.clamp((score - 34) / 70, .04, .6) * rf)) won.push('本賞（唱片）');
   if (I.stage >= 3 && score > 70 && U.chance(U.clamp((score - 62) / 60, .03, .4) * rf)) won.push('年度大賞');
   const r = Idol.applyFx(won.length ? { pop: 2 + won.length * 1.5, fame: 2 + won.length, fans: 5000 * won.length * (1 + I.stage), eval: 4, mood: 12 } : { mood: -2 });
+  const showNote = yW ? `\n\n🎤 今年你在打歌舞台拿下 ${yW} 次一位${yB ? '，並擊敗了路線大魔王' : ''}，替評審印象加了分。` : '';
+  I.flags.yWins = 0; I.flags.yBoss = 0;
   won.forEach(n => I.awards.push({ y, n }));
-  I.queue.push({ t: 'msg', title: `🏆 ${y} 年終頒獎典禮`, text: won.length ? `你獲得了：${won.join('、')}！\n站在台上，你想起第一次走進練習室的那天。` : '今年的典禮上，你只是坐在台下鼓掌。但你告訴自己：明年，換我。', chips: Idol.chips(r) });
+  I.queue.push({ t: 'msg', title: `🏆 ${y} 年終頒獎典禮`, text: (won.length ? `你獲得了：${won.join('、')}！\n站在台上，你想起第一次走進練習室的那天。` : '今年的典禮上，你只是坐在台下鼓掌。但你告訴自己：明年，換我。') + showNote, chips: Idol.chips(r) });
   if (won.length) Idol.log(`🏆 ${y} 年終頒獎：${won.join('、')}`, 'win');
   Idol.checkStage();
 };
@@ -5405,7 +5517,7 @@ Idol.render = function () {
   const root = document.getElementById('screen'); if (!root || !I) return;
   if (I.over && !I.queue.length) return Idol.renderEnding(root);
   const nx = Cal.nextExam(I.day), dd = nx - I.day;
-  const hdr = `<header class="top"><div class="who"><span class="avatar">${Avatar.svg(I.av, 46, I.g)}</span><div><b>${U.esc(I.name)}</b> <span title="${DATA.NATS[I.nat].n}">${DATA.NATS[I.nat].flag}</span><small>${DATA.STAGES[I.stage]} · ${I.age} 歲${I.grp ? ' · ' + I.grp.name : ''}</small></div></div>
+  const hdr = `<header class="top"><div class="who"><span class="avatar">${Avatar.svg(I.av, 46, I.g)}</span><div><b>${U.esc(I.name)}</b> <span title="${DATA.NATS[I.nat].n}">${DATA.NATS[I.nat].flag}</span><small>${DATA.STAGES[I.stage]} · ${I.age} 歲${I.grp ? ' · ' + I.grp.name + (Idol.myRole() && I.grp.kind !== 'solo' ? '（' + Idol.myRole() + '）' : '') : ''}</small></div></div>
     <div class="date"><b>${Cal.str(I.day)}</b><small>第 ${I.day + 1} 天 · ${dd === 0 ? (I.stage >= 2 ? '📝 今日評鑑' : '📝 今日考核') : (I.stage >= 2 ? '評鑑倒數 ' : '考核倒數 ') + dd + ' 天'}</small></div>
     <div class="hdr-stats"><span>💰 ${U.money(I.car.money)}</span><span>💗 ${U.num(I.car.fans)}</span><span class="apdots">${Array.from({ length: I.apMax }, (_, i) => `<i class="${i < I.ap ? 'on' : ''}"></i>`).join('')}</span></div>
     ${Theme.btn()}<button class="btn ghost sm" data-act="app.menu">☰</button></header>`;
@@ -5537,8 +5649,9 @@ function tCo() {
   return `<div class="grid2"><div class="col">${card(Idol.coName() + ' · 公司資訊', `<p>你是 ${Idol.coName()} 的${s.coState === 'indie' ? '負責人兼藝人' : DATA.STAGES[s.stage]}${s.coState === 'acquired' ? '（公司已被併購）' : ''}。公司評價 <b>${Math.round(s.car.eval)}</b>（低於 8 會被解約）。</p>${UI.bar('公司評價', s.car.eval, 100)}<ul class="steps">${steps}</ul>`)}
     ${card(deb ? '🏢 公司內部評鑑紀錄' : '近期考核', last.length ? `<ul class="notes">${last.map(e => `<li>${Cal.short(e.day)} ${e.review ? Idol.reviewName(DATA.EXAMS[e.theme]) : DATA.EXAMS[e.theme].n}　第 <b>${e.rank}</b> / ${e.total} 名　${UI.chip(e.tier, e.tier === 'S' || e.tier === 'A' ? 'pink' : '')}</li>`).join('')}</ul>${deb ? '<p class="sub">出道後的公司評鑑只與其他出道藝人比較，名次會影響公司評價。</p>' : `<p class="sub">連續 3 次墊底將被淘汰（目前警告 ${s.warn}/3）。</p>`}` : '<p class="sub">還沒有紀錄。</p>')}</div>
     <div class="col">${deb ? chartCard() : ''}${card(deb ? '🏢 公司內部評鑑排名（公司藝人綜合實力）' : '練習生排名（綜合實力）', `<ol class="rank">${rows.map((r, i) => `<li class="${r.me ? 'me' : ''}"><span>${i + 1}</span><i class="rav">${r.me ? Avatar.svg(s.av, 30, s.g) : Avatar.mini(r.name, r.g, 30)}</i><b>${U.esc(r.name)}</b><small>${r.me ? '你' : deb ? ({ solo: 'Solo', group: '團體', band: '樂團', mixed: '混合組合' }[r.kind] || '藝人') : r.age + '歲' + (r.npc ? ' · ' + DATA.NPCS[r.npc].role : '')}</small><em>${U.f1(r.score)}</em></li>`).join('')}</ol>`)}
-    ${s.grp ? card((s.grp.kind ? DATA.DEBUT_FORMS[s.grp.kind].ic + DATA.DEBUT_FORMS[s.grp.kind].n + '：' : '團體：') + s.grp.name, `<p>${s.grp.kind === 'solo' ? '單人藝人' : '成員：' + ''}${s.grp.kind === 'solo' ? '' : ''}${s.grp.kind === 'solo' ? '' : `</p><div class="mchips">${s.grp.members.map(mn => { const nm0 = mn.split('（')[0], mt = s.mates && s.mates[mn]; return `<span class="mchip">${Avatar.mini(mn, (mt && mt.g) || s.g, 28)}${U.esc(mn)}</span>`; }).join('')}</div><p>`}</p><p>💖 粉絲名稱：${s.fanName ? '<b>' + U.esc(s.fanName) + '</b>' : '尚未命名'} <button class="btn ghost sm" data-act="i.fanedit">${s.fanName ? '更改' : '命名'}</button></p><p>📜 專屬合約：第 ${s.grp.contractNo || 1} 期，至 ${Cal.short(s.grp.contractEnd)} 到期</p><p>音樂節目一位：${s.grp.wins} 次　累計銷量：${U.num(s.grp.sales)} 張</p><ul class="notes">${s.grp.albums.slice(-4).reverse().map(a => `<li>${Cal.short(a.day)} ${U.esc(a.name)}　首週 ${U.num(a.sales)}　榜單 #${a.pos}</li>`).join('')}</ul>`) : ''}
+    ${s.grp ? card((s.grp.kind ? DATA.DEBUT_FORMS[s.grp.kind].ic + DATA.DEBUT_FORMS[s.grp.kind].n + '：' : '團體：') + s.grp.name, `<p>${s.grp.kind === 'solo' ? '單人藝人' : '你的定位：<b>' + (Idol.ROLE_INFO[Idol.myRole()] || [''])[0] + ' ' + U.esc(Idol.myRole() || '成員') + '</b><br>成員：' + ''}${s.grp.kind === 'solo' ? '' : ''}${s.grp.kind === 'solo' ? '' : `</p><div class="mchips">${s.grp.members.map(mn => { const nm0 = mn.split('（')[0], mt = s.mates && s.mates[mn]; return `<span class="mchip">${Avatar.mini(mn, (mt && mt.g) || s.g, 28)}${U.esc(mn)}</span>`; }).join('')}</div><p>`}</p><p>💖 粉絲名稱：${s.fanName ? '<b>' + U.esc(s.fanName) + '</b>' : '尚未命名'} <button class="btn ghost sm" data-act="i.fanedit">${s.fanName ? '更改' : '命名'}</button></p><p>📜 專屬合約：第 ${s.grp.contractNo || 1} 期，至 ${Cal.short(s.grp.contractEnd)} 到期</p><p>音樂節目一位：${s.grp.wins} 次　累計銷量：${U.num(s.grp.sales)} 張</p><ul class="notes">${s.grp.albums.slice(-4).reverse().map(a => `<li>${Cal.short(a.day)} ${U.esc(a.name)}　首週 ${U.num(a.sales)}　榜單 #${a.pos}</li>`).join('')}</ul>`) : ''}
     ${s.grp && s.grp.albums.length ? card('💿 專輯榜單回顧', `<ul class="albs">${s.grp.albums.map((a, i) => ({ a, i })).reverse().map(({ a, i }) => `<li><span><b>${(DATA.ALBUM_FORMATS[a.fmt] || DATA.ALBUM_FORMATS.mini).ic} ${U.esc(a.name)}</b><small>${Cal.short(a.day)} · ${(DATA.ALBUM_FORMATS[a.fmt] || DATA.ALBUM_FORMATS.mini).n} · 首週 ${U.num(a.sales)} 張 · ${a.peak ? '月榜最高 #' + a.peak : (s.promo && s.promo.start === a.day ? '宣傳中' : '首週榜單 #' + a.pos)}</small></span>${a.chart ? `<button class="btn ghost" data-act="i.albchart" data-i="${i}">📈 榜單</button>` : ''}</li>`).join('')}</ul>`) : ''}
+    ${s.stage >= 3 && s.grp && s.grp.kind !== 'solo' ? card('💸 付違約金單飛', `<p class="sub">離開團體個人活動。需支付違約金 <b>${U.money(Idol.soloFee())}</b>（依剩餘合約與資產計算）。<br>代價：流失約 35% 粉絲、人氣與公司評價下降、隊友好感下滑、失去團體榜與路線大魔王。換來：個人榜、更自由的行程，並簽下新的三年合約。</p><button class="btn ${Idol.soloWhy() ? 'ghost' : 'pink'}" data-act="i.solo" ${Idol.soloWhy() ? 'disabled' : ''}>單飛</button>${Idol.soloWhy() ? '<p class="sub">' + U.esc(Idol.soloWhy()) + '</p>' : ''}`) : ''}
     ${s.stage >= 3 ? card('功成身退', `<p class="sub">人氣偶像之後，你可以隨時選擇結束偶像生涯，迎接結局（否則會一路玩到三十歲）。</p><button class="btn ghost" data-act="i.retire">結束偶像生涯</button>`) : ''}
     ${s.awards.length ? card('獲獎紀錄', `<ul class="notes">${s.awards.map(a => `<li>🏆 ${a.y} ${a.n}</li>`).join('')}</ul>`) : ''}</div></div>`;
 }
@@ -5547,16 +5660,22 @@ function tCo() {
 function tMates(lv) {
   const ms = Idol.ensureMates(), g = I.grp, list = Object.values(ms);
   const avg = list.length ? Math.round(list.reduce((s, m) => s + Idol.mateAff(m), 0) / list.length) : 0;
-  const head = card(`${DATA.DEBUT_FORMS[g.kind].ic} ${U.esc(g.name)} · 隊友`, `<p class="sub">和隊友多互動，能提升好感與團隊默契。同一位隊友一天內重複互動，效果會遞減。</p>${UI.bar('團隊默契', I.hid.team, 100)}${UI.bar('隊友平均好感', avg, 100)}<p class="sub">今日行動點數：${I.ap} / ${I.apMax}</p>`);
-  const acts = ['mate_chat', 'mate_meal', 'mate_practice', 'mate_gift'];
+  const acts = ['mate_chat', 'mate_meal', 'mate_practice', 'mate_gift'], tacts = Object.keys(Idol.TEACH);
+  const tb = ['vocal', 'dance', 'rap', 'charm'].map(k => `${DATA.ABN[k]} ${Idol.teamBoost(k) >= .05 ? '+' + Idol.teamBoost(k).toFixed(1) : '—'}`).join(' · ');
+  const head = card(`${DATA.DEBUT_FORMS[g.kind].ic} ${U.esc(g.name)} · 隊友`, `<p class="sub">和隊友多互動，能提升好感與團隊默契。同一位隊友一天內重複互動，效果會遞減。</p>${UI.bar('團隊默契', I.hid.team, 100)}${UI.bar('隊友平均好感', avg, 100)}<p class="sub">指導隊友帶來的團隊素質加成：${tb}。好感高的隊友學得更快，也會帶來額外默契加成。</p><p class="sub">今日行動點數：${I.ap} / ${I.apMax}</p>`);
   const cards = list.map(m => {
     const v = Math.round(Idol.mateAff(m)), P = DATA.MATE_PERS[m.pers], d = m.npc ? DATA.NPCS[m.npc] : null, g2 = m.g || I.g;
     const btns = acts.map(id => { const a = DATA.ACTIONS[id], why = Idol.canAct(id); return `<button class="btn sm ${why ? 'ghost' : ''}" data-act="i.act" data-id="${id}" data-mate="${U.esc(m.name)}" ${why ? 'disabled title="' + U.esc(why) + '"' : ''}>${a.i} ${a.n}<small style="display:block;opacity:.7">AP ${a.ap}${a.money ? ' · ' + U.money(-a.money) : ''}</small></button>`; }).join('');
+    const tbtns = tacts.map(id => { const a = DATA.ACTIONS[id], why = Idol.canAct(id); return `<button class="btn sm ${why ? 'ghost' : 'pink'}" data-act="i.act" data-id="${id}" data-mate="${U.esc(m.name)}" ${why ? 'disabled title="' + U.esc(why) + '"' : ''} title="${U.esc(a.d)}">${a.i} ${a.n}<small style="display:block;opacity:.7">AP ${a.ap}</small></button>`; }).join('');
     return card('', `<div class="npc"><div class="nav">${Avatar.mini(m.name, g2, 44)}</div><div><b>${U.esc(m.name)}</b><small>${U.esc(m.role)} · ${d ? d.pers : P.n}</small></div>${UI.chip(lv(v), 'pink')}</div>
       ${UI.bar('好感度', v, 100)}${m.last ? `<p class="sub">${U.esc(m.last)}</p>` : '<p class="sub">還沒有特別的互動。</p>'}
-      <div class="btn-row wrap">${btns}</div>`);
+      <div class="btn-row wrap">${btns}</div>
+      <p class="sub" style="margin-top:8px"><b>隊友能力</b>（指導可提高）：${['vocal', 'dance', 'rap', 'charm'].map(k => DATA.ABN[k] + ' ' + Idol.mateAbility(m, k)).join(' · ')}</p>
+      <div class="btn-row wrap">${tbtns}</div>`);
   }).join('');
-  return head + `<div class="cards3">${cards}</div>`;
+  const rl = Idol.myRole(), RI = Idol.ROLE_INFO[rl] || ['🎤', ''];
+  const me = card('', `<div class="npc"><div class="nav">${Avatar.svg(I.av, 44, I.g)}</div><div><b>${U.esc(I.name)}（你）</b><small>定位：${RI[0]} ${U.esc(rl || '成員')}</small></div>${UI.chip('你', 'pink')}</div><p class="sub">${RI[1]}</p>`);
+  return head + `<div class="cards3">${me}${cards}</div>`;
 }
 function tRel() {
   const lv = v => DATA.RELV.filter(r => r[0] <= v).slice(-1)[0][1];
@@ -5583,7 +5702,7 @@ function tWork() {
   return `<div class="grid2"><div class="col">${card('宣傳期', p ? `<h4>《${U.esc(p.name)}》</h4><p>專輯品質 ${Math.round(p.q)} · 首週銷量 ${U.num(p.sales)} · 榜單 #${p.pos}<br>打歌 ${p.shows} 次 · 一位 ${p.wins} 次 · 剩 ${Math.max(0, p.end - I.day)} 天${p.cb && p.cb.length ? '<br>⚔️ 同期回歸：' + p.cb.map(c => (c.boss ? '👹 ' : '') + U.esc(c.name) + '（實力 ' + c.pw + '）').join('、') : ''}</p>` : `<p class="sub">目前沒有宣傳期。${I.grp ? '下次回歸約 ' + Math.max(0, Math.ceil((I.grp.next - I.day) / 7)) + ' 週後。' : ''}</p>`)}
     ${card('工作', `<div class="acts">${ids.map(actCard).join('')}</div>`)}
     ${card('🤝 品牌代言（一次簽一年）', (I.endorse || []).length ? `<ul class="notes">${I.endorse.map(c => `<li><b>${U.esc(c.n)}</b>（${c.cat}）<br>剩 ${Math.max(0, c.end - I.day)} 天 · 已拍 ${c.done}/${c.shots} 次 · 每次酬勞 ${U.money(c.per)}${c.sched.filter(d => d <= I.day).length > c.done ? ' · <b>📸 待拍攝</b>' : (c.done < c.shots ? ' · 下次拍攝約 ' + Cal.short(c.sched.find(d => d > I.day) || c.end) : '')}</li>`).join('')}</ul>` : '<p class="sub">目前沒有代言合約。知名度提高後，品牌會陸續找上門。</p>')}</div>
-    <div class="col">${card('活動規則', '<ul class="notes"><li>打歌只在宣傳期的週四～日，成績取決於舞台、專輯品質、人氣與粉絲。</li><li>演唱會需人氣偶像階段、體力 60 以上，每 60 天一次。</li><li>品牌代言一次簽一年，最多同時兩份、同類別不重複；期間有 4 次拍攝，未完成會被索賠。</li><li>薪水每月 1 日入帳，會依銷量有分紅。</li></ul>')}</div></div>`;
+    <div class="col">${card('活動規則', '<ul class="notes"><li>打歌只在宣傳期的週四～日，成績取決於舞台、專輯品質、人氣與粉絲。</li><li>演唱會需人氣偶像階段、體力 60 以上，每 60 天一次。</li><li>品牌代言一次簽一年，同類別不重複，人氣偶像之前最多同時兩份、成為人氣偶像後最多五份；期間有 4 次拍攝，未完成會被索賠。</li><li>薪水每月 1 日入帳，會依銷量有分紅。</li></ul>')}</div></div>`;
 }
 
 /* ---------- 社群 ---------- */
@@ -5791,6 +5910,8 @@ ACT['i.load2'] = d => { const p = Store.get('idol', d.s); UI.close(); if (p) { I
 ACT['i.delslot'] = d => { Store.del('idol', d.s); Idol.render(); };
 ACT['i.export'] = () => { const t = document.getElementById('exp'); if (t) { t.value = Store.exportJSON('idol', I); t.select(); } };
 ACT['i.import'] = () => { const t = document.getElementById('exp'); const p = t && Store.importJSON(t.value); if (!p || p.mode !== 'idol') return UI.toast('存檔文字無法辨識', 'bad'); Idol.start(Idol.fix(p.state)); UI.toast('匯入成功'); };
+ACT['i.solo'] = () => UI.confirm(`確定支付 ${U.money(Idol.soloFee())} 違約金，脫離 ${I.grp.name} 單飛嗎？將流失約三成五粉絲，且無法回頭。`, 'i.solo2', {}, '支付並單飛');
+ACT['i.solo2'] = () => { UI.close(); Idol.goSolo(); Idol.render(); };
 ACT['i.retire'] = () => UI.confirm('確定要結束偶像生涯嗎？將進入結局。', 'i.retire2', {}, '結束生涯');
 ACT['i.retire2'] = () => { UI.close(); Idol.ending(I.stage >= 4 ? 'top' : 'idol'); Idol.render(); };
 ACT['i.restart'] = () => UI.confirm('確定要放棄目前進度並回到主選單嗎？（手動存檔不會被刪除）', 'i.restart2', {}, '重新開始');
@@ -6510,7 +6631,7 @@ Mgr.awards = function () {
   M.groups.forEach(G => {
     if (G.status === 'prep' || !G.albums.length) return;
     const pts = Mgr.power(G) - Mgr.era() + G.wins * 1.5, won = [];
-    const rookie = G.debutWeek != null && M.week - G.debutWeek < 56;
+    const rookie = G.debutWeek != null && M.week - G.debutWeek < 52;
     if (rookie && U.chance(U.clamp((pts + 10) / 40, .05, .85))) won.push('最佳新人獎');
     if (pts > 8 && U.chance(U.clamp(pts / 40, .05, .7))) won.push('本賞');
     if (pts > 24 && U.chance(U.clamp(pts / 60, .05, .6))) won.push('年度大賞');
