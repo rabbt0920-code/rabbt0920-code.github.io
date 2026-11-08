@@ -5253,6 +5253,7 @@ Idol.yearMark = function (final) {
   const ex = I.exams && I.exams.length ? I.exams[I.exams.length - 1] : null;
   I.yearLog.push({ y, age: I.age, stage: I.stage, chart: I.stage >= 2 && I.chart && I.chart.rank ? I.chart.rank : null, exam: ex ? ex.rank : null, pop: Math.round(I.car.pop), fans: I.car.fans });
 };
+
 Idol.startArc = function (a) {
   const mate = a.mate ? U.pick(I.grp.members.slice(1)).split('（')[0] : null;
   I.arcDone[a.id] = (I.arcDone[a.id] || 0) + 1;
@@ -6094,6 +6095,7 @@ const ShowFx = (function () {
   return { show };
 })();
 
+
 /* ===== spend.js ===== */
 /* ============================================================
    花錢系統（出道後）：專輯追加預算、演唱會規格、月費制專屬團隊、宣傳預算、
@@ -6584,7 +6586,7 @@ Mgr.release = function (G) {
   G.pb = 0; G.q = q;
   const sales = Math.round((G.fans * .28 + bud.mk) * (.5 + q / 100) * U.rf(.85, 1.2) * (1 + M.me.skill.pr * .03));
   const P = Mgr.power(G, q), pos = Math.max(1, Math.round(50 - (P - Mgr.era()) * 2.2 + U.gauss() * 4));
-  const income = Math.round(sales * 60 * (1 + M.me.skill.biz * .03));
+  const income = Mgr.earnCo('album', Math.round(sales * 60 * (1 + M.me.skill.biz * .03)));
   M.co.funds += income; M.hist.income += income; G.rev += income;
   G.fans += Math.round(sales * .1 + 300); G.pop = U.clamp(G.pop + Math.max(0, 8 - pos / 9) + 1); G.fame = U.clamp(G.fame + Math.max(0, 6 - pos / 12) + 1);
   const name = first ? `出道專輯「${C.n}」` : `第 ${G.albums.length + 1} 張專輯「${C.n}」`;
@@ -6601,7 +6603,7 @@ Mgr.groupWeek = function (G) {
   else {
     if (G.status === 'promo') { G.promoWeeks--; G.team = U.clamp(G.team + 1.2); if (G.promoWeeks <= 0) { G.status = 'rest'; Mgr.log(`${G.name} 宣傳期結束。`); } }
     else { G.pop = Math.max(0, G.pop - .5); G.fans = Math.floor(G.fans * .997); G.team = U.clamp(G.team + .2); }
-    const st = Math.round((G.pop * 120 + G.fans * .015) * (1 + M.me.skill.biz * .03)); M.co.funds += st; M.hist.income += st; G.rev += st;
+    const st = Mgr.earnCo('album', Math.round((G.pop * 120 + G.fans * .015) * (1 + M.me.skill.biz * .03))); M.co.funds += st; M.hist.income += st; G.rev += st;
   }
   G.did = {};
   Mgr.gm(G).forEach(T => { T.car.fans = Math.round(G.fans / Math.max(1, G.members.length)); T.car.pop = G.pop; T.car.fame = G.fame; });
@@ -6634,21 +6636,21 @@ Mgr.doG = function (G, id) {
   } else if (id === 'variety') {
     const best = mem.slice().sort((a, b) => b.ab.variety - a.ab.variety)[0]; const sc = best.ab.variety * .6 + best.ab.charm * .3 + U.gauss() * 8;
     const q = sc > 28 ? 2 : sc > 16 ? 1 : 0; G.fame = U.clamp(G.fame + [.5, 1.5, 3][q]); G.fans += [150, 800, 3000][q] * (1 + pr * .1); G.pop = U.clamp(G.pop + [0, .4, 1][q]);
-    best.st.mood = U.clamp(best.st.mood - 2); best.ab.variety = U.clamp(best.ab.variety + .4); M.co.funds += 5000; msg = ['通告上沒什麼存在感。', '表現穩定，有幾個片段被剪進預告。', `${best.name} 成了全場焦點！`][q];
+    best.st.mood = U.clamp(best.st.mood - 2); best.ab.variety = U.clamp(best.ab.variety + .4); M.co.funds += Mgr.earnCo('dom', 5000); msg = ['通告上沒什麼存在感。', '表現穩定，有幾個片段被剪進預告。', `${best.name} 成了全場焦點！`][q];
   } else if (id === 'ad') {
-    const inc = Math.round((25000 + G.fame * 900) * (1 + (M.co.staff.stylist ? .15 : 0)) * (1 + M.me.skill.biz * .03)); M.co.funds += inc; M.hist.income += inc; G.fame = U.clamp(G.fame + 1); msg = `廣告拍攝完成，收入 ${U.money(inc)}。`;
+    const inc = Mgr.earnCo('dom', Math.round((25000 + G.fame * 900) * (1 + (M.co.staff.stylist ? .15 : 0)) * (1 + M.me.skill.biz * .03))); M.co.funds += inc; M.hist.income += inc; G.fame = U.clamp(G.fame + 1); msg = `廣告拍攝完成，收入 ${U.money(inc)}。`;
   } else if (id === 'fanmeet') {
-    G.fans += Math.round(G.fans * .04 + 800); G.pop = U.clamp(G.pop + 1.2); mem.forEach(T => T.st.mood = U.clamp(T.st.mood + 5)); M.co.funds += Math.round(G.fans * .05); msg = '見面會現場氣氛熱烈。';
+    G.fans += Math.round(G.fans * .04 + 800); G.pop = U.clamp(G.pop + 1.2); mem.forEach(T => T.st.mood = U.clamp(T.st.mood + 5)); M.co.funds += Mgr.earnCo('dom', Math.round(G.fans * .05)); msg = '見面會現場氣氛熱烈。';
   } else if (id === 'market') { G.pb = (G.pb || 0) + 4; G.pop = U.clamp(G.pop + 1.2); G.fans += Math.round(G.fans * .02 + 800); msg = '行銷活動帶動了討論度，下次舞台與回歸更有利。'; }
   else if (id === 'popup') {
     const cap = Math.round(2500 + G.pop * 90), q = G.q || 40, demand = (G.fans * .05 * (.7 + q / 200) + G.pop * 60) * U.rf(.85, 1.15) * (G.status === 'promo' ? 1.25 : 1);
-    const sold = Math.round(Math.min(cap, demand)), fill = sold / cap, inc = Math.round(sold * 110 * (1 + M.me.skill.biz * .03));
+    const sold = Math.round(Math.min(cap, demand)), fill = sold / cap, inc = Mgr.earnCo('dom', Math.round(sold * 110 * (1 + M.me.skill.biz * .03)));
     M.co.funds += inc; M.hist.income += inc; G.lastPopup = M.week; G.fans += Math.round(sold * .08); G.pop = U.clamp(G.pop + (fill >= .95 ? 1.4 : fill < .35 ? 0 : .8)); G.fame = U.clamp(G.fame + .5); G.team = U.clamp(G.team + 1.5);
     msg = fill >= .95 ? `🛍️ 快閃店全面完售！售出 ${U.num(sold)} 件，收入 ${U.money(inc)}。` : fill < .35 ? `快閃店買氣冷清，只賣出 ${U.num(sold)} 件，收入 ${U.money(inc)}。` : `快閃店順利落幕，售出 ${U.num(sold)} 件（完售率 ${Math.round(fill * 100)}%），收入 ${U.money(inc)}。`; Mgr.log(`${G.name} ${msg}`, fill >= .95 ? 'win' : '');
   } else if (id === 'rest') { mem.forEach(T => { T.st.mood = U.clamp(T.st.mood + 10); T.st.stress = U.clamp(T.st.stress - 12); T.st.stam = U.clamp(T.st.stam + 15); }); msg = '成員們好好睡了一覺。'; }
   else if (id === 'concert') {
     const q = Mgr.quality(G, DATA.CONCEPTS.find(c => c.id === G.concept)), tickets = Math.round(Math.min(G.fans * .1, 12000 + G.pop * 250) * (.7 + q / 150));
-    const inc = Math.round(tickets * 500 * (1 + M.me.skill.biz * .03)); M.co.funds += inc; M.hist.income += inc; G.lastConcert = M.week; G.pop = U.clamp(G.pop + 3); G.fans += Math.round(tickets * .4); G.fame = U.clamp(G.fame + 2); M.co.rep = U.clamp(M.co.rep + 2);
+    const inc = Mgr.earnCo('ovs', Math.round(tickets * 500 * (1 + M.me.skill.biz * .03))); M.co.funds += inc; M.hist.income += inc; G.lastConcert = M.week; G.pop = U.clamp(G.pop + 3); G.fans += Math.round(tickets * .4); G.fame = U.clamp(G.fame + 2); M.co.rep = U.clamp(M.co.rep + 2);
     mem.forEach(T => T.st.stam = U.clamp(T.st.stam - 25)); msg = `演唱會落幕，${U.num(tickets)} 名觀眾，收入 ${U.money(inc)}。`; Mgr.log(`🏟️ ${G.name} ${msg}`, 'win');
   } else if (id === 'comeback') { M.ap += a.ap; M.me.energy += 3 * a.ap; G.did[id]--; MgrUI.planModal(G); return 'modal'; }
   if (id !== 'rest' && id !== 'concert') Mgr.exp('pr', 1.5);
@@ -7054,7 +7056,14 @@ Mgr.renderEnding = function (root) {
 const RIVAL_COS = [ // [名稱, 起始實力, 實力上限]
   ['NOVA 娛樂', 74, 92], ['ECLIPSE 娛樂', 66, 86], ['藍鯨娛樂', 58, 80], ['MOONFALL', 52, 74], ['HIVE 企劃', 46, 70], ['金鳳凰娛樂', 32, 60], ['Prism Works', 24, 50], ['大河娛樂', 18, 42]
 ];
+/* 收入分成（參考 Cube）：公司拿 專輯/音源 90%、國內活動 70%、演唱會/海外 60%，其餘歸藝人 */
+const CO_SHARE = { album: .9, dom: .7, ovs: .6 };
+Mgr.earnCo = function (kind, gross) {
+  const f = M.fin = M.fin || { gross: 0, co: 0 }, mine = Math.round(gross * (CO_SHARE[kind] || .6));
+  f.gross += gross; f.co += mine; return mine;
+};
 Mgr.coInit = function () {
+  M.fin = M.fin || { gross: 0, co: 0 };
   if (!M.rivalCos) M.rivalCos = RIVAL_COS.map(([name, s, cap]) => ({ name, score: s + U.rf(-3, 3), cap: cap + U.rf(-3, 3), bump: 0 }));
   if (!M.coRank) M.coRank = { rank: 0, total: M.rivalCos.length + 1, hist: [], score: 0 };
   M.roster.forEach((T, i) => { if (T.cEnd == null) T.cEnd = M.week + 52 + ((i * 17) % 50); if (T.pay == null) T.pay = 1; });
@@ -7094,7 +7103,9 @@ Mgr.coSettle = function () { // 年度結算
 Mgr.coCard = function () {
   const l = Mgr.coList(), mx = Math.max(...l.map(x => x.score), 1), hist = M.coRank.hist;
   const rows = l.map((x, i) => `<div class="corow ${x.me ? 'me' : ''}"><span>${i + 1}</span><b>${U.esc(x.me ? x.name + '（你）' : x.name)}</b><div class="cobar"><i style="width:${Math.max(4, x.score / mx * 100)}%"></i></div><em>${Math.round(x.score)}</em></div>`).join('');
-  return card('🏢 娛樂公司排行', `<p class="sub">依聲望、資金、團體人氣、打歌一位與獎項計算的綜合實力。每年底結算：前三名有資金與聲望獎勵，墊底兩名聲望下滑；每月排名在前二聲望微升、墊底微降。</p>${rows}<p class="sub">目前第 <b>${M.coRank.rank}</b> / ${M.coRank.total} 名（綜合實力 ${M.coRank.score}）</p>${hist.length > 1 ? IdolUI.lineChart(hist.map((_, i) => '第' + (i + 1) + '月'), [{ name: '公司排名', color: '#ff5fa2', pts: hist }], { rank: true, label: '公司排名折線圖' }) : ''}`);
+  const fin = M.fin || { gross: 0, co: 0 };
+  const shareNote = card('📑 合約分成', `<p class="sub">專輯／音源 公司 90 : 藝人 10；國內活動 70 : 30；演唱會與海外 60 : 40。藝人份額已在入帳前扣除。</p><p class="sub">累計總收益 ${U.money(fin.gross)}　公司實收 ${U.money(fin.co)}　藝人分得 ${U.money(fin.gross - fin.co)}</p>`);
+  return shareNote + card('🏢 娛樂公司排行', `<p class="sub">依聲望、資金、團體人氣、打歌一位與獎項計算的綜合實力。每年底結算：前三名有資金與聲望獎勵，墊底兩名聲望下滑；每月排名在前二聲望微升、墊底微降。</p>${rows}<p class="sub">目前第 <b>${M.coRank.rank}</b> / ${M.coRank.total} 名（綜合實力 ${M.coRank.score}）</p>${hist.length > 1 ? IdolUI.lineChart(hist.map((_, i) => '第' + (i + 1) + '月'), [{ name: '公司排名', color: '#ff5fa2', pts: hist }], { rank: true, label: '公司排名折線圖' }) : ''}`);
 };
 
 /* ---------- 合約與續約 ---------- */
