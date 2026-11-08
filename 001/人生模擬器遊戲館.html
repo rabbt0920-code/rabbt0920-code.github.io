@@ -2,7 +2,15 @@
 <html lang="zh-Hant">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="theme-color" content="#0e0d14">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" type="image/png" sizes="192x192" href="icons/icon-192.png">
+<link rel="apple-touch-icon" href="icons/icon-180.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="人生模擬器">
 <title>人生模擬器遊戲館</title>
 <meta name="description" content="人生模擬器一次玩：股海、修仙、魔法學院、武俠江湖、K-POP 偶像，持續更新中。">
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -148,6 +156,31 @@
   }
   .toast.show{transform:translate(-50%,0)}
 
+
+  /* PWA */
+  body{padding:env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left)}
+  .install{
+    position:fixed;right:max(18px,env(safe-area-inset-right));top:max(16px,env(safe-area-inset-top));z-index:20;
+    display:none;align-items:center;gap:6px;
+    background:rgba(23,21,31,.85);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);
+    color:var(--gold);border:1px solid rgba(232,194,122,.45);border-radius:999px;
+    padding:8px 16px;font:inherit;font-size:14px;font-weight:700;cursor:pointer;transition:all .2s
+  }
+  .install:hover{background:var(--gold);color:#2a1d08}
+  .install.show{display:inline-flex}
+  .modal{position:fixed;inset:0;z-index:30;background:rgba(0,0,0,.6);display:none;align-items:flex-end;justify-content:center;padding:20px}
+  .modal.show{display:flex}
+  .sheet{
+    background:var(--panel);border:1px solid var(--line);border-radius:22px;max-width:420px;width:100%;
+    padding:26px 24px calc(22px + env(safe-area-inset-bottom));animation:up .3s ease
+  }
+  @keyframes up{from{transform:translateY(40px);opacity:0}}
+  .sheet h3{font-family:"Noto Serif TC",serif;font-size:20px;margin-bottom:14px}
+  .sheet ol{padding-left:22px;color:var(--muted);font-size:15px}
+  .sheet li{margin:8px 0}
+  .sheet b{color:var(--text)}
+  .sheet button{margin-top:18px;width:100%;padding:12px;border-radius:12px;border:none;background:var(--text);color:var(--bg);font:inherit;font-weight:700;cursor:pointer}
+
   @media (max-width:520px){
     header{padding:52px 0 26px}
     .grid{grid-template-columns:1fr}
@@ -159,6 +192,21 @@
 </style>
 </head>
 <body>
+<button class="install" id="installBtn">⬇ 安裝 App</button>
+
+<div class="modal" id="iosModal" role="dialog" aria-modal="true" aria-labelledby="iosTitle">
+  <div class="sheet">
+    <h3 id="iosTitle">把遊戲館加到主畫面</h3>
+    <ol>
+      <li>用 <b>Safari</b> 開啟本頁</li>
+      <li>點下方工具列的 <b>分享</b> 按鈕（方框加向上箭頭）</li>
+      <li>往下滑，選 <b>加入主畫面</b></li>
+      <li>點右上角 <b>加入</b>，完成！</li>
+    </ol>
+    <button id="iosClose">知道了</button>
+  </div>
+</div>
+
 <div class="wrap">
   <header>
     <div class="eyebrow">LIFE SIMULATOR ARCADE</div>
@@ -311,6 +359,59 @@ toolbar.addEventListener('click', e=>{
     showToast('命運之輪轉到了：' + pick.querySelector('h2').textContent + '！點卡片開玩');
   }
 });
+
+/* ================= PWA：安裝與離線 ================= */
+const isStandalone = matchMedia('(display-mode: standalone)').matches || navigator.standalone === true;
+const isIOS = /iphone|ipad|ipod/i.test(navigator.userAgent) ||
+              (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+const installBtn = document.getElementById('installBtn');
+const iosModal = document.getElementById('iosModal');
+let deferredPrompt = null;
+
+// 已安裝成 App 時，遊戲直接在 App 內開啟，不跳出到瀏覽器
+if (isStandalone) grid.querySelectorAll('a.card').forEach(a => a.removeAttribute('target'));
+
+if (!isStandalone) {
+  window.addEventListener('beforeinstallprompt', e => {
+    e.preventDefault();
+    deferredPrompt = e;
+    installBtn.classList.add('show');
+  });
+  if (isIOS) installBtn.classList.add('show');
+}
+
+installBtn.addEventListener('click', async () => {
+  if (deferredPrompt) {
+    deferredPrompt.prompt();
+    const { outcome } = await deferredPrompt.userChoice;
+    deferredPrompt = null;
+    if (outcome === 'accepted') installBtn.classList.remove('show');
+  } else if (isIOS) {
+    iosModal.classList.add('show');
+  }
+});
+document.getElementById('iosClose').addEventListener('click', () => iosModal.classList.remove('show'));
+iosModal.addEventListener('click', e => { if (e.target === iosModal) iosModal.classList.remove('show'); });
+
+window.addEventListener('appinstalled', () => {
+  installBtn.classList.remove('show');
+  showToast('安裝完成！到主畫面找「人生模擬器」');
+});
+
+if ('serviceWorker' in navigator && location.protocol.startsWith('http')) {
+  window.addEventListener('load', async () => {
+    try {
+      await navigator.serviceWorker.register('sw.js');
+      const reg = await navigator.serviceWorker.ready;
+      // 把遊戲清單交給 service worker 下載，讓遊戲也能離線玩
+      reg.active && reg.active.postMessage({
+        type: 'CACHE_GAMES',
+        urls: GAMES.map(g => new URL(g.url, location.href).href)
+                   .filter(u => u.startsWith(location.origin))
+      });
+    } catch (err) { /* 不支援時照常使用網頁版 */ }
+  });
+}
 </script>
 </body>
 </html>
