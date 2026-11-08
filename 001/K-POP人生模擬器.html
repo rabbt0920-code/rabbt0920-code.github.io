@@ -99,6 +99,14 @@ textarea{resize:vertical;font-size:.8rem}.skills{display:flex;gap:6px;flex-wrap:
 .albs{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:8px}.albs li{display:flex;align-items:center;justify-content:space-between;gap:8px;padding:8px 10px;background:#faf8ff;border-radius:12px}.albs li span{display:flex;flex-direction:column;min-width:0;word-break:break-word}.albs small{color:var(--sub);font-size:.78rem}.albs .btn{padding:6px 10px;font-size:.8rem;white-space:nowrap}
 
 .cause{margin:8px 0 0;padding:6px 10px;border-radius:10px;background:#f4f1ff;color:#7a6fb5;font-size:.8rem;line-height:1.4}
+.avsvg{display:block;border-radius:50%}.avatar{display:flex;align-items:center}.bigav{overflow:hidden;padding:0}
+.aved{padding:2px 0}.avprev{display:flex;justify-content:center;margin-bottom:6px}.avprev .avsvg{border:3px solid #fff;box-shadow:0 4px 14px #7a6fb533}
+.avbtns{text-align:center;margin-bottom:8px}.avrow{display:flex;gap:8px;align-items:flex-start;margin:6px 0}.avrow>b{flex:0 0 4.2em;font-size:.82rem;padding-top:5px;color:var(--sub)}
+.avopts{display:flex;flex-wrap:wrap;gap:5px}.avt{border:2px solid transparent;background:#faf8ff;border-radius:10px;padding:4px 9px;font-size:.8rem;cursor:pointer}
+.avt.on{border-color:#ff7eb6;background:#fff0f7;font-weight:700}.avc{width:26px;height:26px;border-radius:50%;border:2px solid #e6e1f5;cursor:pointer;padding:0}.avc.on{border-color:#ff7eb6;box-shadow:0 0 0 2px #ffd3e6}
+.avsvg.full{border-radius:18px}.avh{margin:10px 0 2px;font-size:.78rem;font-weight:700;color:#b07cf0;letter-spacing:.08em;border-bottom:1px dashed #e6e1f5}
+.avprev .avsvg.full{border:0;box-shadow:0 6px 18px #7a6fb533}
+.nav .avsvg{width:44px;height:44px}.rav{flex:none;display:flex}.mchips{display:flex;flex-wrap:wrap;gap:6px;margin:4px 0}.mchip{display:inline-flex;align-items:center;gap:4px;background:#f6f3ff;border-radius:16px;padding:2px 10px 2px 3px;font-size:.82rem}
 
 </style>
 </head>
@@ -284,6 +292,203 @@ document.addEventListener && document.addEventListener('click', e => {
 });
 ACT['u.close'] = () => UI.close();
 
+/* ===== avatar.js ===== */
+/* ============================================================
+   向量韓系紙娃娃（全身 Q 版 2.5 頭身，可裁切成半身頭像）
+   分類：臉（臉型／膚色／眼睛）、髮型（髮型／髮色）、表情、服裝（上衣／下著／鞋）、配件、背景
+   存成 {hair,hc,face,skin,eyes,expr,outfit,oc,bt,bc,sh,acc,bg}
+   ============================================================ */
+const Avatar = (function () {
+  const SKIN = ['#fde8da', '#fbdcc8', '#f3c8a8', '#e5ad88', '#c98a63', '#a96c47'];
+  const HAIRC = ['#2a1f1d', '#5a3a2c', '#8a5e40', '#9a97a0', '#e2c27f', '#f49bbd', '#7aa6e6', '#e6e9f0'];
+  const OUTC = ['#ffffff', '#2f3252', '#ff8cc0', '#86adff', '#98d9b0', '#f8cd55', '#b98af2', '#ec6a6a'];
+  const BOTC = ['#2f3252', '#ffffff', '#ff8cc0', '#86adff', '#c9a97c', '#8d8a90', '#98d9b0', '#7a3b4a'];
+  const BGC = [['#ffe6f1', '#e9e2ff'], ['#e2f3ff', '#eaf8e8'], ['#fff3dc', '#ffe3e3'], ['#e9e4ff', '#dbf2ff'], ['#2a2e4d', '#59447f']];
+  const HAIR_N = ['長直髮', '長捲髮', '鮑伯頭', '短髮', '雙馬尾', '丸子頭', '二七分', '逗號瀏海'];
+  const FACE_N = ['圓臉', '鵝蛋臉', 'V 字臉'];
+  const EYE_N = ['圓眼', '貓眼', '垂眼', '細長眼'];
+  const EXPR_N = ['微笑', '害羞', '冷酷', '大笑', '無辜', '俏皮眨眼'];
+  const OUT_N = ['T 恤', '連帽衫', '制服襯衫', '西裝外套', '運動外套', '舞台服'];
+  const BOT_N = ['百褶裙', '短褲', '長褲'];
+  const SHOE_N = ['運動鞋', '皮鞋', '長靴'];
+  const ACC_N = ['無', '眼鏡', '耳環', '髮夾', '蝴蝶結', '貓耳髮箍'];
+  // 表情預設：[眉型, 嘴型, 腮紅濃度, 眼模式]
+  const EXPR = [[1, 0, .22, ''], [1, 1, .55, ''], [0, 3, .08, ''], [1, 2, .28, 'happy'], [1, 1, .25, 'big'], [0, 0, .3, 'wink']];
+
+  const shade = (hex, k) => { const n = parseInt(hex.slice(1), 16); const f = c => Math.max(0, Math.min(255, Math.round(c * k))); return '#' + [(n >> 16) & 255, (n >> 8) & 255, n & 255].map(f).map(v => v.toString(16).padStart(2, '0')).join(''); };
+
+  const BACK = [
+    'M48 90 Q44 30 100 28 Q156 30 152 90 L156 172 Q130 180 126 150 L74 150 Q70 180 44 172Z',
+    'M44 95 Q36 28 100 26 Q164 28 156 95 Q170 130 150 162 Q140 176 128 150 L72 150 Q60 176 50 162 Q30 130 44 95Z',
+    'M46 92 Q42 30 100 28 Q158 30 154 92 L152 140 Q126 148 124 130 L76 130 Q74 148 48 140Z',
+    '',
+    'M50 80 Q18 92 26 156 Q44 156 52 110Z M150 80 Q182 92 174 156 Q156 156 148 110Z',
+    '',
+    'M50 86 Q46 32 100 30 Q154 32 150 86 L148 104 Q140 82 100 70 Q60 82 52 104Z',
+    'M48 90 Q44 34 100 30 Q156 34 152 90 L150 108 Q148 80 100 60 Q52 80 50 108Z'
+  ];
+  const FRONT = [
+    'M50 90 Q48 38 100 36 Q152 38 150 90 Q138 60 100 62 Q62 60 50 90Z',
+    'M50 90 Q46 38 100 36 Q154 38 150 90 Q130 58 96 60 Q68 64 50 90Z',
+    'M50 84 Q50 38 100 36 Q150 38 150 84 Q140 66 100 68 Q60 66 50 84Z',
+    'M50 82 Q48 32 100 30 Q152 32 150 82 Q146 70 140 66 Q100 52 60 66 Q54 70 50 82Z',
+    'M50 84 Q50 38 100 36 Q150 38 150 84 Q140 66 100 68 Q60 66 50 84Z',
+    'M52 84 Q50 40 100 38 Q150 40 148 84 Q138 60 100 60 Q62 60 52 84Z',
+    'M50 90 Q46 36 100 34 Q154 36 150 90 Q146 76 134 70 Q110 52 74 68 Q56 76 50 90Z',
+    'M50 86 Q48 36 100 34 Q152 36 150 86 Q142 66 124 64 Q116 76 100 72 Q84 68 74 76 Q58 76 50 86Z'
+  ];
+  // [rx, ry, 外眼角上揚度, 虹膜半徑]
+  const EYES = [[8.5, 10, 0, 7], [9.5, 8.2, 8, 6.4], [9.5, 9.2, -8, 6.6], [10, 5.6, 0, 4.8]];
+
+  const def = g => ({ hair: g === 'm' ? 3 : 0, hc: 0, face: 1, skin: 0, eyes: 0, expr: 0, outfit: 0, oc: g === 'm' ? 1 : 2, bt: g === 'm' ? 2 : 0, bc: g === 'm' ? 0 : 0, sh: 0, acc: 0, bg: 0 });
+  const rand = g => {
+    const hp = g === 'm' ? [3, 6, 7, 3, 6] : [0, 1, 2, 4, 5, 7, 0];
+    return { hair: U.pick(hp), hc: U.chance(.7) ? U.pick([0, 1, 2]) : U.ri(0, 7), face: U.ri(0, 2), skin: U.chance(.8) ? U.ri(0, 2) : U.ri(0, 5), eyes: U.ri(0, 3), expr: U.ri(0, 5), outfit: U.ri(0, 5), oc: U.ri(0, 7), bt: g === 'm' ? U.ri(1, 2) : U.ri(0, 2), bc: U.ri(0, 7), sh: U.ri(0, 2), acc: U.chance(.45) ? 0 : U.ri(1, 5), bg: U.ri(0, 4) };
+  };
+  const fix = (a, g) => Object.assign(def(g || 'f'), a || {});
+
+  function eye(cx, dir, st, mode, id) {
+    const cy = 98;
+    if (mode === 'happy' || (mode === 'wink' && dir === 1)) return `<path d="M${cx - 9} ${cy + 3} Q${cx} ${cy - 9} ${cx + 9} ${cy + 3}" stroke="#4a2f2b" stroke-width="3" fill="none" stroke-linecap="round"/>`;
+    let [rx, ry, rot, ir] = EYES[st]; if (mode === 'big') { rx += 1; ry += 1.4; ir += 1; }
+    const lash = `M${cx - rx - 1.5} ${cy - 1} Q${cx} ${cy - ry * 1.55} ${cx + rx + 1.5} ${cy - 1}`;
+    return `<g transform="rotate(${-dir * rot} ${cx} ${cy})"><ellipse cx="${cx}" cy="${cy}" rx="${rx}" ry="${ry}" fill="#fff"/><ellipse cx="${cx}" cy="${cy + 1}" rx="${ir}" ry="${Math.min(ry, ir * 1.12)}" fill="url(#${id}i)"/><ellipse cx="${cx}" cy="${cy + 1.5}" rx="${ir * .5}" ry="${Math.min(ry, ir * 1.12) * .55}" fill="#1c1210"/><circle cx="${cx + ir * .38}" cy="${cy - ir * .32}" r="${ir * .3}" fill="#fff"/><circle cx="${cx - ir * .35}" cy="${cy + ir * .5}" r="${ir * .15}" fill="#fff" opacity=".9"/><path d="${lash}" stroke="#2c1c1a" stroke-width="2.6" fill="none" stroke-linecap="round"/></g>`;
+  }
+
+  /* 半身（頭像用）：肩膀到胸口 */
+  function bust(o, oc, od, sk) {
+    let b = `<path d="M18 200 Q22 156 66 150 L134 150 Q178 156 182 200Z" fill="${oc}"/>`;
+    return b + topDetail(o, oc, od, sk);
+  }
+  function topDetail(o, oc, od, sk) {
+    if (o === 0) return `<path d="M80 150 Q100 172 120 150Z" fill="${sk}"/>`;
+    if (o === 1) return `<path d="M76 150 Q100 166 124 150 Q124 140 100 144 Q76 140 76 150Z" fill="${od}"/><path d="M88 160 L88 184 M112 160 L112 184" stroke="#fff" stroke-width="2.4" stroke-linecap="round"/>`;
+    if (o === 2) return `<path d="M18 200 Q22 156 66 150 L134 150 Q178 156 182 200Z" fill="#fff"/><path d="M82 150 L100 168 L118 150 L112 146 L100 156 L88 146Z" fill="#eee9f8" stroke="#cfc8e8"/><path d="M94 166 L106 166 L110 182 L100 178 L90 182Z" fill="${oc === '#ffffff' ? '#86adff' : oc}"/>`;
+    if (o === 3) return `<path d="M88 150 L100 184 L112 150Z" fill="#fff"/><path d="M80 150 L100 190 L90 150Z M120 150 L100 190 L110 150Z" fill="${od}"/>`;
+    if (o === 4) return `<path d="M100 156 L100 200" stroke="${od}" stroke-width="2.4"/><path d="M78 150 L100 160 L122 150 L122 142 L78 142Z" fill="${od}"/>`;
+    return `<path d="M80 150 Q100 170 120 150Z" fill="${sk}"/><g fill="#fff6b0"><path d="M50 180 l3 -7 l3 7 l-7 -4 l8 0z"/><circle cx="148" cy="176" r="3"/><circle cx="64" cy="164" r="2"/><circle cx="136" cy="190" r="2.4"/></g>`;
+  }
+  /* 全身：腿、鞋、下著、上衣、手臂 */
+  function full(a, sk, skd) {
+    const oc = OUTC[a.oc], od = shade(oc, .82), bc = BOTC[a.bc], bd = shade(bc, .8);
+    let s = '';
+    const longPants = a.bt === 2, shorts = a.bt === 1;
+    // 腿
+    if (!longPants) {
+      const top = shorts ? 238 : 250;
+      s += `<rect x="85" y="${top}" width="13" height="${284 - top}" rx="6" fill="${sk}"/><rect x="102" y="${top}" width="13" height="${284 - top}" rx="6" fill="${sk}"/>`;
+    }
+    // 鞋
+    const shc = a.sh === 0 ? '#fff' : a.sh === 1 ? '#3b2a2e' : '#5b3a2e';
+    if (a.sh === 2) s += `<rect x="82" y="266" width="19" height="25" rx="7" fill="${shc}"/><rect x="99" y="266" width="19" height="25" rx="7" fill="${shc}"/>`;
+    else s += `<ellipse cx="91" cy="287" rx="14" ry="7" fill="${shc}" stroke="${a.sh === 0 ? '#cfc8e0' : 'none'}"/><ellipse cx="109" cy="287" rx="14" ry="7" fill="${shc}" stroke="${a.sh === 0 ? '#cfc8e0' : 'none'}"/>${a.sh === 0 ? `<path d="M84 286 h12 M102 286 h12" stroke="${oc === '#ffffff' ? '#ff8cc0' : oc}" stroke-width="2.2" stroke-linecap="round"/>` : ''}`;
+    // 下著
+    if (a.bt === 0) s += `<path d="M66 212 L134 212 L148 254 L52 254Z" fill="${bc}"/><path d="M80 214 L72 254 M100 214 L100 254 M120 214 L128 254" stroke="${bd}" stroke-width="1.6" opacity=".6"/>`;
+    if (a.bt === 1) s += `<path d="M68 212 L132 212 L134 244 L102 244 L100 232 L98 244 L66 244Z" fill="${bc}"/>`;
+    if (a.bt === 2) s += `<path d="M68 212 L132 212 L130 288 L104 288 L100 226 L96 288 L70 288Z" fill="${bc}"/><path d="M100 226 L100 250" stroke="${bd}" stroke-width="1.5" opacity=".5"/>`;
+    // 手臂
+    s += `<path d="M62 158 Q50 160 52 190 L52 206 Q58 210 66 206 L68 170Z" fill="${oc}"/><path d="M138 158 Q150 160 148 190 L148 206 Q142 210 134 206 L132 170Z" fill="${oc}"/><circle cx="57" cy="212" r="7" fill="${sk}"/><circle cx="143" cy="212" r="7" fill="${sk}"/>`;
+    // 上衣（用半身細節壓縮到軀幹寬度）
+    s += `<path d="M66 156 Q100 148 134 156 L134 216 L66 216Z" fill="${a.outfit === 2 ? '#fff' : oc}"/>`;
+    s += `<g transform="translate(57 0) scale(.43 1)">${topDetail(a.outfit, oc, od, sk)}</g>`;
+    if (a.outfit === 0 || a.outfit === 5) s = s; // 領口已由 topDetail 畫出
+    s += `<rect x="66" y="210" width="68" height="6" rx="3" fill="${od}" opacity=".35"/>`;
+    return s;
+  }
+
+  function svg(a, px, g, isFull) {
+    a = fix(a, g); px = px || 96;
+    const sk = SKIN[a.skin], hc = HAIRC[a.hc], oc = OUTC[a.oc], od = shade(oc, .82), bg = BGC[a.bg], skd = shade(sk, .9), hd = shade(hc, .78), hl = shade(hc, 1.35);
+    const id = 'av' + Math.floor(Math.random() * 1e6);
+    const ex = EXPR[a.expr] || EXPR[0];
+    const faces = [
+      `M52 92 Q52 44 100 44 Q148 44 148 92 Q148 130 100 142 Q52 130 52 92Z`,
+      `M54 88 Q54 44 100 44 Q146 44 146 88 Q146 128 100 146 Q54 128 54 88Z`,
+      `M54 80 Q54 52 100 46 Q146 52 146 80 Q146 106 124 134 Q100 152 76 134 Q54 106 54 80Z`
+    ];
+    const face = faces[a.face];
+    const ears = a.face === 2 ? '' : `<ellipse cx="52" cy="98" rx="6" ry="8" fill="${sk}"/><ellipse cx="148" cy="98" rx="6" ry="8" fill="${sk}"/>`;
+    const bw = [`<path d="M69 82 L89 81 M111 81 L131 82" stroke="${hd}" stroke-width="2.8" stroke-linecap="round"/>`,
+      `<path d="M69 85 Q79 76 90 82 M110 82 Q121 76 131 85" stroke="${hd}" stroke-width="2.8" fill="none" stroke-linecap="round"/>`][ex[0]];
+    const mo = [`<path d="M92 123 Q100 131 108 123" stroke="#c85b68" stroke-width="2.4" fill="none" stroke-linecap="round"/>`,
+      `<ellipse cx="100" cy="125" rx="4.2" ry="2.8" fill="#e07a85"/>`,
+      `<path d="M91 126 Q100 124 109 126" stroke="#c85b68" stroke-width="2.4" fill="none" stroke-linecap="round"/>`,
+      `<path d="M89 120 Q100 138 111 120Z" fill="#d0606c"/><path d="M92 121.5 Q100 126 108 121.5" stroke="#fff" stroke-width="2.4" fill="none"/>`][ex[1]];
+    let acc = '', accBack = '';
+    if (a.acc === 1) acc = `<g fill="#ffffff22" stroke="#3a3340" stroke-width="2"><circle cx="78" cy="98" r="14"/><circle cx="122" cy="98" r="14"/><path d="M92 97 Q100 93 108 97" fill="none"/></g>`;
+    if (a.acc === 2) acc = `<g fill="#f8cd55" stroke="#e0aa2a"><circle cx="52" cy="112" r="3.6"/><circle cx="148" cy="112" r="3.6"/></g><path d="M52 115 l0 8 M148 115 l0 8" stroke="#f8cd55" stroke-width="1.8"/>`;
+    if (a.acc === 3) acc = `<g transform="translate(64 54) rotate(-20)"><rect x="-10" y="-2.6" width="20" height="5" rx="2.5" fill="#ff8cc0"/><rect x="-10" y="3" width="20" height="5" rx="2.5" fill="#86adff"/></g>`;
+    if (a.acc === 4) acc = `<g transform="translate(142 56)"><path d="M0 0 L-16 -9 Q-20 0 -16 9Z M0 0 L16 -9 Q20 0 16 9Z" fill="#ff8cc0" stroke="#e5629f"/><circle r="4" fill="#ff5d9f"/></g>`;
+    if (a.acc === 5) accBack = '';
+    const headband = a.acc === 5 ? `<path d="M52 66 Q100 34 148 66" stroke="#3a3340" stroke-width="5" fill="none" stroke-linecap="round"/><path d="M58 60 L52 40 L72 52Z M142 60 L148 40 L128 52Z" fill="#3a3340"/><path d="M58 56 L56 46 L66 52Z M142 56 L144 46 L134 52Z" fill="#ff9fc4"/>` : '';
+    let extra = '';
+    if (a.hair === 5) extra = `<circle cx="100" cy="26" r="17" fill="${hc}"/><path d="M90 20 Q100 14 110 20" stroke="${hl}" stroke-width="3" fill="none" opacity=".5" stroke-linecap="round"/>`;
+    if (a.hair === 4) extra = '';
+    const tie = a.hair === 4 ? `<circle cx="52" cy="92" r="4.8" fill="#ff8cc0"/><circle cx="148" cy="92" r="4.8" fill="#ff8cc0"/>` : '';
+    const defs = `<clipPath id="${id}"><circle cx="100" cy="${isFull ? 150 : 100}" r="${isFull ? 300 : 100}"/></clipPath><clipPath id="${id}f"><path d="${face}"/></clipPath>
+<linearGradient id="${id}g" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="${bg[0]}"/><stop offset="1" stop-color="${bg[1]}"/></linearGradient>
+<radialGradient id="${id}i" cx=".5" cy=".3" r=".8"><stop offset="0" stop-color="#b87a52"/><stop offset=".6" stop-color="#6a3f2c"/><stop offset="1" stop-color="#2e1a14"/></radialGradient>
+<linearGradient id="${id}s" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="${sk}"/><stop offset="1" stop-color="${skd}"/></linearGradient>`;
+    const H = isFull ? 300 : 200;
+    const bodyPart = isFull ? full(a, sk, skd) : bust(a.outfit, oc, od, sk);
+    const neck = `<rect x="88" y="132" width="24" height="30" rx="8" fill="${skd}"/>`;
+    const bgEl = isFull ? `<rect width="200" height="300" rx="18" fill="url(#${id}g)"/><ellipse cx="100" cy="292" rx="52" ry="6" fill="#000" opacity=".08"/>` : `<rect width="200" height="200" fill="url(#${id}g)"/>`;
+    return `<svg class="avsvg${isFull ? ' full' : ''}" viewBox="0 0 200 ${H}" width="${px}" height="${isFull ? Math.round(px * 1.5) : px}" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="角色形象"><defs>${defs}</defs><g ${isFull ? '' : `clip-path="url(#${id})"`}>${bgEl}
+${extra}<path d="${BACK[a.hair]}" fill="${hc}"/><path d="${BACK[a.hair]}" fill="none" stroke="${hd}" stroke-width="1" opacity=".5"/>${neck}${bodyPart}${ears}
+<path d="${face}" fill="url(#${id}s)" stroke="#e0a58e" stroke-width="1" stroke-opacity=".6"/>
+<g clip-path="url(#${id}f)"><path d="${FRONT[a.hair]}" transform="translate(0 7)" fill="#7a3b2e" opacity=".14"/></g>
+<ellipse cx="72" cy="114" rx="10" ry="6" fill="#ff7a8a" opacity="${ex[2]}"/><ellipse cx="128" cy="114" rx="10" ry="6" fill="#ff7a8a" opacity="${ex[2]}"/>
+${eye(78, -1, a.eyes, ex[3], id)}${eye(122, 1, a.eyes, ex[3], id)}${bw}<path d="M98.5 110 Q100 112.5 101.5 110" stroke="#c9917a" stroke-width="1.8" fill="none" stroke-linecap="round"/>${mo}${acc}
+<path d="${FRONT[a.hair]}" fill="${hc}"/><path d="${FRONT[a.hair]}" fill="none" stroke="${hd}" stroke-width="1.2" opacity=".55"/>
+<path d="M68 52 Q86 42 106 46" stroke="${hl}" stroke-width="4.5" fill="none" opacity=".45" stroke-linecap="round"/><path d="M118 48 Q130 50 138 58" stroke="${hl}" stroke-width="3" fill="none" opacity=".3" stroke-linecap="round"/>${tie}${headband}</g></svg>`;
+  }
+
+  const PARTS = [
+    ['〈臉〉', null], ['face', '臉型', FACE_N], ['skin', '膚色', SKIN], ['eyes', '眼睛', EYE_N],
+    ['〈髮型〉', null], ['hair', '髮型', HAIR_N], ['hc', '髮色', HAIRC],
+    ['〈表情〉', null], ['expr', '表情', EXPR_N],
+    ['〈服裝〉', null], ['outfit', '上衣', OUT_N], ['oc', '上衣色', OUTC],
+    ['〈配件與背景〉', null], ['acc', '配件', ACC_N], ['bg', '背景', BGC.map(b => b[0])]
+  ];
+  function editor(a) {
+    const rows = PARTS.map(([k, label, arr]) => {
+      if (!arr) return `<div class="avh">${k.replace(/[〈〉]/g, '')}</div>`;
+      const isColor = typeof arr[0] === 'string' && arr[0][0] === '#';
+      const chips = arr.map((v, i) => isColor
+        ? `<button type="button" class="avc ${a[k] === i ? 'on' : ''}" data-act="av.set" data-k="${k}" data-v="${i}" style="background:${v}" aria-label="${label}${i + 1}"></button>`
+        : `<button type="button" class="avt ${a[k] === i ? 'on' : ''}" data-act="av.set" data-k="${k}" data-v="${i}">${v}</button>`).join('');
+      return `<div class="avrow"><b>${label}</b><div class="avopts">${chips}</div></div>`;
+    }).join('');
+    return `<div class="aved"><div class="avprev" id="avprev">${svg(a, 150, null, false)}</div><div class="avbtns"><button type="button" class="btn ghost sm" data-act="av.rand">🎲 隨機造型</button></div>${rows}</div>`;
+  }
+  /* 依名字雜湊產生固定的隨機外觀（不動用遊戲亂數，不必存檔；同一個人每次看到都一樣） */
+  const cache = {};
+  function seeded(name, g) {
+    const salt = (typeof I !== 'undefined' && I && I.name) ? I.name + (I.bd ? I.bd.m * 31 + I.bd.d : '') : '';
+    const key = salt + '|' + name + '|' + g;
+    if (cache[key]) return cache[key];
+    let h = 2166136261; for (let i = 0; i < key.length; i++) { h ^= key.charCodeAt(i); h = Math.imul(h, 16777619); }
+    const r = () => { h |= 0; h = h + 0x6D2B79F5 | 0; let x = Math.imul(h ^ h >>> 15, 1 | h); x = x + Math.imul(x ^ x >>> 7, 61 | x) ^ x; return ((x ^ x >>> 14) >>> 0) / 4294967296; };
+    const ri = (a, b) => a + Math.floor(r() * (b - a + 1)), pk = arr => arr[Math.floor(r() * arr.length)];
+    const hp = g === 'm' ? [3, 6, 7, 3, 6] : [0, 1, 2, 4, 5, 7, 0];
+    return cache[key] = { hair: pk(hp), hc: r() < .65 ? pk([0, 1, 2]) : ri(0, 7), face: ri(0, 2), skin: r() < .85 ? ri(0, 2) : ri(0, 5), eyes: ri(0, 3), expr: ri(0, 5), outfit: ri(0, 5), oc: ri(0, 7), bt: 0, bc: 0, sh: 0, acc: r() < .5 ? 0 : ri(1, 5), bg: ri(0, 3) };
+  }
+  const mini = (name, g, px) => svg(seeded(name, g || 'f'), px || 44, g);
+  return { svg, def, rand, fix, editor, seeded, mini };
+})();
+
+ACT['av.set'] = (d, el) => {
+  const dr = App.draft; if (!dr) return; dr.av = dr.av || Avatar.def(dr.g);
+  dr.av[d.k] = +d.v; dr.avTouched = true;
+  el.parentNode.querySelectorAll('button').forEach(b => b.classList.toggle('on', b === el));
+  const p = document.getElementById('avprev'); if (p) p.innerHTML = Avatar.svg(dr.av, 150, null, false);
+};
+ACT['av.rand'] = () => {
+  const dr = App.draft; if (!dr) return; App.syncForm(); dr.av = Avatar.rand(dr.g); dr.avTouched = true;
+  const sc = document.querySelector('.cc-modal'); const top = sc ? sc.scrollTop : 0;
+  App.idolForm(); const sc2 = document.querySelector('.cc-modal'); if (sc2) sc2.scrollTop = top;
+};
+
 /* ===== data.js ===== */
 /* =========================================================
  * DATA 模組：K-POP 背景的靜態資料
@@ -432,7 +637,7 @@ DATA.ENDINGS = {
 const aged = (s, a, b) => s.age >= a && s.age <= b;
 DATA.EVENTS = [
   { id: 'intro', title: '簽約的那一天', once: 1, auto: 1,
-    text: s => (s.nat === 'kr' ? '{family}出身的你，在 {co} 的試鏡中被留了下來。' : `{family}出身的你，在${DATA.NATS[s.nat].city}的海選中被 {co} 的星探看中，獨自拎著行李來到首爾。\n\n你的韓語${s.kor < 20 ? '幾乎是從零開始' : '只有基礎'}，但你相信舞台是共通的語言。`) + '\n\n合約攤在桌上，經紀人{meiling}把筆遞給你：「練習生每個月都有考核，考不好就會被淘汰。十四歲到十六歲是出道的黃金期，抓不住，就沒有下一次。」\n\n你今年十二歲。窗外的{room}亮著燈，有人還在跳舞。',
+    text: s => (s.nat === 'kr' ? '{family}出身的你，在 {co} 的試鏡中被留了下來。' : `{family}出身的你，在${DATA.NATS[s.nat].city}的海選中被 {co} 的星探看中，獨自拎著行李來到首爾。\n\n你的韓語${s.kor < 20 ? '幾乎是從零開始' : '只有基礎'}，但你相信舞台是共通的語言。`) + '\n\n合約攤在桌上，經紀人{meiling}把筆遞給你：「練習生每個月都有考核，考不好就會被淘汰。十四歲到十六歲是出道的黃金期，抓不住，就沒有下一次。」\n\n你今年十三歲。窗外的{room}亮著燈，有人還在跳舞。',
     choices: [
       { t: '用力簽下名字：「我一定會出道！」', p: 'diligent', txt: '{meiling}挑了挑眉：「口氣不小。那就讓我看看。」', fx: { grit: 5, mood: 5, aff: { meiling: 3 } } },
       { t: '問：「{room}裡那個人是誰？」', p: 'social', txt: '「那是{xiaen}，你的同期。去打個招呼吧。」', fx: { aff: { xiaen: 8 } } },
@@ -2260,6 +2465,289 @@ Object.assign(DATA.ACTIONS, {
   DATA.EVENTS.push(...E);
 })();
 
+/* ===== data_ev4.js ===== */
+/* ============================================================
+   事件擴充 IV：入社與初期生活、日常訓練課程、考核與老師指導。
+   aud_1 / aud_2 在新遊戲開頭依序出現（徵選 → 面試 → 簽約），
+   其後的宿舍、室友、同期、文化、飲食事件由 followQ 在前兩週內依序送出。
+   ============================================================ */
+(function () {
+  const pre = s => s.stage <= 1;
+  const foreign = s => s.nat !== 'kr';
+  const E = [];
+
+  /* ---------------- 一、入社與初期生活 ---------------- */
+  E.push(
+    { id: 'aud_1', title: s => foreign(s) ? '線上試鏡與海外選拔' : '公司公開徵選', once: true, auto: 1, w: 0,
+      text: s => foreign(s)
+        ? `你把一支一分半鐘的試鏡影片上傳到 {co} 的海外徵選網站。三週後，你收到通知：入選${DATA.NATS[s.nat].city}的線上第二階段。視訊那頭的評審微笑著說：「請展示你最有把握的一項。」\n\n徵選項目有：舞蹈、歌唱、外貌上鏡感，以及自選才藝。`
+        : `{co} 的公開徵選日，大樓門口排了整條街的人。你領到號碼牌，被帶進一間不大的試鏡室。三位評審坐在長桌後面，其中一位抬起頭：「請展示你最有把握的一項。」\n\n徵選項目有：舞蹈、歌唱、外貌上鏡感，以及自選才藝。`,
+      choices: [
+        { t: '跳一段舞蹈', p: 'diligent', check: { st: 'dance', diff: 12 }, out: {
+          g: ['你的節奏感讓評審停下了筆。「基礎很乾淨。」其中一位低聲說。', { dance: 1.5, eval: 4, mood: 6, flag: 'aud_dance' }],
+          k: ['舞步中規中矩，評審在表格上打了勾。', { dance: .6, eval: 1 }],
+          f: ['你在轉身時忘了動作，笑著重來了一次。評審記下了你的笑容。', { eval: -1, mood: -3, grit: 1 }] } },
+        { t: '唱一首歌', p: 'gentle', check: { st: 'vocal', diff: 12 }, out: {
+          g: ['你唱完最後一個音，試鏡室安靜了兩秒。「聲音很有辨識度。」', { vocal: 1.5, eval: 4, mood: 6, flag: 'aud_vocal' }],
+          k: ['音準穩定，沒有大的失誤。', { vocal: .6, eval: 1 }],
+          f: ['緊張讓你的聲音發抖，評審客氣地說：「再放鬆一點。」', { eval: -1, mood: -3, grit: 1 }] } },
+        { t: '展示自選才藝（饒舌／演技）', p: 'rebel', check: { st: 'rap', diff: 12 }, out: {
+          g: ['你的即興讓評審忍不住笑出來：「這個孩子有點意思。」', { rap: 1.2, acting: .8, eval: 4, mood: 6, flag: 'aud_talent' }],
+          k: ['才藝表演雖不完美，但夠特別。', { rap: .5, acting: .4, eval: 1 }],
+          f: ['詞卡了一下，你乾脆笑著鞠躬，氣氛有點尷尬。', { eval: -1, mood: -3 }] } },
+        { t: '靠鏡頭感與魅力打動評審', p: 'social', check: { st: 'charm', diff: 12 }, out: {
+          g: ['鏡頭一對準你，攝影師忍不住多拍了幾張。「上鏡。」評審簡短地說。', { charm: 1.5, eval: 4, mood: 6, looks: 1, flag: 'aud_look' }],
+          k: ['你很自然，評審對你留下了印象。', { charm: .6, eval: 1 }],
+          f: ['你的表情太僵硬，評審提醒：「放輕鬆，笑一下。」', { eval: -1, mood: -3 }] } }
+      ] },
+    { id: 'aud_2', title: '第二輪面試', once: true, auto: 1, w: 0,
+      text: s => `通過第一輪後，你被帶到十二樓的會議室。面試官是一位戴著金邊眼鏡的中年男子，桌上放著你的資料。\n\n「為什麼想成為偶像？」他問。${foreign(s) ? '\n\n你意識到，這一題要用韓語回答。' : ''}`,
+      choices: [
+        { t: '「因為我想站在最大的舞台上。」', p: 'diligent', txt: s => '面試官點了點頭：「野心不是壞事，只要你付得起代價。」', fx: { grit: 3, eval: 2 } },
+        { t: '「因為音樂是我唯一不會膩的事。」', p: 'gentle', txt: '面試官的語氣放軟了一些：「這是很多人說不出口的理由。」', fx: { res: 2, mood: 4, eval: 2 } },
+        { t: '「因為我覺得自己會比現在的偶像更好。」', p: 'rebel', check: { st: 'charm', diff: 14 }, out: {
+          g: ['面試官笑了：「自信很好。我們會看你能不能兌現它。」', { grit: 2, eval: 3, scandal: 0 }],
+          k: ['面試官皺了皺眉，沒有多說，只在表格上寫了一筆。', { eval: 0 }],
+          f: ['面試官冷冷地說：「那就證明給我看。」房間的氣氛涼了下來。', { eval: -2, stress: 3 }] } },
+        { t: s => foreign(s) ? '用還不流利的韓語，認真回答' : '把早就準備好的稿子流暢地背出來', p: 'social', check: { st: 'charm', diff: 14 }, out: {
+          g: ['你的態度讓面試官笑了：「你的韓語不完美，但很誠懇。」', { charm: .6, kor: 2, eval: 3, mood: 4 }],
+          k: ['回答中規中矩，沒有出錯。', { kor: 1, eval: 1 }],
+          f: ['緊張讓你說錯了幾個詞，你紅著臉重新來過。', { kor: 1, eval: -1, mood: -3 }] } }
+      ] },
+
+    { id: 'dorm_move', title: '搬進練習生宿舍', once: true, w: 0, cond: pre,
+      text: '{meiling}帶你搭電梯到五樓：「這就是宿舍。四人房，上下鋪，浴室輪流用。」門一打開，你看到的是堆滿鞋盒的走廊、牆上貼滿的課表，以及空氣裡淡淡的泡麵味。',
+      choices: [
+        { t: '先把床位整理好，再去打招呼', p: 'diligent', txt: '你把行李依序歸位，連書桌都擦了一遍。後來你聽見有人小聲說：「新來的很整齊。」', fx: { mood: 3, eval: 1, grit: 1 } },
+        { t: '直接放下行李，找室友聊天', p: 'social', txt: '你敲了敲每一間房的門。有人冷淡，有人熱情，你記下了所有人的名字。', fx: { mood: 5, aff: { xiaen: 3, zhihao: 2, yiqing: 2 } } },
+        { t: '在窗邊站了一會兒，看著首爾的夜景', p: 'gentle', txt: '遠處的塔樓亮著紅燈。你深呼吸，把心裡的緊張一點點壓下去。', fx: { mood: 4, res: 1 } }
+      ] },
+    { id: 'dorm_roommate', title: '分配室友', once: true, w: 0, cond: pre,
+      text: '宿舍管理員宣布了房間分配表。你的室友是：{xiaen}、{zhihao}。{xiaen}把行李箱往你旁邊一放：「請多指教。」{zhihao}只是點了點頭，繼續低頭看手機。',
+      choices: [
+        { t: '主動和{zhihao}搭話', p: 'social', check: { st: 'charm', diff: 14 }, out: {
+          g: ['{zhihao}愣了一下，竟然笑著把手機遞給你：「你看這首歌。」兩個人很快聊了起來。', { aff: { zhihao: 8, xiaen: 3 }, mood: 6 }],
+          k: ['{zhihao}簡短地回了你幾句，但沒有完全拒絕。', { aff: { zhihao: 3 } }],
+          f: ['{zhihao}回了一句「還好」，就沒有再說話。', { aff: { zhihao: 0 }, mood: -2 }] } },
+        { t: '跟{xiaen}約好輪流用浴室的時間', p: 'diligent', txt: '{xiaen}鬆了口氣：「太好了，我之前的宿舍每天早上都在吵這個。」', fx: { aff: { xiaen: 6 }, team: 2 } },
+        { t: '各自安好，保持距離', p: 'rebel', txt: '你不想太快建立關係。宿舍的氣氛有點安靜，但你覺得自在。', fx: { stress: -2, aff: { xiaen: -1 } } }
+      ] },
+    { id: 'peer_meet', title: '認識其他練習生', once: true, w: 0, cond: pre,
+      text: '今天是第一次全體練習生集合。大約有二十個人坐在練習室的地板上，有人是舞蹈比賽的冠軍，有人在國外拿過音樂獎。{meiling}說：「接下來三年，你們既是同期，也是對手。」',
+      choices: [
+        { t: '主動向每個人自我介紹', p: 'social', txt: '你一個個握手、報名字。有人覺得你太熱情，也有人記住了你。', fx: { charm: .4, mood: 4, aff: { xiaen: 3, zhihao: 2, yiqing: 3, xiaole: 0 }, team: 2 } },
+        { t: '觀察每個人的練習方式', p: 'diligent', txt: '你默默記下了誰的舞最乾淨、誰的聲音最有力。你開始知道，誰會是你的對手。', fx: { eval: 1, grit: 1, acad: 1 } },
+        { t: '直接宣布：「我會成為第一名。」', p: 'rebel', check: { st: 'charm', diff: 16 }, out: {
+          g: ['房間裡一陣沉默，接著有人笑了：「很好。我也是。」你交到了第一個對手兼朋友。', { grit: 3, aff: { yiqing: 6 }, mood: 6 }],
+          k: ['有人翻白眼，有人點頭。你知道自己被記住了。', { grit: 2 }],
+          f: ['你的話被當成炫耀，好幾個人開始刻意和你保持距離。', { team: -3, grit: 2, mood: -4 }] } }
+      ] },
+    { id: 'culture_start', title: s => foreign(s) ? '韓文與韓國文化的第一課' : '前輩教的規矩', once: true, w: 0, cond: pre,
+      text: s => foreign(s)
+        ? '練習生語言課的老師拿著課本走進教室：「從今天開始，你們在公司只能說韓語。敬語、半語、前後輩的稱呼，一個都不能錯。」你翻開課本，上面的文字像是一張張陌生的地圖。'
+        : '宿舍學長一邊擦著頭髮一邊教你：「見到前輩要九十度鞠躬，進門先敬禮，吃飯要等前輩動筷。這些公司不會寫在合約裡，但每個人都會記著。」',
+      choices: [
+        { t: '把每一條規矩抄進筆記本', p: 'diligent', txt: s => foreign(s) ? '你把敬語的變化、稱呼的規則整整抄了五頁。第二天，你已經可以用敬語和老師道早安。' : '你記得比任何人都仔細，連鞠躬的角度都練了。', fx: { kor: 3, eval: 1, acad: 1, grit: 1 } },
+        { t: '向宿舍的同期請教', p: 'social', txt: '{zhihao}邊笑邊糾正你的發音：「不是這樣，要輕一點。」你們一起笑了很久。', fx: { kor: 2, mood: 4, aff: { zhihao: 4 } } },
+        { t: '先講最重要的幾句，其他邊做邊學', p: 'rebel', check: { st: 'charm', diff: 16 }, out: {
+          g: ['你靠著表情和手勢，竟然讓所有人都聽懂了。前輩笑著說：「聰明。」', { kor: 2, charm: .4, mood: 4 }],
+          k: ['偶爾卡住，但還能溝通。', { kor: 1.5 }],
+          f: ['你把半語說成了敬語，場面尷尬了十秒。', { kor: 1, mood: -3, eval: -1 }] } }
+      ] },
+    { id: 'food_climate', title: '適應首爾的飲食與天氣', once: true, w: 0, cond: pre,
+      text: s => {
+        const m = Cal.date(s.day).m;
+        const w = (m >= 11 || m <= 2) ? '首爾的冬天乾冷得像刀子，你的嘴唇一天到晚都在裂。' : (m >= 6 && m <= 8) ? '梅雨季悶熱潮濕，練習室的地板甚至會起水氣。' : '早晚溫差很大，你連續打了三天的噴嚏。';
+        return `${w}\n\n宿舍的伙食以泡菜湯、白飯、涼拌菜為主，${foreign(s) ? '和你從小吃慣的味道完全不同。' : '你已經習慣了，但連續吃了一週，還是有點膩。'}`;
+      },
+      choices: [
+        { t: '乖乖吃，慢慢適應', p: 'diligent', txt: '你一口一口把飯吃完。一個月後，你發現自己甚至開始想念宿舍的泡菜湯。', fx: { health: 1, grit: 1, stam: -3 } },
+        { t: '偷偷買家鄉的零食來調劑', p: 'social', txt: s => foreign(s) ? '你從家人寄來的包裹裡拿出熟悉的零食，分給室友。大家一邊吃一邊聊得很開心。' : '你買了一整袋零食，和室友分著吃。', fx: { mood: 8, money: -150, team: 2, aff: { xiaen: 3, zhihao: 3 } } },
+        { t: '和宿舍阿姨請教怎麼照顧身體', p: 'gentle', txt: '宿舍阿姨塞給你一罐薑茶：「在這裡，身體是自己的。」你記在心裡。', fx: { health: 2, mood: 4, support: 1 } }
+      ] },
+    { id: 'homesick_night', title: '想家的夜晚', cd: 160, w: 4, cond: s => pre(s) && foreign(s) && s.age <= 17,
+      text: '深夜的宿舍，窗外下著雨。你翻出手機，看著家人傳來的照片，忽然覺得首爾離家好遠。',
+      choices: [
+        { t: '打視訊電話給家人', p: 'gentle', txt: '螢幕那頭的媽媽擦著眼角：「不要逞強，累了就回來。」你笑著說「我沒事」，卻哭了。', fx: { mood: 6, support: 3, stress: -6 } },
+        { t: '把心情寫進日記裡', p: 'diligent', txt: '你寫了三頁，寫到最後，字跡已經分不清是淚還是水氣。', fx: { mood: 2, res: 2, grit: 1 } },
+        { t: '起床去練習室，不想胡思亂想', p: 'rebel', txt: '你在空無一人的練習室跳到天亮。身體很累，但腦袋終於安靜了。', fx: { dance: .5, stam: -10, stress: -4, mood: 3 } }
+      ] },
+    { id: 'chuseok_dorm', title: '中秋節的宿舍', cd: 365, w: 3, cond: s => pre(s) && Cal.date(s.day).m === 9,
+      text: '中秋節放假的日子，宿舍幾乎空了。回得了家的人都回家了，只剩下幾個練習生坐在客廳。{xiaen}拿出一盒松糕：「不然……我們自己過節？」',
+      choices: [
+        { t: '一起煮火鍋、看電影', p: 'social', txt: '你們熱鬧地過了一個不像節日的節日。那晚，每個人都說了一句平常不會說的真心話。', fx: { mood: 10, team: 4, stress: -8, aff: { xiaen: 5, zhihao: 3, yiqing: 3 } } },
+        { t: '趁著空無一人的練習室加練', p: 'diligent', txt: '練習室難得安靜。你把整支舞從頭到尾跳了二十遍。', fx: { dance: .8, vocal: .4, grit: 1, mood: -2 } }
+      ] }
+  );
+
+  /* ---------------- 室友與同期：生活摩擦與關係 ---------------- */
+  E.push(
+    { id: 'roommate_noise', title: '室友的深夜練習', cd: 130, w: 4, cond: pre, pickNpc: ['xiaen', 'zhihao', 'yiqing'],
+      text: '凌晨兩點，{npc}還在宿舍裡小聲練習發聲，每唱一句就停頓一下。你翻了個身，明天一早還有月考的排練。',
+      choices: [
+        { t: '戴上耳塞，睡自己的', txt: '你睡得不太安穩，但沒有說什麼。隔天早上，{npc}尷尬地說：「昨天吵到你了吧？」', fx: { stam: -3, aff: { $npc: 0 } } },
+        { t: '起床陪{npc}練一會兒，再一起睡', p: 'diligent', txt: '你們把一首歌的和聲抓得更準。回去睡時已經快四點，但兩個人都很開心。', fx: { vocal: .6, stam: -8, aff: { $npc: 6 } } },
+        { t: '直接請{npc}小聲一點', p: 'rebel', check: { st: 'charm', diff: 28 }, out: {
+          g: ['{npc}笑著點頭：「好啦好啦，我到客廳去練。」關係反而更近了。', { aff: { $npc: 3 }, stam: 3 }],
+          k: ['{npc}有點尷尬，但還是安靜了。', { aff: { $npc: 0 } }],
+          f: ['{npc}沉下臉：「那我去哪練？」隔天一整天都沒有和你說話。', { aff: { $npc: -4 }, mood: -3 }] } }
+      ] },
+    { id: 'roommate_borrow', title: '借東西的室友', cd: 120, w: 4, cond: pre, pickNpc: ['xiaen', 'zhihao', 'yiqing'],
+      text: '{npc}拎著你的外套問：「這件可以借我穿嗎？明天要拍宣傳照。」你知道那是你最喜歡的一件。',
+      choices: [
+        { t: '大方借他', p: 'gentle', txt: '{npc}穿著你的外套被拍進了花絮。他悄悄把一杯咖啡放在你的書桌上。', fx: { aff: { $npc: 5 }, mood: 2 } },
+        { t: '借，但請他當天一定要洗好還', p: 'diligent', txt: '{npc}笑著點頭，還真的洗得乾乾淨淨送回來。', fx: { aff: { $npc: 2 }, eval: 0 } },
+        { t: '拒絕：「這件對我很重要。」', p: 'rebel', txt: '{npc}聳聳肩：「沒關係，我跟別人借。」你們之間有了淡淡的距離。', fx: { aff: { $npc: -3 } } }
+      ] },
+    { id: 'roommate_clean', title: '誰來倒垃圾', cd: 100, w: 5, cond: pre, pickNpc: ['xiaen', 'zhihao', 'yiqing'],
+      text: '宿舍的垃圾桶已經滿到蓋子闔不起來。{npc}在床上滑手機，假裝沒看到。今天輪到誰值日，其實大家都心知肚明。',
+      choices: [
+        { t: '默默拎出去倒掉', p: 'gentle', txt: '你把垃圾和回收一起處理好。{npc}後來紅著臉說：「下次我來。」', fx: { aff: { $npc: 3 }, stam: -3 } },
+        { t: '提議做一張輪流的值日表', p: 'diligent', txt: '你拿出一張紙，畫了表格。從那天起，宿舍乾淨了許多。', fx: { team: 3, eval: 1, aff: { xiaen: 2, zhihao: 2, yiqing: 2 } } },
+        { t: '直接叫{npc}起來倒', p: 'rebel', check: { st: 'charm', diff: 26 }, out: {
+          g: ['{npc}被你逗笑了，乖乖起床。你們一起倒完垃圾還順便買了宵夜。', { aff: { $npc: 4 }, mood: 4 }],
+          k: ['{npc}不太情願，但還是做了。', { aff: { $npc: 0 } }],
+          f: ['{npc}頂了回來：「你是我媽嗎？」氣氛有點尷尬。', { aff: { $npc: -3 }, stress: 2 }] } }
+      ] },
+    { id: 'peer_rank_pressure', title: '同期的名次', cd: 150, w: 4, cond: pre, pickNpc: ['xiaen', 'zhihao', 'yiqing'],
+      text: '月考成績貼在布告欄上，{npc}站在前面看了很久。你走近才發現，{npc}的名次比你高了兩名。',
+      choices: [
+        { t: '真心恭喜{npc}', p: 'gentle', txt: '{npc}愣了一下，隨即用力擊掌：「下次換你贏我。」', fx: { aff: { $npc: 5 }, mood: 2, grit: 1 } },
+        { t: '默默把名次記在心裡，回去加練', p: 'diligent', txt: '你一句話沒說，在練習室待到最後一個人離開。', fx: { vocal: .5, dance: .5, grit: 2, stam: -8 } },
+        { t: '私下請教{npc}怎麼練的', p: 'social', txt: '{npc}把自己的練習表攤開給你看：「其實也沒什麼，就是比你多練一個小時。」', fx: { vocal: .4, dance: .4, aff: { $npc: 4 }, acad: 1 } }
+      ] },
+    { id: 'peer_study_group', title: '一起組讀書會', cd: 200, w: 3, cond: s => pre(s) && s.age <= 17, pickNpc: ['xiaen', 'zhihao', 'yiqing'],
+      text: '學校期中考快到了，{npc}提議：「我們幾個一起組個讀書會好不好？不然練習和課業會兩頭燒。」',
+      choices: [
+        { t: '好，約在宿舍客廳每晚一小時', p: 'diligent', txt: '你們互相出題，還一起背單字。成績沒有大幅進步，但至少沒有掛科。', fx: { acad: 3, aff: { $npc: 4 }, team: 2, stam: -5 } },
+        { t: '婉拒，專心練習', txt: '{npc}聳聳肩：「也是，我們各忙各的。」', fx: { dance: .3, vocal: .3, aff: { $npc: -1 } } }
+      ] }
+  );
+
+  /* ---------------- 二、日常訓練課程 ---------------- */
+  E.push(
+    { id: 'rap_lyric_class', title: '饒舌與歌詞創作課', cd: 110, w: 5, cond: pre,
+      text: '{baiyu}製作人帶著一疊白紙走進教室：「今天的題目：寫一段 16 小節的詞，主題是——『我為什麼在這裡』。三十分鐘。」',
+      choices: [
+        { t: '寫最真實的故事', p: 'gentle', check: { st: 'rap', diff: 24 }, out: {
+          g: ['你寫到最後一句時，筆尖停了很久。{baiyu}讀完沒有說話，只是把你的紙折好放進口袋。', { rap: 1.4, vocal: .4, eval: 3, mood: 5, aff: { baiyu: 4 } }],
+          k: ['詞句有想法，押韻還需要打磨。', { rap: .8, eval: 1 }],
+          f: ['想說的太多，反而寫成了一團。你被要求重寫。', { rap: .3, mood: -3 }] } },
+        { t: '寫最有節奏感的押韻遊戲', p: 'social', check: { st: 'rap', diff: 22 }, out: {
+          g: ['你的 flow 讓全班忍不住打起節拍。{baiyu}微微點了點頭。', { rap: 1.2, charm: .4, eval: 2, mood: 5 }],
+          k: ['押韻漂亮，內容比較淺。', { rap: .7, eval: 1 }],
+          f: ['押韻太刻意，被點評為「文字遊戲」。', { rap: .3, mood: -2 }] } },
+        { t: '交白卷，坦承寫不出來', p: 'rebel', txt: '{baiyu}盯著空白的紙看了很久：「至少誠實。回去再想。」', fx: { eval: -2, stress: 3, grit: 1 } }
+      ] },
+    { id: 'language_pick', title: '選修語言課', cd: 160, w: 4, cond: pre,
+      text: '公司公布了新一期的語言課報名表：英文會話、日文基礎、韓文進階，三選一，每週兩堂。老師說：「未來進軍海外，語言就是你的第二張臉。」',
+      choices: [
+        { t: '選韓文進階', p: 'diligent', txt: '你開始用韓文寫日記，也試著用韓文讀歌詞。進步很慢，但每天都比昨天多懂一點點。', fx: { kor: 4, acad: 1, grit: 1 } },
+        { t: '選英文會話', p: 'social', txt: '外籍老師一直要你上台講話。你講得磕磕絆絆，卻越來越敢開口。', fx: { variety: .6, charm: .3, acad: 1, kor: 1 } },
+        { t: '選日文基礎', p: 'rebel', txt: '你開始看日劇和日本綜藝。幾個月後，你已經可以跟日本的練習生簡單聊天。', fx: { variety: .4, acting: .3, kor: 1, mood: 3 } }
+      ] },
+    { id: 'camera_training', title: '表情管理與鏡頭訓練', cd: 120, w: 5, cond: pre,
+      text: '攝影棚裡，教練拿著一台攝影機對準你：「接下來三分鐘，我要你對著鏡頭，同時表現出喜悅、悲傷和冷酷，不准看我。」',
+      choices: [
+        { t: '放空自己，把情緒完全交給鏡頭', p: 'gentle', check: { st: 'acting', diff: 26 }, out: {
+          g: ['教練放下攝影機，點頭：「你的眼神，會說話。」', { acting: 1.2, charm: .8, mood: 4, eval: 2 }],
+          k: ['三種表情都有出來，只是不夠自然。', { acting: .7, charm: .4 }],
+          f: ['你的表情僵在臉上，教練輕聲提醒：「放鬆，別用力。」', { acting: .3, mood: -3 }] } },
+        { t: '想像最難忘的場景來帶動情緒', p: 'diligent', check: { st: 'acting', diff: 24 }, out: {
+          g: ['你想起第一次站上舞台的那一天，眼神瞬間亮了起來。', { acting: 1.2, charm: .6, mood: 3, eval: 2 }],
+          k: ['部分情緒到位，還是有點刻意。', { acting: .6, charm: .3 }],
+          f: ['想得太用力，眼神變得緊繃。', { acting: .3, stress: 3 }] } },
+        { t: '偷偷看教練的反應，隨機應變', p: 'social', txt: '你的表情很快，但教練看出了你在討好鏡頭：「你要讓鏡頭愛你，而不是你討好鏡頭。」', fx: { charm: .4, acting: .3, eval: 0 } }
+      ] },
+    { id: 'body_control_class', title: '舞台表演與肢體控制', cd: 120, w: 5, cond: pre,
+      text: '舞蹈教室裡，老師要大家閉上眼睛，只聽節拍走完一段十六拍的路線。「睜開眼之後，你的位置要和你記得的一模一樣。」',
+      choices: [
+        { t: '相信身體，全程不偷看', p: 'diligent', check: { st: 'dance', diff: 26 }, out: {
+          g: ['你睜開眼，發現自己幾乎停在原本的線上。老師忍不住鼓掌。', { dance: 1.2, charm: .4, eval: 2, mood: 4 }],
+          k: ['偏了半步，整體還算穩。', { dance: .7 }],
+          f: ['你走偏了整整一個身位，撞到了旁邊的人。', { dance: .3, mood: -3 }] } },
+        { t: '偷偷用餘光抓位置', p: 'rebel', txt: '你的位置很準，但老師一眼就看出你睜了眼：「舞台上沒有餘光可以偷看。」', fx: { dance: .5, eval: -1 } }
+      ] },
+    { id: 'fitness_camp', title: '體能、肌力與耐力訓練', cd: 110, w: 5, cond: pre,
+      text: '體能教練把大家帶到操場：「今天的課表是：五公里跑、核心訓練、折返跑。沒有人可以中途放棄。」天空飄著細雨，地面是濕的。',
+      choices: [
+        { t: '咬牙跟上，不讓任何人落後', p: 'diligent', check: { st: 'stam', diff: 40 }, out: {
+          g: ['你第一個衝過終點線，還回頭拉了一把落後的同期。教練笑著遞來毛巾。', { stam: -18, dance: .6, grit: 2, health: 1, team: 2, mood: 4 }],
+          k: ['你完成了所有課表，雙腿幾乎站不穩。', { stam: -22, dance: .4, grit: 1 }],
+          f: ['跑到一半，你的膝蓋隱隱作痛，教練讓你提前退場。', { stam: -18, mood: -4, grit: 1, health: -1 }] } },
+        { t: '依自己的節奏來，保留體力', p: 'gentle', txt: '你沒有逞強，穩穩地完成了。教練評語：「知道自己的極限，也是一種能力。」', fx: { stam: -12, dance: .3, health: 1, mood: 2 } }
+      ] },
+    { id: 'instrument_class', title: '樂器課', cd: 150, w: 4, cond: pre,
+      text: '音樂教室裡擺著鋼琴、吉他和鍵盤。老師說：「偶像不只是唱和跳。學會一樣樂器，你會有更多自己的語言。」',
+      choices: [
+        { t: '選鋼琴', p: 'diligent', txt: '黑白鍵的世界很安靜。你每天練一小時，手指慢慢找到節奏。', fx: { vocal: .6, acting: .2, grit: 1, mood: 3 } },
+        { t: '選吉他', p: 'rebel', txt: '你的指尖磨出了繭。第一次完整彈完一首歌時，{xiaole}在旁邊拍手大叫。', fx: { vocal: .5, charm: .4, mood: 6, aff: { xiaole: 2 } } },
+        { t: '選電子鍵盤與編曲軟體', p: 'social', txt: '你學會了簡單的和弦與編曲。第一次聽見自己做的 beat 從喇叭裡傳出來，你笑了。', fx: { rap: .5, vocal: .3, acad: 1, mood: 4, flag: 'can_compose' } }
+      ] },
+    { id: 'compose_class', title: '作曲與編曲入門', cd: 160, w: 4, cond: s => pre(s) && s.age >= 13,
+      text: '{baiyu}在教室投影幕上打開一個專案檔：「今天教你們做一首歌，從 beat、旋律到混音。不要求完美，但要有你自己的聲音。」',
+      choices: [
+        { t: '先寫旋律，再配和弦', p: 'gentle', check: { st: 'vocal', diff: 26 }, out: {
+          g: ['你哼了一段旋律，{baiyu}愣了一下，說：「再哼一次。」他錄了下來。', { vocal: .8, rap: .3, eval: 3, mood: 6, aff: { baiyu: 4 }, flag: 'can_compose' }],
+          k: ['旋律還不錯，只是和弦配得不夠好。', { vocal: .5, rap: .2, flag: 'can_compose' }],
+          f: ['旋律太像別人的歌，被點評為「模仿」。', { vocal: .2, mood: -3 }] } },
+        { t: '先做節奏，再填旋律', p: 'rebel', check: { st: 'rap', diff: 26 }, out: {
+          g: ['你的 beat 很有律動感，教室裡的人忍不住點頭。', { rap: 1, charm: .3, eval: 2, mood: 5, flag: 'can_compose' }],
+          k: ['節奏很穩，但旋律還不夠出彩。', { rap: .5, flag: 'can_compose' }],
+          f: ['節奏太複雜，混音時一團亂。', { rap: .2, mood: -2 }] } }
+      ] },
+    { id: 'choreo_class', title: '編舞入門課', cd: 160, w: 4, cond: s => pre(s) && s.ab.dance >= 20,
+      text: '舞蹈老師要你們兩兩一組，幫四小節的音樂設計動作：「不要想著跳得多難，要想著觀眾看到什麼。」你的搭檔是{npc}。',
+      pickNpc: ['xiaen', 'zhihao', 'yiqing'],
+      choices: [
+        { t: '主導動作設計', p: 'rebel', check: { st: 'dance', diff: 28 }, out: {
+          g: ['你們的編舞被老師選為示範，連其他組都跟著學。', { dance: 1, charm: .4, eval: 3, aff: { $npc: 4 } }],
+          k: ['設計得不錯，只是細節還可以更好。', { dance: .6, aff: { $npc: 2 } }],
+          f: ['動作銜接出了問題，{npc}小聲說：「好像有點難。」', { dance: .3, aff: { $npc: -1 }, mood: -2 }] } },
+        { t: '尊重搭檔的想法，一起磨合', p: 'gentle', txt: '你們一邊吵一邊笑，最後的版本是兩個人各取一半。老師說：「這才像一個團隊。」', fx: { dance: .5, team: 3, aff: { $npc: 5 } } }
+      ] },
+    { id: 'teacher_critic', title: '老師的當面批評', cd: 90, w: 5, cond: pre,
+      text: '練習結束後，老師當著所有人的面指出你的缺點：「你的節奏總是慢半拍，眼神沒有焦點。這樣是上不了台的。」整個練習室變得很安靜。',
+      choices: [
+        { t: '低頭說「我會改進」', p: 'diligent', txt: '你把每一條批評寫進筆記，隔天一早就來找老師請教。老師的眼神柔和了一些。', fx: { dance: .6, vocal: .3, grit: 2, eval: 1, mood: -3 } },
+        { t: '當場請老師示範給你看', p: 'social', check: { st: 'charm', diff: 24 }, out: {
+          g: ['老師愣了一下，隨即起身示範。你學得很快，老師也多給了你幾分鐘。', { dance: .8, eval: 2, mood: 3 }],
+          k: ['老師示範了一遍，語氣和緩了許多。', { dance: .4, mood: 0 }],
+          f: ['老師覺得你在頂嘴，臉色更沉了。', { eval: -2, mood: -4 }] } },
+        { t: '回宿舍後偷偷哭，但不告訴任何人', p: 'gentle', txt: '你躲在被窩裡哭了一會兒，然後擦乾眼淚，把明天的課表又看了一遍。', fx: { mood: -5, res: 3, grit: 2 } }
+      ] },
+    { id: 'teacher_praise', title: '老師罕見的稱讚', cd: 160, w: 3, cond: s => pre(s) && s.car.eval >= 55,
+      because: s => `公司評價已達 ${Math.round(s.car.eval)}`,
+      text: '練習結束時，一向嚴厲的老師把你留下來，語氣少見地溫和：「最近的進步，我都看在眼裡。繼續保持。」',
+      choices: [
+        { t: '「謝謝老師，我還差得遠。」', p: 'gentle', txt: '老師笑著搖頭：「知道自己差得遠，才會一直往前跑。」', fx: { eval: 2, mood: 8, res: 1 } },
+        { t: '「我想挑戰更難的課題。」', p: 'rebel', txt: '老師眉毛一挑：「好。下週開始，我給你加課。」', fx: { dance: .5, vocal: .5, eval: 2, grit: 2, stam: -6 } }
+      ] },
+    { id: 'team_assess', title: '個人或團體考核', cd: 140, w: 5, cond: pre,
+      text: '公司宣布本月考核分成「個人組」與「團體組」兩種，由練習生自行報名。{meiling}說：「選擇本身，也會被列入評價。」',
+      choices: [
+        { t: '報名個人組，單獨展示實力', p: 'diligent', check: { st: 'charm', diff: 30 }, out: {
+          g: ['你一個人撐起整個舞台，評審連續記了好幾筆。', { eval: 4, vocal: .4, dance: .4, grit: 1, mood: 5 }],
+          k: ['表現中規中矩，評審沒有太多評語。', { eval: 1, grit: 1 }],
+          f: ['緊張讓你亂了節奏，台下一片安靜。', { eval: -2, mood: -4 }] } },
+        { t: '報名團體組，和同期組隊', p: 'social', check: { st: 'team', diff: 30 }, out: {
+          g: ['你們的默契讓評審眼睛一亮：「這組像是已經出道的團體。」', { eval: 4, team: 4, mood: 6, aff: { xiaen: 3, zhihao: 3, yiqing: 3 } }],
+          k: ['團體表現穩定，只有幾處走位沒對上。', { eval: 2, team: 2 }],
+          f: ['隊友之間意見不合，舞台上的氣氛有點散。', { eval: -1, team: -2, mood: -3 }] } }
+      ] },
+    { id: 'monthly_eve', title: '月末評價前夜', cd: 130, w: 4, cond: pre,
+      text: '月末評價的前一晚，整棟宿舍都亮著燈。有人在練聲，有人在對鏡子練表情，連平常最愛睡覺的{npc}都在翻筆記。',
+      pickNpc: ['xiaen', 'zhihao', 'yiqing'],
+      choices: [
+        { t: '加練到深夜，把弱項再補一次', p: 'diligent', txt: '你練到喉嚨沙啞。隔天早上，眼睛裡布滿血絲，卻覺得心裡踏實多了。', fx: { vocal: .5, dance: .5, stam: -12, stress: 4, grit: 1 } },
+        { t: '和{npc}一起互相出題、對練', p: 'social', txt: '你們互相扮演評審，笑著給對方打分。緊張感反而淡了。', fx: { vocal: .3, dance: .3, aff: { $npc: 4 }, stress: -4, mood: 4 } },
+        { t: '早早睡覺，保留最佳狀態', p: 'gentle', txt: '你關燈、熱牛奶、睡覺。隔天醒來，頭腦異常清楚。', fx: { stam: 12, stress: -8, mood: 3 } }
+      ] }
+  );
+
+  DATA.EVENTS.push(...E);
+})();
+
 /* ===== arcs.js ===== */
 /* ============================================================
    出道後的「風波劇情線」：參考韓國偶像產業常見的事件，分階段循序漸進。
@@ -2973,7 +3461,7 @@ Idol.newGame = function (o) {
   const nat = DATA.NATS[o.nat] ? o.nat : 'kr', ft = (DATA.FAMILY_NAT[nat] || {})[fam.id];
   const s = {
     nat, kor: DATA.NATS[nat].kor, familyDesc: ft ? ft[1] : fam.d,
-    mode: 'idol', ver: VER, name: o.name, g: o.g, age: 12, bd: { m: U.ri(1, 12), d: U.ri(1, 28) },
+    mode: 'idol', ver: VER, name: o.name, g: o.g, av: Avatar.fix(o.av, o.g), age: 13, bd: { m: U.ri(1, 12), d: U.ri(1, 28) },
     day: 0, apMax: 3, ap: 3, family: fam.id, familyName: ft ? ft[0] : fam.n, allow: fam.allow, traits: o.traits.slice(), pers: null,
     ab: {}, st: { stam: 100, mood: 70, stress: 15, health: 85 }, car: { fans: 0, fame: 0, pop: 0, eval: 40, money: fam.money },
     hid: { tal: {}, luck: 30 + U.ri(0, 50), grit: 30 + U.ri(0, 40), res: 30 + U.ri(0, 40), looks: 30 + U.ri(0, 50), scandal: 0, acad: 30 + U.ri(0, 40), team: 20, fatigue: 0, support: U.clamp(fam.support + U.ri(-8, 8)), fit: 0, p: { diligent: 0, social: 0, rebel: 0, gentle: 0 } },
@@ -3001,10 +3489,11 @@ Idol.newGame = function (o) {
   s.rel = { xiaen: 10, zhihao: 5, yiqing: 3, meiling: 10, baiyu: 0, xiaole: 25, jiangyun: 0, shuyan: 0 };
   // 練習生池
   s.pool = [];
-  const peers = [['xiaen', 13, ['dance']], ['zhihao', 14, ['vocal', 'acting']], ['yiqing', 12, ['rap']]];
+  const peers = [['xiaen', 14, ['dance']], ['zhihao', 15, ['vocal', 'acting']], ['yiqing', 13, ['rap']]];
   peers.forEach(([id, age, focus]) => s.pool.push(Idol.mkRival({ id, name: s.npc[id].name, g: o.g, age, focus, npc: id })));
-  for (let i = 0; i < 9; i++) s.pool.push(Idol.mkRival({ name: Idol.fillerName(o.g), g: o.g, age: U.ri(11, 15) }));
-  s.queue.push({ t: 'ev', id: 'intro' });
+  for (let i = 0; i < 9; i++) s.pool.push(Idol.mkRival({ name: Idol.fillerName(o.g), g: o.g, age: U.ri(12, 16) }));
+  s.queue.push({ t: 'ev', id: 'aud_1' }, { t: 'ev', id: 'aud_2' }, { t: 'ev', id: 'intro' });
+  s.followQ = [['dorm_move', 1], ['dorm_roommate', 3], ['peer_meet', 5], ['culture_start', 8], ['food_climate', 12]].map(([id, d]) => ({ id, due: d, cause: null, mate: null, npc: null }));
   Idol.log(`簽約成為 ${DATA.CO} 的練習生。`, 'story');
   Idol.snapMonth(s);
   return s;
@@ -3027,6 +3516,7 @@ Idol.fix = function (s) {
   if (s.flags && s.flags.adPending) { s.flags.adPending = false; if (!s.endorse.length) s.endorse.push(Idol.mkContract(DATA.BRAND_LIST[0], s.day, 20000)); }
   if (s.grp && !s.grp.contractEnd) { s.grp.contractEnd = s.grp.debutDay + 365 * 7; s.grp.contractNo = 1; }
   if (!s.ms) Idol.snapMonth(s);
+  if (!s.av) s.av = Avatar.def(s.g);
   return s;
 };
 
@@ -3072,6 +3562,7 @@ Idol.applyFx = function (fx) {
     else if (k === 'arc') Idol.arcGo(v);
     else if (k === 'follow') (Array.isArray(v) ? v : [v]).forEach(f => I.followQ.push({ id: f.id, due: I.day + U.ri((f.delay || [7, 20])[0], (f.delay || [7, 20])[1]), cause: f.cause || null, mate: I._mate || null, npc: I._npc || null }));
     else if (k === 'cnt') for (const c in v) I.cnt[c] = (I.cnt[c] || 0) + v[c];
+    else if (k === 'kor') I.kor = U.clamp(I.kor + v, 0, 100);
     else if (k === 'endorseSign') Idol.signEndorse(v);
     else if (k === 'offerClear') I.offer = null;
     else if (k === 'endorseBreak') Idol.endorseBreak(v);
@@ -3416,11 +3907,11 @@ Idol.runExam = function () {
   if (I.warn >= 3 || I.car.eval <= 8) ended = 'cut';
   // 出道積分
   let pts = 0, promoted = false, debut = null, debutInfo = null;
-  if (I.age >= 14 && I.age <= 16 && I.stage === 0) {
+  if (I.age >= 15 && I.age <= 16 && I.stage === 0) {
     pts = rank <= 1 ? 5 : rank === 2 ? 4 : rank === 3 ? 3 : rank === 4 ? 2 : rank <= 6 ? 1 : rank >= warnLine ? -1 : 0;
     I.debutPts = Math.max(0, I.debutPts + pts);
   }
-  if (I.stage === 0 && I.age >= 14 && I.debutPts >= 6 && I.car.eval >= 50 && !ended) { I.stage = 1; promoted = true; Idol.log('晉升為「出道預備組」！', 'win'); }
+  if (I.stage === 0 && I.age >= 15 && I.debutPts >= 6 && I.car.eval >= 50 && !ended) { I.stage = 1; promoted = true; Idol.log('晉升為「出道預備組」！', 'win'); }
   // 競爭者成長、換血
   I.pool.forEach(r => Idol.rivalMonth(r));
   const mth = Cal.date(I.day).m;
@@ -3841,7 +4332,7 @@ Idol.birthday = function () {
   I.queue.push({ t: 'msg', title: `🎂 ${I.age} 歲生日`, text: I.stage >= 2 ? '{fan}在社群上刷滿了生日應援，咖啡車、地鐵廣告都排好了。' : (I.hid.support > 50 ? `家人寄來了禮物與紅包（${U.money(gift)}），電話那頭唱著不成調的生日歌。` : `${gift ? '收到一筆小小的零用錢（' + U.money(gift) + '）。' : ''}你一個人在練習室吹熄了手機裡的蠟燭。`) });
   const age = I.age;
   if (age === 15) I.queue.push({ t: 'ev', id: 'personality' });
-  if (age === 14) I.queue.push({ t: 'msg', title: '⏰ 出道窗口開啟', text: `十四歲了。${Idol.fmt('{meiling}')}說：「從現在開始，月考的名次會被記進出道評估。表現好的人，公司才會考慮把他們放進預備組。十六歲結束前沒有出道……就沒有下一次了。」\n\n【目標】月考排名進入前段班，累積出道積分並升上「出道預備組」。` });
+  if (age === 15) I.queue.push({ t: 'msg', title: '⏰ 出道窗口開啟', text: `十五歲了。${Idol.fmt('{meiling}')}說：「從現在開始，月考的名次會被記進出道評估。表現好的人，公司才會考慮把他們放進預備組。十六歲結束前沒有出道……就沒有下一次了。」\n\n【目標】月考排名進入前段班，累積出道積分並升上「出道預備組」。` });
   if (age === 17 && I.stage < 2) {
     const key = I.flags.rival_offer ? 'rival' : (I.hid.acad > 55 ? 'school' : 'cut');
     I.queue.push({ t: 'msg', title: '最後的期限', text: '十七歲生日到了。出道評估的名單已經定案——裡面沒有你的名字。\n\n練習室的燈還亮著，但那已經不再是你的舞台。' });
@@ -3985,7 +4476,7 @@ Idol.render = function () {
   const root = document.getElementById('screen'); if (!root || !I) return;
   if (I.over && !I.queue.length) return Idol.renderEnding(root);
   const nx = Cal.nextExam(I.day), dd = nx - I.day;
-  const hdr = `<header class="top"><div class="who"><span class="avatar">${gIcon(I.g)}</span><div><b>${U.esc(I.name)}</b> <span title="${DATA.NATS[I.nat].n}">${DATA.NATS[I.nat].flag}</span><small>${DATA.STAGES[I.stage]} · ${I.age} 歲${I.grp ? ' · ' + I.grp.name : ''}</small></div></div>
+  const hdr = `<header class="top"><div class="who"><span class="avatar">${Avatar.svg(I.av, 46, I.g)}</span><div><b>${U.esc(I.name)}</b> <span title="${DATA.NATS[I.nat].n}">${DATA.NATS[I.nat].flag}</span><small>${DATA.STAGES[I.stage]} · ${I.age} 歲${I.grp ? ' · ' + I.grp.name : ''}</small></div></div>
     <div class="date"><b>${Cal.str(I.day)}</b><small>第 ${I.day + 1} 天 · ${dd === 0 ? (I.stage >= 2 ? '📝 今日評鑑' : '📝 今日考核') : (I.stage >= 2 ? '評鑑倒數 ' : '考核倒數 ') + dd + ' 天'}</small></div>
     <div class="hdr-stats"><span>💰 ${U.money(I.car.money)}</span><span>💗 ${U.num(I.car.fans)}</span><span class="apdots">${Array.from({ length: I.apMax }, (_, i) => `<i class="${i < I.ap ? 'on' : ''}"></i>`).join('')}</span></div>
     <button class="btn ghost sm" data-act="app.menu">☰</button></header>`;
@@ -3998,7 +4489,7 @@ Idol.render = function () {
 /* ---------- 首頁 ---------- */
 function stageGoal() {
   const s = I;
-  if (s.stage === 0 && s.age < 14) return { t: '打好基礎', d: `十四歲起，月考名次會進入出道評估。現在先把六項能力練起來、守住公司評價。`, p: Math.min(1, (s.age - 12 + 0.01) / 2) };
+  if (s.stage === 0 && s.age < 15) return { t: '打好基礎', d: `十五歲起，月考名次會進入出道評估。現在先把六項能力練起來、守住公司評價。`, p: Math.min(1, (s.age - 13 + 0.01) / 2) };
   if (s.stage === 0) return { t: '累積出道積分，升上預備組', d: `月考名次前 6 名可得積分（第 1 名 +5）。需要積分 6 且公司評價 ≥ 50。目前積分 ${s.debutPts}，評價 ${Math.round(s.car.eval)}。`, p: Math.min(1, s.debutPts / 6) };
   if (s.stage === 1) return { t: '通過季度出道評估', d: `預備組每季（3、6、9、12 月）月考後會公布出道名單，名額 ${DEBUT_SLOTS} 人。已參加 ${s.debutTries} 次。十七歲生日前未出道將被淘汰。`, p: Math.min(1, .3 + s.debutTries * .15) };
   if (s.stage === 2) return { t: '成為人氣偶像', d: `拿下首個音樂節目一位，且人氣 ≥ 45、粉絲 ≥ 5 萬。目前 一位 ${s.grp ? s.grp.wins : 0} 次、人氣 ${Math.round(s.car.pop)}、粉絲 ${U.num(s.car.fans)}。`, p: Math.min(1, (s.car.pop / 45 + s.car.fans / 50000 + (s.grp && s.grp.wins ? 1 : 0)) / 3) };
@@ -4017,14 +4508,14 @@ function tHome() {
   if (Idol.daysToBirthday() <= 14) nt.push(`🎂 生日倒數 ${Idol.daysToBirthday()} 天`);
   if (s.promo) nt.push(`💿 宣傳期：《${s.promo.name}》剩 ${Math.max(0, s.promo.end - s.day)} 天（一位 ${s.promo.wins} 次）`);
   { const ps = Idol.pendingShoots ? Idol.pendingShoots() : 0; if (ps) nt.push(`📸 有 ${ps} 支廣告待拍攝，到「工作」頁執行（代言合約有期限）`); else if ((s.endorse || []).length) nt.push(`🤝 代言中：${s.endorse.map(c => c.n.replace(/[「」《》]/g, '')).join('、')}`); }
-  if (s.stage < 2 && s.age >= 14) nt.push(`⏳ 出道期限：十七歲生日前（剩 ${Idol.daysToAge(17)} 天）`);
+  if (s.stage < 2 && s.age >= 15) nt.push(`⏳ 出道期限：十七歲生日前（剩 ${Idol.daysToAge(17)} 天）`);
   if (s.stage === 1) nt.push(`📣 預備組：每季月考後公布出道名單`);
   const g = stageGoal();
   const abil = DATA.ABIL.map(([k, n, ic]) => UI.bar(`${ic} ${n}`, s.ab[k], 100, 'ab', U.f1(s.ab[k]))).join('');
   const today = s.today.length ? s.today.map(t => `<li>${DATA.ACTIONS[t.id].i} <b>${DATA.ACTIONS[t.id].n}</b> ${t.eff.filter(([k]) => k !== 'stam').slice(0, 3).map(([k, v]) => UI.fmtDelta(k, v)).join('')}${t.txt ? `<div class="sub">${Idol.fmt(t.txt)}</div>` : ''}</li>`).join('') : '<li class="sub">今天還沒有安排任何行動。</li>';
   return `<div class="grid2">
     <div class="col">
-      ${card('', `<div class="profile"><div class="bigav">${gIcon(s.g)}</div><div><h2>${U.esc(s.name)}</h2><div>${UI.chip(DATA.STAGES[s.stage], 'pink')} ${UI.chip(s.age + ' 歲')} ${s.pers ? UI.chip(DATA.PERS[s.pers].n, 'lav') : ''}</div><small>${s.familyName} · ${s.traits.map(t => DATA.TRAITS.find(x => x.id === t).n).join('、')}</small></div></div>
+      ${card('', `<div class="profile"><div class="bigav">${Avatar.svg(s.av, 76, s.g)}</div><div><h2>${U.esc(s.name)}</h2><div>${UI.chip(DATA.STAGES[s.stage], 'pink')} ${UI.chip(s.age + ' 歲')} ${s.pers ? UI.chip(DATA.PERS[s.pers].n, 'lav') : ''}</div><small>${s.familyName} · ${s.traits.map(t => DATA.TRAITS.find(x => x.id === t).n).join('、')}</small></div></div>
         <div class="bars4">${UI.bar('體力', s.st.stam, 100, 'stam')}${UI.bar('心情', s.st.mood, 100, 'mood')}${UI.bar('壓力', s.st.stress, 100, 'stress')}${UI.bar('健康', s.st.health, 100, 'health')}</div>`)}
       ${card('能力摘要', `<div class="abgrid">${abil}</div>`)}
       ${card('演藝事業', `<div class="kpis"><div><b>${U.num(s.car.fans)}</b><small>${s.fanName ? U.esc(s.fanName) : '粉絲'}數</small></div><div><b>${U.f1(s.car.fame)}</b><small>知名度</small></div><div><b>${U.f1(s.car.pop)}</b><small>人氣</small></div><div><b>${Math.round(s.car.eval)}</b><small>公司評價</small></div><div><b>${U.money(s.car.money)}</b><small>金錢</small></div></div>`)}
@@ -4103,12 +4594,12 @@ function tCal() {
 function tCo() {
   const s = I, steps = DATA.STAGES.map((n, i) => `<li class="${i < s.stage ? 'done' : i === s.stage ? 'cur' : ''}">${i < s.stage ? '✔' : i === s.stage ? '▶' : '○'} ${n}</li>`).join('');
   const deb = s.stage >= 2; if (deb && !(s.dpool && s.dpool.length)) Idol.initArtists();
-  const rows = [{ name: s.name, me: true, score: Sim.weighted(s, DATA.EXAMS.all.w) }].concat((deb ? s.dpool : s.pool).map(r => ({ name: r.name, score: Sim.weighted(r, DATA.EXAMS.all.w), age: Idol.rAge(r), npc: r.npc, kind: r.kind }))).sort((a, b) => b.score - a.score);
+  const rows = [{ name: s.name, me: true, score: Sim.weighted(s, DATA.EXAMS.all.w) }].concat((deb ? s.dpool : s.pool).map(r => ({ name: r.name, score: Sim.weighted(r, DATA.EXAMS.all.w), age: Idol.rAge(r), npc: r.npc, kind: r.kind, g: r.g }))).sort((a, b) => b.score - a.score);
   const last = s.exams.slice(-6).reverse();
   return `<div class="grid2"><div class="col">${card(DATA.CO + ' · 公司資訊', `<p>你是 ${DATA.CO} 的${DATA.STAGES[s.stage]}。公司評價 <b>${Math.round(s.car.eval)}</b>（低於 8 會被解約）。</p>${UI.bar('公司評價', s.car.eval, 100)}<ul class="steps">${steps}</ul>`)}
     ${card(deb ? '近期評鑑' : '近期考核', last.length ? `<ul class="notes">${last.map(e => `<li>${Cal.short(e.day)} ${e.review ? Idol.reviewName(DATA.EXAMS[e.theme]) : DATA.EXAMS[e.theme].n}　第 <b>${e.rank}</b> / ${e.total} 名　${UI.chip(e.tier, e.tier === 'S' || e.tier === 'A' ? 'pink' : '')}</li>`).join('')}</ul>${deb ? '<p class="sub">出道後的公司評鑑只與其他出道藝人比較，名次會影響公司評價。</p>' : `<p class="sub">連續 3 次墊底將被淘汰（目前警告 ${s.warn}/3）。</p>`}` : '<p class="sub">還沒有紀錄。</p>')}</div>
-    <div class="col">${card(deb ? '出道藝人排名（綜合實力）' : '練習生排名（綜合實力）', `<ol class="rank">${rows.map((r, i) => `<li class="${r.me ? 'me' : ''}"><span>${i + 1}</span><b>${U.esc(r.name)}</b><small>${r.me ? '你' : deb ? ({ solo: 'Solo', group: '團體', band: '樂團', mixed: '混合組合' }[r.kind] || '藝人') : r.age + '歲' + (r.npc ? ' · ' + DATA.NPCS[r.npc].role : '')}</small><em>${U.f1(r.score)}</em></li>`).join('')}</ol>`)}
-    ${s.grp ? card((s.grp.kind ? DATA.DEBUT_FORMS[s.grp.kind].ic + DATA.DEBUT_FORMS[s.grp.kind].n + '：' : '團體：') + s.grp.name, `<p>${s.grp.kind === 'solo' ? '單人藝人' : '成員：' + ''}${s.grp.kind === 'solo' ? '' : ''}${s.grp.kind === 'solo' ? '' : s.grp.members.map(U.esc).join('、')}</p><p>💖 粉絲名稱：${s.fanName ? '<b>' + U.esc(s.fanName) + '</b>' : '尚未命名'} <button class="btn ghost sm" data-act="i.fanedit">${s.fanName ? '更改' : '命名'}</button></p><p>📜 專屬合約：第 ${s.grp.contractNo || 1} 期，至 ${Cal.short(s.grp.contractEnd)} 到期</p><p>音樂節目一位：${s.grp.wins} 次　累計銷量：${U.num(s.grp.sales)} 張</p><ul class="notes">${s.grp.albums.slice(-4).reverse().map(a => `<li>${Cal.short(a.day)} ${U.esc(a.name)}　首週 ${U.num(a.sales)}　榜單 #${a.pos}</li>`).join('')}</ul>`) : ''}
+    <div class="col">${card(deb ? '出道藝人排名（綜合實力）' : '練習生排名（綜合實力）', `<ol class="rank">${rows.map((r, i) => `<li class="${r.me ? 'me' : ''}"><span>${i + 1}</span><i class="rav">${r.me ? Avatar.svg(s.av, 30, s.g) : Avatar.mini(r.name, r.g, 30)}</i><b>${U.esc(r.name)}</b><small>${r.me ? '你' : deb ? ({ solo: 'Solo', group: '團體', band: '樂團', mixed: '混合組合' }[r.kind] || '藝人') : r.age + '歲' + (r.npc ? ' · ' + DATA.NPCS[r.npc].role : '')}</small><em>${U.f1(r.score)}</em></li>`).join('')}</ol>`)}
+    ${s.grp ? card((s.grp.kind ? DATA.DEBUT_FORMS[s.grp.kind].ic + DATA.DEBUT_FORMS[s.grp.kind].n + '：' : '團體：') + s.grp.name, `<p>${s.grp.kind === 'solo' ? '單人藝人' : '成員：' + ''}${s.grp.kind === 'solo' ? '' : ''}${s.grp.kind === 'solo' ? '' : `</p><div class="mchips">${s.grp.members.map(mn => { const nm0 = mn.split('（')[0], mt = s.mates && s.mates[mn]; return `<span class="mchip">${Avatar.mini(mn, (mt && mt.g) || s.g, 28)}${U.esc(mn)}</span>`; }).join('')}</div><p>`}</p><p>💖 粉絲名稱：${s.fanName ? '<b>' + U.esc(s.fanName) + '</b>' : '尚未命名'} <button class="btn ghost sm" data-act="i.fanedit">${s.fanName ? '更改' : '命名'}</button></p><p>📜 專屬合約：第 ${s.grp.contractNo || 1} 期，至 ${Cal.short(s.grp.contractEnd)} 到期</p><p>音樂節目一位：${s.grp.wins} 次　累計銷量：${U.num(s.grp.sales)} 張</p><ul class="notes">${s.grp.albums.slice(-4).reverse().map(a => `<li>${Cal.short(a.day)} ${U.esc(a.name)}　首週 ${U.num(a.sales)}　榜單 #${a.pos}</li>`).join('')}</ul>`) : ''}
     ${s.grp && s.grp.albums.length ? card('💿 專輯榜單回顧', `<ul class="albs">${s.grp.albums.map((a, i) => ({ a, i })).reverse().map(({ a, i }) => `<li><span><b>${(DATA.ALBUM_FORMATS[a.fmt] || DATA.ALBUM_FORMATS.mini).ic} ${U.esc(a.name)}</b><small>${Cal.short(a.day)} · ${(DATA.ALBUM_FORMATS[a.fmt] || DATA.ALBUM_FORMATS.mini).n} · 首週 ${U.num(a.sales)} 張 · ${a.peak ? '月榜最高 #' + a.peak : (s.promo && s.promo.start === a.day ? '宣傳中' : '首週榜單 #' + a.pos)}</small></span>${a.chart ? `<button class="btn ghost" data-act="i.albchart" data-i="${i}">📈 榜單</button>` : ''}</li>`).join('')}</ul>`) : ''}
     ${s.stage >= 3 ? card('功成身退', `<p class="sub">人氣偶像之後，你可以隨時選擇結束偶像生涯，迎接結局（否則會一路玩到三十歲）。</p><button class="btn ghost" data-act="i.retire">結束偶像生涯</button>`) : ''}
     ${s.awards.length ? card('獲獎紀錄', `<ul class="notes">${s.awards.map(a => `<li>🏆 ${a.y} ${a.n}</li>`).join('')}</ul>`) : ''}</div></div>`;
@@ -4123,7 +4614,7 @@ function tMates(lv) {
   const cards = list.map(m => {
     const v = Math.round(Idol.mateAff(m)), P = DATA.MATE_PERS[m.pers], d = m.npc ? DATA.NPCS[m.npc] : null, g2 = m.g || I.g;
     const btns = acts.map(id => { const a = DATA.ACTIONS[id], why = Idol.canAct(id); return `<button class="btn sm ${why ? 'ghost' : ''}" data-act="i.act" data-id="${id}" data-mate="${U.esc(m.name)}" ${why ? 'disabled title="' + U.esc(why) + '"' : ''}>${a.i} ${a.n}<small style="display:block;opacity:.7">AP ${a.ap}${a.money ? ' · ' + U.money(-a.money) : ''}</small></button>`; }).join('');
-    return card('', `<div class="npc"><div class="nav">${d ? d.icon : (g2 === 'f' ? '👩‍🎤' : '🧑‍🎤')}</div><div><b>${U.esc(m.name)}</b><small>${U.esc(m.role)} · ${d ? d.pers : P.n}</small></div>${UI.chip(lv(v), 'pink')}</div>
+    return card('', `<div class="npc"><div class="nav">${Avatar.mini(m.name, g2, 44)}</div><div><b>${U.esc(m.name)}</b><small>${U.esc(m.role)} · ${d ? d.pers : P.n}</small></div>${UI.chip(lv(v), 'pink')}</div>
       ${UI.bar('好感度', v, 100)}${m.last ? `<p class="sub">${U.esc(m.last)}</p>` : '<p class="sub">還沒有特別的互動。</p>'}
       <div class="btn-row wrap">${btns}</div>`);
   }).join('');
@@ -4139,7 +4630,7 @@ function tRel() {
     const n = I.npc[id], met = I.met[id], v = I.rel[id] || 0;
     if (!met) return card('', `<div class="npc"><div class="nav">❔</div><div><b>？？？</b><small>${d.role}</small></div></div><p class="sub">尚未認識。留意練習室與公司活動。</p>`, 'dim');
     const evs = DATA.NPC_EVENTS.filter(e => e.npc === id);
-    return card('', `<div class="npc"><div class="nav">${d.icon}</div><div><b>${n.name}</b><small>${d.role} · ${d.pers}</small></div>${UI.chip(lv(v), 'pink')}</div>
+    return card('', `<div class="npc"><div class="nav">${Avatar.mini(n.name, n.g, 44)}</div><div><b>${n.name}</b><small>${d.role} · ${d.pers}</small></div>${UI.chip(lv(v), 'pink')}</div>
       ${UI.bar('好感度', v, 100)}<p class="sub">${v >= 20 ? Idol.fmt(d.bg) : '還不太熟，不知道對方的故事。'}</p>
       <div class="sub">專屬劇情：${evs.map(e => `${I.done[e.id] ? '✔' : '🔒' + e.need}`).join(' / ')}</div>
       <button class="btn sm" data-act="i.act" data-id="team" data-npc="${id}" ${Idol.canAct('team') ? 'disabled' : ''}>互動（1AP）</button>`);
@@ -4766,7 +5257,7 @@ function mRoster() {
   if (!M.roster.length) return card('練習生', '<p class="sub">目前沒有練習生。到「星探」頁舉辦試鏡。</p>');
   return `<div class="cards2">${M.roster.map(T => {
     const top = DATA.ABK.slice().sort((a, b) => T.ab[b] - T.ab[a]).slice(0, 3).map(k => `${DATA.ABN[k]} ${U.f1(T.ab[k])}`).join(' · ');
-    return card('', `<div class="npc"><div class="nav">${gIcon(T.g)}</div><div><b>${U.esc(T.name)}</b><small>${T.age} 歲 · ${['練習生', '預備組', '已出道'][T.stage]}${T.gid ? ' · ' + U.esc((M.groups.find(g => g.id === T.gid) || {}).name || '') : ''}</small></div><div>${gradeChip(T.rating)}</div></div>
+    return card('', `<div class="npc"><div class="nav">${Avatar.mini(T.name, T.g, 44)}</div><div><b>${U.esc(T.name)}</b><small>${T.age} 歲 · ${['練習生', '預備組', '已出道'][T.stage]}${T.gid ? ' · ' + U.esc((M.groups.find(g => g.id === T.gid) || {}).name || '') : ''}</small></div><div>${gradeChip(T.rating)}</div></div>
       <small class="sub">${top}　綜合 ${U.f1(T.ovr)}（${T.age} 歲基準 ${BENCH(T.age)}）　潛力 <b class="star">${starStr(Mgr.stars(T))}</b>${T.rev.pot ? '' : ' (推測)'}</small>
       ${UI.bar('體力', T.st.stam, 100, 'stam')}${UI.bar('心情', T.st.mood, 100, 'mood')}${UI.bar('壓力', T.st.stress, 100, 'stress')}${UI.bar('忠誠度', T.hid.loyalty, 100)}
       <div class="plan"><select data-chg="m.focus" data-id="${T.id}">${foc.map(([k, n]) => `<option value="${k}" ${T.plan.focus === k ? 'selected' : ''}>${n}</option>`).join('')}</select>
@@ -4777,7 +5268,7 @@ function mRoster() {
 }
 function mScout() {
   const lv = M.me.skill.scout;
-  const list = M.market.length ? M.market.map(T => `<div class="act"><div class="nav">${gIcon(T.g)}</div><div class="ab"><b>${U.esc(T.name)}</b> <small>${T.age} 歲 · ${T.tag}</small><small>亮點：${DATA.ABK.slice().sort((a, b) => T.ab[b] - T.ab[a]).slice(0, 2).map(k => DATA.ABN[k] + ' ' + Math.round(T.ab[k])).join('、')} · 綜合 ${U.f1(T.ovr)}（基準 ${BENCH(T.age)}）</small><small>潛力推測 <b class="star">${starStr(Mgr.stars(T))}</b>（星探眼光 Lv.${lv}，誤差較小）· 簽約金 ${U.money(Mgr.fee(T))}</small></div><button class="btn sm" data-act="m.sign" data-id="${T.id}">簽約</button></div>`).join('') : '<p class="sub">目前沒有候選人。</p>';
+  const list = M.market.length ? M.market.map(T => `<div class="act"><div class="nav">${Avatar.mini(T.name, T.g, 44)}</div><div class="ab"><b>${U.esc(T.name)}</b> <small>${T.age} 歲 · ${T.tag}</small><small>亮點：${DATA.ABK.slice().sort((a, b) => T.ab[b] - T.ab[a]).slice(0, 2).map(k => DATA.ABN[k] + ' ' + Math.round(T.ab[k])).join('、')} · 綜合 ${U.f1(T.ovr)}（基準 ${BENCH(T.age)}）</small><small>潛力推測 <b class="star">${starStr(Mgr.stars(T))}</b>（星探眼光 Lv.${lv}，誤差較小）· 簽約金 ${U.money(Mgr.fee(T))}</small></div><button class="btn sm" data-act="m.sign" data-id="${T.id}">簽約</button></div>`).join('') : '<p class="sub">目前沒有候選人。</p>';
   return card('星探與試鏡', `<p class="sub">候選人的潛力是推測值，星探眼光越高越準。面談可以確認真正的潛力。公司目前可容納 ${Mgr.tier().cap} 人（現有 ${M.roster.length} 人）。</p>
     <div class="btn-row wrap"><button class="btn pink" data-act="m.audition" ${M.ap < 2 || M.co.funds < 30000 ? 'disabled' : ''}>舉辦公開試鏡（2AP · ${U.money(30000)}）</button><button class="btn" data-act="m.scout1" ${M.ap < 1 || M.co.funds < 8000 ? 'disabled' : ''}>街頭星探（1AP · ${U.money(8000)}）</button></div>`) + card('候選人', `<div class="acts">${list}</div>`);
 }
@@ -4924,7 +5415,7 @@ App.menu = function () {
   const cont = (l, key) => l ? `<button class="btn" data-act="app.${key}.cont">繼續遊戲<small>${U.esc(l.p.label)}</small></button>` : `<button class="btn" disabled>繼續遊戲<small>尚無存檔</small></button>`;
   root.innerHTML = `<div class="menu"><div class="hero"><div class="spark">✨</div><h1>K-POP 人生模擬器</h1><p>練習生 · 出道 · 經營——在首爾的舞台，寫下屬於你的故事</p></div>
     <div class="modes">
-      <section class="card mode idolm"><div class="big">🎤</div><h2>偶像模式</h2><p>十二歲簽約成為練習生。安排每天的行程、面對月考與人生事件，在十四到十六歲的黃金期爭取出道，再一步步走向頂級藝人。</p>
+      <section class="card mode idolm"><div class="big">🎤</div><h2>偶像模式</h2><p>十三歲簽約成為練習生。安排每天的行程、面對月考與人生事件，在十五到十六歲的黃金期爭取出道，再一步步走向頂級藝人。</p>
         <ul><li>人生模擬為主：隱藏數值、隨機人生事件</li><li>月考排名、出道評估、宣傳、打歌、頒獎</li><li>人際關係與專屬劇情</li></ul>
         <div class="btn-row"><button class="btn pink" data-act="app.idol.new">新遊戲</button>${cont(li, 'idol')}</div></section>
       <section class="card mode mgrm ${App.mgrUnlocked() ? '' : 'locked'}"><div class="big">🧑‍💼</div><h2>經紀人模式</h2><p>你是小型娛樂公司的新手經紀人。簽下練習生、安排培訓、企劃團體出道，管理資金，在六年內把公司帶上頂點。</p>
@@ -4945,8 +5436,9 @@ App.idolForm = function () {
     <h3>🎤 偶像模式：新遊戲</h3>
     <section class="cc-sec"><h4>1. 你的名字</h4><div class="cc-name"><input id="nm" maxlength="8" value="${U.esc(d.name)}" placeholder="例：金夏恩"><button class="btn ghost sm" data-act="app.rname" type="button">🎲</button></div></section>
     <section class="cc-sec"><h4>2. 性別</h4><div class="cc-segs">${seg('f', '👩 女生')}${seg('m', '👨 男生')}</div></section>
-    <section class="cc-sec"><h4>3. 國籍</h4><div class="cc-nats">${natCards}</div><p class="cc-natd" id="natd">${DATA.NATS[d.nat].d}</p></section>
-    <section class="cc-sec"><h4>4. 天賦詞條 <small>從 5 個中選 3 個</small></h4><div class="cc-traits">${tr}</div>
+    <section class="cc-sec"><h4>3. 外貌 <small>韓系紙娃娃，可自由搭配</small></h4>${Avatar.editor(d.av)}</section>
+    <section class="cc-sec"><h4>4. 國籍</h4><div class="cc-nats">${natCards}</div><p class="cc-natd" id="natd">${DATA.NATS[d.nat].d}</p></section>
+    <section class="cc-sec"><h4>5. 天賦詞條 <small>從 5 個中選 3 個</small></h4><div class="cc-traits">${tr}</div>
       <button class="btn ghost cc-reroll" data-act="app.reroll">🎲 重抽詞條</button></section>
     <p class="cc-note">家庭背景會隨機決定，並影響起始金錢、家人支持與事件。隱藏數值（氣運、毅力等）不會顯示，要靠人生去發現。</p>
     <div class="cc-foot"><button class="btn ghost" data-act="u.close">取消</button><button class="btn pink" data-act="app.idol.go">開始簽約</button></div></div>`, { cls: 'small cc-modal' });
@@ -4955,7 +5447,7 @@ ACT['app.idol.new'] = () => {
   if (Store.latest('idol')) return UI.confirm('已有偶像模式存檔，開始新遊戲會覆蓋「自動存檔」（手動存檔不受影響）。', 'app.idol.new2', {}, '開始新遊戲');
   ACT['app.idol.new2']();
 };
-ACT['app.idol.new2'] = () => { const g = U.chance(.5) ? 'f' : 'm'; App.draft = { name: rndName(g, 'kr'), g, nat: 'kr', auto: true, traits: [], sel: [] }; App.rollTraits(); App.idolForm(); };
+ACT['app.idol.new2'] = () => { const g = U.chance(.5) ? 'f' : 'm'; App.draft = { name: rndName(g, 'kr'), g, nat: 'kr', auto: true, traits: [], sel: [], av: Avatar.rand(g), avTouched: false }; App.rollTraits(); App.idolForm(); };
 ACT['app.rname'] = () => { App.syncForm(); App.draft.name = rndName(App.draft.g, App.draft.nat); App.draft.auto = true; const nm = document.getElementById('nm'); if (nm) nm.value = App.draft.name; };
 ACT['app.reroll'] = () => { App.syncForm(); App.draft.sel = []; App.rollTraits(); App.idolForm(); };
 App.syncForm = function () {
@@ -4969,7 +5461,7 @@ ACT['app.idol.go'] = () => {
   if (!d.name.trim()) return UI.toast('請輸入名字', 'bad');
   if (d.sel.length !== 3) return UI.toast('請剛好選 3 個詞條', 'bad');
   UI.close(); Store.del('idol', 'bak');
-  const s = Idol.newGame({ name: d.name.trim(), g: d.g, nat: d.nat, traits: d.sel });
+  const s = Idol.newGame({ name: d.name.trim(), g: d.g, nat: d.nat, traits: d.sel, av: d.av });
   Idol.start(s); Idol.save('auto');
 };
 ACT['app.idol.cont'] = () => { const l = Store.latest('idol'); if (!l) return; Idol.start(l.p.state); };
@@ -5004,6 +5496,7 @@ document.addEventListener('change', e => {
     App.syncForm(); const nm = document.getElementById('nm');
     if (App.draft.auto && nm) { App.draft.name = rndName(App.draft.g, App.draft.nat); nm.value = App.draft.name; }
     const nd = document.getElementById('natd'); if (nd) nd.textContent = DATA.NATS[App.draft.nat].d;
+    if (el.name === 'gd' && !App.draft.avTouched) { App.draft.av = Avatar.rand(App.draft.g); App.idolForm(); }
   } if (el && el.dataset && el.dataset.chg) { const f = ACT[el.dataset.chg]; if (f) f(el.dataset, el); }
 });
 if (typeof window !== 'undefined' && document.getElementById('screen')) App.menu();
