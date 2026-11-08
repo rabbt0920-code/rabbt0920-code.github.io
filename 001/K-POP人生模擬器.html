@@ -796,6 +796,7 @@ DATA.ACTIONS = {
   fanmeet: { n: '粉絲見面會', i: '💌', ap: 2, stam: 14, stress: 2, mood: 6, minStage: 2, work: 1, d: '鞏固粉絲、提升人氣。' },
   live: { n: '直播', i: '🔴', ap: 1, stam: 5, stress: 2, minStage: 2, work: 1, d: '和粉絲聊天，話題高但有風險。' },
   ad: { n: '廣告拍攝', i: '📸', ap: 2, stam: 12, stress: 3, minStage: 2, work: 1, d: '執行已簽下的代言合約。' },
+  popup: { n: '周邊快閃店', i: '🛍️', ap: 2, stam: 18, stress: 5, minStage: 3, work: 1, d: '人氣偶像限定，每 30 天一次。販售周邊，營收看粉絲與人氣。' },
   concert: { n: '舉辦演唱會', i: '🏟️', ap: 3, stam: 40, stress: 10, minStage: 3, work: 1, d: '人氣偶像限定，體力 60 以上，每 60 天一次。' }
 };
 DATA.SHOP = [
@@ -4448,7 +4449,7 @@ Idol.canAct = function (id) {
   const a = DATA.ACTIONS[id]; if (!a) return '無此行動';
   if (I.over) return '遊戲已結束';
   if (a.minStage && I.stage < a.minStage) return `出道後解鎖`;
-  if (['musicshow', 'ad', 'fanmeet', 'concert'].includes(id) && (I.flags.freezeUntil || 0) > I.day) return `活動冷凍中（${I.flags.freezeUntil - I.day} 天）`;
+  if (['musicshow', 'ad', 'fanmeet', 'concert', 'popup'].includes(id) && (I.flags.freezeUntil || 0) > I.day) return `活動冷凍中（${I.flags.freezeUntil - I.day} 天）`;
   if (a.mate && !Idol.hasMates()) return '單人活動沒有隊友';
   if (I.ap < a.ap) return 'AP 不足';
   if (a.money && I.car.money + a.money < 0) return '金錢不足';
@@ -4457,6 +4458,7 @@ Idol.canAct = function (id) {
   if (id === 'ad' && !Idol.pendingShoots()) return I.endorse.length ? '目前沒有待拍攝的廣告（依合約排程）' : '沒有代言合約';
   if (id === 'concert' && I.sick > 0) return '生病中';
   if (id === 'concert') { if (I.day - I.lastConcert < 60) return `冷卻中（${60 - (I.day - I.lastConcert)} 天）`; if (I.st.stam < 60) return '體力需 60 以上'; }
+  if (id === 'popup') { const cd = 30 - (I.day - (I.lastPopup ?? -999)); if (cd > 0) return `冷卻中（${cd} 天）`; if (I.st.stam < 30) return '體力需 30 以上'; }
   if (id === 'fanmeet' && I.today.some(t => t.id === 'fanmeet')) return '今天已辦過';
   return null;
 };
@@ -4803,8 +4805,8 @@ Idol.chartMk = function (used, rookie) {
   if (!name) { const all = rivalPool(cats[0], used); name = all.length ? U.pick(all) : U.pick(ARTIST_GROUPS) + ' ' + U.ri(2, 9); }
   used.add(name);
   const yrs = I.grp ? Math.max(0, (I.day - I.grp.debutDay) / 365) : 0;
-  const base = rookie ? U.ri(18, 52) : U.ri(32, 78) + Math.min(10, yrs * 2);
-  return { name, pw: base, fans: Math.round(Math.pow(10, 3.2 + base / 22)), trend: U.rf(-.5, 1.2), hot: 0 };
+  const base = rookie ? U.ri(18, 52) : U.ri(32, 74) + Math.min(8, yrs * 1.5);
+  return { name, pw: base, core: base, bump: 0, cap: U.clamp(base + U.ri(3, 10) + Math.min(4, yrs), 30, 88), fans: Math.round(Math.pow(10, 3.2 + base / 22)), trend: U.rf(-.5, 1), hot: 0 };
 };
 Idol.chartInit = function () {
   const ck = Idol.chartKind(), used = new Set([I.name, I.grp && I.grp.name].concat((I.dpool || []).map(r => r.name)));
@@ -4813,7 +4815,13 @@ Idol.chartInit = function () {
   for (let i = 0; i < cap; i++) I.chart.rivals.push(Idol.chartMk(used, ck.id === 'rookie'));
   I.chart.rivals.sort((a, b) => b.pw - a.pw);
 };
-Idol.playerPw = function () { return I.car.pop * .7 + U.clamp(Math.log10(I.car.fans + 10) * 4, 0, 28); };
+Idol.playerPw = function () { // 榜單實力：人氣＋粉絲，再加上今年的打歌成績、近期專輯銷量與本人實力
+  const fanT = U.clamp(Math.log10(I.car.fans + 10) * 4, 0, 28);
+  const winT = Math.min(6, (I.flags.yWins || 0) * .8 + (I.flags.yBoss || 0) * 2);
+  const albT = I.lastSales ? Math.min(5, Math.max(0, (Math.log10(I.lastSales + 1) - 3.5) * 2)) : 0;
+  const abT = ((I.ab.vocal + I.ab.dance + I.ab.charm + I.ab.acting) / 4) * .05;
+  return I.car.pop * .68 + fanT + winT + albT + abT;
+};
 Idol.chartUpdate = function (monthly) {
   if (!I.chart || I.chart.id !== Idol.chartKind().id) Idol.chartInit();
   const C = I.chart, yrs = I.grp ? Math.max(0, (I.day - I.grp.debutDay) / 365) : 0;
@@ -4821,12 +4829,17 @@ Idol.chartUpdate = function (monthly) {
     // 同類對手每月成長：越久越強；偶爾有人爆紅；弱者被新人取代
     const used = new Set(C.rivals.map(r => r.name).concat([I.name, I.grp && I.grp.name]));
     C.rivals.forEach(r => {
-      r.pw = U.clamp(r.pw + r.trend * .9 + U.gauss() * 1.6 + Math.min(.6, yrs * .12), 8, 98);
-      if (r.hot > 0) { r.hot--; r.pw = U.clamp(r.pw + 1.2, 8, 98); }
-      if (U.chance(.08)) r.trend = U.rf(-.6, 1.3);
+      if (r.boss) return;
+      // 對手有各自的實力上限，向上限緩慢靠攏；爆紅只是短期加成，會逐月消退（避免整個榜單無止境膨脹）
+      if (r.cap == null) r.cap = U.clamp(r.pw + U.ri(3, 10), 40, 88);
+      if (r.core == null) r.core = r.pw - (r.bump || 0);
+      r.core = U.clamp(r.core + (r.cap - r.core) * .05 + r.trend * .3 + U.gauss() * 1.0, 8, r.cap + 3);
+      r.bump = (r.bump || 0) * .65; if (r.hot > 0) r.hot--;
+      r.pw = U.clamp(r.core + r.bump, 8, 98);
+      if (U.chance(.08)) r.trend = U.rf(-.6, 1.1);
       r.fans = Math.round(Math.pow(10, 3.2 + r.pw / 22));
     });
-    if (U.chance(.28)) { const r = U.pick(C.rivals.slice(0, 8)); r.pw = U.clamp(r.pw + U.ri(4, 9), 8, 98); r.hot = 3; C.surge = r.name; } else C.surge = null;
+    if (U.chance(.22)) { const cand = C.rivals.slice(0, 8).filter(x => !x.boss); if (cand.length) { const r = U.pick(cand); r.bump = (r.bump || 0) + U.ri(3, 7); r.pw = U.clamp(r.core + r.bump, 8, 98); r.hot = 3; C.surge = r.name; } else C.surge = null; } else C.surge = null;
     C.rivals.sort((a, b) => b.pw - a.pw);
     if (C.rivals[C.rivals.length - 1].pw < 20 && U.chance(.5)) { C.rivals.pop(); C.rivals.push(Idol.chartMk(used, false)); }
   }
@@ -5063,9 +5076,11 @@ Idol.startPromo = function (concept, opt) {
   let q = U.clamp(Idol.teamSynergy() + base * .6 + (I.rel.baiyu || 0) * .1 + I.hid.team * .1 + I.car.pop * .1 + U.rf(-6, 8) + (I.hid.luck - 50) / 10 + kb + F.qb, 5, 100);
   const iv = Idol.invFx(opt.inv, q); q = U.clamp(q + iv.qb + 2.5 * ((I.staff && I.staff.studio) || 0), 5, 100);
   if (opt.inv) Idol.log(iv.flop ? '🎛️ 追加預算的旗艦製作「過度雕琢」，成效不如預期。' : `🎛️ 追加製作預算（${Spend.INV[opt.inv].n}），專輯品質提升。`, iv.flop ? 'bad' : 'story');
-  const nth = I.grp.albums.length;
-  const names = ['首張迷你專輯', '第二張迷你專輯', '首張正規專輯', '夏季特別專輯', '冬季特別專輯', '第二張正規專輯', '第三張迷你專輯'];
-  const name = opt.title ? opt.title : (nth === 0 ? '出道專輯' : names[Math.min(nth, names.length - 1)]) + '「' + c.n + '」';
+  const nth = I.grp.albums.length, fk = opt.fmt && DATA.ALBUM_FORMATS[opt.fmt] ? opt.fmt : 'mini';
+  const ORD = ['首張', '第二張', '第三張', '第四張', '第五張', '第六張', '第七張', '第八張'];
+  const sameFmt = I.grp.albums.filter(a => (a.fmt || 'mini') === fk).length;
+  const kindName = { single: '單曲專輯', mini: '迷你專輯', full: '正規專輯' }[fk];
+  const name = opt.title ? opt.title : (nth === 0 ? '出道專輯' : (ORD[Math.min(sameFmt, ORD.length - 1)] + kindName)) + '「' + c.n + '」';
   const sales = Math.round((I.car.fans * .25 + 4000) * (.5 + q / 100) * U.rf(.85, 1.2) * F.sales * iv.sm);
   const pos = Math.max(1, Math.round(70 - (q * .5 + I.car.pop * .4 + I.car.fame * .2) + U.gauss() * 6));
   I.promo = { name, concept: c.id, fmt: opt.fmt || 'mini', start: I.day, end: I.day + F.days, gap: F.gap, winLog: [], q, wins: 0, shows: 0, sales, pos };
@@ -5697,12 +5712,12 @@ function tRel() {
 /* ---------- 工作 ---------- */
 function tWork() {
   if (I.stage < 2) return card('🔒 出道後解鎖', `<p>正式出道後，你才能參加音樂節目、綜藝、見面會與廣告拍攝。<br>目前階段：${DATA.STAGES[I.stage]}。${I.stage === 1 ? '通過季度出道評估即可出道。' : '先升上預備組、累積月考成績。'}</p>`);
-  const ids = ['musicshow', 'varshow', 'fanmeet', 'live', 'ad', 'concert'];
+  const ids = ['musicshow', 'varshow', 'fanmeet', 'live', 'ad', 'concert', 'popup'];
   const p = I.promo;
   return `<div class="grid2"><div class="col">${card('宣傳期', p ? `<h4>《${U.esc(p.name)}》</h4><p>專輯品質 ${Math.round(p.q)} · 首週銷量 ${U.num(p.sales)} · 榜單 #${p.pos}<br>打歌 ${p.shows} 次 · 一位 ${p.wins} 次 · 剩 ${Math.max(0, p.end - I.day)} 天${p.cb && p.cb.length ? '<br>⚔️ 同期回歸：' + p.cb.map(c => (c.boss ? '👹 ' : '') + U.esc(c.name) + '（實力 ' + c.pw + '）').join('、') : ''}</p>` : `<p class="sub">目前沒有宣傳期。${I.grp ? '下次回歸約 ' + Math.max(0, Math.ceil((I.grp.next - I.day) / 7)) + ' 週後。' : ''}</p>`)}
     ${card('工作', `<div class="acts">${ids.map(actCard).join('')}</div>`)}
     ${card('🤝 品牌代言（一次簽一年）', (I.endorse || []).length ? `<ul class="notes">${I.endorse.map(c => `<li><b>${U.esc(c.n)}</b>（${c.cat}）<br>剩 ${Math.max(0, c.end - I.day)} 天 · 已拍 ${c.done}/${c.shots} 次 · 每次酬勞 ${U.money(c.per)}${c.sched.filter(d => d <= I.day).length > c.done ? ' · <b>📸 待拍攝</b>' : (c.done < c.shots ? ' · 下次拍攝約 ' + Cal.short(c.sched.find(d => d > I.day) || c.end) : '')}</li>`).join('')}</ul>` : '<p class="sub">目前沒有代言合約。知名度提高後，品牌會陸續找上門。</p>')}</div>
-    <div class="col">${card('活動規則', '<ul class="notes"><li>打歌只在宣傳期的週四～日，成績取決於舞台、專輯品質、人氣與粉絲。</li><li>演唱會需人氣偶像階段、體力 60 以上，每 60 天一次。</li><li>品牌代言一次簽一年，同類別不重複，人氣偶像之前最多同時兩份、成為人氣偶像後最多五份；期間有 4 次拍攝，未完成會被索賠。</li><li>薪水每月 1 日入帳，會依銷量有分紅。</li></ul>')}</div></div>`;
+    <div class="col">${card('活動規則', '<ul class="notes"><li>打歌只在宣傳期的週四～日，成績取決於舞台、專輯品質、人氣與粉絲。</li><li>演唱會需人氣偶像階段、體力 60 以上，每 60 天一次。</li><li>周邊快閃店需人氣偶像階段、體力 30 以上，每 30 天一次；備貨成本先付，賣不完會虧。</li><li>品牌代言一次簽一年，同類別不重複，人氣偶像之前最多同時兩份、成為人氣偶像後最多五份；期間有 4 次拍攝，未完成會被索賠。</li><li>薪水每月 1 日入帳，會依銷量有分紅。</li></ul>')}</div></div>`;
 }
 
 /* ---------- 社群 ---------- */
@@ -5870,14 +5885,19 @@ ACT['i.act'] = d => {
     UI.modal(`<h3>與誰互動？</h3><div class="choices">${list}</div><div class="btn-row"><button class="btn ghost" data-act="u.close">取消</button></div>`); return;
   }
   if (d.id === 'social') return ACT['i.post']();
+  if (d.id === 'popup' && !d.tier) {
+    const T = Idol.popupTiers, list = Object.keys(T).map(k => { const v = T[k], c = Idol.popupCost(k), off = !v.ok() || I.car.money < c; return `<button class="choice" data-act="i.popup" data-tier="${k}" ${off ? 'disabled' : ''}><b>${v.ic} ${v.n}</b><small>${v.d}｜成本 ${U.money(c)}｜備貨約 ${U.num(v.cap())} 件｜均價 ×${v.price}</small>${!v.ok() ? `<small>需要：${v.need}</small>` : I.car.money < c ? '<small>資金不足</small>' : ''}</button>`; }).join('');
+    UI.modal(`<h3>周邊快閃店規格</h3><p class="sub">備貨與租金先付，賣不完就會虧。人氣與粉絲越高、宣傳期間，越容易完售。目前資金 ${U.money(I.car.money)}，粉絲 ${U.num(I.car.fans)}，人氣 ${Math.round(I.car.pop)}。</p><div class="choices">${list}</div><div class="btn-row"><button class="btn ghost" data-act="u.close">取消</button></div>`); return;
+  }
   if (d.id === 'concert' && !d.tier) {
     const T = Idol.concertTiers, list = Object.keys(T).map(k => { const v = T[k], c = Idol.concertCost(k), off = !v.ok() || I.car.money < c; return `<button class="choice" data-act="i.concert" data-tier="${k}" ${off ? 'disabled' : ''}><b>${v.ic} ${v.n}</b><small>${v.d}｜成本 ${U.money(c)}｜容量約 ${U.num(v.cap())}｜票價 ×${v.price}</small>${!v.ok() ? `<small>需要：${v.need}</small>` : I.car.money < c ? '<small>資金不足</small>' : ''}</button>`; }).join('');
     UI.modal(`<h3>演唱會規格</h3><p class="sub">規格越大收益越高，但賣不滿會虧損。目前資金 ${U.money(I.car.money)}，粉絲 ${U.num(I.car.fans)}，人氣 ${Math.round(I.car.pop)}。</p><div class="choices">${list}</div><div class="btn-row"><button class="btn ghost" data-act="u.close">取消</button></div>`); return;
   }
   UI.close();
-  I._concert = null; I._show = null;
+  I._concert = null; I._show = null; I._popup = null;
   const r = Idol.doAct(d.id, { npc: d.npc, mate: d.mate, tier: d.tier }); if (!r) return;
   const t = I.today[I.today.length - 1];
+  if (d.id === 'popup' && I._popup) { const P = I._popup; Idol.render(); return UI.modal(`<div class="ev-tag">${P.ic} 周邊快閃店</div><h3>${P.soldOut ? '🎉 全面完售！' : P.flop ? '😓 買氣冷清' : '快閃店結算'}</h3><p class="sub">${P.tier}</p><div class="kpis"><div><b>${U.num(P.sold)}</b><small>售出（備貨 ${U.num(P.cap)}）</small></div><div><b>${Math.round(P.fill * 100)}%</b><small>完售率</small></div></div><p>營收 ${U.money(P.rev)}　成本 ${U.money(P.cost)}<br><b>淨收益 ${U.money(P.net)}</b>　粉絲 +${U.num(P.fans)}</p><div class="btn-row"><button class="btn" data-act="u.close">收工</button></div>`); }
   if (d.id === 'concert' && I._concert) { Idol.render(); return ConcertFx.show(I._concert); }
   if (d.id === 'musicshow' && I._show) { Idol.render(); return ShowFx.show(I._show, t.eff.filter(([k]) => k !== 'stam' && k !== 'stress').slice(0, 4)); }
   UI.toast(`${DATA.ACTIONS[d.id].i} ${DATA.ACTIONS[d.id].n}：` + (t.eff.filter(([k]) => k !== 'stam' && k !== 'stress').slice(0, 3).map(([k, v]) => `${DATA.LABEL[k]}${v > 0 ? '+' : ''}${Math.abs(v) >= 100 ? U.num(v) : U.f1(v)}`).join(' ') || '完成'));
@@ -6078,6 +6098,32 @@ const Spend = (function () {
     return flop ? `巨蛋有大片空位……票房不如預期，淨虧損 ${U.money(-net)}。` : `演唱會落幕，${U.num(tickets)} 名觀眾齊聲呼喊你的名字。`;
   };
 
+  /* ---- 周邊快閃店（人氣偶像限定） ---- */
+  const POP = {
+    small: { n: '商場快閃櫃位', ic: '🛍️', frac: .45, cap: () => 3000, price: 90, pop: .8, fame: .6, fans: .3, d: '三天的小型櫃位，成本低、風險小。', ok: () => true },
+    mid: { n: '主題快閃店', ic: '🏬', frac: .5, cap: () => Math.round(8000 + I.car.pop * 100), price: 110, pop: 1.5, fame: 1.2, fans: .4, d: '一週的主題空間，限定周邊與拍照區。', ok: () => I.car.fans >= 100000, need: '粉絲 ≥ 10 萬' },
+    large: { n: '旗艦聯名快閃店', ic: '🏯', frac: .55, cap: () => Math.round(20000 + I.car.pop * 250), price: 150, pop: 2.5, fame: 2, fans: .5, d: '聯名限定款、排隊人潮與媒體曝光，賣不動會虧。', ok: () => I.car.fans >= 250000 && I.car.pop >= 45, need: '粉絲 ≥ 25 萬、人氣 ≥ 45' }
+  };
+  Idol.popupTiers = POP; Idol.popupCost = k => Math.round(POP[k].cap() * POP[k].price * POP[k].frac);
+  Idol.act_popup = function (a, o, push) {
+    I.lastPopup = I.day;
+    const k = POP[o.tier] && POP[o.tier].ok() ? o.tier : 'small', T = POP[k], cap = T.cap();
+    const c = Math.min(Idol.popupCost(k), I.car.money);
+    const appeal = Sim.weighted(I, { charm: .4, variety: .25, acting: .15, vocal: .1, dance: .1 }) * Sim.form(I);
+    const hype = (I.promo ? 1.25 : 1) * (1 + Math.min(.3, (I.flags.yWins || 0) * .03));
+    const demand = (I.car.fans * .03 * (.65 + appeal / 140) + I.car.pop * 80) * hype * U.rf(.85, 1.15);
+    const sold = Math.round(Math.min(cap, demand)), fill = sold / cap;
+    const rev = Math.round(sold * T.price), net = rev - c;
+    I.car.money = Math.max(0, I.car.money - c); push('money', -c);
+    const soldOut = fill >= .95, flop = fill < .35;
+    const fx = { money: rev, pop: flop ? -.5 : T.pop * (soldOut ? 1.3 : 1), fame: flop ? 0 : T.fame, fans: Math.round(sold * T.fans * (flop ? .4 : 1)), mood: flop ? -3 : soldOut ? 8 : 4 };
+    const r = Idol.applyFx(fx); r.out.forEach(([kk, v]) => push(kk, v));
+    I._popup = { tier: T.n, ic: T.ic, sold, cap, fill, rev, cost: c, net, soldOut, flop, fans: fx.fans };
+    Idol.log(`${T.ic} 周邊快閃店（${T.n}）：售出 ${U.num(sold)} 件（${Math.round(fill * 100)}%），營收 ${U.money(rev)}、成本 ${U.money(c)}，淨收益 ${U.money(net)}。`, net >= 0 ? 'win' : 'bad');
+    Idol.checkStage();
+    return soldOut ? `快閃店全面完售！粉絲在門口排了整條街。` : flop ? `店裡冷冷清清，周邊堆在倉庫……淨虧損 ${U.money(-net)}。` : `快閃店順利落幕，賣出 ${U.num(sold)} 件周邊。`;
+  };
+
   /* ---- 月費與每日效果 ---- */
   const origMonthly = Idol.monthly;
   Idol.monthly = function () {
@@ -6157,6 +6203,7 @@ const Spend = (function () {
 ACT['i.staff'] = d => { const k = d.k, S = Spend.STAFF[k]; if (!S) return; I.staff = I.staff || {}; const l = Spend.lv(k), n = l + (+d.d); if (n < 0 || n > 3) return; I.staff[k] = n; Idol.log(`${S.i} ${S.n}調整為 Lv.${n}。`, 'story'); Idol.render(); };
 ACT['i.camp'] = d => Idol.camp(d.id);
 ACT['i.life'] = d => Idol.life(d.id);
+ACT['i.popup'] = d => { UI.close(); ACT['i.act']({ id: 'popup', tier: d.tier }); };
 ACT['i.concert'] = d => { UI.close(); ACT['i.act']({ id: 'concert', tier: d.tier }); };
 
 /* ===== tutorial.js ===== */
