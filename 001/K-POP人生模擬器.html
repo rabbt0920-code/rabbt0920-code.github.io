@@ -491,6 +491,14 @@ const Theme = {
   },
   btn() { return `<button class="btn ghost sm themebtn" data-act="theme.toggle" aria-label="深色模式">${Theme.get() === 'dark' ? '☀️' : '🌙'}</button>`; }
 };
+const AutoEv = { // 相同事件快速選擇：記住每個事件第一次的選項，之後自動套用（可開關，全域設定）
+  KEY: 'kpop_sim_autoev',
+  on() { try { return localStorage.getItem(AutoEv.KEY) === '1'; } catch (e) { return !!AutoEv._m; } },
+  set(v) { try { localStorage.setItem(AutoEv.KEY, v ? '1' : '0'); } catch (e) { AutoEv._m = v; } AutoEv.apply(); },
+  apply() { if (typeof document === 'undefined') return; const o = AutoEv.on(); document.querySelectorAll('.autoevbtn').forEach(b => { b.classList.toggle('pink', o); b.classList.toggle('ghost', !o); b.title = o ? '快速事件：開（重複事件自動套用你第一次的選擇）' : '快速事件：關'; }); },
+  btn() { const o = AutoEv.on(); return `<button class="btn ${o ? 'pink' : 'ghost'} sm autoevbtn" data-act="autoev.toggle" aria-label="快速事件" title="${o ? '快速事件：開（重複事件自動套用你第一次的選擇）' : '快速事件：關'}">⚡</button>`; }
+};
+ACT['autoev.toggle'] = () => { const v = !AutoEv.on(); AutoEv.set(v); UI.toast(v ? '⚡ 快速事件已開啟：重複事件會自動套用你第一次的選擇（劇情與連鎖事件除外）' : '⚡ 快速事件已關閉', 'ok'); };
 ACT['theme.toggle'] = () => Theme.set(Theme.get() === 'dark' ? 'light' : 'dark');
 if (typeof document !== 'undefined') Theme.apply();
 
@@ -5535,7 +5543,7 @@ Idol.render = function () {
   const hdr = `<header class="top"><div class="who"><span class="avatar">${Avatar.svg(I.av, 46, I.g)}</span><div><b>${U.esc(I.name)}</b> <span title="${DATA.NATS[I.nat].n}">${DATA.NATS[I.nat].flag}</span><small>${DATA.STAGES[I.stage]} · ${I.age} 歲${I.grp ? ' · ' + I.grp.name + (Idol.myRole() && I.grp.kind !== 'solo' ? '（' + Idol.myRole() + '）' : '') : ''}</small></div></div>
     <div class="date"><b>${Cal.str(I.day)}</b><small>第 ${I.day + 1} 天 · ${dd === 0 ? (I.stage >= 2 ? '📝 今日評鑑' : '📝 今日考核') : (I.stage >= 2 ? '評鑑倒數 ' : '考核倒數 ') + dd + ' 天'}</small></div>
     <div class="hdr-stats"><span>💰 ${U.money(I.car.money)}</span><span>💗 ${U.num(I.car.fans)}</span><span class="apdots">${Array.from({ length: I.apMax }, (_, i) => `<i class="${i < I.ap ? 'on' : ''}"></i>`).join('')}</span></div>
-    ${Theme.btn()}<button class="btn ghost sm" data-act="app.menu">☰</button></header>`;
+    ${AutoEv.btn()}${Theme.btn()}<button class="btn ghost sm" data-act="app.menu">☰</button></header>`;
   const tabs = `<nav class="tabs">${ITABS.map(([id, ic, n]) => `<button class="tab ${IdolUI.tab === id ? 'on' : ''}" data-act="i.tab" data-t="${id}"><span>${ic}</span>${n}</button>`).join('')}</nav>`;
   const fn = { home: tHome, plan: tPlan, stats: tStats, cal: tCal, co: tCo, rel: tRel, work: tWork, spend: () => Spend.tSpend(), sns: tSns, log: tLog, save: tSave }[IdolUI.tab];
   root.innerHTML = `<div class="game idol">${hdr}${tabs}<main class="content">${fn()}</main></div>`;
@@ -5785,12 +5793,18 @@ Idol.flush = function () {
     const ev = q.id === 'personality' ? Idol.personalityEvent() : Idol.evById(q.id);
     if (!ev) { done(); return Idol.flush(); }
     I._npc = q.npc || null; I._mate = q.mate || null; ev._choices = ev.choices; IdolUI.cur = { ev, q };
+    const memOk = q.id !== 'personality' && !ev.arc && !ev.chain, mi = memOk && I.evMem ? I.evMem[ev.id] : null, mc = mi != null ? ev.choices[mi] : null;
+    if (mc && AutoEv.on() && !(mc.req && !mc.req(I))) { // 快速事件：自動套用第一次的選擇
+      I.queue.shift(); const res = Idol.resolveChoice(ev, mi);
+      if (res) { UI.toast(`⚡ ${Idol.fmt(ev.title)}：${Idol.fmt(mc.t).replace(/<[^>]+>/g, '')}`, 'ok'); Idol.log(`⚡ 快速事件【${Idol.fmt(ev.title)}】已自動選擇`, 'event'); }
+      Idol.checkConditions(); Idol.checkStage(); Idol.save('auto'); Idol.render(); return Idol.flush();
+    }
     const why = q.cause || (ev.because ? ev.because(I) : null);
     const ch = ev.choices.map((c, i) => {
       const off = c.req && !c.req(I);
       return `<button class="choice" data-act="i.choose" data-i="${i}" ${off ? 'disabled' : ''}>${Idol.fmt(c.t)}${c.check ? `<small>🎲 檢定：${DATA.LABEL[c.check.st] || c.check.st}</small>` : ''}${off ? `<small>${c.need ? '需要：' + c.need : '條件不足'}</small>` : ''}</button>`;
     }).join('');
-    UI.modal(`<div class="ev-tag">${q.t === 'nev' ? '💞 專屬劇情' : ev.chain ? '🔗 連鎖事件' : ev.arc ? '📰 風波' : '📖 事件'}</div><h3>${Idol.fmt(ev.title)}</h3><p class="pre">${Idol.fmt(ev.text)}</p>${why ? `<p class="cause">🔗 因果：${Idol.fmt(why)}</p>` : ''}<div class="choices">${ch}</div>`, { cls: 'event' });
+    UI.modal(`<div class="ev-tag">${q.t === 'nev' ? '💞 專屬劇情' : ev.chain ? '🔗 連鎖事件' : ev.arc ? '📰 風波' : '📖 事件'}</div><h3>${Idol.fmt(ev.title)}</h3><p class="pre">${Idol.fmt(ev.text)}</p>${why ? `<p class="cause">🔗 因果：${Idol.fmt(why)}</p>` : ''}<div class="choices">${ch}</div>${mc ? `<p class="sub">⚡ 你上次選了「${U.esc(Idol.fmt(mc.t).replace(/<[^>]+>/g, ''))}」。右上角 ⚡ 開啟後，同一事件會自動套用。</p>` : ''}`, { cls: 'event' });
     return;
   }
   if (q.t === 'exam') {
@@ -5848,6 +5862,7 @@ ACT['i.next'] = d => {
 ACT['i.choose'] = d => {
   const { ev } = IdolUI.cur; I.queue.shift();
   const res = Idol.resolveChoice(ev, +d.i);
+  if (ev.id !== 'personality' && !ev.arc && !ev.chain && IdolUI.cur.q.t === 'ev') (I.evMem = I.evMem || {})[ev.id] = I.evMem && I.evMem[ev.id] != null ? I.evMem[ev.id] : +d.i; // 只記住第一次的選擇
   if (ev.id === 'personality') { const ch = ev.choices[+d.i]; I.pers = ch.pers; I.done.personality = true; Idol.log(`個性確定：${DATA.PERS[ch.pers].n}`, 'story'); }
   const g = res.grade ? { g: '✨ 大成功', k: '👍 成功', f: '😓 失敗', b: '💥 大失敗' }[res.grade] : '';
   UI.modal(`<div class="ev-tag">${g || '結果'}</div><h3>${Idol.fmt(ev.title)}</h3><p class="you">你選擇了：${Idol.fmt(res.ch.t)}</p><p class="pre">${res.txt}</p><div class="chips">${res.chips}</div><div class="btn-row"><button class="btn" data-act="i.next2">繼續</button></div>`, { cls: 'event' });
@@ -6727,7 +6742,7 @@ Mgr.render = function () {
   const hdr = `<header class="top"><div class="who"><span class="avatar">🧑‍💼</span><div><b>${U.esc(M.name)}</b><small>${t.n} · 經紀人</small></div></div>
     <div class="date"><b>${Cal.str(M.day)}</b><small>第 ${M.week + 1} 週 / ${END_WEEK}</small></div>
     <div class="hdr-stats"><span>💰 ${U.money(M.co.funds)}</span><span>⭐ ${Math.round(M.co.rep)}</span><span class="apdots">${Array.from({ length: M.apMax }, (_, i) => `<i class="${i < M.ap ? 'on' : ''}"></i>`).join('')}</span></div>
-    ${Theme.btn()}<button class="btn ghost sm" data-act="app.menu">☰</button></header>`;
+    ${AutoEv.btn()}${Theme.btn()}<button class="btn ghost sm" data-act="app.menu">☰</button></header>`;
   const tabs = `<nav class="tabs">${MTABS.map(([id, ic, n]) => `<button class="tab ${MgrUI.tab === id ? 'on' : ''}" data-act="m.tab" data-t="${id}"><span>${ic}</span>${n}</button>`).join('')}</nav>`;
   const fn = { home: mHome, roster: mRoster, scout: mScout, groups: mGroups, co: mCo, sched: mSched, log: mLog, save: mSave }[MgrUI.tab];
   root.innerHTML = `<div class="game mgr">${hdr}${tabs}<main class="content">${fn()}</main></div>`;
@@ -6825,9 +6840,13 @@ Mgr.flush = function () {
     const ev = DATA.M.EVENTS.find(e => e.id === q.id), T = q.tid ? MT(M, q.tid) : null, G = q.gid ? M.groups.find(g => g.id === q.gid) : null;
     if ((ev.pick && !T && !G) || !ev) { M.queue.shift(); return Mgr.flush(); }
     MgrUI.cur = { ev, T, G, ctx: { t: T, g: G } };
+    const mc = M.evMem && M.evMem[ev.id] != null ? ev.choices[M.evMem[ev.id]] : null;
+    if (mc && AutoEv.on() && !(mc.req && !mc.req(M, MgrUI.cur.ctx))) { // 快速事件
+      MgrUI.autoChoose(M.evMem[ev.id]); return Mgr.flush();
+    }
     const ch = ev.choices.map((c, i) => { const off = c.req && !c.req(M, MgrUI.cur.ctx); return `<button class="choice" data-act="m.choose" data-i="${i}" ${off ? 'disabled' : ''}>${Mgr.fmt(c.t, MgrUI.cur.ctx)}${c.check ? `<small>🎲 檢定：${SKILLS[c.check.st]}</small>` : ''}${off ? `<small>${c.need ? '需要：' + c.need : '條件不足'}</small>` : ''}</button>`; }).join('');
     const why = q.cause || (ev.because ? ev.because(M, MgrUI.cur.ctx) : null);
-    return UI.modal(`<div class="ev-tag">📖 事件</div><h3>${Mgr.fmt(ev.title, MgrUI.cur.ctx)}</h3><p class="pre">${Mgr.fmt(ev.text, MgrUI.cur.ctx)}</p>${why ? `<p class="cause">🔗 因果：${Mgr.fmt(why, MgrUI.cur.ctx)}</p>` : ''}<div class="choices">${ch}</div>`, { cls: 'event' });
+    return UI.modal(`<div class="ev-tag">📖 事件</div><h3>${Mgr.fmt(ev.title, MgrUI.cur.ctx)}</h3><p class="pre">${Mgr.fmt(ev.text, MgrUI.cur.ctx)}</p>${why ? `<p class="cause">🔗 因果：${Mgr.fmt(why, MgrUI.cur.ctx)}</p>` : ''}<div class="choices">${ch}</div>${mc ? `<p class="sub">⚡ 你上次選了「${U.esc(Mgr.fmt(mc.t, MgrUI.cur.ctx).replace(/<[^>]+>/g, ''))}」。右上角 ⚡ 開啟後，同一事件會自動套用。</p>` : ''}`, { cls: 'event' });
   }
   if (q.t === 'report') {
     return UI.modal(`<div class="ev-tag">📋 月度報告</div><h3>練習生成長報告</h3><ol class="rank mini">${q.list.map((x, i) => `<li><span>${gradeChip(x.rating)}</span><b>${U.esc(x.name)}</b><small>${x.age}歲 · ${['練習生', '預備組', '已出道'][x.stage]}</small><em>${x.ovr}</em></li>`).join('')}</ol><p class="sub">評級依據同年齡的基準值。S/A 表示已有出道實力。</p><div class="btn-row"><button class="btn" data-act="m.next">繼續</button></div>`, { cls: 'event' });
@@ -6847,13 +6866,23 @@ MgrUI.planModal = function (G) {
 const qv = n => { const el = document.querySelector(`input[name=${n}]:checked`); return el ? el.value : null; };
 ACT['m.tab'] = d => { MgrUI.tab = d.t; Mgr.render(); };
 ACT['m.next'] = () => { M.queue.shift(); UI.close(); Mgr.save('auto'); Mgr.render(); Mgr.flush(); };
-ACT['m.choose'] = d => {
+MgrUI.applyChoice = function (i) {
   const { ev, ctx } = MgrUI.cur; M.queue.shift();
-  const ch = ev.choices[+d.i]; let txt = ch.txt, fx = ch.fx, grade = null;
+  const ch = ev.choices[i]; let txt = ch.txt, fx = ch.fx, grade = null;
   if (ch.check) { grade = Mgr.roll(ch.check.st, ch.check.diff); const o = ch.out; const e = o[grade] || (grade === 'b' ? (o.f || o.k) : grade === 'g' ? (o.k || o.g) : grade === 'k' ? (o.k || o.g || o.f) : (o.f || o.k)); txt = e[0]; fx = e[1]; }
   if (typeof fx === 'function') fx = fx(M, ctx);
   if (typeof fx === 'function') fx = fx(M, ctx);
   const lines = Mgr.applyFx(fx || {}, ctx); Mgr.log(`【${ev.title}】${Mgr.fmt(ch.t, ctx).replace(/<[^>]+>/g, '')}`);
+  M.evMem = M.evMem || {}; if (M.evMem[ev.id] == null) M.evMem[ev.id] = i; // 只記住第一次的選擇
+  return { ev, ch, txt, lines, grade, ctx };
+};
+MgrUI.autoChoose = function (i) {
+  const r = MgrUI.applyChoice(i);
+  UI.toast(`⚡ ${r.ev.title}：${Mgr.fmt(r.ch.t, r.ctx).replace(/<[^>]+>/g, '')}`, 'ok');
+  Mgr.save('auto'); Mgr.render();
+};
+ACT['m.choose'] = d => {
+  const { ev, ch, txt, lines, grade, ctx } = MgrUI.applyChoice(+d.i);
   const g = grade ? { g: '✨ 大成功', k: '👍 成功', f: '😓 失敗', b: '💥 大失敗' }[grade] : '結果';
   UI.modal(`<div class="ev-tag">${g}</div><h3>${ev.title}</h3><p class="pre">${Mgr.fmt(txt, ctx)}</p><div class="chips">${lines.map(l => `<span class="delta hint">${U.esc(l)}</span>`).join('')}</div><div class="btn-row"><button class="btn" data-act="m.next2">繼續</button></div>`, { cls: 'event' });
   Mgr.save('auto');
