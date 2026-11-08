@@ -1322,7 +1322,8 @@ DATA.M.FAC = {
 };
 DATA.M.STAFF = {
   vocal: { n: '聲樂導師', d: '歌唱、饒舌 +10%', wage: 12000 }, dance: { n: '舞蹈老師', d: '舞蹈、表演 +10%', wage: 12000 },
-  stylist: { n: '造型團隊', d: '外貌成長、廣告收入 +15%', wage: 8000 }, pr: { n: '公關團隊', d: '黑料傷害 -40%、粉絲成長 +10%', wage: 10000 }
+  stylist: { n: '造型團隊', d: '外貌成長、廣告收入 +15%', wage: 8000 }, pr: { n: '公關團隊', d: '黑料傷害 -40%、粉絲成長 +10%', wage: 10000 },
+  assist: { n: '助理經紀人', d: '每週幫你分擔：壓力 -2.5、精力 +4', wage: 9000 }
 };
 DATA.M.BUDGET = [{ n: '精簡', cost: 150000, mk: 2500, qb: 0 }, { n: '標準', cost: 400000, mk: 6000, qb: 5 }, { n: '豪華', cost: 900000, mk: 14000, qb: 10 }];
 DATA.M.PRODUCER = [{ n: '自家製作', cost: 0, qb: 0 }, { n: '外聘製作人', cost: 200000, qb: 4 }, { n: '金牌製作人', cost: 600000, qb: 9 }];
@@ -7381,6 +7382,7 @@ Mgr.endWeek = function () {
   // 經紀人狀態
   const me = M.me, used = M.apMax - M.ap;
   me.energy = U.clamp(me.energy + 22 + (M.ap >= 3 ? 10 : 0)); me.stress = U.clamp(me.stress + (used >= M.apMax ? 3 : 0) + (M.co.funds < 0 ? 4 : 0) - (M.ap >= 3 ? 3 : 1) - 1.5);
+  if (M.co.staff.assist) { me.stress = U.clamp(me.stress - 2.5); me.energy = U.clamp(me.energy + 4); }
   // 時間
   M.day += 7; M.week++; Mgr.coTick(); if (M.week % 52 === 0) Mgr.yearMark(); M.roster.forEach(Mgr.refresh);
   M.roster.forEach(T => { if (T.age >= 19 && T.stage < 2 && !T.flags.warned) { T.flags.warned = true; Mgr.log(`${T.name} 已 ${T.age} 歲仍未出道。`, 'bad'); } if (T.age >= 21 && T.stage < 2) M.leaving = (M.leaving || []).concat(T.id); });
@@ -7494,7 +7496,7 @@ function mHome() {
   return `<div class="grid2"><div class="col">
     ${card('公司概況 · ' + Mgr.tier().n, `<div class="kpis"><div><b>${U.money(M.co.funds)}</b><small>資金</small></div><div><b>${U.money(burn)}</b><small>每週固定支出</small></div><div><b>${M.roster.length}/${Mgr.tier().cap}</b><small>練習生</small></div><div><b>${M.groups.length}</b><small>團體</small></div></div>
       ${UI.bar('業界聲望', M.co.rep, 100, '', Math.round(M.co.rep) + (nxt ? ` / 下一級需 ${nxt.rep}` : ' MAX'))}${UI.bar('社長信任', M.me.trust, 100)}`)}
-    ${card('經紀人狀態', `${UI.bar('精力', M.me.energy, 100, 'stam')}${UI.bar('壓力', M.me.stress, 100, 'stress')}<div class="skills">${Object.entries(SKILLS).map(([k, n]) => `<span>${n} <b>Lv.${M.me.skill[k]}</b></span>`).join('')}</div>`)}
+    ${card('經紀人狀態', `${UI.bar('精力', M.me.energy, 100, 'stam')}${UI.bar('壓力', M.me.stress, 100, 'stress')}<div class="btn-row"><button class="btn sm" data-act="m.leave" ${M.ap < 1 || M.restWk === M.week ? 'disabled' : ''}>🛌 休假一天（1AP・每週限一次）</button></div><div class="skills">${Object.entries(SKILLS).map(([k, n]) => `<span>${n} <b>Lv.${M.me.skill[k]}</b></span>`).join('')}</div>`)}
     ${card('上週報告', M.last.length ? `<ul class="notes">${M.last.slice(0, 8).map(x => `<li>${U.esc(x)}</li>`).join('')}</ul>` : '<p class="sub">這是第一週，還沒有報告。</p>')}</div>
     <div class="col">
     ${card('本週行動點數', `<div class="apbig">${Array.from({ length: M.apMax }, (_, i) => `<i class="${i < M.ap ? 'on' : ''}"></i>`).join('')}<span>${M.ap} / ${M.apMax}</span></div><div class="btn-row"><button class="btn pink" data-act="m.end">結束本週 ➜</button></div>`)}
@@ -7668,6 +7670,13 @@ ACT['m.end'] = () => {
   else ACT['m.endgo']();
 };
 ACT['m.endgo'] = () => { UI.close(); Mgr.endWeek(); Mgr.render(); };
+Mgr.takeLeave = function () {
+  if (M.restWk === M.week) return UI.toast('這週已經休過假了', 'bad');
+  if (M.ap < 1) return UI.toast('AP 不足', 'bad');
+  M.restWk = M.week; M.ap -= 1; M.me.stress = U.clamp(M.me.stress - 14); M.me.energy = U.clamp(M.me.energy + 15);
+  Mgr.log('你給自己放了一天假，睡到自然醒。', 'story'); UI.toast('休假一天：壓力 -14、精力 +15'); Mgr.save('auto'); Mgr.render();
+};
+ACT['m.leave'] = () => Mgr.takeLeave();
 ACT['m.audition'] = () => Mgr.audition();
 ACT['m.scout1'] = () => Mgr.scoutOne();
 ACT['m.sign'] = d => Mgr.sign(+d.id);
