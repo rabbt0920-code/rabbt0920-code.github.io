@@ -5450,12 +5450,13 @@ Idol.endDay = function () {
 Idol.awards = function () {
   const lines = []; const y = Cal.date(I.day).y;
   const yW = I.flags.yWins || 0, yB = I.flags.yBoss || 0;
-  const showBonus = Math.min(32, yW * 3 + yB * 8); // 今年打歌一位次數（擊敗大魔王加倍）換算成頒獎分數
+  const prog = Math.min(1, (yW + yB * 3) / 12); // 打歌一位累積 12 次（擊敗大魔王一次算 3 次）才到頂
+  const showBonus = 32 * prog; // 今年打歌一位次數（擊敗大魔王加倍）換算成頒獎分數
   const score = I.car.pop * .5 + I.car.fame * .25 + (I.lastSales ? Math.min(25, Math.log10(I.lastSales + 1) * 5) : 0) - I.hid.scandal * .3 + showBonus;
   const debutRecent = I.grp && I.day - I.grp.debutDay < 365 && !I.flags.rookieAwardDone; // 新人獎只限出道第一年
   const won = [];
   Idol.chartUpdate(false); const rk = I.chart.rank; let rf = rk <= 1 ? 1 : rk === 2 ? .7 : rk === 3 ? .5 : rk <= 6 ? .3 : .15; // 同類榜單名次越低，拿獎越難
-  const rfUp = Math.min(.5, yW * .06 + yB * .12); rf = Math.min(1, rf + rfUp); // 打歌常贏可抵銷一部分名次劣勢
+  const rfUp = .5 * prog; rf = Math.min(1, rf + rfUp); // 打歌常贏可抵銷一部分名次劣勢
   if (debutRecent && U.chance(U.clamp(score / 80, .05, .8) * rf)) won.push('最佳新人獎');
   if (I.grp && I.day - I.grp.debutDay >= 300) I.flags.rookieAwardDone = true;
   if (I.stage >= 2 && score > 42 && U.chance(U.clamp((score - 34) / 70, .04, .75) * rf)) won.push('本賞（唱片）');
