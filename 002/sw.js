@@ -1,5 +1,5 @@
 // 分帳神器 離線快取。更新網站內容時，把版本號加 1，使用者下次打開就會拿到新版。
-var VERSION = 'split-v1';
+var VERSION = 'split-v2';
 var ASSETS = ['./', './index.html', './manifest.webmanifest', './icons/icon-192.png', './icons/icon-512.png', './icons/icon-maskable-512.png', './icons/apple-touch-icon.png'];
 
 self.addEventListener('install', function (e) {

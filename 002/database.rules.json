@@ -1,0 +1,38 @@
+{
+  "rules": {
+    "ledgers": {
+      "$id": {
+        ".read": "auth != null && $id.matches(/^[a-z0-9]{4,24}$/)",
+        ".write": "auth != null && $id.matches(/^[a-z0-9]{4,24}$/)",
+        "name": { ".validate": "newData.isString() && newData.val().length <= 40" },
+        "people": {
+          "$p": {
+            ".validate": "newData.hasChildren(['n', 't'])",
+            "n": { ".validate": "newData.isString() && newData.val().length >= 1 && newData.val().length <= 12" },
+            "t": { ".validate": "newData.isNumber()" },
+            "$other": { ".validate": false }
+          }
+        },
+        "pay": {
+          "$p": { ".validate": "newData.isString() && newData.val().length <= 60" }
+        },
+        "expenses": {
+          "$e": {
+            ".validate": "newData.hasChildren(['a', 'p', 's'])",
+            "d": { ".validate": "newData.isString() && newData.val().length <= 30" },
+            "a": { ".validate": "newData.isNumber() && newData.val() > 0 && newData.val() <= 100000000000" },
+            "p": { ".validate": "newData.isString() && newData.val().length >= 1 && newData.val().length <= 12" },
+            "s": { "$i": { ".validate": "newData.isString() && newData.val().length <= 12" } },
+            "t": { ".validate": "newData.isNumber()" },
+            "$other": { ".validate": false }
+          }
+        },
+        "done": {
+          "$k": { ".validate": "newData.isBoolean() && newData.val() == true" }
+        },
+        "meta": { ".validate": true },
+        "$other": { ".validate": false }
+      }
+    }
+  }
+}

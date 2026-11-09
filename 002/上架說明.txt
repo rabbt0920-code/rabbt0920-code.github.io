@@ -1,0 +1,65 @@
+分帳神器（即時同步版）上架步驟
+================================
+
+一、設定 Firebase（約 10 分鐘，只要做一次）
+
+1. 打開 https://console.firebase.google.com ，進入你的專案（或新建一個）。
+
+2. 建立即時資料庫
+   左側「建構 → Realtime Database」→「建立資料庫」
+   ・位置選「新加坡 (asia-southeast1)」，離台灣最近、速度最快
+   ・安全規則先選「以鎖定模式啟動」
+
+3. 貼上安全規則
+   在 Realtime Database 頁面切到「規則」分頁，
+   把 database.rules.json 的內容整個貼上取代原本的內容，按「發布」。
+   （這份規則只允許讀寫單一帳本，別人無法列出或瀏覽所有人的帳本。）
+
+4. 開啟匿名登入
+   左側「建構 → Authentication」→「開始使用」→「Sign-in method」
+   →「匿名」→ 啟用 → 儲存。
+   接著到「設定 → 授權網域」，新增你的網址網域，例如：你的帳號.github.io
+
+5. 取得設定碼
+   點左上角齒輪「專案設定」→ 往下到「你的應用程式」
+   ・如果還沒有網頁應用程式，按「</>」圖示新增一個（名稱隨意，不用勾 Hosting）
+   ・複製 firebaseConfig 那一段，長得像：
+       {
+         apiKey: "AIza....",
+         authDomain: "xxx.firebaseapp.com",
+         databaseURL: "https://xxx-default-rtdb.asia-southeast1.firebasedatabase.app",
+         projectId: "xxx",
+         ...
+       }
+   ・務必確認裡面有 databaseURL 這一行（建立資料庫之後才會出現，沒有的話重新整理頁面再複製）
+
+6. 貼進 index.html
+   用記事本打開 index.html，搜尋 FIREBASE_CONFIG = null
+   把 null 換成剛剛複製的那段，例如：
+       var FIREBASE_CONFIG = { apiKey: "AIza....", authDomain: "...", databaseURL: "...", projectId: "...", appId: "..." };
+   存檔。
+   （這組設定碼放在網頁裡是正常的，安全性由第 3、4 步的規則把關。）
+
+
+二、上傳到 GitHub Pages
+
+1. 在 GitHub 建一個 repository，例如 split-app。
+2. 上傳這些檔案到根目錄：
+   index.html、manifest.webmanifest、sw.js、icons 資料夾
+   （database.rules.json 和這份說明不用上傳）
+3. Settings → Pages → Source 選 main 分支、/(root) → Save。
+4. 約 1 分鐘後打開 https://你的帳號.github.io/split-app/
+   最上方出現「☁️ 已即時同步」就代表成功。
+   如果出現「⚠️ 無法連上同步伺服器」，通常是第 4 或第 6 步沒做好。
+
+
+三、之後更新網站
+
+修改 index.html 後重新上傳，並把 sw.js 第 2 行的 split-v2 改成 split-v3（之後依序遞增），
+已經加到主畫面的使用者下次打開才會拿到新版。
+
+
+四、免費額度
+
+Firebase 免費方案（Spark）的即時資料庫：同時在線最多 100 人、儲存 1 GB、每月下載 10 GB。
+一般使用綽綽有餘；如果真的爆紅、同時在線超過 100 人，需要升級成用量計費方案（Blaze）。
