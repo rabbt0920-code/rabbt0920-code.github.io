@@ -1,0 +1,752 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>分帳神器</title>
+<style>
+  :root { --bg:#f5f6f8; --card:#fff; --fg:#1d1f23; --mut:#7a7f88; --acc:#16a34a; --acc2:#e8f7ee; --red:#dc2626; --line:#e6e8ec; }
+  * { box-sizing:border-box; }
+  body { margin:0; background:var(--bg); color:var(--fg); font-family:-apple-system,"PingFang TC","Noto Sans TC","Microsoft JhengHei",sans-serif; }
+  main { max-width:480px; margin:0 auto; padding:18px 14px 60px; }
+  h1 { font-size:24px; margin:4px 0 2px; }
+  .sub { color:var(--mut); font-size:14px; margin-bottom:14px; }
+  .card { background:var(--card); border-radius:16px; padding:16px; margin-bottom:12px; box-shadow:0 1px 3px rgba(0,0,0,.05); }
+  h2 { font-size:16px; margin:0 0 10px; display:flex; justify-content:space-between; align-items:center; }
+  h2 small { color:var(--mut); font-weight:400; font-size:13px; }
+  input, select { font:inherit; font-size:16px; padding:11px 12px; border:1px solid var(--line); border-radius:10px; width:100%; background:#fff; color:var(--fg); }
+  input:focus, select:focus { outline:2px solid var(--acc); border-color:transparent; }
+  .flex { display:flex; gap:8px; }
+  .flex > * { min-width:0; }
+  button { font:inherit; font-size:16px; font-weight:700; border:0; border-radius:10px; padding:11px 14px; background:var(--acc); color:#fff; cursor:pointer; white-space:nowrap; }
+  button.ghost { background:#eef0f3; color:var(--fg); }
+  button.danger { background:#fdecec; color:var(--red); }
+  button.full { width:100%; margin-top:10px; }
+  .chips { display:flex; flex-wrap:wrap; gap:8px; margin-top:10px; }
+  .chip { background:var(--acc2); color:#14532d; border-radius:20px; padding:6px 6px 6px 12px; font-size:15px; display:flex; align-items:center; gap:4px; }
+  .chip button { background:transparent; color:#14532d; padding:0 6px; font-size:18px; line-height:1; }
+  .lbl { color:var(--mut); font-size:13px; margin:10px 0 6px; }
+  .checks { display:flex; flex-wrap:wrap; gap:6px; }
+  .checks label { border:1px solid var(--line); border-radius:20px; padding:6px 12px; font-size:15px; cursor:pointer; user-select:none; }
+  .checks label.on { background:var(--acc); color:#fff; border-color:var(--acc); }
+  .checks input { display:none; }
+  .linkbtn { background:none; color:var(--acc); padding:0; font-size:13px; font-weight:600; }
+  .item { display:flex; justify-content:space-between; align-items:center; padding:10px 0; border-top:1px solid var(--line); gap:8px; }
+  .item:first-child { border-top:0; }
+  .item .t { font-weight:600; }
+  .item .d { color:var(--mut); font-size:13px; margin-top:2px; }
+  .amt { font-weight:700; font-variant-numeric:tabular-nums; }
+  .empty { color:var(--mut); font-size:14px; text-align:center; padding:8px 0; }
+  .xfer { display:flex; align-items:center; justify-content:space-between; background:var(--acc2); border-radius:12px; padding:12px 14px; margin-top:8px; font-size:16px; }
+  .xfer .arrow { color:var(--mut); margin:0 6px; }
+  .xfer.done { background:#f1f2f4; color:var(--mut); }
+  .xfer.done b, .xfer.done .amt { text-decoration:line-through; }
+  .xfer .ck { width:26px; height:26px; border-radius:50%; border:2px solid var(--acc); background:#fff; color:#fff; padding:0; font-size:15px; margin-right:10px; flex:none; }
+  .xfer.done .ck { background:var(--acc); }
+  .xfer .who { display:flex; align-items:center; min-width:0; }
+  .item.editing { background:#fffbe6; margin:0 -8px; padding:10px 8px; border-radius:10px; }
+  textarea { font:inherit; font-size:14px; width:100%; min-height:110px; padding:10px; border:1px solid var(--line); border-radius:10px; resize:vertical; }
+  .bookbar { display:flex; gap:8px; align-items:center; margin-bottom:12px; }
+  .bookbar select { flex:1; font-weight:600; }
+  .chip .nm { background:none; color:#14532d; padding:0; font-size:15px; font-weight:500; }
+  .pay { font-size:13px; color:#14532d; margin-top:6px; padding-left:36px; word-break:break-all; }
+  .xfer { flex-wrap:wrap; }
+  .xfer .row1 { display:flex; justify-content:space-between; align-items:center; width:100%; }
+  #imgOut { width:100%; border-radius:10px; display:block; margin-top:6px; border:1px solid var(--line); }
+  .pos { color:var(--acc); } .neg { color:var(--red); }
+  table { width:100%; border-collapse:collapse; font-size:14px; }
+  td, th { padding:7px 4px; text-align:right; border-top:1px solid var(--line); font-variant-numeric:tabular-nums; }
+  th { color:var(--mut); font-weight:500; border-top:0; }
+  td:first-child, th:first-child { text-align:left; }
+  .toast { position:fixed; left:50%; bottom:28px; transform:translateX(-50%); background:#1d1f23; color:#fff; padding:10px 18px; border-radius:20px; font-weight:600; opacity:0; transition:opacity .2s; pointer-events:none; z-index:9; max-width:90%; text-align:center; }
+  .toast.on { opacity:1; }
+  .modal { position:fixed; inset:0; background:rgba(0,0,0,.4); display:flex; align-items:center; justify-content:center; z-index:8; padding:20px; }
+  .modal .card { max-width:340px; width:100%; }
+  .hidden { display:none !important; }
+  pre { white-space:pre-wrap; background:#f3f4f6; padding:12px; border-radius:10px; font-size:14px; margin:10px 0 0; font-family:inherit; }
+</style>
+</head>
+<body>
+<main>
+  <h1>💸 分帳神器</h1>
+  <div class="sub">記下誰付了錢，自動算出最少轉帳次數，一鍵貼到 LINE 群組。</div>
+
+  <div class="bookbar">
+    <select id="bookSel" aria-label="切換帳本"></select>
+    <button id="newBook" class="ghost">＋ 新帳本</button>
+  </div>
+
+  <section class="card">
+    <h2>帳本名稱</h2>
+    <input id="eventName" placeholder="例如：墾丁三天兩夜" maxlength="40">
+  </section>
+
+  <section class="card">
+    <h2>成員 <small id="pplCount"></small></h2>
+    <form id="pplForm" class="flex">
+      <input id="pplInput" placeholder="輸入名字，可用空格一次加多人" maxlength="60">
+      <button type="submit">加入</button>
+    </form>
+    <div class="chips" id="chips"></div>
+    <div class="lbl" id="payHint" style="margin-bottom:0">點名字可以填收款方式（LINE Pay、街口、銀行帳號等）</div>
+  </section>
+
+  <section class="card" id="expCard">
+    <h2 id="expTitle">新增一筆花費</h2>
+    <form id="expForm">
+      <div class="flex">
+        <input id="expDesc" placeholder="項目（如：晚餐）" maxlength="30" style="flex:3">
+        <input id="expAmt" placeholder="金額" inputmode="decimal" style="flex:2">
+      </div>
+      <div class="lbl">誰付的</div>
+      <select id="expPayer"></select>
+      <div class="lbl" style="display:flex;justify-content:space-between">
+        <span>誰要分攤（平均）</span>
+        <span><button type="button" class="linkbtn" id="selAll">全選</button> · <button type="button" class="linkbtn" id="selNone">全不選</button></span>
+      </div>
+      <div class="checks" id="expSplit"></div>
+      <button type="submit" class="full" id="expSubmit">＋ 加入這筆</button>
+      <button type="button" class="full ghost hidden" id="expCancel" style="width:100%">取消編輯</button>
+    </form>
+  </section>
+
+  <section class="card">
+    <h2>花費紀錄 <small id="expTotal"></small></h2>
+    <div id="expList"></div>
+  </section>
+
+  <section class="card">
+    <h2>結算：誰該轉給誰 <small id="xferProg"></small></h2>
+    <div id="xfers"></div>
+    <table id="balTable" class="hidden" style="margin-top:12px">
+      <thead><tr><th>成員</th><th>已付</th><th>應付</th><th>差額</th></tr></thead>
+      <tbody></tbody>
+    </table>
+    <pre id="shareText" class="hidden"></pre>
+    <button class="full" id="copyBtn">📋 複製結果，貼到 LINE</button>
+    <button class="full ghost" id="imgBtn" style="width:100%">🖼️ 產生結算圖片</button>
+    <button class="full ghost" id="shareLedgerBtn" style="width:100%">🔗 分享帳本，讓朋友一起編輯</button>
+  </section>
+
+  <button class="full ghost" id="importBtn" style="width:100%">📥 匯入朋友分享的帳本</button>
+  <button class="full danger" id="resetBtn" style="width:100%">🗑️ 刪除這本帳本</button>
+</main>
+
+<div class="modal hidden" id="modal">
+  <div class="card">
+    <h2 id="modalMsg" style="display:block;line-height:1.5"></h2>
+    <div class="flex" style="margin-top:12px">
+      <button class="ghost" id="modalNo" style="flex:1">取消</button>
+      <button class="danger" id="modalYes" style="flex:1">確定</button>
+    </div>
+  </div>
+</div>
+<div class="modal hidden" id="impModal">
+  <div class="card">
+    <h2 style="display:block">匯入帳本</h2>
+    <div class="lbl" style="margin-top:0">貼上朋友傳來的帳本連結或帳本代碼，會另外存成一本帳本（同一本會更新成最新版）。</div>
+    <textarea id="impText" placeholder="貼在這裡"></textarea>
+    <div class="flex" style="margin-top:10px">
+      <button class="ghost" id="impNo" style="flex:1">取消</button>
+      <button id="impYes" style="flex:1">匯入</button>
+    </div>
+  </div>
+</div>
+<div class="modal hidden" id="codeModal">
+  <div class="card">
+    <h2 style="display:block">帳本代碼</h2>
+    <div class="lbl" style="margin-top:0" id="codeHint"></div>
+    <textarea id="codeText" readonly></textarea>
+    <button class="full" id="codeClose" style="width:100%">關閉</button>
+  </div>
+</div>
+<div class="modal hidden" id="payModal">
+  <div class="card">
+    <h2 style="display:block" id="payTitle"></h2>
+    <div class="lbl" style="margin-top:0">收款方式（選填），會顯示在結算和分享內容裡</div>
+    <input id="payInput" maxlength="60" placeholder="例如：LINE Pay／中信 822-1234567890">
+    <div class="flex" style="margin-top:10px">
+      <button class="ghost" id="payNo" style="flex:1">取消</button>
+      <button id="payYes" style="flex:1">儲存</button>
+    </div>
+  </div>
+</div>
+<div class="modal hidden" id="imgModal">
+  <div class="card" style="max-height:92vh;overflow:auto">
+    <h2 style="display:block;margin-bottom:4px">結算圖片</h2>
+    <div class="lbl" style="margin-top:0" id="imgHint">手機請長按圖片，選「儲存圖片」或「分享」</div>
+    <img id="imgOut" alt="結算圖片">
+    <div class="flex" style="margin-top:10px">
+      <button class="ghost" id="imgClose" style="flex:1">關閉</button>
+      <button id="imgShare" style="flex:1">分享 / 下載</button>
+    </div>
+  </div>
+</div>
+<div class="toast" id="toast"></div>
+
+<script>
+// ===== CORE (pure, testable) =====
+// 分享網址：放上自己的網站後會自動使用目前網址；也可以在這裡手動填寫
+var SHARE_URL = '';
+
+function parseAmount(str) {
+  if (typeof str !== 'string') str = String(str == null ? '' : str);
+  str = str.replace(/[,，\s$＄元]/g, '');
+  if (!/^\d+(\.\d{1,2})?$/.test(str)) return null;
+  var cents = Math.round(parseFloat(str) * 100);
+  if (!(cents > 0) || cents > 1e11) return null;
+  return cents;
+}
+function fmt(cents) {
+  var neg = cents < 0; cents = Math.abs(cents);
+  var whole = Math.floor(cents / 100), frac = cents % 100;
+  var s = String(whole).replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+  if (frac) s += '.' + (frac < 10 ? '0' : '') + frac;
+  return (neg ? '-' : '') + '$' + s;
+}
+function amtInput(cents) { return (cents / 100).toFixed(cents % 100 ? 2 : 0); }
+// 平均分攤（以分為單位），除不盡的零頭依序分給前幾位
+function splitShares(cents, n) {
+  var base = Math.floor(cents / n), rem = cents - base * n, out = [];
+  for (var i = 0; i < n; i++) out.push(base + (i < rem ? 1 : 0));
+  return out;
+}
+function computeBalances(people, expenses) {
+  var bal = {}, paid = {}, owe = {};
+  people.forEach(function (p) { bal[p] = 0; paid[p] = 0; owe[p] = 0; });
+  expenses.forEach(function (e) {
+    var parts = e.split.filter(function (p) { return p in bal; });
+    if (!(e.payer in bal) || parts.length === 0) return;
+    paid[e.payer] += e.amount; bal[e.payer] += e.amount;
+    var sh = splitShares(e.amount, parts.length);
+    parts.forEach(function (p, i) { owe[p] += sh[i]; bal[p] -= sh[i]; });
+  });
+  return { bal: bal, paid: paid, owe: owe };
+}
+// 貪婪法：最大債務人付給最大債權人，轉帳次數最多 n-1 筆
+function settle(bal) {
+  var cr = [], dr = [];
+  Object.keys(bal).forEach(function (p) {
+    if (bal[p] > 0) cr.push({ p: p, v: bal[p] });
+    else if (bal[p] < 0) dr.push({ p: p, v: -bal[p] });
+  });
+  var out = [];
+  while (cr.length && dr.length) {
+    cr.sort(function (a, b) { return b.v - a.v; });
+    dr.sort(function (a, b) { return b.v - a.v; });
+    var c = cr[0], d = dr[0], x = Math.min(c.v, d.v);
+    out.push({ from: d.p, to: c.p, amount: x });
+    c.v -= x; d.v -= x;
+    if (c.v === 0) cr.shift();
+    if (d.v === 0) dr.shift();
+  }
+  return out;
+}
+function newId() { return (Date.now().toString(36) + Math.random().toString(36).slice(2, 8)).slice(-12); }
+function blankLedger() { return { id: newId(), name: '', people: [], expenses: [], done: [], pay: {} }; }
+function xferKey(t) { return t.from + '\u0001' + t.to + '\u0001' + t.amount; }
+
+// 帳本 <-> 代碼（UTF-8 JSON -> base64url），名字用索引壓縮
+function b64urlEncode(str) {
+  var bytes = new TextEncoder().encode(str), bin = '';
+  for (var i = 0; i < bytes.length; i++) bin += String.fromCharCode(bytes[i]);
+  return btoa(bin).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
+}
+function b64urlDecode(s) {
+  s = s.replace(/-/g, '+').replace(/_/g, '/');
+  while (s.length % 4) s += '=';
+  var bin = atob(s), bytes = new Uint8Array(bin.length);
+  for (var i = 0; i < bin.length; i++) bytes[i] = bin.charCodeAt(i);
+  return new TextDecoder('utf-8', { fatal: true }).decode(bytes);
+}
+function encodeLedger(S) {
+  var idx = {}; S.people.forEach(function (p, i) { idx[p] = i; });
+  var o = {
+    v: 1, i: S.id, n: S.name, p: S.people,
+    y: S.people.map(function (p) { return (S.pay && S.pay[p]) || ''; }),
+    e: S.expenses.map(function (e) { return [e.desc, e.amount, idx[e.payer], e.split.map(function (p) { return idx[p]; })]; }),
+    d: (S.done || []).map(function (k) { var a = k.split('\u0001'); return [idx[a[0]], idx[a[1]], +a[2]]; })
+  };
+  return b64urlEncode(JSON.stringify(o));
+}
+// 驗證並還原；任何格式錯誤都回傳 null
+function decodeLedger(code) {
+  try {
+    code = String(code || '').trim();
+    var m = code.match(/#s=([A-Za-z0-9_-]+)/);
+    if (m) code = m[1];
+    if (!/^[A-Za-z0-9_-]+$/.test(code)) return null;
+    var o = JSON.parse(b64urlDecode(code));
+    if (!o || o.v !== 1 || !Array.isArray(o.p) || !Array.isArray(o.e)) return null;
+    var people = [];
+    for (var i = 0; i < o.p.length; i++) {
+      var n = o.p[i];
+      if (typeof n !== 'string' || !n || n.length > 12 || people.indexOf(n) >= 0) return null;
+      people.push(n);
+    }
+    if (people.length > 50) return null;
+    var okIdx = function (x) { return typeof x === 'number' && x % 1 === 0 && x >= 0 && x < people.length; };
+    var expenses = [];
+    for (var j = 0; j < o.e.length; j++) {
+      var e = o.e[j];
+      if (!Array.isArray(e) || e.length !== 4) return null;
+      if (typeof e[0] !== 'string' || e[0].length > 30) return null;
+      if (typeof e[1] !== 'number' || e[1] % 1 !== 0 || e[1] <= 0 || e[1] > 1e11) return null;
+      if (!okIdx(e[2]) || !Array.isArray(e[3]) || !e[3].length || !e[3].every(okIdx)) return null;
+      var sp = [];
+      e[3].forEach(function (k) { if (sp.indexOf(people[k]) < 0) sp.push(people[k]); });
+      expenses.push({ desc: e[0], amount: e[1], payer: people[e[2]], split: sp });
+    }
+    var done = [];
+    if (Array.isArray(o.d)) o.d.forEach(function (t) {
+      if (Array.isArray(t) && okIdx(t[0]) && okIdx(t[1]) && typeof t[2] === 'number')
+        done.push(people[t[0]] + '\u0001' + people[t[1]] + '\u0001' + t[2]);
+    });
+    var pay = {};
+    if (Array.isArray(o.y)) o.y.forEach(function (t, k) {
+      if (k < people.length && typeof t === 'string' && t.trim()) pay[people[k]] = t.trim().slice(0, 60);
+    });
+    var id = (typeof o.i === 'string' && /^[a-z0-9]{4,16}$/.test(o.i)) ? o.i : newId();
+    return { id: id, name: typeof o.n === 'string' ? o.n.slice(0, 40) : '', people: people, expenses: expenses, done: done, pay: pay };
+  } catch (err) { return null; }
+}
+
+function shareTextFor(name, people, expenses, xfers, done, link, pay) {
+  pay = pay || {};
+  var total = expenses.reduce(function (a, e) { return a + e.amount; }, 0);
+  var lines = ['💸 ' + (name || '分帳結果'), '共 ' + expenses.length + ' 筆，總額 ' + fmt(total) + '，' + people.length + ' 人', ''];
+  if (!xfers.length) lines.push('✅ 大家都不用轉帳');
+  else {
+    var n = xfers.filter(function (t) { return done.indexOf(xferKey(t)) >= 0; }).length;
+    lines.push('👉 轉帳明細（已完成 ' + n + '/' + xfers.length + '）');
+    xfers.forEach(function (t) { lines.push((done.indexOf(xferKey(t)) >= 0 ? '✅ ' : '⬜ ') + t.from + ' → ' + t.to + '  ' + fmt(t.amount)); });
+  }
+  var recv = [];
+  xfers.forEach(function (t) { if (pay[t.to] && recv.indexOf(t.to) < 0) recv.push(t.to); });
+  if (recv.length) { lines.push('', '💳 收款方式'); recv.forEach(function (p) { lines.push(p + '：' + pay[p]); }); }
+  lines.push('', '📝 花費紀錄');
+  expenses.forEach(function (e) { lines.push('・' + (e.desc || '花費') + ' ' + fmt(e.amount) + '（' + e.payer + ' 付）'); });
+  lines.push('', link ? '打開帳本一起編輯：' + link : '用「分帳神器」算的');
+  return lines.join('\n');
+}
+// ===== END CORE =====
+
+var KEY = 'splitApp_v2', OLDKEY = 'splitApp_v1';
+function normBook(v) {
+  if (!v || !Array.isArray(v.people) || !Array.isArray(v.expenses)) return null;
+  if (!Array.isArray(v.done)) v.done = [];
+  if (!v.pay || typeof v.pay !== 'object') v.pay = {};
+  if (typeof v.name !== 'string') v.name = '';
+  if (typeof v.id !== 'string' || !v.id) v.id = newId();
+  return v;
+}
+function loadDB() {
+  var db = null;
+  try { db = JSON.parse(localStorage.getItem(KEY) || 'null'); } catch (e) {}
+  var out = { cur: null, books: {} };
+  if (db && db.books && typeof db.books === 'object') {
+    Object.keys(db.books).forEach(function (k) { var b = normBook(db.books[k]); if (b) { b.id = k; out.books[k] = b; } });
+    out.cur = db.cur;
+  } else {
+    try { var old = normBook(JSON.parse(localStorage.getItem(OLDKEY) || 'null')); if (old) out.books[old.id] = old; } catch (e) {}
+  }
+  if (!out.books[out.cur]) out.cur = Object.keys(out.books)[0] || null;
+  if (!out.cur) { var b = blankLedger(); out.books[b.id] = b; out.cur = b.id; }
+  return out;
+}
+function save() {
+  DB.books[S.id] = S; DB.cur = S.id;
+  try { localStorage.setItem(KEY, JSON.stringify(DB)); } catch (e) {}
+}
+
+function baseUrl() {
+  if (SHARE_URL) return SHARE_URL.split('#')[0];
+  try {
+    if (/^https?:$/.test(location.protocol) && !/claude/.test(location.hostname)) return location.origin + location.pathname;
+  } catch (e) {}
+  return '';
+}
+function ledgerLink() { var b = baseUrl(); return b ? b + '#s=' + encodeLedger(S) : ''; }
+
+var DB = loadDB();
+var S = DB.books[DB.cur];
+var payFor = null;   // 正在編輯收款方式的成員
+var $ = function (id) { return document.getElementById(id); };
+var splitSel = {};   // 分攤勾選狀態
+var editing = -1;    // 正在編輯的花費索引
+var curX = [];       // 目前的轉帳清單
+function esc(s) { return String(s).replace(/[&<>"']/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]; }); }
+
+function toast(m) {
+  var t = $('toast'); t.textContent = m; t.classList.add('on');
+  clearTimeout(toast._t); toast._t = setTimeout(function () { t.classList.remove('on'); }, 1800);
+}
+function ask(msg, onYes) {
+  $('modalMsg').textContent = msg; $('modal').classList.remove('hidden');
+  $('modalYes').onclick = function () { $('modal').classList.add('hidden'); onYes(); };
+  $('modalNo').onclick = function () { $('modal').classList.add('hidden'); };
+}
+function copyText(txt, okMsg, onFail) {
+  try {
+    if (navigator.clipboard && navigator.clipboard.writeText) navigator.clipboard.writeText(txt).then(function () { toast(okMsg); }, onFail);
+    else onFail();
+  } catch (e) { onFail(); }
+}
+
+function stopEdit() {
+  editing = -1;
+  $('expDesc').value = ''; $('expAmt').value = '';
+  S.people.forEach(function (p) { splitSel[p] = true; });
+}
+
+function renderBooks() {
+  var sel = $('bookSel');
+  sel.innerHTML = Object.keys(DB.books).map(function (k) {
+    var b = DB.books[k];
+    return '<option value="' + esc(k) + '">📒 ' + esc(b.name || '未命名帳本') + (b.people.length ? '（' + b.people.length + ' 人）' : '') + '</option>';
+  }).join('');
+  sel.value = S.id;
+}
+function render() {
+  renderBooks();
+  if (editing >= S.expenses.length) stopEdit();
+  if (document.activeElement !== $('eventName')) $('eventName').value = S.name;
+  $('pplCount').textContent = S.people.length ? S.people.length + ' 人' : '';
+  $('chips').innerHTML = S.people.map(function (p, i) {
+    return '<span class="chip"><button type="button" class="nm" data-pay="' + i + '">' + esc(p) + (S.pay[p] ? ' 💳' : '') + '</button><button type="button" data-rm="' + i + '" aria-label="移除">×</button></span>';
+  }).join('') || '<div class="empty" style="width:100%">先加入一起出遊的朋友</div>';
+  $('payHint').classList.toggle('hidden', !S.people.length);
+
+  var prevPayer = $('expPayer').value;
+  $('expPayer').innerHTML = S.people.map(function (p) { return '<option>' + esc(p) + '</option>'; }).join('');
+  if (S.people.indexOf(prevPayer) >= 0) $('expPayer').value = prevPayer;
+
+  S.people.forEach(function (p) { if (!(p in splitSel)) splitSel[p] = true; });
+  Object.keys(splitSel).forEach(function (p) { if (S.people.indexOf(p) < 0) delete splitSel[p]; });
+  $('expSplit').innerHTML = S.people.map(function (p, i) {
+    return '<label class="' + (splitSel[p] ? 'on' : '') + '" data-sp="' + i + '">' + esc(p) + '</label>';
+  }).join('');
+  $('expCard').style.opacity = S.people.length < 2 ? .5 : 1;
+  $('expTitle').textContent = editing >= 0 ? '✏️ 編輯花費' : '新增一筆花費';
+  $('expSubmit').textContent = editing >= 0 ? '儲存修改' : '＋ 加入這筆';
+  $('expCancel').classList.toggle('hidden', editing < 0);
+
+  var total = S.expenses.reduce(function (a, e) { return a + e.amount; }, 0);
+  $('expTotal').textContent = S.expenses.length ? '總額 ' + fmt(total) : '';
+  $('expList').innerHTML = S.expenses.length ? S.expenses.map(function (e, i) {
+    var who = e.split.length === S.people.length ? '全員' : e.split.join('、');
+    return '<div class="item' + (i === editing ? ' editing' : '') + '"><div style="min-width:0"><div class="t">' + esc(e.desc || '花費') + '</div><div class="d">' + esc(e.payer) + ' 付 · ' + esc(who) + ' 分攤</div></div>' +
+      '<div class="flex" style="align-items:center"><span class="amt">' + fmt(e.amount) + '</span>' +
+      '<button class="ghost" data-edit="' + i + '" style="padding:6px 10px">編輯</button>' +
+      '<button class="ghost" data-del="' + i + '" style="padding:6px 10px">刪除</button></div></div>';
+  }).reverse().join('') : '<div class="empty">還沒有花費</div>';
+
+  var r = computeBalances(S.people, S.expenses);
+  curX = settle(r.bal);
+  // 帳目變動後，已不存在的轉帳打勾紀錄自動移除
+  var keys = curX.map(xferKey);
+  var kept = (S.done || []).filter(function (k) { return keys.indexOf(k) >= 0; });
+  if (!S.done || kept.length !== S.done.length) { S.done = kept; save(); }
+
+  var nDone = curX.filter(function (t) { return S.done.indexOf(xferKey(t)) >= 0; }).length;
+  $('xferProg').textContent = curX.length ? '已完成 ' + nDone + '/' + curX.length : '';
+  if (!S.expenses.length) {
+    $('xfers').innerHTML = '<div class="empty">加入花費後，這裡會算出轉帳方式</div>';
+  } else if (!curX.length) {
+    $('xfers').innerHTML = '<div class="empty">✅ 剛好打平，大家都不用轉帳</div>';
+  } else {
+    $('xfers').innerHTML = curX.map(function (t, i) {
+      var d = S.done.indexOf(xferKey(t)) >= 0;
+      return '<div class="xfer' + (d ? ' done' : '') + '"><div class="row1"><span class="who"><button class="ck" data-x="' + i + '" aria-label="標記已轉帳">' + (d ? '✓' : '') + '</button><span><b>' + esc(t.from) + '</b><span class="arrow">→</span><b>' + esc(t.to) + '</b></span></span><span class="amt">' + fmt(t.amount) + '</span></div>' +
+        (S.pay[t.to] && !d ? '<div class="pay">💳 ' + esc(S.pay[t.to]) + '</div>' : '') + '</div>';
+    }).join('') + (nDone === curX.length ? '<div class="empty" style="margin-top:8px">🎉 全部轉帳完成！</div>' : '<div class="empty" style="margin-top:4px;font-size:13px">轉完帳後點左邊圓圈打勾</div>');
+  }
+  var tb = $('balTable');
+  tb.classList.toggle('hidden', !S.expenses.length);
+  tb.querySelector('tbody').innerHTML = S.people.map(function (p) {
+    var b = r.bal[p];
+    return '<tr><td>' + esc(p) + '</td><td>' + fmt(r.paid[p]) + '</td><td>' + fmt(r.owe[p]) + '</td><td class="' + (b > 0 ? 'pos' : b < 0 ? 'neg' : '') + '">' + (b > 0 ? '+' : '') + fmt(b) + '</td></tr>';
+  }).join('');
+  $('shareText').textContent = shareTextFor(S.name, S.people, S.expenses, curX, S.done, ledgerLink(), S.pay);
+}
+
+$('eventName').addEventListener('input', function () { S.name = this.value.trim().slice(0, 40); save(); renderBooks(); $('shareText').textContent = shareTextFor(S.name, S.people, S.expenses, curX, S.done, ledgerLink(), S.pay); });
+
+$('pplForm').addEventListener('submit', function (ev) {
+  ev.preventDefault();
+  var names = $('pplInput').value.split(/[\s,，、]+/).map(function (s) { return s.trim(); }).filter(Boolean);
+  if (!names.length) { toast('請輸入名字'); return; }
+  var added = 0, dup = [], full = false;
+  names.forEach(function (n) {
+    n = n.slice(0, 12);
+    if (S.people.indexOf(n) >= 0) dup.push(n);
+    else if (S.people.length >= 50) full = true;
+    else { S.people.push(n); added++; }
+  });
+  $('pplInput').value = '';
+  if (full) toast('最多 50 人');
+  else if (dup.length) toast('已有：' + dup.join('、'));
+  if (added) { save(); render(); }
+});
+
+$('chips').addEventListener('click', function (ev) {
+  var pb = ev.target.closest('[data-pay]');
+  if (pb) {
+    payFor = S.people[+pb.getAttribute('data-pay')]; if (payFor === undefined) return;
+    $('payTitle').textContent = '💳 ' + payFor + ' 的收款方式';
+    $('payInput').value = S.pay[payFor] || '';
+    $('payModal').classList.remove('hidden');
+    try { $('payInput').focus(); } catch (e) {}
+    return;
+  }
+  var b = ev.target.closest('[data-rm]'); if (!b) return;
+  var p = S.people[+b.getAttribute('data-rm')];
+  if (p === undefined) return;
+  var used = S.expenses.some(function (e) { return e.payer === p || e.split.indexOf(p) >= 0; });
+  if (used) { toast(p + ' 有花費紀錄，請先刪除或編輯相關花費'); return; }
+  S.people.splice(S.people.indexOf(p), 1); delete S.pay[p]; save(); render();
+});
+
+$('expSplit').addEventListener('click', function (ev) {
+  var l = ev.target.closest('[data-sp]'); if (!l) return;
+  var p = S.people[+l.getAttribute('data-sp')];
+  if (p === undefined) return;
+  splitSel[p] = !splitSel[p]; render();
+});
+$('selAll').addEventListener('click', function () { S.people.forEach(function (p) { splitSel[p] = true; }); render(); });
+$('selNone').addEventListener('click', function () { S.people.forEach(function (p) { splitSel[p] = false; }); render(); });
+
+$('expForm').addEventListener('submit', function (ev) {
+  ev.preventDefault();
+  if (S.people.length < 2) { toast('請先加入至少 2 位成員'); return; }
+  var amt = parseAmount($('expAmt').value);
+  if (amt == null) { toast('請輸入正確金額（最多兩位小數）'); return; }
+  var payer = $('expPayer').value;
+  if (S.people.indexOf(payer) < 0) { toast('請選擇付款人'); return; }
+  var split = S.people.filter(function (p) { return splitSel[p]; });
+  if (!split.length) { toast('至少要選一位分攤的人'); return; }
+  var item = { desc: $('expDesc').value.trim().slice(0, 30), amount: amt, payer: payer, split: split };
+  var wasEdit = editing >= 0 && editing < S.expenses.length;
+  if (wasEdit) S.expenses[editing] = item; else S.expenses.push(item);
+  stopEdit(); save(); render(); toast(wasEdit ? '已儲存修改' : '已加入');
+});
+$('expCancel').addEventListener('click', function () { stopEdit(); render(); });
+
+$('expList').addEventListener('click', function (ev) {
+  var eb = ev.target.closest('[data-edit]');
+  if (eb) {
+    var k = +eb.getAttribute('data-edit'), x = S.expenses[k];
+    if (!x) return;
+    editing = k;
+    $('expDesc').value = x.desc; $('expAmt').value = amtInput(x.amount);
+    S.people.forEach(function (p) { splitSel[p] = x.split.indexOf(p) >= 0; });
+    render();
+    $('expPayer').value = x.payer;
+    try { $('expCard').scrollIntoView({ behavior: 'smooth', block: 'start' }); } catch (e) {}
+    return;
+  }
+  var b = ev.target.closest('[data-del]'); if (!b) return;
+  var i = +b.getAttribute('data-del'), e = S.expenses[i];
+  if (!e) return;
+  ask('刪除「' + (e.desc || '花費') + ' ' + fmt(e.amount) + '」？', function () {
+    if (S.expenses[i] !== e) return;
+    S.expenses.splice(i, 1);
+    if (editing === i) stopEdit(); else if (editing > i) editing--;
+    save(); render();
+  });
+});
+
+$('xfers').addEventListener('click', function (ev) {
+  var b = ev.target.closest('[data-x]'); if (!b) return;
+  var t = curX[+b.getAttribute('data-x')]; if (!t) return;
+  var k = xferKey(t), at = S.done.indexOf(k);
+  if (at >= 0) S.done.splice(at, 1); else { S.done.push(k); toast(t.from + ' 已轉給 ' + t.to); }
+  save(); render();
+});
+
+$('copyBtn').addEventListener('click', function () {
+  if (!S.expenses.length) { toast('還沒有花費可以分享'); return; }
+  copyText($('shareText').textContent, '已複製！貼到 LINE 群組吧', function () {
+    var pre = $('shareText'); pre.classList.remove('hidden');
+    try { var r = document.createRange(); r.selectNodeContents(pre); var s = window.getSelection(); s.removeAllRanges(); s.addRange(r); } catch (e) {}
+    toast('已顯示文字，請長按複製');
+  });
+});
+
+function showCode(txt, hint) {
+  $('codeText').value = txt; $('codeHint').textContent = hint;
+  $('codeModal').classList.remove('hidden');
+  try { $('codeText').focus(); $('codeText').select(); } catch (e) {}
+}
+$('codeClose').addEventListener('click', function () { $('codeModal').classList.add('hidden'); });
+$('shareLedgerBtn').addEventListener('click', function () {
+  if (!S.people.length) { toast('帳本還是空的'); return; }
+  var link = ledgerLink();
+  var txt = link || encodeLedger(S);
+  var hint = link ? '把連結傳給朋友，他打開就能看到並編輯這份帳本。改完後請再分享一次，大家的版本才會一致。'
+                  : '把這段代碼傳給朋友，他按「匯入朋友分享的帳本」貼上即可。改完後請再分享一次，大家的版本才會一致。';
+  copyText(txt, link ? '已複製帳本連結！' : '已複製帳本代碼！', function () { showCode(txt, hint); });
+});
+
+$('importBtn').addEventListener('click', function () { $('impText').value = ''; $('impModal').classList.remove('hidden'); });
+$('impNo').addEventListener('click', function () { $('impModal').classList.add('hidden'); });
+$('impYes').addEventListener('click', function () {
+  var L = decodeLedger($('impText').value);
+  if (!L) { toast('看不懂這段內容，請確認有完整貼上'); return; }
+  $('impModal').classList.add('hidden');
+  receiveLedger(L);
+});
+function isEmptyBook(b) { return !b.name && !b.people.length && !b.expenses.length; }
+function switchBook(id) {
+  if (!DB.books[id]) return;
+  // 離開一本完全空白的帳本時，順手把它移除，避免留下一堆「未命名帳本」
+  if (S && S.id !== id && DB.books[S.id] === S && isEmptyBook(S)) delete DB.books[S.id];
+  S = DB.books[id]; splitSel = {}; editing = -1; $('expDesc').value = ''; $('expAmt').value = '';
+  save(); render();
+}
+function sameLedger(a, b) {
+  return JSON.stringify([a.name, a.people, a.expenses, a.pay]) === JSON.stringify([b.name, b.people, b.expenses, b.pay]) &&
+         JSON.stringify((a.done || []).slice().sort()) === JSON.stringify((b.done || []).slice().sort());
+}
+// 載入分享的帳本：新帳本直接新增；同一本則詢問是否更新成最新版
+function receiveLedger(L) {
+  var old = DB.books[L.id];
+  if (!old) { DB.books[L.id] = L; switchBook(L.id); toast('已新增帳本「' + (L.name || '未命名帳本') + '」'); return; }
+  if (sameLedger(old, L)) { switchBook(L.id); return; }
+  ask('你已經有「' + (old.name || '未命名帳本') + '」，要更新成朋友分享的最新版本嗎？', function () {
+    DB.books[L.id] = L; switchBook(L.id); toast('已更新成最新版本');
+  });
+}
+
+$('resetBtn').addEventListener('click', function () {
+  var nm = S.name || '未命名帳本';
+  ask('確定刪除帳本「' + nm + '」？這個動作無法復原。', function () {
+    delete DB.books[S.id];
+    var rest = Object.keys(DB.books);
+    if (!rest.length) { var b = blankLedger(); DB.books[b.id] = b; rest = [b.id]; }
+    switchBook(rest[rest.length - 1]); toast('已刪除「' + nm + '」');
+  });
+});
+
+// 從分享連結打開時，載入連結裡的帳本
+function checkHash() {
+  var h = '';
+  try { h = location.hash || ''; } catch (e) {}
+  if (h.indexOf('#s=') !== 0) return;
+  var L = decodeLedger(h);
+  try { history.replaceState(null, '', location.pathname + location.search); } catch (e) {}
+  if (!L) { toast('分享連結不完整，無法載入'); return; }
+  receiveLedger(L);
+}
+window.addEventListener('hashchange', checkHash);
+
+// ===== 多帳本 =====
+$('bookSel').addEventListener('change', function () { switchBook(this.value); });
+$('newBook').addEventListener('click', function () {
+  if (isEmptyBook(S)) { try { $('eventName').focus(); } catch (e) {} toast('這本就是新的空白帳本'); return; }
+  var b = blankLedger(); DB.books[b.id] = b; switchBook(b.id);
+  try { $('eventName').focus(); } catch (e) {}
+  toast('已建立新帳本');
+});
+
+// ===== 收款方式 =====
+$('payNo').addEventListener('click', function () { $('payModal').classList.add('hidden'); payFor = null; });
+$('payYes').addEventListener('click', function () {
+  if (payFor !== null && S.people.indexOf(payFor) >= 0) {
+    var v = $('payInput').value.trim().slice(0, 60);
+    if (v) S.pay[payFor] = v; else delete S.pay[payFor];
+    save(); render(); toast(v ? '已儲存收款方式' : '已清除收款方式');
+  }
+  $('payModal').classList.add('hidden'); payFor = null;
+});
+
+// ===== 結算圖片 =====
+var imgBlob = null;
+function rrect(ctx, x, y, w, h, r) {
+  ctx.beginPath(); ctx.moveTo(x + r, y); ctx.arcTo(x + w, y, x + w, y + h, r); ctx.arcTo(x + w, y + h, x, y + h, r);
+  ctx.arcTo(x, y + h, x, y, r); ctx.arcTo(x, y, x + w, y, r); ctx.closePath();
+}
+function fitText(ctx, text, maxW, size, weight) {
+  var FONT = '"PingFang TC","Noto Sans TC","Microsoft JhengHei",sans-serif';
+  while (size > 18) { ctx.font = weight + ' ' + size + 'px ' + FONT; if (ctx.measureText(text).width <= maxW) break; size -= 2; }
+  if (ctx.measureText(text).width > maxW) { while (text.length > 1 && ctx.measureText(text + '…').width > maxW) text = text.slice(0, -1); text += '…'; }
+  return text;
+}
+function drawSummary() {
+  var W = 1080, P = 60, IW = W - P * 2 - 80;
+  var total = S.expenses.reduce(function (a, e) { return a + e.amount; }, 0);
+  var rows = curX.map(function (t) {
+    var d = S.done.indexOf(xferKey(t)) >= 0;
+    return { t: t, d: d, pay: (!d && S.pay[t.to]) ? S.pay[t.to] : '' };
+  });
+  var H = 330 + (rows.length ? rows.reduce(function (a, r) { return a + (r.pay ? 170 : 120) + 20; }, 0) : 120) + 170;
+  var c = document.createElement('canvas'); c.width = W; c.height = H;
+  var x = c.getContext('2d');
+  x.fillStyle = '#16a34a'; x.fillRect(0, 0, W, H);
+  x.fillStyle = '#ffffff'; rrect(x, P, P, W - P * 2, H - P * 2 - 70, 36); x.fill();
+  var L = P + 40, y = P + 100;
+  x.textBaseline = 'alphabetic';
+  x.fillStyle = '#1d1f23'; x.fillText(fitText(x, '💸 ' + (S.name || '分帳結果'), IW, 60, '800'), L, y);
+  y += 60; x.fillStyle = '#7a7f88';
+  x.fillText(fitText(x, '共 ' + S.expenses.length + ' 筆 · 總額 ' + fmt(total) + ' · ' + S.people.length + ' 人', IW, 34, '400'), L, y);
+  y += 80; x.fillStyle = '#1d1f23';
+  var nDone = rows.filter(function (r) { return r.d; }).length;
+  x.fillText(fitText(x, rows.length ? '轉帳明細（已完成 ' + nDone + '/' + rows.length + '）' : '轉帳明細', IW, 38, '700'), L, y);
+  y += 30;
+  if (!rows.length) {
+    x.fillStyle = '#e8f7ee'; rrect(x, L, y, IW, 100, 24); x.fill();
+    x.fillStyle = '#14532d'; x.fillText(fitText(x, '✅ 剛好打平，大家都不用轉帳', IW - 60, 38, '700'), L + 30, y + 64);
+    y += 120;
+  }
+  rows.forEach(function (r) {
+    var h = r.pay ? 170 : 120;
+    x.fillStyle = r.d ? '#f1f2f4' : '#e8f7ee'; rrect(x, L, y, IW, h, 24); x.fill();
+    var amt = fmt(r.t.amount);
+    x.font = '800 44px sans-serif'; var aw = x.measureText(amt).width;
+    x.fillStyle = r.d ? '#9aa0a8' : '#14532d';
+    x.fillText(fitText(x, (r.d ? '✓ ' : '') + r.t.from + ' → ' + r.t.to, IW - aw - 90, 42, '700'), L + 30, y + 75);
+    x.font = '800 44px "PingFang TC","Noto Sans TC",sans-serif'; aw = x.measureText(amt).width;
+    x.fillText(amt, L + IW - 30 - aw, y + 75);
+    if (r.d) { x.fillStyle = '#9aa0a8'; x.fillRect(L + 30, y + 62, IW - 60, 3); }
+    if (r.pay) { x.fillStyle = '#14532d'; x.fillText(fitText(x, '💳 ' + r.pay, IW - 60, 30, '400'), L + 30, y + 135); }
+    y += h + 20;
+  });
+  var host = '';
+  try { var bu = baseUrl(); if (bu) host = bu.replace(/^https?:\/\//, '').replace(/\/(index\.html)?$/, ''); } catch (e) {}
+  x.fillStyle = '#ffffff';
+  x.fillText(fitText(x, '用「分帳神器」算的' + (host ? '  ·  ' + host : ''), W - P * 2, 32, '700'), P, H - P - 10);
+  return c;
+}
+$('imgBtn').addEventListener('click', function () {
+  if (!S.expenses.length) { toast('還沒有花費可以產生圖片'); return; }
+  var c;
+  try { c = drawSummary(); $('imgOut').src = c.toDataURL('image/png'); }
+  catch (e) { toast('這個瀏覽器無法產生圖片'); return; }
+  imgBlob = null;
+  try { c.toBlob(function (b) { imgBlob = b; }, 'image/png'); } catch (e) {}
+  $('imgModal').classList.remove('hidden');
+});
+$('imgClose').addEventListener('click', function () { $('imgModal').classList.add('hidden'); });
+$('imgShare').addEventListener('click', function () {
+  var name = (S.name || '分帳結果').replace(/[\\/:*?"<>|]/g, '') + '.png';
+  try {
+    if (imgBlob && window.File && navigator.canShare) {
+      var f = new File([imgBlob], name, { type: 'image/png' });
+      if (navigator.canShare({ files: [f] })) {
+        navigator.share({ files: [f] }).catch(function () {});
+        return;
+      }
+    }
+  } catch (e) {}
+  try {
+    var a = document.createElement('a'); a.href = $('imgOut').src; a.download = name;
+    document.body.appendChild(a); a.click(); a.remove();
+  } catch (e) {}
+  toast('如果沒有開始下載，請長按圖片儲存');
+});
+
+render();
+checkHash();
+</script>
+</body>
+</html>
