@@ -296,6 +296,7 @@ button,.tab,.choice,.btn{touch-action:manipulation}
 .pl-sum{position:sticky;bottom:-20px;background:#fff;margin:14px -22px -20px;padding:12px 22px 18px;border-top:1px solid #eee9fb}.pl-kpi{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;text-align:center}.pl-kpi b{display:block;font-size:17px;color:#ff5fa2}.pl-kpi small{color:#8a84a3;font-size:11px}
 [data-theme=dark] .pl-row,[data-theme=dark] .pl-card{background:#242238;border-color:#3a3658}[data-theme=dark] .pl-row.on,[data-theme=dark] .pl-card.on{background:#3a2640;border-color:#ff5fa2}[data-theme=dark] .pl-sum{background:#1c1a30;border-color:#3a3658}[data-theme=dark] .pl-row em{background:#312d52;color:#b9b2ff}
 .corow{display:grid;grid-template-columns:22px 1fr 90px 34px;gap:8px;align-items:center;padding:5px 0;font-size:13px}.corow.me{font-weight:700;color:#ff5fa2}.corow span{color:#8a84a3;text-align:center}.corow em{font-style:normal;text-align:right}.cobar{height:8px;border-radius:99px;background:#eee9fb;overflow:hidden}.cobar i{display:block;height:100%;background:linear-gradient(90deg,#ff8bbd,#ff5fa2)}.corow.me .cobar i{background:linear-gradient(90deg,#8b7bff,#6c63ff)}
+.pl-al{display:flex;gap:6px;align-items:center;margin:4px 0}.pl-al label{flex:0 0 5.5em;font-size:12px;opacity:.8}.pl-al input{flex:1;min-width:0}
 
 </style>
 </head>
@@ -1296,6 +1297,16 @@ DATA.NPC_EVENTS = [
       { t: '約好每個月視訊一次', p: 'gentle', txt: '你們勾了手指。這個約定，你們守了很多年。', fx: { aff: { xiaole: 12 }, res: 4 } }
     ] }
 ];
+
+DATA.ALIAS = {
+  f: ['Luna', 'Hana', 'Yuri', 'Sora', 'Mika', 'Rin', 'Jade', 'Nari', 'Seol', 'Ari', 'Bora', 'Dahlia', 'Eunbi', 'Fiona', 'Gaon', 'Haru', 'Iris', 'Jiyu', 'Kira', 'Lia', 'Mira', 'Noa', 'Olivia', 'Pia', 'Rae', 'Sia', 'Tia', 'Una', 'Vivi', 'Wren', 'Yuna', 'Zia', 'Aeri', 'Bomi', 'Chaeri', 'Dami', 'Elin', 'Hayul', 'Ida', 'Joy'],
+  m: ['Kai', 'Rex', 'Jun', 'Leo', 'Axel', 'Zane', 'Ren', 'Dante', 'Eden', 'Finn', 'Gray', 'Haon', 'Ian', 'Jett', 'Knox', 'Lux', 'Max', 'Nox', 'Owen', 'Pax', 'Quinn', 'Ryu', 'Sol', 'Tae', 'Uri', 'Vic', 'Wade', 'Yoon', 'Zion', 'Ash', 'Beck', 'Cael', 'Dex', 'Eli', 'Fox', 'Hyun', 'Jax', 'Kane', 'Levi', 'Nash']
+};
+DATA.randAlias = function (g, used) {
+  const pool = DATA.ALIAS[g === 'm' ? 'm' : 'f'], u = used || new Set();
+  for (let i = 0; i < 40; i++) { const n = U.pick(pool); if (!u.has(n)) return n; }
+  return U.pick(pool) + U.ri(2, 9);
+};
 
 /* ===== data_mgr.js ===== */
 /* =========================================================
@@ -4900,10 +4911,11 @@ const DEBUT_SLOTS = 5;
 
 /* ---------- 文字代號 ---------- */
 Idol.room = () => I.stage < 2 ? '練習室' : (I.grp && I.grp.kind === 'solo' ? '個人練習室' : '團體專用練習室');
+Idol.dn = () => (I && (I.alias || I.name)) || '';
 Idol.fmt = function (t) {
   if (typeof t === 'function') t = t(I);
   return String(t ?? '').replace(/\{([a-z]+)(\.p)?\}/g, (m, id, p) => {
-    if (id === 'me') return U.esc(I.name);
+    if (id === 'me') return U.esc(Idol.dn());
     if (id === 'co') return (I && I.coName) || DATA.CO;
     if (id === 'fan') return U.esc(I.fanName || '粉絲');
     if (id === 'rival') return DATA.RIVAL;
@@ -5215,7 +5227,7 @@ Idol.act_social = function (a, o, push) {
   let txt = { selfie: '分享了一張自拍', practice: '上傳了練習影片', funny: '發了搞笑短影音', deep: '寫了一篇真心話長文' }[t];
   const good = score > 38, bad = score < 18;
   const pool = I.stage < 2 ? DATA.COMMENTS.trainee : good ? DATA.COMMENTS.good : bad ? DATA.COMMENTS.bad : DATA.COMMENTS.mid;
-  const cm = U.shuffle(pool).slice(0, 3).map(c => c.replace('{me}', I.name));
+  const cm = U.shuffle(pool).slice(0, 3).map(c => c.replace('{me}', Idol.dn()));
   const f = Idol.applyFx({ fans: Math.round(fans), fame: Math.min(1.5, fans / scale * .35) });
   f.out.forEach(([k, v]) => push(k, v));
   if (t === 'deep' && score < 20) { Idol.applyFx({ scandal: 4 }); }
@@ -5382,7 +5394,7 @@ Idol.runExam = function () {
   // 狀態修正與運氣
   const mine = Sim.weighted(I, w) * Sim.form(I) + (I.hid.luck - 50) / 25 + U.gauss() * 2.5 * (1.2 - I.hid.res / 160) - Math.max(0, 60 - I.kor) / 60 * 4;
   const snap = I.pool.slice();
-  const rows = [{ id: 'me', name: I.name, score: mine, me: true }];
+  const rows = [{ id: 'me', name: Idol.dn(), score: mine, me: true }];
   I.pool.forEach(r => rows.push({ id: r.id, name: r.name, score: Sim.weighted(r, w) + U.gauss() * 4, npc: r.npc }));
   rows.sort((a, b) => b.score - a.score);
   const rank = rows.findIndex(r => r.me) + 1, total = rows.length;
@@ -5555,7 +5567,7 @@ Idol.runReview = function () {
   if (!I.dpool || !I.dpool.length) Idol.initArtists();
   const theme = Idol.examTheme(I.day), th = DATA.EXAMS[theme], w = th.w, tname = Idol.reviewName(th);
   const mine = Sim.weighted(I, w) * Sim.form(I) + (I.hid.luck - 50) / 25 + U.gauss() * 2.5 * (1.2 - I.hid.res / 160) + I.car.pop / 40;
-  const rows = [{ id: 'me', name: I.name, score: mine, me: true }];
+  const rows = [{ id: 'me', name: Idol.dn(), score: mine, me: true }];
   I.dpool.forEach(r => rows.push({ id: r.id, name: r.name, score: Sim.weighted(r, w) + U.gauss() * 4, kind: r.kind }));
   rows.sort((a, b) => b.score - a.score);
   const rank = rows.findIndex(r => r.me) + 1, total = rows.length;
@@ -5590,7 +5602,7 @@ Idol.debutAssess = function (rows, snap) {
   const mkRow = (row) => {
     if (row.me) {
       const comp = .42 * Idol.avgRankScore() + .18 * I.car.eval + .10 * I.hid.looks + .08 * I.hid.team + .06 * I.hid.luck + .06 * (I.rel.baiyu || 0) + .06 * (I.rel.meiling || 0) + .04 * I.car.fame - .25 * I.hid.scandal + U.gauss() * 5 + (I.age === 16 ? 2 : 0);
-      return { name: I.name, me: true, comp };
+      return { name: Idol.dn(), me: true, comp };
     }
     const r = snap.find(p => p.id === row.id) || { eval: 50, looks: 50, luck: 50 };
     const idx = rows.findIndex(t => t.id === row.id);
@@ -5641,8 +5653,8 @@ Idol.doDebut = function (info) {
   else if (kind === 'band') ms = ms.slice(0, U.ri(2, 3));
   else if (kind === 'mixed') { ms = ms.slice(0, 2); const n = ms.length + 1 >= 4 ? 2 : 2; const used = new Set(ms.map(m => m.name).concat([I.name])); for (let i = 0; i < n; i++) { let nm; let g = 0; do { nm = U.pick(DATA.NAMES[og]); } while (used.has(nm) && g++ < 20); used.add(nm); ms.push({ name: nm, og: true }); } }
   const cands = kind === 'solo' ? null : Idol.nameCandidates();
-  const name = kind === 'solo' ? I.name : cands[0];
-  let names = [I.name].concat(ms.map(m => m.name));
+  const name = kind === 'solo' ? Idol.dn() : cands[0];
+  let names = [Idol.dn()].concat(ms.map(m => m.name));
   if (kind === 'band') names = names.map((n, i) => `${n}（${BAND_ROLES[i] || '客席'}）`);
   I.grp = { kind, name, members: names, npcMembers: ms.filter(m => m.npc).map(m => m.npc), wins: 0, albums: [], sales: 0, next: I.day + 7, debutDay: I.day + 7, avgAb: null, contractEnd: I.day + 7 + 365 * 7, contractNo: 1 };
   I.stage = 2; I.debutPts = 0; Idol.initArtists(); I.chart = null; I.mates = {}; I.grp.myRole = Idol.pickMyRole();
@@ -5655,7 +5667,8 @@ Idol.doDebut = function (info) {
   const who = kind === 'solo' ? `你將以「${name}」之名單飛出道` : `${names.join('、')}——${DATA.CO} 的新企劃（團名將由全員投票決定）`;
   I.queue.unshift({ t: 'msg', title: kind === 'solo' ? `🎉 正式出道：${name}` : '🎉 正式出道',  text: `公司內部會議決定了你的出道型態：\n${F.ic}【${F.n}】${F.d}\n\n${who}，將於一週後發行出道專輯。${I.grp.myRole && kind !== 'solo' ? `\n你在團體中的定位是【${I.grp.myRole}】。` : ''}\n\n你不再是練習生了。公司為你安排了專屬的${kind === 'solo' ? '個人練習室與編舞老師' : '團體練習室、編舞老師與專屬行程團隊'}，不用再和練習生們擠在同一個空間。\n\n📜 新人時期的專屬合約為期 7 年，到期前公司會與你討論續約或解散。\n\n【解鎖】出道後的工作（音樂節目、綜藝、見面會、廣告）、每月薪水、年終頒獎。`, chips: Idol.chips(r) });
   if (kind === 'solo') Idol.log(`以${F.n}「${name}」正式出道！`, 'win');
-  else I.queue.push({ t: 'gname', cands });
+  I.queue.push({ t: 'sname' });
+  if (kind !== 'solo') I.queue.push({ t: 'gname', cands });
   I.queue.push({ t: 'fname' });
   I.mates = {}; Idol.ensureMates();
 };
@@ -5677,6 +5690,18 @@ Idol.pickGroupName = function (cands, idx) {
   const r = Idol.applyFx(mine ? { mood: 4, team: 1 } : { mood: -1, team: 1 });
   Idol.log(`全員投票決定團名「${I.grp.name}」${mine ? '' : '（不是你投的那一個）'}。`, 'win');
   I.queue.unshift({ t: 'msg', title: `🗳️ 團名投票結果：${I.grp.name}`, text: `${DATA.CO}讓全員從三個候選團名中投票：\n${cands.join('、')}\n\n${lines.join('\n')}\n\n${tally}\n\n${mine ? `你的選擇「${I.grp.name}」獲得最多票，成為正式團名！` : `最後獲選的是「${I.grp.name}」。雖然不是你投的那一個，但這是大家一起決定的名字，也會跟著你們走很久。`}`, chips: Idol.chips(r) });
+};
+Idol.setAlias = function (nm) {
+  nm = String(nm || '').replace(/[<>&"'`]/g, '').trim().slice(0, 10);
+  if (!nm || nm === I.name) { I.alias = null; return false; }
+  const old = Idol.dn(); I.alias = nm;
+  if (I.grp) {
+    if (I.grp.kind === 'solo') { I.grp.name = nm; I.grp.members = [nm]; }
+    else I.grp.members = I.grp.members.map((m, i) => i === 0 ? m.replace(old, nm).replace(I.name, nm) : m);
+  }
+  Idol.log(`藝名定為「${nm}」（本名 ${I.name}）。`, 'win');
+  I.queue.unshift({ t: 'msg', title: `🎤 藝名：${nm}`, text: `從今天起，舞台上的你叫做「${nm}」。\n本名「${I.name}」只會留在合約和家人的口中。` });
+  return true;
 };
 Idol.setFanName = function (nm, first) {
   nm = String(nm || '').replace(/[<>"'`]/g, '').trim().slice(0, 12); if (!nm) return false;
@@ -5848,7 +5873,7 @@ Idol.freeze = function (days) {
 };
 Idol.disband = function () {
   if (!I.grp) return;
-  if (I.grp.kind !== 'solo') { Idol.log(`💔 ${I.grp.name} 正式解散。`, 'bad'); I.grp.formerName = I.grp.name; I.grp.name = I.name; I.grp.members = [I.name]; I.grp.kind = 'solo'; Idol.purgeQueue(); }
+  if (I.grp.kind !== 'solo') { Idol.log(`💔 ${I.grp.name} 正式解散。`, 'bad'); I.grp.formerName = I.grp.name; I.grp.name = Idol.dn(); I.grp.members = [Idol.dn()]; I.grp.kind = 'solo'; Idol.purgeQueue(); }
 };
 
 /* ---------- 指導隊友：隊友各自有「指導成長」，平均值會提高團隊素質 ---------- */
@@ -5905,7 +5930,7 @@ Idol.goSolo = function () {
   mates.forEach(m => { if (m.npc) I.rel[m.npc] = Math.max(0, (I.rel[m.npc] || 0) - 18); });
   const lost = Math.round(I.car.fans * .35);
   const r = Idol.applyFx({ fans: -lost, pop: -5, eval: -6, team: -20, stress: 8, mood: -3 });
-  I.grp.formerName = old; I.grp.name = I.name; I.grp.members = [I.name]; I.grp.npcMembers = []; I.grp.kind = 'solo'; I.grp.myRole = null; I.grp.avgAb = null;
+  I.grp.formerName = old; I.grp.name = Idol.dn(); I.grp.members = [Idol.dn()]; I.grp.npcMembers = []; I.grp.kind = 'solo'; I.grp.myRole = null; I.grp.avgAb = null;
   I.mates = {}; I.promo = null; I.chart = null; I.flags.wentSolo = true; I.flags.soloDay = I.day;
   I.grp.contractEnd = I.day + 365 * 3; I.grp.contractNo = (I.grp.contractNo || 1) + 1; I.grp.renewFor = I.grp.contractEnd;
   I.grp.next = I.day + 30;
@@ -6234,7 +6259,7 @@ Idol.render = function () {
   const root = document.getElementById('screen'); if (!root || !I) return;
   if (I.over && !I.queue.length) return Idol.renderEnding(root);
   const nx = Cal.nextExam(I.day), dd = nx - I.day;
-  const hdr = `<header class="top"><div class="who"><span class="avatar">${Avatar.svg(I.av, 46, I.g)}</span><div><b>${U.esc(I.name)}</b> <span title="${DATA.NATS[I.nat].n}">${DATA.NATS[I.nat].flag}</span><small>${DATA.STAGES[I.stage]} · ${I.age} 歲${I.grp ? ' · ' + I.grp.name + (Idol.myRole() && I.grp.kind !== 'solo' ? '（' + Idol.myRole() + '）' : '') : ''}</small></div></div>
+  const hdr = `<header class="top"><div class="who"><span class="avatar">${Avatar.svg(I.av, 46, I.g)}</span><div><b>${U.esc(Idol.dn())}</b> <span title="${DATA.NATS[I.nat].n}">${DATA.NATS[I.nat].flag}</span><small>${DATA.STAGES[I.stage]} · ${I.age} 歲${I.grp ? ' · ' + I.grp.name + (Idol.myRole() && I.grp.kind !== 'solo' ? '（' + Idol.myRole() + '）' : '') : ''}</small></div></div>
     <div class="date"><b>${Cal.str(I.day)}</b><small>第 ${I.day + 1} 天 · ${dd === 0 ? (I.stage >= 2 ? '📝 今日評鑑' : '📝 今日考核') : (I.stage >= 2 ? '評鑑倒數 ' : '考核倒數 ') + dd + ' 天'}</small></div>
     <div class="hdr-stats"><span>💰 ${U.money(I.car.money)}</span><span>💗 ${U.num(I.car.fans)}</span><span class="apdots">${Array.from({ length: I.apMax }, (_, i) => `<i class="${i < I.ap ? 'on' : ''}"></i>`).join('')}</span></div>
     ${AutoEv.btn()}${Ach.btn()}${Theme.btn()}<button class="btn ghost sm" data-act="app.menu">☰</button></header>`;
@@ -6275,7 +6300,7 @@ function tHome() {
   const today = s.today.length ? s.today.map(t => `<li>${DATA.ACTIONS[t.id].i} <b>${DATA.ACTIONS[t.id].n}</b> ${t.eff.filter(([k]) => k !== 'stam').slice(0, 3).map(([k, v]) => UI.fmtDelta(k, v)).join('')}${t.txt ? `<div class="sub">${Idol.fmt(t.txt)}</div>` : ''}</li>`).join('') : '<li class="sub">今天還沒有安排任何行動。</li>';
   return `<div class="grid2">
     <div class="col">
-      ${card('', `<div class="profile"><div class="bigav">${Avatar.svg(s.av, 76, s.g)}</div><div><h2>${U.esc(s.name)}</h2><div>${UI.chip(DATA.STAGES[s.stage], 'pink')} ${UI.chip(s.age + ' 歲')} ${s.pers ? UI.chip(DATA.PERS[s.pers].n, 'lav') : ''}</div><small>${s.familyName} · ${s.traits.map(t => DATA.TRAITS.find(x => x.id === t).n).join('、')}</small></div></div>
+      ${card('', `<div class="profile"><div class="bigav">${Avatar.svg(s.av, 76, s.g)}</div><div><h2>${U.esc(s.alias || s.name)}</h2>${s.alias ? `<div class="sub">🎤 藝名・本名 ${U.esc(s.name)}</div>` : ''}<div>${UI.chip(DATA.STAGES[s.stage], 'pink')} ${UI.chip(s.age + ' 歲')} ${s.pers ? UI.chip(DATA.PERS[s.pers].n, 'lav') : ''}</div><small>${s.familyName} · ${s.traits.map(t => DATA.TRAITS.find(x => x.id === t).n).join('、')}</small></div></div>
         <div class="bars4">${UI.bar('體力', s.st.stam, 100, 'stam')}${UI.bar('心情', s.st.mood, 100, 'mood')}${UI.bar('壓力', s.st.stress, 100, 'stress')}${UI.bar('健康', s.st.health, 100, 'health')}</div>`)}
       ${card('能力摘要', `<div class="abgrid">${abil}</div>`)}
       ${card('演藝事業', `<div class="kpis"><div><b>${U.num(s.car.fans)}</b><small>${s.fanName ? U.esc(s.fanName) : '粉絲'}數</small></div><div><b>${U.f1(s.car.fame)}</b><small>知名度</small></div><div><b>${U.f1(s.car.pop)}</b><small>人氣</small></div><div><b>${Math.round(s.car.eval)}</b><small>公司評價</small></div><div><b>${U.money(s.car.money)}</b><small>金錢</small></div></div>`)}
@@ -6391,7 +6416,7 @@ function tMates(lv) {
       <div class="btn-row wrap">${tbtns}</div>`);
   }).join('');
   const rl = Idol.myRole(), RI = Idol.ROLE_INFO[rl] || ['🎤', ''];
-  const me = card('', `<div class="npc"><div class="nav">${Avatar.svg(I.av, 44, I.g)}</div><div><b>${U.esc(I.name)}（你）</b><small>定位：${RI[0]} ${U.esc(rl || '成員')}</small></div>${UI.chip('你', 'pink')}</div><p class="sub">${RI[1]}</p>`);
+  const me = card('', `<div class="npc"><div class="nav">${Avatar.svg(I.av, 44, I.g)}</div><div><b>${U.esc(Idol.dn())}（你）</b><small>定位：${RI[0]} ${U.esc(rl || '成員')}</small></div>${UI.chip('你', 'pink')}</div><p class="sub">${RI[1]}</p>`);
   return head + `<div class="cards3">${me}${cards}</div>`;
 }
 function tRel() {
@@ -6424,7 +6449,7 @@ function tWork() {
 
 /* ---------- 社群 ---------- */
 function tSns() {
-  const feed = I.sns.length ? I.sns.map(p => `<div class="post"><div class="ph"><b>${U.esc(I.name)}</b><small>${Cal.short(p.day)}</small></div><p>${p.txt}</p><small>❤ ${U.num(p.likes)} · 粉絲 +${U.num(p.fans)}</small><ul class="cm">${p.cm.map(c => `<li>💬 ${U.esc(c)}</li>`).join('')}</ul></div>`).join('') : '<p class="sub">還沒有發過貼文。</p>';
+  const feed = I.sns.length ? I.sns.map(p => `<div class="post"><div class="ph"><b>${U.esc(Idol.dn())}</b><small>${Cal.short(p.day)}</small></div><p>${p.txt}</p><small>❤ ${U.num(p.likes)} · 粉絲 +${U.num(p.fans)}</small><ul class="cm">${p.cm.map(c => `<li>💬 ${U.esc(c)}</li>`).join('')}</ul></div>`).join('') : '<p class="sub">還沒有發過貼文。</p>';
   return card('社群媒體', `<div class="kpis"><div><b>${U.num(I.car.fans)}</b><small>粉絲</small></div><div><b>${I.sns.length}</b><small>貼文</small></div></div>
     <p class="sub">發文需要 1 AP。不同類型貼文依你的魅力、外貌、綜藝與表演而定。</p>
     <button class="btn pink" data-act="i.post" ${Idol.canAct('social') ? 'disabled' : ''}>${Idol.canAct('social') || '✏️ 發新貼文'}</button>`) + card('動態', feed);
@@ -6477,6 +6502,17 @@ IdolUI.chartHtml = function (r) {
   return `<h3>《${U.esc(r.name)}》</h3>${svg}
       <div class="kpis"><div><b>#${r.peak}</b><small>最高名次</small></div><div><b>${r.top10}</b><small>前 10 名天數</small></div><div><b>${r.no1}</b><small>第 1 名天數</small></div><div><b>#${r.last}</b><small>第 30 天名次</small></div></div>
       <p class="sub">${verdict}${r.wins.length ? ' 🏆 為音樂節目一位當天。' : ''}</p>`;
+};
+IdolUI.aliasModal = function () {
+  UI.modal(`<div class="ev-tag">🎤 藝名</div><h3>為自己取一個藝名</h3><p>出道了，舞台上需要一個響亮的名字。本名是「${U.esc(I.name)}」，最多 10 個字，留空則沿用本名。</p>
+    <div class="cc-sec" style="padding:4px 0"><input type="text" id="aliasName" maxlength="10" value="${U.esc(I.alias || '')}" placeholder="例如：Luna、Kai"></div>
+    <div class="btn-row"><button class="btn ghost" data-act="i.aliasrand">🎲 隨機</button><button class="btn ghost" data-act="i.aliasskip">沿用本名</button><button class="btn pink" data-act="i.aliasgo">確定</button></div>`, { cls: 'event' });
+};
+ACT['i.aliasrand'] = () => { const el = document.getElementById('aliasName'); if (el) el.value = DATA.randAlias(I.g, new Set([I.name])); };
+ACT['i.aliasskip'] = () => { const q = I.queue[0]; if (q && q.t === 'sname') I.queue.shift(); I.alias = null; UI.close(); Idol.save('auto'); Idol.render(); Idol.flush(); };
+ACT['i.aliasgo'] = () => {
+  const el = document.getElementById('aliasName'), q = I.queue[0]; if (q && q.t === 'sname') I.queue.shift();
+  UI.close(); if (el && el.value.trim()) Idol.setAlias(el.value); Idol.save('auto'); Idol.render(); Idol.flush();
 };
 IdolUI.fanModal = function (edit) {
   UI.modal(`<div class="ev-tag">💖 粉絲名稱</div><h3>${edit ? '更改粉絲名稱' : '替粉絲取一個名字'}</h3><p>${edit ? '' : '出道了，粉絲們需要一個專屬的稱呼。'}由你親自決定，最多 12 個字。</p>
@@ -6561,6 +6597,7 @@ Idol.flush = function () {
     UI.modal(`<div class="ev-tag">🗳️ 團名候選</div><h3>你想用哪一個團名？</h3><p>公司準備了三個候選團名。你先投下自己的一票，然後全員投票——<b>最後的團名不一定是你選的那一個</b>。</p><div class="choices">${list}</div>`, { cls: 'event' });
     return;
   }
+  if (q.t === 'sname') { IdolUI.aliasModal(); return; }
   if (q.t === 'fname') { IdolUI.fanModal(false); return; }
   if (q.t === 'end') { done(); Idol.ending(q.key); return Idol.render(); }
   // msg
@@ -6675,7 +6712,7 @@ Idol.renderEnding = function (root) {
   Idol.yearMark(true);
   const YL = I.yearLog || [], lab = YL.map(x => x.age + '歲');
   const rankChart = YL.length ? IdolUI.lineChart(lab, [{ name: '同類榜單名次', color: '#ff5fa2', pts: YL.map(x => x.chart) }, { name: '月考／公司評鑑名次', color: '#6c63ff', pts: YL.map(x => x.exam) }], { rank: true, label: '歷年名次折線圖' }) : '';
-  root.innerHTML = `<div class="game idol"><main class="content ending">${card('', `<div class="endhero"><div class="endav">${Avatar.svg(I.av, 150, I.g, false)}</div><div><div class="ev-tag">結局</div><h1>${e[0]}</h1><small class="sub">${U.esc(I.name)}${I.grp && I.grp.name ? '｜' + U.esc(I.grp.name) : ''}</small></div></div><p class="pre big">${e[1]}</p>
+  root.innerHTML = `<div class="game idol"><main class="content ending">${card('', `<div class="endhero"><div class="endav">${Avatar.svg(I.av, 150, I.g, false)}</div><div><div class="ev-tag">結局</div><h1>${e[0]}</h1><small class="sub">${U.esc(Idol.dn())}${I.alias ? '（本名 ' + U.esc(I.name) + '）' : ''}${I.grp && I.grp.name ? '｜' + U.esc(I.grp.name) : ''}</small></div></div><p class="pre big">${e[1]}</p>
     <div class="kpis"><div><b>${I.age}</b><small>年齡</small></div><div><b>${DATA.STAGES[I.stage]}</b><small>最高階段</small></div><div><b>${U.num(I.car.fans)}</b><small>粉絲</small></div><div><b>${I.awards.length}</b><small>獎項</small></div></div>
     ${(I.over === 'idol' || I.over === 'top') ? '<p class="you">🔓 已解鎖「經紀人模式」！回主選單即可開始。</p>' : '<p class="sub">🔒 「一代偶像」或「頂級藝人」結局可解鎖經紀人模式。</p>'}
     <p class="sub">已收集結局：${Object.keys(meta).map(k => DATA.ENDINGS[k][0]).join('、') || '無'}</p>`)}
@@ -6758,7 +6795,7 @@ const ShowFx = (function () {
     UI.modal(`<div class="sf-wrap"><div class="sf-title">📺 ${c.show} 現場直播 · 第 ${c.n} 次舞台</div>
       <div class="sf-stage">${scene(c.win)}<div class="sf-row">${mini}<i class="sf-me">${Avatar.svg(I.av, 66, I.g)}</i></div></div>
       <div class="sf-board" style="--a:${a.toFixed(3)};--b:${b.toFixed(3)}">
-        <div class="sf-line"><span>你 ${U.esc(I.grp ? I.grp.name : I.name)}</span><div class="sf-track"><div class="sf-fill me"></div></div><b>${c.mine}</b></div>
+        <div class="sf-line"><span>你 ${U.esc(I.grp ? I.grp.name : Idol.dn())}</span><div class="sf-track"><div class="sf-fill me"></div></div><b>${c.mine}</b></div>
         <div class="sf-line"><span>${U.esc(c.rname)}</span><div class="sf-track"><div class="sf-fill rv"></div></div><b>${c.rival}</b></div></div>
       <div class="sf-verdict ${c.win ? 'win' : 'lose'}">${c.win ? (c.beatBoss ? `👑 擊敗 ${U.esc(c.boss)}，一位！` : '🏆 一位！') : `差 ${Math.max(1, c.rival - c.mine)} 分${c.boss ? '，' + U.esc(c.boss) + ' 太強了' : '，下次再來'}`}</div>
       <div class="sf-after"><div class="chips" style="justify-content:center">${chips}</div><div class="btn-row"><button class="btn pink" data-act="u.close">下台 🎤</button></div></div></div>`, { cls: 'sf' });
@@ -7097,11 +7134,12 @@ const SKX = [0, 12, 32, 60, 100];
 const BENCH = a => a <= 10 ? 8 : ({ 11: 11, 12: 15, 13: 22, 14: 29, 15: 36, 16: 43, 17: 49 }[a] || 52);
 
 Mgr.prepWord = G => (G.albums && G.albums.length ? '回歸' : '出道');
+Mgr.dn = T => (T && T.alias) || (T && T.name) || '';
 Mgr.fmt = function (t, ctx = {}) {
   if (typeof t === 'function') t = t(M, ctx);
   return String(t ?? '').replace(/\{(t|g|rival)(\.p)?\}/g, (m, k, p) => {
     if (k === 'rival') return DATA.RIVAL;
-    if (k === 't') { const T = ctx.t; return T ? (p ? (T.g === 'm' ? '他' : '她') : U.esc(T.name)) : '某人'; }
+    if (k === 't') { const T = ctx.t; return T ? (p ? (T.g === 'm' ? '他' : '她') : U.esc(Mgr.dn(T))) : '某人'; }
     if (k === 'g') return ctx.g ? U.esc(ctx.g.name) : '團體';
     return m;
   });
@@ -7194,7 +7232,7 @@ Mgr.applyFx = function (fx, ctx) {
     else if (k === 'flag') M.flags[v] = true;
     else if (k === 'cnt') { for (const c in v) M.cnt[c] = (M.cnt[c] || 0) + v[c]; }
     else if (k === 'follow') (Array.isArray(v) ? v : [v]).forEach(f => M.followQ.push({ id: f.id, due: M.week + U.ri((f.delay || [2, 6])[0], (f.delay || [2, 6])[1]), cause: f.cause || null, tid: ctx.t ? ctx.t.id : null, gid: ctx.g ? ctx.g.id : null }));
-    else if (k === 'recruit') { if (M.roster.length < Mgr.tier().cap) { const T = Mgr.mkTrainee({ age: U.ri(12, 15), q: v.q || 0, g: v.g }); M.roster.push(T); Mgr.refresh && Mgr.refresh(T); out.push(`新練習生加入：${T.name}`); Mgr.log(`新練習生 ${T.name} 加入公司。`, 'story'); } else out.push('宿舍已滿，無法再收練習生'); }
+    else if (k === 'recruit') { if (M.roster.length < Mgr.tier().cap) { const T = Mgr.mkTrainee({ age: U.ri(12, 15), q: v.q || 0, g: v.g }); M.roster.push(T); Mgr.refresh && Mgr.refresh(T); out.push(`新練習生加入：${Mgr.dn(T)}`); Mgr.log(`新練習生 ${Mgr.dn(T)} 加入公司。`, 'story'); } else out.push('宿舍已滿，無法再收練習生'); }
   }
   Mgr.processLeaving();
   return out;
@@ -7204,7 +7242,7 @@ Mgr.processLeaving = function () {
   M.leaving.forEach(id => {
     const T = MT(M, id); if (!T) return;
     if (T.gid) { const G = M.groups.find(g => g.id === T.gid); if (G) { G.members = G.members.filter(x => x !== id); if (G.members.length < 2 && G.status !== 'prep') { G.status = 'hiatus'; } if (G.members.length === 0) { M.groups = M.groups.filter(g => g !== G); Mgr.log(`${G.name} 因成員全數離開而解散。`, 'bad'); } else if (G.status === 'prep' && G.members.length < 3) { M.groups = M.groups.filter(g => g !== G); M.roster.forEach(t => { if (t.gid === G.id) { t.gid = null; t.stage = 0; } }); } } }
-    M.roster = M.roster.filter(t => t.id !== id); Mgr.log(`${T.name} 離開了公司。`, 'bad');
+    M.roster = M.roster.filter(t => t.id !== id); Mgr.log(`${Mgr.dn(T)} 離開了公司。`, 'bad');
   }); M.leaving = [];
 };
 
@@ -7233,7 +7271,7 @@ Mgr.trainWeek = function (T) {
   if (T.st.stress > 80) T.st.mood = U.clamp(T.st.mood - 3);
   T.st.health = U.clamp(T.st.health + (T.st.stress > 85 ? -2 : 1));
   if (T.injury > 0) T.injury--;
-  else if (n >= 6 && T.hid.fatigue > 50 && U.chance(.08)) { T.injury = U.ri(1, 2); Mgr.log(`${T.name} 因過度訓練受傷了。`, 'bad'); }
+  else if (n >= 6 && T.hid.fatigue > 50 && U.chance(.08)) { T.injury = U.ri(1, 2); Mgr.log(`${Mgr.dn(T)} 因過度訓練受傷了。`, 'bad'); }
   if (G && G.status !== 'rest') T.hid.loyalty = U.clamp(T.hid.loyalty + .2);
   T.hid.loyalty = U.clamp(T.hid.loyalty + (T.st.mood > 60 ? .6 : T.st.mood < 35 ? -1.5 : 0));
   if (T.st.mood < 30 && T.hid.loyalty < 30) T.flags.unrest = (T.flags.unrest || 0) + 1; else T.flags.unrest = 0;
@@ -7349,7 +7387,7 @@ Mgr.sign = function (id) {
   const T = MT({ roster: M.market }, id); if (!T) return;
   if (M.roster.length >= Mgr.tier().cap) return UI.toast('宿舍滿了，公司規模不足以容納更多練習生', 'bad');
   const fee = Mgr.fee(T); if (M.co.funds < fee) return UI.toast('資金不足', 'bad');
-  M.co.funds -= fee; T.signed = M.day; T.cEnd = M.week + 104; T.pay = 1; M.roster.push(T); M.market = M.market.filter(t => t.id !== id); Mgr.log(`簽下練習生 ${T.name}（${T.age}歲）。`, 'story'); UI.toast(`已簽下 ${T.name}`); Mgr.render();
+  M.co.funds -= fee; T.signed = M.day; T.cEnd = M.week + 104; T.pay = 1; M.roster.push(T); M.market = M.market.filter(t => t.id !== id); Mgr.log(`簽下練習生 ${Mgr.dn(T)}（${T.age}歲）。`, 'story'); UI.toast(`已簽下 ${Mgr.dn(T)}`); Mgr.render();
 };
 Mgr.fee = T => 15000 + Math.round(T.hid.pot * 300 * (T.age >= 15 ? 1.3 : 1) + T.ovr * 200);
 Mgr.interview = function (id, mode) {
@@ -7357,7 +7395,7 @@ Mgr.interview = function (id, mode) {
   Mgr.spend(1); let msg = '';
   if (mode === 'cheer') { Mgr.applyT(T, { mood: 14, loyalty: 4 }); msg = '你鼓勵了' + T.name + '，對方笑得很開心。'; }
   else if (mode === 'strict') { Mgr.applyT(T, { mood: -6, stress: 6, loyalty: -1, ab: { [U.pick(DATA.ABK)]: 1.2 } }); T.hid.grit = U.clamp(T.hid.grit + 2); msg = '嚴格的指導讓' + T.name + '的某項能力有了突破。'; }
-  else { Mgr.applyT(T, { stress: -15, loyalty: 3 }); if (U.chance(.35 + (M.me.skill.scout - 1) * .1)) { T.rev.pot = true; msg = `談話中你確認了 ${T.name} 的潛力：${T.hid.pot >= 85 ? '天才級（S）' : T.hid.pot >= 70 ? '很有潛力（A）' : T.hid.pot >= 55 ? '中等（B）' : '偏低（C）'}。`; } else msg = `${T.name} 把心事說了出來，輕鬆多了。`; }
+  else { Mgr.applyT(T, { stress: -15, loyalty: 3 }); if (U.chance(.35 + (M.me.skill.scout - 1) * .1)) { T.rev.pot = true; msg = `談話中你確認了 ${Mgr.dn(T)} 的潛力：${T.hid.pot >= 85 ? '天才級（S）' : T.hid.pot >= 70 ? '很有潛力（A）' : T.hid.pot >= 55 ? '中等（B）' : '偏低（C）'}。`; } else msg = `${Mgr.dn(T)} 把心事說了出來，輕鬆多了。`; }
   Mgr.exp('coach', 2.5); UI.close(); UI.toast(msg); Mgr.render();
 };
 Mgr.upgrade = function (k) {
@@ -7377,20 +7415,20 @@ Mgr.endWeek = function () {
   if (M.over) return;
   M.last = [];
   if ((M.week + 1) % 4 === 0) { // 訓練以月為單位：每 4 週結算一次本月訓練計畫
-    M.roster.forEach(T => { const tot = {}; for (let w = 0; w < 4; w++) { const g = Mgr.trainWeek(T); for (const k in g) tot[k] = (tot[k] || 0) + g[k]; } const top = Object.entries(tot).sort((a, b) => b[1] - a[1])[0]; if (top && top[1] > .5) M.last.push(`本月訓練 ${T.name}：${DATA.ABN[top[0]]} +${U.f1(top[1])}`); });
+    M.roster.forEach(T => { const tot = {}; for (let w = 0; w < 4; w++) { const g = Mgr.trainWeek(T); for (const k in g) tot[k] = (tot[k] || 0) + g[k]; } const top = Object.entries(tot).sort((a, b) => b[1] - a[1])[0]; if (top && top[1] > .5) M.last.push(`本月訓練 ${Mgr.dn(T)}：${DATA.ABN[top[0]]} +${U.f1(top[1])}`); });
     M.last.push('📅 本月訓練結算完成，可重新安排下個月的訓練計畫');
   } else M.last.push(`訓練進行中（本月第 ${(M.week % 4) + 1}/4 週，月底結算）`);
   const c = Mgr.weeklyCost(), total = c.rent + c.train + c.staff + c.salary; M.co.funds -= total; M.last.push(`本週支出 ${U.money(total)}`);
   M.groups.slice().forEach(Mgr.groupWeek);
   // 離職與不滿
-  M.roster.forEach(T => { if ((T.flags.unrest || 0) >= 3 && U.chance(.35)) { M.leaving = (M.leaving || []).concat(T.id); M.queue.push({ t: 'msg', title: '提出解約', text: `${T.name} 長期情緒低落，今天寄來了解約申請書。` }); } });
+  M.roster.forEach(T => { if ((T.flags.unrest || 0) >= 3 && U.chance(.35)) { M.leaving = (M.leaving || []).concat(T.id); M.queue.push({ t: 'msg', title: '提出解約', text: `${Mgr.dn(T)} 長期情緒低落，今天寄來了解約申請書。` }); } });
   // 經紀人狀態
   const me = M.me, used = M.apMax - M.ap;
   me.energy = U.clamp(me.energy + 22 + (M.ap >= 3 ? 10 : 0)); me.stress = U.clamp(me.stress + (used >= M.apMax ? 3 : 0) + (M.co.funds < 0 ? 4 : 0) - (M.ap >= 3 ? 3 : 1) - 1.5);
   if (M.co.staff.assist) { me.stress = U.clamp(me.stress - 2.5); me.energy = U.clamp(me.energy + 4); }
   // 時間
   M.day += 7; M.week++; Mgr.coTick(); if (M.week % 52 === 0) Mgr.yearMark(); M.roster.forEach(Mgr.refresh);
-  M.roster.forEach(T => { if (T.age >= 19 && T.stage < 2 && !T.flags.warned) { T.flags.warned = true; Mgr.log(`${T.name} 已 ${T.age} 歲仍未出道。`, 'bad'); } if (T.age >= 21 && T.stage < 2) M.leaving = (M.leaving || []).concat(T.id); });
+  M.roster.forEach(T => { if (T.age >= 19 && T.stage < 2 && !T.flags.warned) { T.flags.warned = true; Mgr.log(`${Mgr.dn(T)} 已 ${T.age} 歲仍未出道。`, 'bad'); } if (T.age >= 21 && T.stage < 2) M.leaving = (M.leaving || []).concat(T.id); });
   Mgr.processLeaving();
   M.apMax = Mgr.tier().ap; M.ap = M.apMax - (me.energy < 25 ? 1 : 0); if (me.stress > 85) M.ap = Math.max(2, M.ap - 1);
   const t = Cal.date(M.day);
@@ -7492,8 +7530,8 @@ function mHome() {
   const nt = [];
   if (M.ap > 0) nt.push(`🎯 本週還有 ${M.ap} 點行動點數可以使用`);
   if (!M.roster.length) nt.push('👥 你沒有任何練習生了！到「星探」頁舉辦試鏡。');
-  M.roster.filter(T => T.st.mood < 35).forEach(T => nt.push(`😟 ${T.name} 心情低落（${Math.round(T.st.mood)}），找 ta 面談吧`));
-  M.roster.filter(T => T.injury > 0).forEach(T => nt.push(`🩹 ${T.name} 受傷休養中（${T.injury} 週）`));
+  M.roster.filter(T => T.st.mood < 35).forEach(T => nt.push(`😟 ${Mgr.dn(T)} 心情低落（${Math.round(T.st.mood)}），找 ta 面談吧`));
+  M.roster.filter(T => T.injury > 0).forEach(T => nt.push(`🩹 ${Mgr.dn(T)} 受傷休養中（${T.injury} 週）`));
   M.groups.forEach(G => nt.push(G.status === 'prep' ? `🎬 ${G.name} ${Mgr.prepWord(G)}準備中（剩 ${G.prepWeeks} 週）` : G.status === 'promo' ? `📺 ${G.name} 宣傳期（剩 ${G.promoWeeks} 週）` : `💤 ${G.name} 休養期，可以企劃回歸`));
   if (run < 12) nt.push(`⚠️ 現金只夠支撐約 ${Math.max(0, run)} 週`);
   if (M.groups.length === 0 && M.roster.some(T => T.age >= 14)) nt.push('💡 有練習生年滿 14 歲了，到「團體」頁企劃出道吧');
@@ -7514,7 +7552,7 @@ function mRoster() {
   if (!M.roster.length) return card('練習生', '<p class="sub">目前沒有練習生。到「星探」頁舉辦試鏡。</p>');
   return `<div class="cards2">${M.roster.map(T => {
     const top = DATA.ABK.slice().sort((a, b) => T.ab[b] - T.ab[a]).slice(0, 3).map(k => `${DATA.ABN[k]} ${U.f1(T.ab[k])}`).join(' · ');
-    return card('', `<div class="npc"><div class="nav">${Avatar.mini(T.name, T.g, 44)}</div><div><b>${U.esc(T.name)}</b><small>${T.age} 歲 · ${['練習生', '預備組', '已出道'][T.stage]}${T.gid ? ' · ' + U.esc((M.groups.find(g => g.id === T.gid) || {}).name || '') : ''}</small></div><div>${gradeChip(T.rating)}</div></div>
+    return card('', `<div class="npc"><div class="nav">${Avatar.mini(T.name, T.g, 44)}</div><div><b>${U.esc(Mgr.dn(T))}</b>${T.alias ? ` <small class="sub">藝名・本名 ${U.esc(T.name)}</small>` : ''}<small>${T.age} 歲 · ${['練習生', '預備組', '已出道'][T.stage]}${T.gid ? ' · ' + U.esc((M.groups.find(g => g.id === T.gid) || {}).name || '') : ''}</small></div><div>${gradeChip(T.rating)}</div></div>
       <small class="sub">${top}　綜合 ${U.f1(T.ovr)}（${T.age} 歲基準 ${BENCH(T.age)}）　潛力 <b class="star">${starStr(Mgr.stars(T))}</b>${T.rev.pot ? '' : ' (推測)'}</small>
       ${UI.bar('體力', T.st.stam, 100, 'stam')}${UI.bar('心情', T.st.mood, 100, 'mood')}${UI.bar('壓力', T.st.stress, 100, 'stress')}${UI.bar('忠誠度', T.hid.loyalty, 100)}
       <div class="plan"><select data-chg="m.focus" data-id="${T.id}">${foc.map(([k, n]) => `<option value="${k}" ${T.plan.focus === k ? 'selected' : ''}>${n}</option>`).join('')}</select>
@@ -7525,7 +7563,7 @@ function mRoster() {
 }
 function mScout() {
   const lv = M.me.skill.scout;
-  const list = M.market.length ? M.market.map(T => `<div class="act"><div class="nav">${Avatar.mini(T.name, T.g, 44)}</div><div class="ab"><b>${U.esc(T.name)}</b> <small>${T.age} 歲 · ${T.tag}</small><small>亮點：${DATA.ABK.slice().sort((a, b) => T.ab[b] - T.ab[a]).slice(0, 2).map(k => DATA.ABN[k] + ' ' + Math.round(T.ab[k])).join('、')} · 綜合 ${U.f1(T.ovr)}（基準 ${BENCH(T.age)}）</small><small>潛力推測 <b class="star">${starStr(Mgr.stars(T))}</b>（星探眼光 Lv.${lv}，誤差較小）· 簽約金 ${U.money(Mgr.fee(T))}</small></div><button class="btn sm" data-act="m.sign" data-id="${T.id}">簽約</button></div>`).join('') : '<p class="sub">目前沒有候選人。</p>';
+  const list = M.market.length ? M.market.map(T => `<div class="act"><div class="nav">${Avatar.mini(T.name, T.g, 44)}</div><div class="ab"><b>${U.esc(Mgr.dn(T))}</b> <small>${T.age} 歲 · ${T.tag}</small><small>亮點：${DATA.ABK.slice().sort((a, b) => T.ab[b] - T.ab[a]).slice(0, 2).map(k => DATA.ABN[k] + ' ' + Math.round(T.ab[k])).join('、')} · 綜合 ${U.f1(T.ovr)}（基準 ${BENCH(T.age)}）</small><small>潛力推測 <b class="star">${starStr(Mgr.stars(T))}</b>（星探眼光 Lv.${lv}，誤差較小）· 簽約金 ${U.money(Mgr.fee(T))}</small></div><button class="btn sm" data-act="m.sign" data-id="${T.id}">簽約</button></div>`).join('') : '<p class="sub">目前沒有候選人。</p>';
   return card('星探與試鏡', `<p class="sub">候選人的潛力是推測值，星探眼光越高越準。面談可以確認真正的潛力。公司目前可容納 ${Mgr.tier().cap} 人（現有 ${M.roster.length} 人）。</p>
     <div class="btn-row wrap"><button class="btn pink" data-act="m.audition" ${M.ap < 2 || M.co.funds < 30000 ? 'disabled' : ''}>舉辦公開試鏡（2AP · ${U.money(30000)}）</button><button class="btn" data-act="m.scout1" ${M.ap < 1 || M.co.funds < 8000 ? 'disabled' : ''}>街頭星探（1AP · ${U.money(8000)}）</button></div>`) + card('候選人', `<div class="acts">${list}</div>`);
 }
@@ -7534,7 +7572,7 @@ function mGroups() {
   const cards = M.groups.map(G => {
     const mem = Mgr.gm(G), acts = Object.keys(Mgr.gAct).map(id => { const a = Mgr.gAct[id], why = Mgr.canG(G, id); return `<button class="btn sm ${why ? 'ghost' : ''}" data-act="m.gact" data-gid="${G.id}" data-id="${id}" ${why ? 'disabled' : ''} title="${why || ''}">${a.i} ${a.n}${a.ap ? ` ${a.ap}AP` : ''}${why ? `<small>(${why})</small>` : ''}</button>`; }).join('');
     const st = { prep: `${Mgr.prepWord(G)}準備中（剩 ${G.prepWeeks} 週）`, promo: `宣傳期（剩 ${G.promoWeeks} 週）`, rest: '休養期', hiatus: '暫停活動' }[G.status];
-    return card(`🎤 ${U.esc(G.name)} · ${st}`, `<p>成員：${mem.map(T => { const rl = Mgr.assignRoles(mem)[T.id]; return `${U.esc(T.name)}(${T.age}${rl ? '・' + MROLE[rl] : ''})`; }).join('、')}</p>
+    return card(`🎤 ${U.esc(G.name)} · ${st}`, `<p>成員：${mem.map(T => { const rl = Mgr.assignRoles(mem)[T.id]; return `${U.esc(Mgr.dn(T))}(${T.age}${rl ? '・' + MROLE[rl] : ''})`; }).join('、')}</p>
       <div class="kpis"><div><b>${U.num(G.fans)}</b><small>粉絲</small></div><div><b>${U.f1(G.pop)}</b><small>人氣</small></div><div><b>${U.f1(G.fame)}</b><small>知名度</small></div><div><b>${Math.round(G.team)}</b><small>默契</small></div><div><b>${G.wins}</b><small>一位</small></div></div>
       ${Mgr.groupTools(G, mem)}
       <div class="btn-row wrap acts-g">${acts}</div>
@@ -7624,11 +7662,13 @@ MgrUI.planRender = function () {
   if (M.co.funds < cost) probs.push(`資金不足（差 ${U.money(cost - M.co.funds)}）`);
   if (M.ap < 2) probs.push('AP 不足（需 2AP）');
   const grade = q => q >= 62 ? ['S', '極具競爭力，有機會衝上榜單前段'] : q >= 50 ? ['A', '口碑與數字都有看頭'] : q >= 38 ? ['B', '中規中矩，新團的合理水準'] : ['C', '偏弱，建議先加強培訓、提高預算或換更好的製作人'];
-  const memHtml = G ? `<div class="pl-mem fixed">${sel.map(T => `<div class="pl-row on"><b>${U.esc(T.name)}</b><small>${T.age}歲 · 綜合 ${U.f1(T.ovr)}</small>${roles[T.id] ? `<em>${MROLE[roles[T.id]]}</em>` : ''}</div>`).join('')}</div><p class="sub">回歸沿用原班成員。</p>`
-    : P.elig.map(T => { const on = P.ids.includes(T.id), off = !on && ((g0 && T.g !== g0) || sel.length >= 6); return `<button type="button" class="pl-row ${on ? 'on' : ''}" data-act="m.pl.mem" data-id="${T.id}" ${off ? 'disabled' : ''}><span class="pl-chk">${on ? '✔' : ''}</span><b>${gIcon(T.g)} ${U.esc(T.name)}</b><small>${T.age}歲 · 綜合 ${U.f1(T.ovr)} · ${T.rating}　唱${Math.round(T.ab.vocal)} 舞${Math.round(T.ab.dance)} 饒${Math.round(T.ab.rap)} 魅${Math.round(T.ab.charm)}</small>${on && roles[T.id] ? `<em>${MROLE[roles[T.id]]}</em>` : ''}</button>`; }).join('') || '<p class="sub">沒有符合資格的練習生。</p>';
+  const memHtml = G ? `<div class="pl-mem fixed">${sel.map(T => `<div class="pl-row on"><b>${U.esc(Mgr.dn(T))}</b><small>${T.age}歲 · 綜合 ${U.f1(T.ovr)}</small>${roles[T.id] ? `<em>${MROLE[roles[T.id]]}</em>` : ''}</div>`).join('')}</div><p class="sub">回歸沿用原班成員。</p>`
+    : P.elig.map(T => { const on = P.ids.includes(T.id), off = !on && ((g0 && T.g !== g0) || sel.length >= 6); return `<button type="button" class="pl-row ${on ? 'on' : ''}" data-act="m.pl.mem" data-id="${T.id}" ${off ? 'disabled' : ''}><span class="pl-chk">${on ? '✔' : ''}</span><b>${gIcon(T.g)} ${U.esc(Mgr.dn(T))}</b><small>${T.age}歲 · 綜合 ${U.f1(T.ovr)} · ${T.rating}　唱${Math.round(T.ab.vocal)} 舞${Math.round(T.ab.dance)} 饒${Math.round(T.ab.rap)} 魅${Math.round(T.ab.charm)}</small>${on && roles[T.id] ? `<em>${MROLE[roles[T.id]]}</em>` : ''}</button>`; }).join('') || '<p class="sub">沒有符合資格的練習生。</p>';
   const conHtml = DATA.CONCEPTS.map(c => { const f = Mgr.predictQ(P.ids, c.id, P.bud, P.prod, G); return `<button type="button" class="pl-card ${P.con === c.id ? 'on' : ''}" data-act="m.pl.con" data-id="${c.id}"><b>${c.n}</b><small>${Object.keys(c.w).map(k => DATA.ABN[k]).join('／')}</small>${f ? `<em>適配 ${Math.round(f.fit)}</em>` : ''}</button>`; }).join('');
   const budHtml = DATA.M.BUDGET.map((b, i) => `<button type="button" class="pl-card ${P.bud === i ? 'on' : ''}" data-act="m.pl.bud" data-id="${i}"><b>${b.n}</b><small>${U.money(b.cost)}</small><em>品質 +${b.qb}　首週行銷 ${U.num(b.mk)}</em></button>`).join('');
   const prodHtml = DATA.M.PRODUCER.map((b, i) => `<button type="button" class="pl-card ${P.prod === i ? 'on' : ''}" data-act="m.pl.prod" data-id="${i}"><b>${b.n}</b><small>${b.cost ? U.money(b.cost) : '免費'}</small><em>品質 +${b.qb}</em></button>`).join('');
+  P.al = P.al || {};
+  const alHtml = G ? '' : `<div class="pl-step"><h4>⑤ 藝名<small>可自取、按 🎲 隨機，留空則沿用本名</small></h4>${sel.length ? sel.map(T => `<div class="pl-al"><label>${U.esc(T.name)}</label><input type="text" maxlength="10" data-al="${T.id}" placeholder="藝名" value="${U.esc(P.al[T.id] || '')}"><button type="button" class="btn sm ghost" data-act="m.pl.al1" data-id="${T.id}">🎲</button></div>`).join('') + '<div class="btn-row"><button type="button" class="btn sm" data-act="m.pl.alall">🎲 全部隨機</button><button type="button" class="btn sm ghost" data-act="m.pl.alclr">全部沿用本名</button></div>' : '<p class="sub">先選好成員，再為每個人取藝名。</p>'}</div>`;
   const nameHtml = G ? '' : `<div class="pl-step"><h4>④ 團名（可留空，由系統取名）</h4><input type="text" id="plname" maxlength="12" placeholder="例如：LUMENA" value="${U.esc(P.name || '')}"></div>`;
   el.innerHTML = `<h3>${G ? '💿 企劃回歸：' + U.esc(G.name) : '🎤 出道企劃'}</h3>
     <p class="sub">${G ? '重新決定概念、預算與製作人，準備 3 週後回歸。' : '依序完成 ①～③，最下方會即時顯示預估品質與總成本。'}</p>
@@ -7636,6 +7676,7 @@ MgrUI.planRender = function () {
     <div class="pl-step"><h4>② 概念<small>決定看重的能力；「適配」是目前成員在該概念的表現</small></h4><div class="pl-cards">${conHtml}</div></div>
     <div class="pl-step"><h4>③ 預算與製作人</h4><div class="pl-cards">${budHtml}</div><div class="pl-cards" style="margin-top:8px">${prodHtml}</div></div>
     ${nameHtml}
+    ${alHtml}
     <div class="pl-sum"><div class="pl-kpi"><div><b>${pre ? Math.round(pre.q) : '—'}</b><small>預估品質${pre ? '（' + grade(pre.q)[0] + '）' : ''}</small></div><div><b>${U.money(cost)}</b><small>總成本</small></div><div><b>${U.money(M.co.funds)}</b><small>目前資金</small></div></div>
     <p class="sub">${pre ? grade(pre.q)[1] + '。實際品質會再有 ±3 的浮動。' : '選好成員後顯示預估。'}</p>
     ${probs.length ? `<p class="warn">⚠ ${probs.join('；')}</p>` : ''}
@@ -7646,6 +7687,11 @@ ACT['m.pl.con'] = d => { MgrUI.pl.con = d.id; MgrUI.planRender(); };
 ACT['m.pl.bud'] = d => { MgrUI.pl.bud = +d.id; MgrUI.planRender(); };
 ACT['m.pl.prod'] = d => { MgrUI.pl.prod = +d.id; MgrUI.planRender(); };
 document.addEventListener('input', e => { if (e.target && e.target.id === 'plname' && MgrUI.pl) MgrUI.pl.name = e.target.value; });
+document.addEventListener('input', e => { if (e.target && e.target.dataset && e.target.dataset.al && MgrUI.pl) { MgrUI.pl.al = MgrUI.pl.al || {}; MgrUI.pl.al[e.target.dataset.al] = e.target.value; } });
+Mgr.aliasUsed = () => new Set(M.roster.map(t => t.alias).filter(Boolean).concat(Object.values((MgrUI.pl && MgrUI.pl.al) || {}).filter(Boolean)));
+ACT['m.pl.al1'] = d => { const P = MgrUI.pl, T = MT(M, +d.id); if (!T) return; P.al = P.al || {}; P.al[T.id] = ''; P.al[T.id] = DATA.randAlias(T.g, Mgr.aliasUsed()); MgrUI.planRender(); };
+ACT['m.pl.alall'] = () => { const P = MgrUI.pl; P.al = {}; P.ids.forEach(id => { const T = MT(M, id); if (T) P.al[id] = DATA.randAlias(T.g, Mgr.aliasUsed()); }); MgrUI.planRender(); };
+ACT['m.pl.alclr'] = () => { MgrUI.pl.al = {}; MgrUI.planRender(); };
 const qv = n => { const el = document.querySelector(`input[name=${n}]:checked`); return el ? el.value : null; };
 ACT['m.tab'] = d => { MgrUI.tab = d.t; Mgr.render(); };
 ACT['m.next'] = () => { M.queue.shift(); UI.close(); Mgr.save('auto'); Mgr.render(); Mgr.flush(); };
@@ -7694,7 +7740,7 @@ const SCAN_MIN = 20, ADD_CD = 12, GROUP_MAX = 7;
 Mgr.addWhy = G => G.status === 'prep' ? '準備中不能加人' : G.members.length >= GROUP_MAX ? `已滿 ${GROUP_MAX} 人` : M.week - (G.lastAdd ?? -99) < ADD_CD ? `${ADD_CD - (M.week - (G.lastAdd ?? -99))} 週後可再加` : M.ap < 1 ? 'AP 不足' : null;
 Mgr.groupTools = function (G, mem) {
   const why = Mgr.addWhy(G), cur = G.status !== 'prep';
-  const rows = mem.filter(T => T.hid.scandal >= SCAN_MIN).map(T => `<div class="act"><div class="ab"><b>${U.esc(T.name)}</b><small>⚠️ 黑料 ${Math.round(T.hid.scandal)}，正在拖累團體形象</small></div><button class="btn sm ghost" data-act="m.fire" data-gid="${G.id}" data-id="${T.id}">🚫 解約退團</button></div>`).join('');
+  const rows = mem.filter(T => T.hid.scandal >= SCAN_MIN).map(T => `<div class="act"><div class="ab"><b>${U.esc(Mgr.dn(T))}</b><small>⚠️ 黑料 ${Math.round(T.hid.scandal)}，正在拖累團體形象</small></div><button class="btn sm ghost" data-act="m.fire" data-gid="${G.id}" data-id="${T.id}">🚫 解約退團</button></div>`).join('');
   return `${cur ? `<div class="btn-row"><button class="btn sm" data-act="m.addm" data-gid="${G.id}" ${why ? 'disabled' : ''}>➕ 增加團員（開會 1AP）${why ? `<small>(${why})</small>` : ''}</button></div>` : ''}${rows ? `<div class="acts">${rows}</div>` : ''}`;
 };
 Mgr.addCands = G => { const g0 = Mgr.gm(G)[0]; return M.roster.filter(T => T.stage < 2 && !T.gid && T.age >= 13 && (!g0 || T.g === g0.g)); };
@@ -7705,7 +7751,7 @@ Mgr.voteP = function (G, T, cand) {
 };
 ACT['m.addm'] = d => {
   const G = M.groups.find(g => g.id === +d.gid); if (!G || Mgr.addWhy(G)) return;
-  const list = Mgr.addCands(G).map(T => `<button class="choice" data-act="m.addm2" data-gid="${G.id}" data-id="${T.id}"><b>${U.esc(T.name)}</b><small>${T.age} 歲・綜合 ${U.f1(Mgr.ovr(T))}（基準 ${BENCH(T.age)}）・${T.tag || ''}</small></button>`).join('');
+  const list = Mgr.addCands(G).map(T => `<button class="choice" data-act="m.addm2" data-gid="${G.id}" data-id="${T.id}"><b>${U.esc(Mgr.dn(T))}</b><small>${T.age} 歲・綜合 ${U.f1(Mgr.ovr(T))}（基準 ${BENCH(T.age)}）・${T.tag || ''}</small></button>`).join('');
   UI.modal(`<h3>➕ ${U.esc(G.name)}：增加團員</h3><p class="sub">只能從尚未出道、同性別、滿 13 歲的練習生中挑選。選定後會召開團員會議，由現有成員投票，過半數同意才能加入。</p><div class="choices">${list || '<p class="sub">目前沒有符合資格的練習生。</p>'}</div><div class="btn-row"><button class="btn ghost" data-act="u.close">取消</button></div>`, { cls: 'small' });
 };
 ACT['m.addm2'] = d => {
@@ -7731,7 +7777,7 @@ ACT['m.addm3'] = () => { UI.close(); Mgr.render(); };
 ACT['m.fire'] = d => {
   const G = M.groups.find(g => g.id === +d.gid), T = MT(M, +d.id); if (!G || !T) return;
   const fee = 20000 + Math.round(T.hid.scandal * 500), ok = M.co.funds >= fee, small = G.members.length - 1 < 2;
-  UI.modal(`<h3>🚫 ${U.esc(T.name)} 解約退團</h3><p class="sub">${U.esc(T.name)} 的黑料高達 ${Math.round(T.hid.scandal)}。解約後，${T.g === 'm' ? '他' : '她'}將離開 ${U.esc(G.name)} 與公司。<br>需支付解約金 <b>${U.money(fee)}</b>，團隊默契 -3，但團體不再被醜聞拖累（人氣與知名度小幅回升）。${small ? '<br><b>⚠️ 團體人數將少於 2 人，會暫停活動。</b>' : ''}${ok ? '' : '<br><b>資金不足。</b>'}</p><div class="btn-row"><button class="btn ghost" data-act="u.close">取消</button><button class="btn pink" data-act="m.fire2" data-gid="${G.id}" data-id="${T.id}" ${ok ? '' : 'disabled'}>確定解約</button></div>`, { cls: 'small' });
+  UI.modal(`<h3>🚫 ${U.esc(Mgr.dn(T))} 解約退團</h3><p class="sub">${U.esc(Mgr.dn(T))} 的黑料高達 ${Math.round(T.hid.scandal)}。解約後，${T.g === 'm' ? '他' : '她'}將離開 ${U.esc(G.name)} 與公司。<br>需支付解約金 <b>${U.money(fee)}</b>，團隊默契 -3，但團體不再被醜聞拖累（人氣與知名度小幅回升）。${small ? '<br><b>⚠️ 團體人數將少於 2 人，會暫停活動。</b>' : ''}${ok ? '' : '<br><b>資金不足。</b>'}</p><div class="btn-row"><button class="btn ghost" data-act="u.close">取消</button><button class="btn pink" data-act="m.fire2" data-gid="${G.id}" data-id="${T.id}" ${ok ? '' : 'disabled'}>確定解約</button></div>`, { cls: 'small' });
 };
 ACT['m.fire2'] = d => {
   const G = M.groups.find(g => g.id === +d.gid), T = MT(M, +d.id); if (!G || !T) return;
@@ -7744,11 +7790,11 @@ ACT['m.fire2'] = d => {
 ACT['m.audition'] = () => Mgr.audition();
 ACT['m.scout1'] = () => Mgr.scoutOne();
 ACT['m.sign'] = d => Mgr.sign(+d.id);
-ACT['m.talk'] = d => { const T = MT(M, +d.id); UI.modal(`<h3>與 ${U.esc(T.name)} 面談</h3><div class="choices"><button class="choice" data-act="m.talk2" data-id="${T.id}" data-mode="cheer"><b>鼓勵</b><small>心情大幅上升、忠誠度提升</small></button><button class="choice" data-act="m.talk2" data-id="${T.id}" data-mode="strict"><b>嚴格指導</b><small>隨機一項能力提升，但心情下降</small></button><button class="choice" data-act="m.talk2" data-id="${T.id}" data-mode="listen"><b>傾聽</b><small>減壓；有機會確認真正的潛力</small></button></div><div class="btn-row"><button class="btn ghost" data-act="u.close">取消</button></div>`); };
+ACT['m.talk'] = d => { const T = MT(M, +d.id); UI.modal(`<h3>與 ${U.esc(Mgr.dn(T))} 面談</h3><div class="choices"><button class="choice" data-act="m.talk2" data-id="${T.id}" data-mode="cheer"><b>鼓勵</b><small>心情大幅上升、忠誠度提升</small></button><button class="choice" data-act="m.talk2" data-id="${T.id}" data-mode="strict"><b>嚴格指導</b><small>隨機一項能力提升，但心情下降</small></button><button class="choice" data-act="m.talk2" data-id="${T.id}" data-mode="listen"><b>傾聽</b><small>減壓；有機會確認真正的潛力</small></button></div><div class="btn-row"><button class="btn ghost" data-act="u.close">取消</button></div>`); };
 ACT['m.talk2'] = d => Mgr.interview(+d.id, d.mode);
 ACT['m.detail'] = d => {
   const T = MT(M, +d.id);
-  UI.modal(`<h3>${U.esc(T.name)}（${T.age} 歲）</h3>${DATA.ABIL.map(([k, n, ic]) => UI.bar(`${ic} ${n}`, T.ab[k], 100, 'ab', U.f1(T.ab[k]))).join('')}<p class="sub">${T.tag} · 潛力 ${starStr(Mgr.stars(T))}${T.rev.pot ? '（已確認）' : '（推測）'}</p><p class="sub">體力 ${Math.round(T.st.stam)}／心情 ${Math.round(T.st.mood)}／壓力 ${Math.round(T.st.stress)}／忠誠 ${Math.round(T.hid.loyalty)}／黑料 ${Math.round(T.hid.scandal)}</p><div class="btn-row"><button class="btn" data-act="u.close">關閉</button></div>`);
+  UI.modal(`<h3>${U.esc(Mgr.dn(T))}（${T.age} 歲）</h3>${T.alias ? `<p class="sub">🎤 藝名「${U.esc(T.alias)}」・本名 ${U.esc(T.name)}</p>` : ''}${DATA.ABIL.map(([k, n, ic]) => UI.bar(`${ic} ${n}`, T.ab[k], 100, 'ab', U.f1(T.ab[k]))).join('')}<p class="sub">${T.tag} · 潛力 ${starStr(Mgr.stars(T))}${T.rev.pot ? '（已確認）' : '（推測）'}</p><p class="sub">體力 ${Math.round(T.st.stam)}／心情 ${Math.round(T.st.mood)}／壓力 ${Math.round(T.st.stress)}／忠誠 ${Math.round(T.hid.loyalty)}／黑料 ${Math.round(T.hid.scandal)}</p><div class="btn-row"><button class="btn" data-act="u.close">關閉</button></div>`);
 };
 ACT['m.dis'] = d => UI.confirm('確定要與這位練習生解約嗎？其他練習生的忠誠度會稍微下降。', 'm.dis2', { id: d.id }, '解約');
 ACT['m.dis2'] = d => Mgr.dismiss(+d.id);
@@ -7767,6 +7813,9 @@ ACT['m.plango'] = d => {
   const nm = (P.name || '').trim(); if (nm && M.groups.some(g => g.name === nm)) return UI.toast('已有同名團體', 'bad');
   Mgr.spend(2); M.co.funds -= cost; const G = Mgr.planGroup({ ids, concept: con, budget: bud, producer: prod });
   if (nm) G.name = nm;
+  const used = new Set(M.roster.map(t => t.alias).filter(Boolean)); const al = P.al || {};
+  mem.forEach(T => { const v = String(al[T.id] || '').replace(/[<>&"'`]/g, '').trim().slice(0, 10); if (v && !used.has(v)) { T.alias = v; used.add(v); } });
+  if (mem.some(T => T.alias)) Mgr.log(`藝名公開：${mem.map(T => T.alias ? `${T.alias}（${T.name}）` : T.name).join('、')}。`, 'story');
   Mgr.log(`企劃新團體「${G.name}」，4 週後出道。`, 'story'); UI.close(); UI.toast(`新團體「${G.name}」開始出道準備`); Mgr.render();
 };
 ACT['m.gact'] = d => { const G = M.groups.find(g => g.id === +d.gid); const r = Mgr.doG(G, d.id); if (r === 'modal') return; if (r) UI.toast(r); Mgr.render(); };
@@ -7868,7 +7917,7 @@ Mgr.coTick = function () { // 每週：公司榜單與合約
   if (M.week >= END_WEEK - 6) return;
   M.roster.forEach(T => {
     const w = Mgr.contractLeft(T);
-    if (w <= 4 && w > 0 && !T.flags.warn4) { T.flags.warn4 = true; Mgr.log(`📄 ${T.name} 的合約將在 ${w} 週後到期，可到「練習生」頁提前談判續約。`, 'story'); }
+    if (w <= 4 && w > 0 && !T.flags.warn4) { T.flags.warn4 = true; Mgr.log(`📄 ${Mgr.dn(T)} 的合約將在 ${w} 週後到期，可到「練習生」頁提前談判續約。`, 'story'); }
     if (w <= 0 && !T.flags.renewQ && !M.queue.some(q => q.t === 'renew' && q.id === T.id)) { T.flags.renewQ = true; M.queue.push({ t: 'renew', id: T.id }); }
   });
 };
@@ -7877,7 +7926,7 @@ Mgr.renewModal = function (id, fromQ) {
   MgrUI.rn = MgrUI.rn && MgrUI.rn.id === id ? MgrUI.rn : { id, tries: 0 }; MgrUI.rn.fromQ = !!fromQ;
   const v = Mgr.value(T), w = Mgr.willing(T), lab = p => p >= .75 ? '很有把握' : p >= .55 ? '不錯' : p >= .35 ? '五五波' : '偏低';
   const cards = Object.keys(OFFERS).map(k => { const o = OFFERS[k], fee = Math.round(v * o.bonus), off = M.co.funds < fee, p = Mgr.renewP(T, k, MgrUI.rn.tries); return `<button type="button" class="pl-card" data-act="m.renew" data-o="${k}" ${off ? 'disabled' : ''}><b>${o.n}</b><small>簽約金 ${fee ? U.money(fee) : '無'} · 薪資 ×${o.pay}</small><small>${o.d}</small><em>成功機率：${lab(p)}</em>${off ? '<em style="color:#e0457b">資金不足</em>' : ''}</button>`; }).join('');
-  UI.modal(`<div class="ev-tag">📄 合約續約談判</div><h3>${U.esc(T.name)}</h3><p class="sub">${T.age} 歲 · ${['練習生', '預備組', '已出道'][T.stage]}${T.gid ? ' · ' + U.esc((M.groups.find(g => g.id === T.gid) || {}).name || '') : ''}　身價 ${U.money(v)}　${Mgr.contractLeft(T) <= 0 ? '合約已到期' : '合約剩 ' + Mgr.contractLeft(T) + ' 週'}</p>
+  UI.modal(`<div class="ev-tag">📄 合約續約談判</div><h3>${U.esc(Mgr.dn(T))}</h3><p class="sub">${T.age} 歲 · ${['練習生', '預備組', '已出道'][T.stage]}${T.gid ? ' · ' + U.esc((M.groups.find(g => g.id === T.gid) || {}).name || '') : ''}　身價 ${U.money(v)}　${Mgr.contractLeft(T) <= 0 ? '合約已到期' : '合約剩 ' + Mgr.contractLeft(T) + ' 週'}</p>
     ${UI.bar('續約意願', Math.min(100, w), 100)}<p class="sub">${MgrUI.rn.tries ? '對方表示想再多考慮一下，需要你拿出更多誠意（第二輪機率略增）。若再談不成，可能直接轉投他社。' : '意願取決於忠誠度、心情、你的信任度、公司聲望，以及經營技能。'}</p>
     <div class="pl-cards" style="grid-template-columns:1fr">${cards}</div>
     <div class="btn-row">${fromQ ? '' : '<button class="btn ghost" data-act="u.close">先不談</button>'}<button class="btn ghost" data-act="m.renewno">好聚好散（不續約）</button></div>`, { cls: 'planm' });
@@ -7890,20 +7939,20 @@ ACT['m.renew'] = d => {
   if (U.chance(Mgr.renewP(T, d.o, R.tries))) {
     M.co.funds -= fee; T.cEnd = Math.max(M.week, T.cEnd || 0) + o.term; T.pay = o.pay; T.flags.renewQ = false; T.flags.warn4 = false;
     T.hid.loyalty = U.clamp(T.hid.loyalty + (d.o === 'rich' ? 8 : d.o === 'std' ? 4 : -3)); T.st.mood = U.clamp(T.st.mood + (d.o === 'long' ? 0 : 5)); M.hist.renews++;
-    Mgr.log(`✍️ ${T.name} 續約成功（${o.n}，${o.term / 52} 年）${fee ? '，簽約金 ' + U.money(fee) : ''}。`, 'win'); UI.toast(`${T.name} 續約成功`);
+    Mgr.log(`✍️ ${Mgr.dn(T)} 續約成功（${o.n}，${o.term / 52} 年）${fee ? '，簽約金 ' + U.money(fee) : ''}。`, 'win'); UI.toast(`${Mgr.dn(T)} 續約成功`);
     return renewDone();
   }
   R.tries++;
   if (R.tries >= 2) {
     M.leaving = (M.leaving || []).concat(T.id); const rv = U.pick(M.rivalCos); rv.bump += 2.5;
-    Mgr.log(`💔 ${T.name} 拒絕續約，轉投 ${rv.name}。`, 'bad');
-    M.queue.unshift({ t: 'msg', title: '談判破裂', text: `${T.name} 婉拒了你的續約方案，最終簽進了 ${rv.name}。\n${T.gid ? '團體少了一名成員，品質與活動可能受影響。' : '祝福他在新的地方發光。'}` });
+    Mgr.log(`💔 ${Mgr.dn(T)} 拒絕續約，轉投 ${rv.name}。`, 'bad');
+    M.queue.unshift({ t: 'msg', title: '談判破裂', text: `${Mgr.dn(T)} 婉拒了你的續約方案，最終簽進了 ${rv.name}。\n${T.gid ? '團體少了一名成員，品質與活動可能受影響。' : '祝福他在新的地方發光。'}` });
     return renewDone();
   }
   UI.toast('對方想再考慮，請提出更好的條件', 'bad'); Mgr.renewModal(R.id, R.fromQ);
 };
-ACT['m.renewno'] = () => { const R = MgrUI.rn, T = R && MT(M, R.id); if (!T) return UI.close(); UI.confirm(`確定不與 ${T.name} 續約嗎？合約到期後會離開公司。`, 'm.renewno2', {}, '不續約'); };
-ACT['m.renewno2'] = () => { const R = MgrUI.rn, T = R && MT(M, R.id); if (T) { M.leaving = (M.leaving || []).concat(T.id); Mgr.log(`${T.name} 的合約到期，雙方和平分手。`); } renewDone(); };
+ACT['m.renewno'] = () => { const R = MgrUI.rn, T = R && MT(M, R.id); if (!T) return UI.close(); UI.confirm(`確定不與 ${Mgr.dn(T)} 續約嗎？合約到期後會離開公司。`, 'm.renewno2', {}, '不續約'); };
+ACT['m.renewno2'] = () => { const R = MgrUI.rn, T = R && MT(M, R.id); if (T) { M.leaving = (M.leaving || []).concat(T.id); Mgr.log(`${Mgr.dn(T)} 的合約到期，雙方和平分手。`); } renewDone(); };
 ACT['m.renewopen'] = d => Mgr.renewModal(+d.id, false);
 
 /* ===== ach.js ===== */
