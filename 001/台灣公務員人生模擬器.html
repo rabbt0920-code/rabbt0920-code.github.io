@@ -122,7 +122,7 @@ table.rec td,table.rec th{border-bottom:1px solid var(--line);padding:4px;text-a
 .toast{position:fixed;bottom:18px;left:50%;transform:translateX(-50%);background:var(--ink);color:#fff;padding:8px 16px;border-radius:4px;font-size:14px;opacity:0;transition:.3s;pointer-events:none;z-index:10}
 .toast.on{opacity:.92}
 .autotag{font-size:12px;opacity:.75}
-ol.pref{padding-left:0;list-style:none;margin:8px 0}ol.pref li{display:flex;align-items:center;gap:6px;padding:6px 8px;border:1px solid var(--line);background:#fff;margin-bottom:4px;border-radius:3px;flex-wrap:wrap}
+ol.prefbox{max-height:340px;overflow:auto;padding-right:2px}ol.pref .pname{flex:1;min-width:0}ol.pref{padding-left:0;list-style:none;margin:8px 0}ol.pref li{display:flex;align-items:center;gap:6px;padding:6px 8px;border:1px solid var(--line);background:#fff;margin-bottom:4px;border-radius:3px;flex-wrap:wrap}
 .pbtns{margin-left:auto;display:flex;gap:4px}
 .yr{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin:6px 0}.yr div{background:#fff;border:1px solid var(--line);border-radius:3px;text-align:center;padding:6px}.yr b{display:block;font-size:18px;color:var(--blue)}.yr span{font-size:12px;color:var(--muted)}
 .charts{display:grid;grid-template-columns:1fr 1fr;gap:10px}@media(max-width:640px){.charts{grid-template-columns:1fr}}
@@ -196,6 +196,54 @@ const UNITS=[
 const ENTRY={t:'辦事員',lo:3,hi:5}; // 普考：委任第三職等起
 function ladder(u){return [ENTRY,...(u||S.job.unit).ladder];}
 function unitMax(u){const L=u.ladder;return L[L.length-1].hi;}
+
+/* ---- 具體機關名單（熱門常見者；機關為遊戲化簡，名額與熱度為遊戲設定）----
+   u:所屬類別  pop:熱門程度  q:類別內名額權重  b:各職系名額加權  only:限定職系（一般行政不受限）
+   ren:職稱改名（局、關）  rent/house/load/ot/w:覆寫類別預設值 */
+const ORGS=[
+ {id:'xinyi',u:'metro',name:'臺北市信義區公所',pop:1.8,rent:20000,house:24000000,desc:'台北市的精華區，里長活動、社區營造與跨年晚會的人潮，都在你的轄區。'},
+ {id:'banqiao',u:'metro',name:'新北市板橋區公所',pop:1.5,rent:14000,house:17000000,desc:'新北市政府所在地，人口稠密，洽公民眾與里長服務同樣爆量。'},
+ {id:'xitun',u:'metro',name:'臺中市西屯區公所',pop:1.3,rent:12000,house:14500000,desc:'人口成長最快的行政區之一，建商、社區管委會與里長都很有想法。'},
+ {id:'fengshan',u:'metro',name:'高雄市鳳山區公所',pop:1.0,rent:9000,house:9500000,desc:'老牌大區，生活機能好、房價還算友善，但敬老福利與陳情案件不少。'},
+ {id:'xiulin',u:'remote',name:'花蓮縣秀林鄉公所',pop:0.4,load:42,desc:'幅員遼闊、山海環繞，颱風與地震後的災情通報全靠你。另支地域加給。'},
+ {id:'lanyu',u:'remote',name:'臺東縣蘭嶼鄉公所',pop:0.3,load:38,rent:5500,house:5500000,desc:'離島生活，補給船決定你的伙食。班機不開、船不來時，整個辦公室一起看海。另支地域加給。'},
+ {id:'renai',u:'remote',name:'南投縣仁愛鄉公所',pop:0.35,desc:'高山部落、原住民族事務與觀光民宿並重，每次颱風都要確認道路有沒有斷。另支地域加給。'},
+ {id:'moi',u:'central',name:'內政部',pop:1.6,desc:'戶政、地政、營建、警政與移民的上級機關，業務橫跨民眾生活的每一件事。'},
+ {id:'mof',u:'central',name:'財政部',pop:1.5,b:{tax:3},desc:'賦稅、關務、國有財產與公股銀行的主管機關，稅制修法時全部門動員。'},
+ {id:'moe',u:'central',name:'教育部',pop:1.3,desc:'從幼兒園到大學、體育與青年，一個政策牽動全國家長，網路輿論永遠熱烈。'},
+ {id:'moea',u:'central',name:'經濟部',pop:1.4,desc:'產業、能源、水利與中小企業，電價和半導體政策都要你備資料。'},
+ {id:'motc',u:'central',name:'交通部',pop:1.4,b:{civil:2},desc:'鐵公路、航空、港埠、觀光與氣象，大眾運輸一出事就上新聞。'},
+ {id:'mohw',u:'central',name:'衛生福利部',pop:1.5,b:{social:3},desc:'健保、長照、社福與食藥安全，預算全國最大，質詢也最多。'},
+ {id:'moenv',u:'central',name:'環境部',pop:1.2,b:{env:3},desc:'空污、廢棄物、氣候變遷與淨零排放，永遠被環團和產業兩邊檢討。'},
+ {id:'moda',u:'central',name:'數位發展部',pop:1.3,b:{it:3},desc:'數位政府、資安與電信詐騙防制的新興部會，年輕、拼命，加班也不少。'},
+ {id:'mol',u:'central',name:'勞動部',pop:1.2,b:{social:1.5},desc:'基本工資、勞動檢查、勞保年金與外籍移工，每一項都有人關心。'},
+ {id:'tourism',u:'agency',name:'交通部觀光署',pop:1.7,desc:'推動觀光政策、國旅補助與旅宿管理，旅展、跨年與颱風後的旅遊安全都是年度大事。'},
+ {id:'imm',u:'agency',name:'內政部移民署',pop:1.3,desc:'入出國證照、外籍人士居留與移民事務，機場、專勤隊與服務站都是第一線。'},
+ {id:'tpetax',u:'agency',name:'財政部臺北國稅局',pop:1.3,q:0.5,b:{tax:5},ren:{署長:'局長',副署長:'副局長'},desc:'綜所稅、營業稅與遺贈稅的核課機關，五月報稅季，櫃檯整天人潮不斷。'},
+ {id:'customs',u:'agency',name:'財政部關務署臺北關',pop:1.0,q:0.4,b:{tax:3},ren:{署長:'關長',副署長:'副關長'},desc:'進出口通關、查緝走私與關稅徵收，機場與港口的貨櫃永遠看不完。'},
+ {id:'nla',u:'agency',name:'內政部國土管理署',pop:1.1,q:0.6,b:{land:4,civil:2},desc:'國土計畫、都市計畫與營建管理，每一個開發案都有人在關切。'},
+ {id:'highway',u:'agency',name:'交通部公路局',pop:1.0,q:0.6,b:{civil:5},ren:{署長:'局長',副署長:'副局長'},desc:'省道養護、公路運輸與搶修，颱風天與連假塞車時，全局待命。'},
+ {id:'cdc',u:'agency',name:'衛生福利部疾病管制署',pop:1.2,q:0.7,b:{social:1.5},desc:'傳染病監測、疫苗與疫情通報，疫情一旦升溫，所有人取消休假。'},
+ {id:'fda',u:'agency',name:'衛生福利部食品藥物管理署',pop:1.1,q:0.6,b:{env:1.5},desc:'食品安全、藥品與化粧品管理，食安事件上新聞的第一時間，電話就會被打爆。'},
+ {id:'bli',u:'agency',name:'勞動部勞工保險局',pop:1.2,q:0.7,b:{social:2,it:1.5},ren:{署長:'局長',副署長:'副局長'},desc:'勞保、勞退與年金給付的承辦機關，每個月數百萬筆給付，容不得出錯。'},
+ {id:'ipo',u:'agency',name:'經濟部智慧財產局',pop:1.2,q:0.5,b:{it:1.5},ren:{署長:'局長',副署長:'副局長'},desc:'專利、商標與著作權的主管機關，案件專業，辦公室出奇安靜。'},
+ {id:'forest',u:'agency',name:'農業部林業及自然保育署',pop:0.9,q:0.5,b:{env:4,civil:1.5},desc:'國有林、登山步道與野生動物保育，經常要進山，也經常被民意代表關切。'},
+ {id:'tycity_tour',u:'county',name:'桃園市政府觀光旅遊局',pop:1.2,q:0.6,desc:'燈會、地景藝術節與機場周邊觀光，市長的觀光政見都要你落實。'},
+ {id:'tn_tour',u:'county',name:'臺南市政府觀光旅遊局',pop:1.3,q:0.6,desc:'古蹟小吃處處是景點，連假期間遊客爆量，全局同仁到現場支援。'},
+ {id:'tp_soc',u:'county',name:'臺北市政府社會局',pop:1.3,q:0.6,only:['social'],b:{social:4},rent:19000,house:23000000,desc:'社福、保護與長照的第一線，每個個案背後都是一個家庭。'},
+ {id:'ntp_land',u:'county',name:'新北市政府地政局',pop:1.1,q:0.6,only:['land'],b:{land:5},rent:14000,house:17000000,desc:'地價、登記、區段徵收與重劃，業務量龐大，案件看似單純但常有爭議。'},
+ {id:'ntp_pw',u:'county',name:'新北市政府工務局',pop:1.0,q:0.6,only:['civil'],b:{civil:5},rent:14000,house:17000000,desc:'建管、公共工程與災害搶修，颱風夜與地震後的現場勘查，就是你的日常。'},
+ {id:'ks_epa',u:'county',name:'高雄市政府環境保護局',pop:0.9,q:0.6,only:['env'],b:{env:5},rent:9500,house:10000000,desc:'空污稽查、垃圾清運與環境教育，半夜被檢舉電話叫醒是常態。'},
+ {id:'tp_dit',u:'county',name:'臺北市政府資訊局',pop:1.1,q:0.5,only:['it'],b:{it:5},rent:19000,house:23000000,desc:'智慧城市、資安與市府系統維運，市長一句話，你就要上線新系統。'},
+];
+const ORGMAP=Object.fromEntries(ORGS.map(o=>[o.id,o]));
+const CATN={metro:'區公所',remote:'偏遠鄉鎮',central:'中央部會',county:'縣市政府',agency:'署局'};
+function orgW(o){const t=S.track||'general';
+  if(t==='general'?o.only:(o.only&&!o.only.includes(t))) return 0;
+  return (TRACKS[t].units[o.u]||1)*(o.q||1)*((o.b&&o.b[t])||1);}
+function eligibleOrgs(){return ORGS.filter(o=>orgW(o)>0);}
+function makeUnit(o){const b=UNITS.find(u=>u.id===o.u),ren=o.ren||{};
+  return {...b,org:o.id,name:o.name,desc:o.desc||b.desc,load:o.load!==undefined?o.load:b.load,ot:o.ot!==undefined?o.ot:b.ot,rent:o.rent!==undefined?o.rent:b.rent,house:o.house!==undefined?o.house:b.house,w:{...b.w,...(o.w||{})},ladder:b.ladder.map(r=>({...r,t:ren[r.t]||r.t}))};}
 const BOSSES=[
  {name:'佛系長官',desc:'「沒事就好，不要出事。」',stress:-1,kpi:0},
  {name:'甩鍋王長官',desc:'功勞是他的，錯誤是你的。',stress:3,kpi:-2},
@@ -523,7 +571,7 @@ const TRACKS={
  it:{n:'資訊處理',pro:1.15,units:{central:1.6,agency:1.6,county:1,metro:0.8,remote:0.5},tech:true,desc:'系統維運、資安、數位轉型。（適用資訊專業加給，遊戲概估＋15%）'},
 };
 const TR=()=>TRACKS[S.track||'general'];
-function pickUnit(){const w=UNITS.map(u=>TR().units[u.id]||1);let t=rnd()*w.reduce((a,b)=>a+b,0);for(let i=0;i<UNITS.length;i++){t-=w[i];if(t<=0)return {...UNITS[i]};}return {...UNITS[0]};}
+function pickUnit(){const els=eligibleOrgs(),w=els.map(orgW);let t=rnd()*w.reduce((a,b)=>a+b,0);for(let i=0;i<els.length;i++){t-=w[i];if(t<=0)return makeUnit(els[i]);}return makeUnit(els[0]);}
 
 /* ================== 人際關係 ================== */
 const MATE_TYPES=[{t:'熱心學姊',f:58},{t:'老鳥前輩',f:50},{t:'卷王同期',f:38},{t:'八卦王',f:48},{t:'佛系同事',f:55}];
@@ -725,10 +773,54 @@ function mkC(c,title){
   if(a===null) return {t,fn:run(b,cc)}; // [文字, null, 結果, 效果]
   return {t,fn:run(a,b)};
 }
-function E(o,...cs){EV.push({cat:o.cat,stage:o.st,track:o.tr,title:o.t,w:o.w,cond:o.cond,body:typeof o.b==='function'?o.b:()=>o.b,choices:cs.map(c=>mkC(c,o.t))});}
+function E(o,...cs){EV.push({cat:o.cat,stage:o.st,track:o.tr,org:o.org,uc:o.uc,title:o.t,w:o.w,cond:o.cond,body:typeof o.b==='function'?o.b:()=>o.b,choices:cs.map(c=>mkC(c,o.t))});}
 function stage(){const j=S.job;if(isSup()||j.grade>=9)return 'lead';if(j.grade>=7||j.months>=60)return 'mid';return 'new';}
 const STAGE_N={new:'新人期',mid:'中堅期',lead:'主管期'};
 const BN=()=>S.job.boss.name;
+
+/* ---------- 機關專屬事件（org:機關 id / uc:機關類別）---------- */
+E({cat:'fest',org:['tourism'],t:'臺北國際旅展',b:'一年一度的旅展登場，署長要求觀光署展位要有「話題性」，還要統計四天的參觀人次與 LINE 加入人數。'},
+ ['親自排班顧展位，站到腳軟',['sta',52],'人潮爆滿，展位互動遊戲被媒體報導，署長在臉書上公開稱讚。',{perf:5,stress:6,sta:-3,c:1},'人潮太多，你中暑被扶去休息，還被民眾追問退稅問題。',{stress:12,sta:-5,perf:1}],
+ ['把排班表丟給新進同仁','新人一個人撐了四天，成效普通，你的人緣也普通。',{stress:-2,mates:-3}]);
+E({cat:'audit',org:['tourism'],t:'旅宿稽查聯合行動',b:'接獲檢舉，某熱門景點周邊有多家民宿未依規定登記營業，業者還在社群平台打廣告。'},
+ ['會同地方政府、消防、警察聯合稽查',['int',52],'證據齊全，開單、限期改善一次到位，查獲件數還被署長在會議上點名表揚。',{perf:5,stress:5,c:1},'業者找了議員來關說，你被地方政府和議員兩邊拉扯。',{stress:12,perf:1,luck:-1}],
+ ['先行政指導，勸導業者補辦登記','業者答應改善，但之後有沒有照辦，沒人敢保證。',{stress:-1,perf:0,risk:[0.2,'一個月後該業者在社群被民眾檢舉，你被長官問「當初為什麼沒開單？」',1]}]);
+E({cat:'boss',org:['tourism'],t:'颱風來襲：旅遊安全通報',b:'中央氣象署發布海上颱風警報，各地風景區遊客仍然絡繹不絕。首長指示：「立刻通知旅行業者與風景區，暫停高風險行程！」'},
+ ['連夜通知旅行業者與風景區管理單位',['eq',52],'業者雖然抱怨損失，但事後颱風果然造成災情，大家都慶幸有提早通報。',{perf:5,stress:8,sta:-2,c:1},'有業者認為你「太保守、害他們損失」，在群組裡罵翻了。',{stress:12,eq:1}],
+ ['以公告為主，不特別聯繫','公告貼了，但有旅行團沒看到而照常出團，事後被媒體追問。',{stress:6,d:0.5}]);
+E({cat:'rep',org:['tourism'],t:'國旅補助成效質詢',b:'立委在質詢時質疑：「國旅補助花了好幾億，到底有沒有帶動地方經濟？」署長要你兩天內把成效資料做出來。'},
+ ['把住宿率、消費額、地方店家問卷整合成一份簡報',['int',54],'數據具體有說服力，署長在院會上對答如流。',{perf:5,int:1,stress:5,c:1},'數字之間彼此對不起來，被立委抓到漏洞。',{stress:10,perf:-1}],
+ ['沿用去年的資料改一改','資料雖然舊，但勉強過關。',{stress:2,perf:0,risk:[0.25,'立委發現是舊資料，要求書面道歉。',1]}]);
+E({cat:'office',org:['imm'],t:'專勤隊深夜查察',b:'凌晨兩點，移民署專勤隊接獲通報，某處疑似有外籍人士非法停居留，需要現場人員支援。'},
+ ['跟著出勤，現場協助',['sta',52],'行動順利，沒有人受傷，你學到不少現場處理的眼界。',{perf:4,sta:-4,stress:6,int:1},'現場混亂，你被推了一把摔倒受傷，隔天只好請假。',{stress:10,sta:-8}],
+ ['在辦公室待命，負責文書','你守著電腦把筆錄整理好，同事誇你「很穩」。',{stress:2,perf:1}]);
+E({cat:'boss',org:['imm'],t:'外籍配偶面談',b:'一位外籍配偶聽不懂中文，拿著厚厚一疊文件在櫃檯哭了出來：「為什麼我又被退件？」後面排隊的民眾已經開始不耐煩。'},
+ ['耐心逐項說明，必要時請通譯協助',['eq',50],'她終於補齊文件，哭著對你鞠躬道謝。',{eq:1,stress:3,perf:3,luck:1},'溝通半天仍無法理解，後面排隊的民眾開始抱怨。',{stress:8,eq:1}],
+ ['請她「照公告辦理」','她站在原地不知所措，隔天又來了一次。',{stress:3,perf:-1,eq:-1}]);
+E({cat:'boss',org:['tpetax'],t:'五月報稅季：櫃檯大排長龍',b:'五月綜所稅申報季，國稅局櫃檯大排長龍。一位民眾拿著一袋收據：「我什麼都不懂，你幫我報就好！」'},
+ ['耐心逐項指導，教他操作自然人憑證',['eq',50],'民眾順利完成申報，還送了你一盒鳳梨酥。',{eq:1,perf:3,stress:4,luck:1},'民眾越聽越火大，最後在櫃檯大聲抱怨。',{stress:9,eq:1}],
+ ['請他去找代書','民眾面露難色，但也只好自己想辦法。',{stress:2,perf:-1}]);
+E({cat:'office',org:['customs'],t:'貨櫃查驗',b:'關員通報，一批貨物申報為「家具」，但 X 光影像顯示內容物似乎不太一樣。'},
+ ['依規定開櫃查驗，通知查緝人員',['int',52],'查出夾藏的違禁品，這起案件成了新聞，署裡發獎金慰勞同仁。',{perf:6,stress:6,c:1},'開櫃發現確實只是家具，貨主抱怨延誤出貨並要求賠償。',{stress:9,perf:0}],
+ ['先放行，事後再查','貨已出關，要追回幾乎不可能。',{stress:3,risk:[0.3,'事後查獲這批貨有問題，你被政風室約談。',2]}]);
+E({cat:'boss',org:['highway'],t:'山區省道坍方',b:'連日大雨造成山區省道坍方，來往車輛被困，工程處與養護工務段緊急要你調度機具。'},
+ ['親赴現場指揮搶通',['sta',54],'二十四小時內打通單線便道，用路人揮手致謝。',{perf:5,sta:-5,stress:8,c:1},'現場土石持續滑落，只能暫時封閉道路，被民眾罵翻。',{stress:12,sta:-3}],
+ ['在辦公室遠端協調','你坐在冷氣房統籌機具與人力，但被批評「沒到現場」。',{stress:5,perf:1,boss:-1}]);
+E({cat:'boss',org:['cdc'],t:'疫情通報：凌晨三點的電話',b:'凌晨三點，手機響了。縣市衛生局通報一起疑似群聚感染，署裡要你立刻進辦公室整理資料。'},
+ ['立刻進辦公室，連夜整理疫調資料',['int',52],'早上八點，你整理好的報告成為記者會的基礎，大家說你「很可靠」。',{perf:6,stress:9,sta:-4,c:1},'資料整理匆忙，部分數字有誤，被署長唸了一頓。',{stress:12,perf:0}],
+ ['先回報「明早處理」','署長問「為什麼這麼晚才給資料？」你無言以對。',{stress:8,perf:-2,boss:-3}]);
+E({cat:'boss',org:['bli'],t:'勞保年金爭議',b:'一位老先生拿著厚厚一疊資料來到櫃檯，堅持自己的勞保年資被少算了三年，聲音越來越大。'},
+ ['調出投保紀錄，逐年與他核對',['int',50],'發現他曾在某家公司的投保紀錄重複，你協助申請更正，他握著你的手連聲道謝。',{perf:4,eq:1,stress:3,luck:1},'投保單位早已歇業，資料無從更正，老先生越講越激動。',{stress:10,eq:1}],
+ ['請他循申訴管道辦理','老先生氣呼呼地離開，並寫信給首長信箱。',{stress:5,perf:-1,risk:[0.3,'首長信箱來函，你被要求書面說明。',1]}]);
+E({cat:'rep',uc:['metro','remote'],t:'敬老禮金與里長關說',b:'重陽節將近，里長打電話來：「我們里有幾位長輩沒有登記敬老禮金，你能不能幫忙破例讓他們領？」'},
+ ['依規定向里長說明，並協助補辦資格審核',['eq',52],'里長雖然有點失望，但最後還是幫你把補辦資格的名單整理好。',{eq:1,perf:3,stress:3,luck:1},'里長一聽「不能破例」就大發脾氣，掛了電話。',{stress:9,eq:1,luck:-1}],
+ ['想辦法幫忙，讓長輩先領','一時心軟破例，結果被政風室約談。',{stress:8,d:1,perf:-1}]);
+E({cat:'rep',uc:['central'],t:'部長質詢備詢資料',b:'立法院明日要質詢部長，委員的質詢通知單剛傳來，你負責的業務被點名要在明早七點前備好答詢資料。'},
+ ['熬夜製作答詢資料，附上法源與數據',['int',54],'部長答詢順利，結束後向你點頭示意，說「資料很完整」。',{perf:6,stress:9,sta:-3,c:1},'資料有一處數字對不上，部長答詢時差點露餡。',{stress:13,perf:-1}],
+ ['沿用去年資料，簡單更新','資料雖然過得去，但沒有亮點。',{stress:3,perf:0}]);
+E({cat:'fest',org:['tycity_tour','tn_tour'],t:'連假遊客爆量',b:'三天連假，觀光景點湧入大量遊客，停車場、廁所、垃圾桶全爆。市長要你到現場「了解狀況」。'},
+ ['到現場巡視，協調交通與清潔',['sta',52],'你在現場調度，狀況很快獲得改善，市長在社群上稱讚觀光局「反應迅速」。',{perf:5,stress:6,sta:-3,c:1},'人潮太多，協調到一半就被民眾罵「怎麼這麼亂」。',{stress:11,sta:-3}],
+ ['在辦公室待命，電話指揮','遠端協調效率有限，被民意代表批評「官員不到現場」。',{stress:6,perf:-1,boss:-2}]);
 
 /* ---------- 新人期（通用）---------- */
 E({cat:'boss',st:'new',t:'打錯機關的電話',b:'電話那頭的阿姨講了 20 分鐘，你才聽懂她想問垃圾車幾點來——但這裡是地政事務所……不，這裡是你們機關。'},
@@ -1203,22 +1295,24 @@ function quizBonus(){const n=(S.quiz&&S.quiz.ok)||0;return n*0.05+(n===3?0.03:0)
 /* ================== 志願分發 ================== */
 const POP={metro:1.5,central:1.4,agency:1.2,county:1,remote:0.35};
 function examQuota(){const base={general:420,tax:260,social:180,civil:200,it:120,land:150,env:90}[S.track||'general']||200;return Math.round(base*(S.prep.target==='普考'?1.25:1)*(0.85+rnd()*0.3));}
+function orgQuota(N){const els=eligibleOrgs();let tot=0;els.forEach(o=>tot+=orgW(o));const q={};els.forEach(o=>q[o.id]=Math.max(1,Math.ceil(N*orgW(o)/tot)));return q;}
+const heat=p=>p>=1.6?'🔥🔥🔥':p>=1.2?'🔥🔥':p>=0.8?'🔥':'❄️';
 function pushPref(){
-  const N=S.flags.N,rk=S.flags.rank;
-  if(!S.pref) S.pref=UNITS.map(u=>u.id).sort((a,b)=>POP[b]-POP[a]);
-  pushCard({tag:'分發',title:'填寫分配志願',body:`你的錄取名次：<b>第 ${rk} 名</b>／本類科錄取 ${N} 名。<br>保訓會將<b>依考試成績名次及志願順序</b>分配實務訓練機關：名次在前的人先選，熱門機關名額可能在輪到你之前就被選完。<br><span class="note">用 ▲▼ 調整志願順序，確認後送出。各機關需用名額依本類科職缺分布。</span>`,
-    custom:()=>`<ol class="pref">${S.pref.map((id,i)=>{const u=UNITS.find(x=>x.id===id);return `<li><b>第${i+1}志願</b>　${u.name}<span class="note">　${u.desc.slice(0,20)}…</span><span class="pbtns"><button class="btns" ${i?'':'disabled'} onclick="movePref(${i},-1)">▲</button><button class="btns" ${i<S.pref.length-1?'':'disabled'} onclick="movePref(${i},1)">▼</button></span></li>`;}).join('')}</ol>`,
-    choices:[{t:'確認送出志願',fn:()=>{const r=allocate(rk,N);S.flags.prefIdx=r.idx;Q.push({fn:()=>startCareer(r.got,r)});
-      return `分配結果出爐：你被分配到 <b>第 ${r.idx+1} 志願「${UNITS.find(u=>u.id===r.got).name}」</b>。${r.idx===0?'🎉 恭喜上第一志願！':'雖然不是第一志願，但也是一段緣分。'}<div class="salary">${S.pref.map((id,i)=>`<div><span>第${i+1}志願 ${UNITS.find(u=>u.id===id).name}</span><span>名額 ${r.quota0[id]}，輪到你時剩 ${r.left[id]}</span></div>`).join('')}</div>`;}}]});
+  const N=S.flags.N,rk=S.flags.rank,els=eligibleOrgs(),q0=orgQuota(N);
+  if(!S.pref||S.pref.length!==els.length||S.pref.some(id=>!q0[id])) S.pref=els.map(o=>o.id).sort((a,b)=>ORGMAP[b].pop-ORGMAP[a].pop);
+  pushCard({tag:'分發',title:'填寫分配志願',body:`你的錄取名次：<b>第 ${rk} 名</b>／本類科錄取 ${N} 名。<br>保訓會將<b>依考試成績名次及志願順序</b>分配實務訓練機關：名次在前的人先選，熱門機關名額可能在輪到你之前就被選完。<br><span class="note">共 ${els.length} 個機關可填（依你的職系列出）。用 ▲▼ 或「置頂」調整順序，確認後送出。名額與熱度為遊戲設定。</span>`,
+    custom:()=>`<ol class="pref prefbox">${S.pref.map((id,i)=>{const o=ORGMAP[id];return `<li><b>第${i+1}志願</b><span class="pname">${o.name}<span class="note">　${CATN[o.u]}・${heat(o.pop)}・名額 ${q0[id]}</span></span><span class="pbtns"><button class="btns" ${i?'':'disabled'} onclick="movePref(${i},'top')">置頂</button><button class="btns" ${i?'':'disabled'} onclick="movePref(${i},-1)">▲</button><button class="btns" ${i<S.pref.length-1?'':'disabled'} onclick="movePref(${i},1)">▼</button></span></li>`;}).join('')}</ol>`,
+    choices:[{t:'確認送出志願',fn:()=>{const r=allocate(rk,N),o=ORGMAP[r.got];S.flags.prefIdx=r.idx;Q.push({fn:()=>startCareer(r.got,r)});
+      const rows=S.pref.slice(0,Math.min(Math.max(r.idx+1,3),8));
+      return `分配結果出爐：你被分配到 <b>${r.idx>=0?`第 ${r.idx+1} 志願「`:'「'}${o.name}」</b>。${r.idx===0?'🎉 恭喜上第一志願！':r.idx>=0?'雖然不是第一志願，但也是一段緣分。':'你填的志願全數額滿，由保訓會依缺額調劑分配。'}<div class="salary">${rows.map((id,i)=>`<div><span>第${i+1}志願 ${ORGMAP[id].name}</span><span>名額 ${r.quota0[id]}，輪到你時剩 ${r.left[id]}</span></div>`).join('')}${r.idx>=rows.length?`<div><span>第${r.idx+1}志願 ${o.name}</span><span>名額 ${r.quota0[r.got]}，輪到你時剩 ${r.left[r.got]}</span></div>`:''}</div>`;}}]});
 }
-function movePref(i,d){const p=S.pref,j=i+d;if(j<0||j>=p.length)return;[p[i],p[j]]=[p[j],p[i]];render();}
+function movePref(i,d){const p=S.pref;if(d==='top'){if(i>0)p.unshift(p.splice(i,1)[0]);render();return;}const j=i+d;if(j<0||j>=p.length)return;[p[i],p[j]]=[p[j],p[i]];render();}
 function allocate(rank,N){
-  const share=TR().units;let tot=0;UNITS.forEach(u=>tot+=(share[u.id]||1));
-  const quota={};UNITS.forEach(u=>quota[u.id]=Math.max(1,Math.round(N*(share[u.id]||1)/tot)));
-  const quota0={...quota};
-  for(let i=1;i<rank;i++){const av=UNITS.filter(u=>quota[u.id]>0);if(!av.length)break;const w=av.map(u=>POP[u.id]*(0.7+rnd()*0.6));let t=rnd()*w.reduce((a,b)=>a+b,0),k=0;for(;k<av.length-1;k++){t-=w[k];if(t<=0)break;}quota[av[k].id]--;}
-  let got=S.pref.find(id=>quota[id]>0)||'remote';
-  return {got,idx:S.pref.indexOf(got),quota0,left:{...quota}};
+  const els=eligibleOrgs(),quota=orgQuota(N),quota0={...quota};
+  for(let i=1;i<rank;i++){const av=els.filter(o=>quota[o.id]>0);if(!av.length)break;const w=av.map(o=>o.pop*o.pop*(0.7+rnd()*0.6));let t=rnd()*w.reduce((a,b)=>a+b,0),k=0;for(;k<av.length-1;k++){t-=w[k];if(t<=0)break;}quota[av[k].id]--;}
+  let got=S.pref.find(id=>quota[id]>0),idx=got?S.pref.indexOf(got):-1;
+  if(!got){const av=els.filter(o=>quota[o.id]>0);got=(av.length?pick(av):pick(els)).id;}
+  return {got,idx,quota0,left:{...quota}};
 }
 
 /* ================== 數值紀錄、年度回顧 ================== */
@@ -1424,7 +1518,7 @@ function examCard(){
 
 /* ================== 職涯 ================== */
 function startCareer(uid,ar){
-  const unit=uid?{...UNITS.find(u=>u.id===uid)}:pickUnit(), boss={...pick(BOSSES)};
+  const unit=uid&&ORGMAP[uid]?makeUnit(ORGMAP[uid]):uid&&UNITS.find(u=>u.id===uid)?{...UNITS.find(u=>u.id===uid)}:pickUnit(), boss={...pick(BOSSES)};
   const hi=S.prep.target==='高考', grade=hi?6:3;
   S.phase='career';
   S.job={unit,boss,grade,lv:0,pos:hi?1:0,cap:14,qual:hi?'高考':'普考',gradeMonths:0,months:0,unitMonths:0,perf:0,commend:0,demerit:0,totalC:0,totalD:0,major:0,rec:[],sinceA:0,sinceB:0,corrupt:0,pension:0,startAge:AGE(),examYear:0,yWork:0,yStop:0,rel:newRel()};
@@ -1488,11 +1582,11 @@ function pickEvent(){
   const sp=SPECIAL.filter(e=>e.cond());
   if(sp.length&&rnd()<0.25) return pick(sp);
   const rec=S.recent||(S.recent=[]);
-  const sg=stage(),okTrack=e=>(!e.track||e.track===(S.track||'general'))&&(!e.stage||e.stage===sg);
+  const sg=stage(),uo=S.job.unit.org,ucat=S.job.unit.id,okTrack=e=>(!e.track||e.track===(S.track||'general'))&&(!e.stage||e.stage===sg)&&(!e.org||e.org.includes(uo))&&(!e.uc||e.uc.includes(ucat));
   let pool=EV.filter(e=>okTrack(e)&&(!e.cond||e.cond())&&!rec.includes(e.title));
   if(!pool.length) pool=EV.filter(e=>okTrack(e)&&(!e.cond||e.cond()));
   const bf=rel().boss;
-  const w=pool.map(e=>(S.job.unit.w[e.cat]||1)*(e.w||1)*(e.track?1.8:1)*(e.title==='長官甩鍋'&&bf<35?2.5:1));
+  const w=pool.map(e=>(S.job.unit.w[e.cat]||1)*(e.w||1)*(e.track?1.8:1)*((e.org||e.uc)?2.5:1)*(e.title==='長官甩鍋'&&bf<35?2.5:1));
   let t=rnd()*w.reduce((a,b)=>a+b,0), ev=pool[0];
   for(let i=0;i<pool.length;i++){t-=w[i];if(t<=0){ev=pool[i];break;}}
   remember(ev);return ev;
@@ -1656,7 +1750,7 @@ function propose(){life(()=>{if(S.money<300000)return toast('婚禮預算需要 
 function haveKid(){life(()=>{pushCard({tag:'生活',title:'迎接新生命',body:'你們決定生個寶寶。',choices:[{t:'準備迎接寶寶',fn:()=>{S.life.kids++;(S.life.kidsB=S.life.kidsB||[]).push(S.m);const b=basePay()*2;S.money+=b*2;log(`👶 第${S.life.kids}個孩子出生！`,'good');return `寶寶平安出生！${S.gender==='f'?'你請了娩假42日（另有產前假8日）。':S.gender==='m'?'你請了陪產檢及陪產假7日。':''}<br>領取公教人員生育補助（2個月薪俸額）${fmt(b)}，及公保生育給付（約2個月保俸）${fmt(b)}。<br>之後每月育兒開銷約 $12,000。`+mod({stress:5,eq:2},true);}}]});});}
 function transfer(){life(()=>{const j=S.job;
   pushCard({tag:'人事',title:'申請調動',body:'你向人事室遞出調動申請，能不能成功要看你的官運與人脈。',choices:[{t:'送出申請',check:['luck',45],ok:()=>{
-    const opts=UNITS.filter(u=>u.id!==j.unit.id&&unitMax(u)>=j.grade);
+    const opts=eligibleOrgs().filter(o=>o.id!==j.unit.org&&o.name!==j.unit.name).map(makeUnit).filter(u=>unitMax(u)>=j.grade);
     const two=opts.sort(()=>rnd()-0.5).slice(0,2);
     Q.push({fn:()=>pushCard({tag:'人事',title:'有機關願意接收你',body:'以下機關有缺，請選擇：',choices:two.map(u=>({t:`${u.name}（最高職務列等 ${unitMax(u)} 職等）`,fn:()=>{j.unit={...u};const L=ladder(u);let pi=L.findIndex(x=>x.lo<=j.grade&&j.grade<=x.hi);if(pi<0)pi=L.findIndex(x=>x.hi>=j.grade);j.pos=pi;j.unitMonths=0;j.boss={...pick(BOSSES)};j.rel=newRel();j.capNote=false;S.stats.units.push(u.name);log(`調任【${u.name}】，新長官：${j.boss.name}`,'key');return `${u.desc}<br>新長官：${j.boss.name}——${j.boss.desc}`+mod({stress:-5},true);}})).concat([{t:'算了，留在原單位',fn:()=>'你撤回申請。'}])})});
     return '人事室回覆：有機會！';},fail:()=>'沒有適合的職缺，原單位長官還知道你想跑。'+mod({luck:-2,stress:5})}]});});}
@@ -1914,7 +2008,7 @@ function openHelp(){
   <p><b>九、人際關係</b>：長官好感影響考績分數、甲等名額與陞遷；達 75 有機會幫你擋懲處，低於 35 容易被甩鍋。同事好感≥70 為盟友（每月分擔壓力），≤25 為不合（可能打小報告）。調動後換一批人。</p>
   <p><b>十、假勤與家庭</b>：休假依年資（滿1年7日→滿14年30日）。事、病假合計超過14日不得考列甲等，家庭照顧假不計。子女未滿3歲可申請育嬰留職停薪（每名最長2年，前6個月領本俸60%津貼＋政府加發20%）；父母年老可能需要照顧，可選長照2.0、外籍看護或侍親留職停薪；父母辭世給喪假15日及喪葬補助。年度中有留職停薪者辦理「另予考績」（不晉級，只發一次獎金）。本遊戲簡化：留職停薪期間不提撥退撫、不計年資。</p>
   <p><b>十一、職涯機會</b>：資深後可能獲邀借調行政法人（每次2年、最長4年，薪水較高，回任後陞遷加分）；可報考碩士在職專班（升簡任遴選加分，並放寬升官等訓練人員的職務列等限制）；40歲前可能遇到國營事業招考（考上即轉職結局）。</p>
-  <p><b>十二、國考與分發</b>：考試時會隨機出 3 題「法學知識與英文」歷屆試題（考選部公開試題），每答對一題錄取機率 +5%，全對再 +3%。上榜後依錄取名次與志願順序分配機關，名次在前者先選，熱門機關可能先額滿。</p>
+  <p><b>十二、國考與分發</b>：考試時會隨機出 3 題「法學知識與英文」歷屆試題（考選部公開試題），每答對一題錄取機率 +5%，全對再 +3%。上榜後依錄取名次與志願順序分配機關：志願表列出約 25～30 個具體機關（如交通部觀光署、臺北國稅局、內政部移民署、各區公所與縣市局處，依職系不同），名次在前者先選，熱門機關可能先額滿。各機關另有專屬事件，名額與熱度為遊戲設定。</p>
   <p><b>十三、事件與劇情</b>：事件依職涯階段分為新人期、中堅期、主管期（擔任主管或薦任九職等以上），並有各職系專屬事件。另有 6 條跨月劇情線（陳情案、標案、新首長、議會會期、審計查核、帶新人），選擇會影響後續發展。</p>
   <p><b>十四、數值回饋與重玩</b>：每年 12 月出年度回顧並記錄數值，「📈 人生曲線」可看歷年變化；「🏆 成就」有 30 項跨局保留的成就；另有 4 種隱藏結局等你發掘。</p>
   <p><b>十五、存檔與操作</b>：每回合結束自動存檔；「💾 存檔管理」可手動存 3 格、讀取、刪除，也能匯出／匯入 .json 備份。快捷鍵：數字鍵 1～4 選擇選項，Enter 或空白鍵「存查」，Esc 關閉視窗。</p></div>`;
