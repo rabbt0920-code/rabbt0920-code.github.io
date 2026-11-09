@@ -68,6 +68,8 @@
   .install button { padding:8px 12px; font-size:14px; }
   .install .x { background:none; color:#14532d; padding:4px 6px; font-size:20px; }
   .steps { margin:0; padding-left:20px; line-height:1.9; font-size:15px; }
+  .syncbar { font-size:13px; color:#14532d; background:#e8f7ee; border-radius:10px; padding:8px 12px; margin:-4px 0 12px; }
+  .syncbar.off { color:#92400e; background:#fef3c7; }
   .pos { color:var(--acc); } .neg { color:var(--red); }
   table { width:100%; border-collapse:collapse; font-size:14px; }
   td, th { padding:7px 4px; text-align:right; border-top:1px solid var(--line); font-variant-numeric:tabular-nums; }
@@ -97,6 +99,7 @@
     <select id="bookSel" aria-label="切換帳本"></select>
     <button id="newBook" class="ghost">＋ 新帳本</button>
   </div>
+  <div class="syncbar hidden" id="syncBar"></div>
 
   <section class="card">
     <h2>帳本名稱</h2>
@@ -222,6 +225,18 @@
 // ===== CORE (pure, testable) =====
 // 分享網址：放上自己的網站後會自動使用目前網址；也可以在這裡手動填寫
 var SHARE_URL = '';
+// Firebase 設定：在 Firebase 主控台「專案設定 → 你的應用程式」複製 firebaseConfig 貼在這裡。
+// 保持 null 時，App 不連網，只用手機本機儲存（和舊版一樣）。
+var FIREBASE_CONFIG = {
+  apiKey: "AIzaSyC2ntASFJjRZ85weaSuYR_UlIKyXqTdo-E",
+  authDomain: "fzsq-58220.firebaseapp.com",
+  databaseURL: "https://fzsq-58220-default-rtdb.asia-southeast1.firebasedatabase.app",
+  projectId: "fzsq-58220",
+  storageBucket: "fzsq-58220.firebasestorage.app",
+  messagingSenderId: "1030866057348",
+  appId: "1:1030866057348:web:67e73e3812c67b3661ead1",
+  measurementId: "G-LWBR9SMTTL"
+};
 
 function parseAmount(str) {
   if (typeof str !== 'string') str = String(str == null ? '' : str);
@@ -276,8 +291,56 @@ function settle(bal) {
   }
   return out;
 }
-function newId() { return (Date.now().toString(36) + Math.random().toString(36).slice(2, 8)).slice(-12); }
-function blankLedger() { return { id: newId(), name: '', people: [], expenses: [], done: [], pay: {} }; }
+// 16 碼隨機 id；帳本 id 同時是加入連結的「鑰匙」，所以必須難以猜到
+function newId() {
+  var a = 'abcdefghijklmnopqrstuvwxyz0123456789', out = '';
+  try {
+    var r = new Uint8Array(16); (typeof crypto !== 'undefined' ? crypto : require('crypto').webcrypto).getRandomValues(r);
+    for (var i = 0; i < 16; i++) out += a[r[i] % 36];
+  } catch (e) { for (var j = 0; j < 16; j++) out += a[Math.floor(Math.random() * 36)]; }
+  return out;
+}
+var ID_RE = /^[a-z0-9]{4,24}$/;
+// Firebase 的 key 不能有 . # $ [ ] /，把名字編碼後當 key
+function ckey(s) { return encodeURIComponent(s).replace(/\./g, '%2E'); }
+function unkey(k) { try { return decodeURIComponent(k); } catch (e) { return null; } }
+// 本機帳本 -> 雲端格式（以 id 為 key 的物件，方便多人同時修改不同項目）
+function toCloud(b) {
+  var o = { name: b.name || '', people: {}, pay: {}, expenses: {}, done: {}, meta: { v: 1 } };
+  b.people.forEach(function (p, i) { o.people[ckey(p)] = { n: p, t: i }; });
+  Object.keys(b.pay || {}).forEach(function (p) { if (b.pay[p] && b.people.indexOf(p) >= 0) o.pay[ckey(p)] = b.pay[p]; });
+  b.expenses.forEach(function (e, i) { o.expenses[e.eid] = { d: e.desc || '', a: e.amount, p: e.payer, s: e.split.slice(), t: i }; });
+  (b.done || []).forEach(function (k) { o.done[ckey(k)] = true; });
+  return o;
+}
+// 雲端格式 -> 本機帳本；格式不對的項目直接略過
+function fromCloud(v) {
+  v = v && typeof v === 'object' ? v : {};
+  var ord = function (obj) {
+    return Object.keys(obj && typeof obj === 'object' ? obj : {}).map(function (k) { return { k: k, v: obj[k] }; })
+      .sort(function (x, y) { var a = +(x.v && x.v.t) || 0, b = +(y.v && y.v.t) || 0; return a - b || (x.k < y.k ? -1 : x.k > y.k ? 1 : 0); });
+  };
+  var people = [];
+  ord(v.people).forEach(function (r) { var n = r.v && r.v.n; if (typeof n === 'string' && n && n.length <= 12 && people.indexOf(n) < 0) people.push(n); });
+  var expenses = [];
+  ord(v.expenses).forEach(function (r) {
+    var e = r.v; if (!e || typeof e !== 'object') return;
+    var sp = Array.isArray(e.s) ? e.s : (e.s && typeof e.s === 'object' ? Object.keys(e.s).map(function (k) { return e.s[k]; }) : []);
+    sp = sp.filter(function (x, i) { return typeof x === 'string' && x && sp.indexOf(x) === i; });
+    if (typeof e.a !== 'number' || e.a % 1 !== 0 || e.a <= 0 || typeof e.p !== 'string' || !e.p || !sp.length) return;
+    expenses.push({ eid: r.k, desc: typeof e.d === 'string' ? e.d.slice(0, 30) : '', amount: e.a, payer: e.p, split: sp });
+  });
+  // 有人刪掉成員、另一人同時用他記帳時，把成員補回來，帳才算得平
+  expenses.forEach(function (e) { [e.payer].concat(e.split).forEach(function (n) { if (people.indexOf(n) < 0 && n.length <= 12) people.push(n); }); });
+  var pay = {};
+  Object.keys(v.pay && typeof v.pay === 'object' ? v.pay : {}).forEach(function (k) {
+    var n = unkey(k), t = v.pay[k]; if (n && people.indexOf(n) >= 0 && typeof t === 'string' && t) pay[n] = t.slice(0, 60);
+  });
+  var done = Object.keys(v.done && typeof v.done === 'object' ? v.done : {}).map(unkey).filter(Boolean);
+  return { name: typeof v.name === 'string' ? v.name.slice(0, 40) : '', people: people, expenses: expenses, done: done, pay: pay };
+}
+function stripEids(list) { return list.map(function (e) { return [e.desc, e.amount, e.payer, e.split]; }); }
+function blankLedger() { return { id: newId(), name: '', people: [], expenses: [], done: [], pay: {}, pending: [] }; }
 function xferKey(t) { return t.from + '\u0001' + t.to + '\u0001' + t.amount; }
 
 // 帳本 <-> 代碼（UTF-8 JSON -> base64url），名字用索引壓縮
@@ -329,7 +392,7 @@ function decodeLedger(code) {
       if (!okIdx(e[2]) || !Array.isArray(e[3]) || !e[3].length || !e[3].every(okIdx)) return null;
       var sp = [];
       e[3].forEach(function (k) { if (sp.indexOf(people[k]) < 0) sp.push(people[k]); });
-      expenses.push({ desc: e[0], amount: e[1], payer: people[e[2]], split: sp });
+      expenses.push({ eid: newId(), desc: e[0], amount: e[1], payer: people[e[2]], split: sp });
     }
     var done = [];
     if (Array.isArray(o.d)) o.d.forEach(function (t) {
@@ -340,8 +403,8 @@ function decodeLedger(code) {
     if (Array.isArray(o.y)) o.y.forEach(function (t, k) {
       if (k < people.length && typeof t === 'string' && t.trim()) pay[people[k]] = t.trim().slice(0, 60);
     });
-    var id = (typeof o.i === 'string' && /^[a-z0-9]{4,16}$/.test(o.i)) ? o.i : newId();
-    return { id: id, name: typeof o.n === 'string' ? o.n.slice(0, 40) : '', people: people, expenses: expenses, done: done, pay: pay };
+    var id = (typeof o.i === 'string' && ID_RE.test(o.i)) ? o.i : newId();
+    return { id: id, name: typeof o.n === 'string' ? o.n.slice(0, 40) : '', people: people, expenses: expenses, done: done, pay: pay, pending: [] };
   } catch (err) { return null; }
 }
 
@@ -371,7 +434,9 @@ function normBook(v) {
   if (!Array.isArray(v.done)) v.done = [];
   if (!v.pay || typeof v.pay !== 'object') v.pay = {};
   if (typeof v.name !== 'string') v.name = '';
-  if (typeof v.id !== 'string' || !v.id) v.id = newId();
+  if (typeof v.id !== 'string' || !ID_RE.test(v.id)) v.id = newId();
+  if (!Array.isArray(v.pending)) v.pending = [];
+  v.expenses.forEach(function (e) { if (typeof e.eid !== 'string' || !e.eid) e.eid = newId(); });
   return v;
 }
 function loadDB() {
@@ -379,7 +444,7 @@ function loadDB() {
   try { db = JSON.parse(localStorage.getItem(KEY) || 'null'); } catch (e) {}
   var out = { cur: null, books: {} };
   if (db && db.books && typeof db.books === 'object') {
-    Object.keys(db.books).forEach(function (k) { var b = normBook(db.books[k]); if (b) { b.id = k; out.books[k] = b; } });
+    Object.keys(db.books).forEach(function (k) { var b = normBook(db.books[k]); if (b && b.id === k) out.books[k] = b; else if (b) out.books[b.id] = b; });
     out.cur = db.cur;
   } else {
     try { var old = normBook(JSON.parse(localStorage.getItem(OLDKEY) || 'null')); if (old) out.books[old.id] = old; } catch (e) {}
@@ -400,14 +465,19 @@ function baseUrl() {
   } catch (e) {}
   return '';
 }
-function ledgerLink() { var b = baseUrl(); return b ? b + '#s=' + encodeLedger(S) : ''; }
+var CLOUD_CFG = (typeof window !== 'undefined' && window.__FB_TEST_CONFIG) || FIREBASE_CONFIG;
+var CLOUD_ON = !!CLOUD_CFG;
+var cloud = { ready: false, db: null, failed: false, online: false, cur: null };
+// 開啟同步時，分享的是「加入連結」（只含帳本 id），朋友打開就和你看同一本
+function ledgerLink() { var b = baseUrl(); return b ? b + (CLOUD_ON ? '#j=' + S.id : '#s=' + encodeLedger(S)) : ''; }
 
 var DB = loadDB();
 var S = DB.books[DB.cur];
 var payFor = null;   // 正在編輯收款方式的成員
 var $ = function (id) { return document.getElementById(id); };
 var splitSel = {};   // 分攤勾選狀態
-var editing = -1;    // 正在編輯的花費索引
+var editEid = null;  // 正在編輯的花費 id
+function findExp(eid) { for (var i = 0; i < S.expenses.length; i++) if (S.expenses[i].eid === eid) return i; return -1; }
 var curX = [];       // 目前的轉帳清單
 function esc(s) { return String(s).replace(/[&<>"']/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]; }); }
 
@@ -428,7 +498,7 @@ function copyText(txt, okMsg, onFail) {
 }
 
 function stopEdit() {
-  editing = -1;
+  editEid = null;
   $('expDesc').value = ''; $('expAmt').value = '';
   S.people.forEach(function (p) { splitSel[p] = true; });
 }
@@ -443,7 +513,7 @@ function renderBooks() {
 }
 function render() {
   renderBooks();
-  if (editing >= S.expenses.length) stopEdit();
+  if (editEid !== null && findExp(editEid) < 0) { stopEdit(); toast('你正在編輯的花費已被其他人刪除'); }
   if (document.activeElement !== $('eventName')) $('eventName').value = S.name;
   $('pplCount').textContent = S.people.length ? S.people.length + ' 人' : '';
   $('chips').innerHTML = S.people.map(function (p, i) {
@@ -461,18 +531,18 @@ function render() {
     return '<label class="' + (splitSel[p] ? 'on' : '') + '" data-sp="' + i + '">' + esc(p) + '</label>';
   }).join('');
   $('expCard').style.opacity = S.people.length < 2 ? .5 : 1;
-  $('expTitle').textContent = editing >= 0 ? '✏️ 編輯花費' : '新增一筆花費';
-  $('expSubmit').textContent = editing >= 0 ? '儲存修改' : '＋ 加入這筆';
-  $('expCancel').classList.toggle('hidden', editing < 0);
+  $('expTitle').textContent = editEid !== null ? '✏️ 編輯花費' : '新增一筆花費';
+  $('expSubmit').textContent = editEid !== null ? '儲存修改' : '＋ 加入這筆';
+  $('expCancel').classList.toggle('hidden', editEid === null);
 
   var total = S.expenses.reduce(function (a, e) { return a + e.amount; }, 0);
   $('expTotal').textContent = S.expenses.length ? '總額 ' + fmt(total) : '';
   $('expList').innerHTML = S.expenses.length ? S.expenses.map(function (e, i) {
     var who = e.split.length === S.people.length ? '全員' : e.split.join('、');
-    return '<div class="item' + (i === editing ? ' editing' : '') + '"><div style="min-width:0"><div class="t">' + esc(e.desc || '花費') + '</div><div class="d">' + esc(e.payer) + ' 付 · ' + esc(who) + ' 分攤</div></div>' +
+    return '<div class="item' + (e.eid === editEid ? ' editing' : '') + '"><div style="min-width:0"><div class="t">' + esc(e.desc || '花費') + '</div><div class="d">' + esc(e.payer) + ' 付 · ' + esc(who) + ' 分攤</div></div>' +
       '<div class="flex" style="align-items:center"><span class="amt">' + fmt(e.amount) + '</span>' +
-      '<button class="ghost" data-edit="' + i + '" style="padding:6px 10px">編輯</button>' +
-      '<button class="ghost" data-del="' + i + '" style="padding:6px 10px">刪除</button></div></div>';
+      '<button class="ghost" data-edit="' + esc(e.eid) + '" style="padding:6px 10px">編輯</button>' +
+      '<button class="ghost" data-del="' + esc(e.eid) + '" style="padding:6px 10px">刪除</button></div></div>';
   }).reverse().join('') : '<div class="empty">還沒有花費</div>';
 
   var r = computeBalances(S.people, S.expenses);
@@ -504,7 +574,15 @@ function render() {
   $('shareText').textContent = shareTextFor(S.name, S.people, S.expenses, curX, S.done, ledgerLink(), S.pay);
 }
 
-$('eventName').addEventListener('input', function () { S.name = this.value.trim().slice(0, 40); save(); renderBooks(); $('shareText').textContent = shareTextFor(S.name, S.people, S.expenses, curX, S.done, ledgerLink(), S.pay); });
+var nameTimer = null, nameDraft = null;  // 打字中的名稱，還沒送出前不讓雲端資料蓋掉
+$('eventName').addEventListener('input', function () {
+  S.name = this.value.trim().slice(0, 40); save(); renderBooks();
+  clearTimeout(nameTimer);
+  var draft = nameDraft = { book: S, val: S.name };
+  nameTimer = setTimeout(function () {
+    if (nameDraft === draft) nameDraft = null;
+    commit({ name: draft.val }, draft.book);
+  }, 600); $('shareText').textContent = shareTextFor(S.name, S.people, S.expenses, curX, S.done, ledgerLink(), S.pay); });
 
 $('pplForm').addEventListener('submit', function (ev) {
   ev.preventDefault();
@@ -520,7 +598,11 @@ $('pplForm').addEventListener('submit', function (ev) {
   $('pplInput').value = '';
   if (full) toast('最多 50 人');
   else if (dup.length) toast('已有：' + dup.join('、'));
-  if (added) { save(); render(); }
+  if (added) {
+    var u = {}, t = Date.now();
+    S.people.slice(-added).forEach(function (n, i) { u['people/' + ckey(n)] = { n: n, t: t + i }; });
+    save(); render(); commit(u);
+  }
 });
 
 $('chips').addEventListener('click', function (ev) {
@@ -539,6 +621,7 @@ $('chips').addEventListener('click', function (ev) {
   var used = S.expenses.some(function (e) { return e.payer === p || e.split.indexOf(p) >= 0; });
   if (used) { toast(p + ' 有花費紀錄，請先刪除或編輯相關花費'); return; }
   S.people.splice(S.people.indexOf(p), 1); delete S.pay[p]; save(); render();
+  var u = {}; u['people/' + ckey(p)] = null; u['pay/' + ckey(p)] = null; commit(u);
 });
 
 $('expSplit').addEventListener('click', function (ev) {
@@ -559,19 +642,24 @@ $('expForm').addEventListener('submit', function (ev) {
   if (S.people.indexOf(payer) < 0) { toast('請選擇付款人'); return; }
   var split = S.people.filter(function (p) { return splitSel[p]; });
   if (!split.length) { toast('至少要選一位分攤的人'); return; }
-  var item = { desc: $('expDesc').value.trim().slice(0, 30), amount: amt, payer: payer, split: split };
-  var wasEdit = editing >= 0 && editing < S.expenses.length;
-  if (wasEdit) S.expenses[editing] = item; else S.expenses.push(item);
+  var at = editEid !== null ? findExp(editEid) : -1;
+  var wasEdit = at >= 0;
+  var item = { eid: wasEdit ? editEid : newId(), desc: $('expDesc').value.trim().slice(0, 30), amount: amt, payer: payer, split: split };
+  if (wasEdit) S.expenses[at] = item; else S.expenses.push(item);
+  var u = {}, base = 'expenses/' + item.eid;
+  if (wasEdit) { u[base + '/d'] = item.desc; u[base + '/a'] = amt; u[base + '/p'] = payer; u[base + '/s'] = split; }
+  else u[base] = { d: item.desc, a: amt, p: payer, s: split, t: Date.now() };
   stopEdit(); save(); render(); toast(wasEdit ? '已儲存修改' : '已加入');
+  commit(u);
 });
 $('expCancel').addEventListener('click', function () { stopEdit(); render(); });
 
 $('expList').addEventListener('click', function (ev) {
   var eb = ev.target.closest('[data-edit]');
   if (eb) {
-    var k = +eb.getAttribute('data-edit'), x = S.expenses[k];
+    var k = eb.getAttribute('data-edit'), x = S.expenses[findExp(k)];
     if (!x) return;
-    editing = k;
+    editEid = k;
     $('expDesc').value = x.desc; $('expAmt').value = amtInput(x.amount);
     S.people.forEach(function (p) { splitSel[p] = x.split.indexOf(p) >= 0; });
     render();
@@ -580,13 +668,16 @@ $('expList').addEventListener('click', function (ev) {
     return;
   }
   var b = ev.target.closest('[data-del]'); if (!b) return;
-  var i = +b.getAttribute('data-del'), e = S.expenses[i];
+  var eid = b.getAttribute('data-del'), e = S.expenses[findExp(eid)];
   if (!e) return;
+  var book = S;
   ask('刪除「' + (e.desc || '花費') + ' ' + fmt(e.amount) + '」？', function () {
-    if (S.expenses[i] !== e) return;
-    S.expenses.splice(i, 1);
-    if (editing === i) stopEdit(); else if (editing > i) editing--;
+    if (book !== S) return;
+    var at = findExp(eid);
+    if (at >= 0) S.expenses.splice(at, 1);
+    if (editEid === eid) stopEdit();
     save(); render();
+    var u = {}; u['expenses/' + eid] = null; commit(u);
   });
 });
 
@@ -596,6 +687,7 @@ $('xfers').addEventListener('click', function (ev) {
   var k = xferKey(t), at = S.done.indexOf(k);
   if (at >= 0) S.done.splice(at, 1); else { S.done.push(k); toast(t.from + ' 已轉給 ' + t.to); }
   save(); render();
+  var u = {}; u['done/' + ckey(k)] = at >= 0 ? null : true; commit(u);
 });
 
 $('copyBtn').addEventListener('click', function () {
@@ -617,14 +709,16 @@ $('shareLedgerBtn').addEventListener('click', function () {
   if (!S.people.length) { toast('帳本還是空的'); return; }
   var link = ledgerLink();
   var txt = link || encodeLedger(S);
-  var hint = link ? '把連結傳給朋友，他打開就能看到並編輯這份帳本。改完後請再分享一次，大家的版本才會一致。'
+  var hint = link && CLOUD_ON ? '把連結傳給朋友，打開後大家編輯的是同一本帳本，會即時同步。' : link ? '把連結傳給朋友，他打開就能看到並編輯這份帳本。改完後請再分享一次，大家的版本才會一致。'
                   : '把這段代碼傳給朋友，他按「匯入朋友分享的帳本」貼上即可。改完後請再分享一次，大家的版本才會一致。';
-  copyText(txt, link ? '已複製帳本連結！' : '已複製帳本代碼！', function () { showCode(txt, hint); });
+  copyText(txt, link ? (CLOUD_ON ? '已複製連結！朋友打開就能一起即時編輯' : '已複製帳本連結！') : '已複製帳本代碼！', function () { showCode(txt, hint); });
 });
 
 $('importBtn').addEventListener('click', function () { $('impText').value = ''; $('impModal').classList.remove('hidden'); });
 $('impNo').addEventListener('click', function () { $('impModal').classList.add('hidden'); });
 $('impYes').addEventListener('click', function () {
+  var jm = String($('impText').value).match(/#j=([a-z0-9]{4,24})/);
+  if (jm) { $('impModal').classList.add('hidden'); joinBook(jm[1]); return; }
   var L = decodeLedger($('impText').value);
   if (!L) { toast('看不懂這段內容，請確認有完整貼上'); return; }
   $('impModal').classList.add('hidden');
@@ -635,11 +729,11 @@ function switchBook(id) {
   if (!DB.books[id]) return;
   // 離開一本完全空白的帳本時，順手把它移除，避免留下一堆「未命名帳本」
   if (S && S.id !== id && DB.books[S.id] === S && isEmptyBook(S)) delete DB.books[S.id];
-  S = DB.books[id]; splitSel = {}; editing = -1; $('expDesc').value = ''; $('expAmt').value = '';
-  save(); render();
+  S = DB.books[id]; splitSel = {}; editEid = null; $('expDesc').value = ''; $('expAmt').value = '';
+  save(); render(); cloudAttach();
 }
 function sameLedger(a, b) {
-  return JSON.stringify([a.name, a.people, a.expenses, a.pay]) === JSON.stringify([b.name, b.people, b.expenses, b.pay]) &&
+  return JSON.stringify([a.name, a.people, stripEids(a.expenses), a.pay]) === JSON.stringify([b.name, b.people, stripEids(b.expenses), b.pay]) &&
          JSON.stringify((a.done || []).slice().sort()) === JSON.stringify((b.done || []).slice().sort());
 }
 // 載入分享的帳本：新帳本直接新增；同一本則詢問是否更新成最新版
@@ -655,6 +749,7 @@ function receiveLedger(L) {
 $('resetBtn').addEventListener('click', function () {
   var nm = S.name || '未命名帳本';
   ask('確定刪除帳本「' + nm + '」？這個動作無法復原。', function () {
+    cloudDetach();
     delete DB.books[S.id];
     var rest = Object.keys(DB.books);
     if (!rest.length) { var b = blankLedger(); DB.books[b.id] = b; rest = [b.id]; }
@@ -666,6 +761,11 @@ $('resetBtn').addEventListener('click', function () {
 function checkHash() {
   var h = '';
   try { h = location.hash || ''; } catch (e) {}
+  var jm = h.match(/^#j=([a-z0-9]{4,24})$/);
+  if (jm) {
+    try { history.replaceState(null, '', location.pathname + location.search); } catch (e) {}
+    joinBook(jm[1]); return;
+  }
   if (h.indexOf('#s=') !== 0) return;
   var L = decodeLedger(h);
   try { history.replaceState(null, '', location.pathname + location.search); } catch (e) {}
@@ -690,6 +790,7 @@ $('payYes').addEventListener('click', function () {
     var v = $('payInput').value.trim().slice(0, 60);
     if (v) S.pay[payFor] = v; else delete S.pay[payFor];
     save(); render(); toast(v ? '已儲存收款方式' : '已清除收款方式');
+    var u = {}; u['pay/' + ckey(payFor)] = v || null; commit(u);
   }
   $('payModal').classList.add('hidden'); payFor = null;
 });
@@ -782,6 +883,146 @@ $('imgShare').addEventListener('click', function () {
 render();
 checkHash();
 
+
+// ===== 即時同步（Firebase Realtime Database）=====
+var qSeq = Date.now();
+function setSync(state) {
+  var el = $('syncBar'); if (!el) return;
+  if (!CLOUD_ON) { el.classList.add('hidden'); return; }
+  el.classList.remove('hidden');
+  var b = S;
+  var waiting = b && b.pending && b.pending.length;
+  el.textContent = state === 'fail' ? '⚠️ 無法連上同步伺服器，變更先存在手機，連上後會自動同步'
+    : !cloud.ready ? '⏳ 正在連線同步伺服器…'
+    : !cloud.online ? '📴 目前離線，變更會在連上網路後同步'
+    : waiting ? '⏳ 同步中…' : '☁️ 已即時同步，大家看到的是同一本';
+  el.className = 'syncbar' + (state === 'fail' || !cloud.online ? ' off' : '');
+}
+// 本機已經改好之後呼叫：把這次的變動排進待送清單，連線時送到雲端
+function commit(upd, book) {
+  book = book || S;
+  if (!CLOUD_ON || !upd) return;
+  book.pending.push({ q: ++qSeq, u: upd });
+  if (book === S) save(); else { try { localStorage.setItem(KEY, JSON.stringify(DB)); } catch (e) {} }
+  cloudFlush(book);
+}
+function persistQuiet() { try { localStorage.setItem(KEY, JSON.stringify(DB)); } catch (e) {} }
+function cloudFlush(book) {
+  if (!cloud.ready || !book.pending.length) { setSync(); return; }
+  var ref = cloud.db.ref('ledgers/' + book.id);
+  book.pending.slice().forEach(function (item) {
+    if (item.sent) return;
+    item.sent = true;
+    ref.update(item.u).then(function () {
+      var i = book.pending.indexOf(item); if (i >= 0) book.pending.splice(i, 1);
+      delete item.sent; persistQuiet(); setSync();
+    }, function (err) {
+      delete item.sent;
+      // 被安全規則拒絕的資料不再重送，避免卡住後面的變動
+      if (err && /permission|PERMISSION/.test(String(err.code || err.message || err))) {
+        var i = book.pending.indexOf(item); if (i >= 0) book.pending.splice(i, 1); persistQuiet();
+      }
+      toast('有一筆變動同步失敗');
+      setSync();
+    });
+  });
+  setSync();
+}
+function applyCloud(book, v) {
+  var L = fromCloud(v);
+  book.name = L.name; book.people = L.people; book.expenses = L.expenses; book.done = L.done; book.pay = L.pay;
+  // 還沒送出的本機變動，先疊在雲端資料上顯示，避免畫面閃回舊資料
+  book.pending.forEach(function (item) { if (!item.sent) applyUpdLocal(book, item.u); });
+  if (nameDraft && nameDraft.book === book) book.name = nameDraft.val;
+  persistQuiet();
+  if (book === S) { render(); setSync(); } else renderBooks();
+}
+// 把一筆 update（路徑 -> 值）套用到本機帳本
+function applyUpdLocal(book, upd) {
+  var c = toCloud(book);
+  Object.keys(upd).forEach(function (path) {
+    var parts = path.split('/'), o = c;
+    for (var i = 0; i < parts.length - 1; i++) { if (!o[parts[i]] || typeof o[parts[i]] !== 'object') o[parts[i]] = {}; o = o[parts[i]]; }
+    var last = parts[parts.length - 1];
+    if (upd[path] === null) delete o[last]; else o[last] = JSON.parse(JSON.stringify(upd[path]));
+  });
+  var L = fromCloud(c);
+  book.name = L.name; book.people = L.people; book.expenses = L.expenses; book.done = L.done; book.pay = L.pay;
+}
+function cloudDetach() {
+  if (cloud.cur) { try { cloud.cur.ref.off('value', cloud.cur.cb); } catch (e) {} cloud.cur = null; }
+}
+function cloudAttach() {
+  setSync();
+  if (!cloud.ready) return;
+  var book = S;
+  if (cloud.cur && cloud.cur.id === book.id) return;
+  cloudDetach();
+  var ref = cloud.db.ref('ledgers/' + book.id);
+  var me = { id: book.id, ref: ref, cb: null };
+  cloud.cur = me;
+  ref.once('value').then(function (snap) {
+    if (cloud.cur !== me) return;
+    var v = snap.val();
+    if (v == null) {
+      if (book.joining) { book.joining = false; persistQuiet(); toast('找不到這本帳本，可能連結不完整或已被刪除'); }
+      else if (!isEmptyBook(book)) {
+        // 第一次同步：把整本帳本上傳
+        book.pending.length = 0;
+        ref.set(toCloud(book)).then(function () { setSync(); }, function () { toast('上傳帳本失敗'); });
+      }
+    }
+    book.joining = false;
+    cloudFlush(book);
+    me.cb = function (s2) { var val = s2.val(); if (val != null && DB.books[book.id] === book) applyCloud(book, val); };
+    ref.on('value', me.cb);
+  }, function () { setSync('fail'); });
+}
+// 透過 #j= 連結加入朋友的帳本
+function joinBook(id) {
+  if (!ID_RE.test(id)) { toast('連結不完整'); return; }
+  if (!CLOUD_ON) { toast('這個版本沒有開啟即時同步，無法加入'); return; }
+  if (DB.books[id]) { switchBook(id); toast('已打開「' + (DB.books[id].name || '帳本') + '」'); return; }
+  var b = blankLedger(); b.id = id; b.joining = true;
+  DB.books[id] = b; switchBook(id);
+  toast(cloud.ready ? '正在載入帳本…' : '連上網路後會自動載入帳本');
+}
+function loadScript(src) {
+  return new Promise(function (ok, no) {
+    var sc = document.createElement('script'); sc.src = src; sc.async = false;
+    sc.onload = ok; sc.onerror = no; document.head.appendChild(sc);
+  });
+}
+function cloudInit() {
+  if (!CLOUD_ON) { setSync(); return; }
+  setSync();
+  var V = '10.12.2', base = 'https://www.gstatic.com/firebasejs/' + V + '/';
+  var load = (window.firebase && window.firebase.database) ? Promise.resolve()
+    : loadScript(base + 'firebase-app-compat.js').then(function () { return Promise.all([loadScript(base + 'firebase-auth-compat.js'), loadScript(base + 'firebase-database-compat.js')]); });
+  load.then(function () {
+    var fb = window.firebase;
+    if (!fb.apps.length) fb.initializeApp(CLOUD_CFG);
+    return fb.auth().signInAnonymously().then(function () {
+      cloud.db = fb.database(); cloud.ready = true;
+      cloud.db.ref('.info/connected').on('value', function (s) { cloud.online = !!s.val(); setSync(); });
+      Object.keys(DB.books).forEach(function (k) { if (DB.books[k] !== S) cloudFlushQuietly(DB.books[k]); });
+      cloudAttach();
+    });
+  }).catch(function (err) {
+    cloud.failed = true; setSync('fail');
+    try { console.warn('Firebase 初始化失敗', err); } catch (e) {}
+  });
+}
+// 其他帳本若有離線時的變動，也一起補送
+function cloudFlushQuietly(book) {
+  if (!book.pending.length) return;
+  cloud.db.ref('ledgers/' + book.id).once('value').then(function (snap) {
+    if (snap.val() == null && !isEmptyBook(book)) { book.pending.length = 0; persistQuiet(); return cloud.db.ref('ledgers/' + book.id).set(toCloud(book)); }
+    cloudFlush(book);
+  }).catch(function () {});
+}
+window.addEventListener('online', function () { if (cloud.failed) location.reload(); });
+cloudInit();
 
 // ===== 加到主畫面（PWA）=====
 (function () {
