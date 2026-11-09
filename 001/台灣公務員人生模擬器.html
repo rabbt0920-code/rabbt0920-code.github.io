@@ -122,7 +122,7 @@ table.rec td,table.rec th{border-bottom:1px solid var(--line);padding:4px;text-a
 .toast{position:fixed;bottom:18px;left:50%;transform:translateX(-50%);background:var(--ink);color:#fff;padding:8px 16px;border-radius:4px;font-size:14px;opacity:0;transition:.3s;pointer-events:none;z-index:10}
 .toast.on{opacity:.92}
 .autotag{font-size:12px;opacity:.75}
-ol.prefbox{max-height:340px;overflow:auto;padding-right:2px}ol.pref .pname{flex:1;min-width:0}ol.pref{padding-left:0;list-style:none;margin:8px 0}ol.pref li{display:flex;align-items:center;gap:6px;padding:6px 8px;border:1px solid var(--line);background:#fff;margin-bottom:4px;border-radius:3px;flex-wrap:wrap}
+div.tp{border-left:3px solid var(--red);padding:6px 10px;margin:8px 0;background:#fffdf7;font-size:14px;line-height:1.6}div.tp .tpa{color:var(--muted)}ol.prefbox{max-height:340px;overflow:auto;padding-right:2px}ol.pref .pname{flex:1;min-width:0}ol.pref{padding-left:0;list-style:none;margin:8px 0}ol.pref li{display:flex;align-items:center;gap:6px;padding:6px 8px;border:1px solid var(--line);background:#fff;margin-bottom:4px;border-radius:3px;flex-wrap:wrap}
 .pbtns{margin-left:auto;display:flex;gap:4px}
 .yr{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin:6px 0}.yr div{background:#fff;border:1px solid var(--line);border-radius:3px;text-align:center;padding:6px}.yr b{display:block;font-size:18px;color:var(--blue)}.yr span{font-size:12px;color:var(--muted)}
 .charts{display:grid;grid-template-columns:1fr 1fr;gap:10px}@media(max-width:640px){.charts{grid-template-columns:1fr}}
@@ -152,6 +152,7 @@ ol.prefbox{max-height:340px;overflow:auto;padding-right:2px}ol.pref .pname{flex:
     <div><h1 class="serif">台灣公務員人生模擬器</h1><small>人生模擬器系列｜本遊戲純屬虛構，如有雷同，依規定辦理</small></div>
     <div class="sp"></div>
     <span id="autoTag" class="autotag"></span>
+    <button class="hbtn" onclick="openTut()">🧭 新手引導</button>
     <button class="hbtn" onclick="openCharts()">📈 人生曲線</button>
     <button class="hbtn" onclick="openAch()">🏆 成就</button>
     <button class="hbtn" onclick="openSaves()">💾 存檔管理</button>
@@ -177,7 +178,7 @@ function gauss(){let u=0,v=0;while(!u)u=rnd();while(!v)v=rnd();return Math.sqrt(
 function toast(t){const e=$('#toast');e.textContent=t;e.classList.add('on');clearTimeout(e._t);e._t=setTimeout(()=>e.classList.remove('on'),1800);}
 
 const ATTR={int:'智力',sta:'體力',stress:'壓力',eq:'情商',luck:'官運'};
-const CAT={rep:'民代關說',audit:'廉政採購',fest:'大型活動',boss:'長官民眾',life:'生活',prep:'備考日常'};
+const CAT={rep:'民代關說',audit:'廉政採購',fest:'大型活動',boss:'長官民眾',life:'生活',prep:'備考日常',office:'辦公室日常'};
 
 /* ================== 資料表 ================== */
 // 職務階梯：lo~hi 為職務列等（同一職務列等範圍內可「考績升等」，超出需陞任新職務）；sup＝主管職務加給比例
@@ -234,12 +235,21 @@ const ORGS=[
  {id:'ntp_land',u:'county',name:'新北市政府地政局',pop:1.1,q:0.6,only:['land'],b:{land:5},rent:14000,house:17000000,desc:'地價、登記、區段徵收與重劃，業務量龐大，案件看似單純但常有爭議。'},
  {id:'ntp_pw',u:'county',name:'新北市政府工務局',pop:1.0,q:0.6,only:['civil'],b:{civil:5},rent:14000,house:17000000,desc:'建管、公共工程與災害搶修，颱風夜與地震後的現場勘查，就是你的日常。'},
  {id:'ks_epa',u:'county',name:'高雄市政府環境保護局',pop:0.9,q:0.6,only:['env'],b:{env:5},rent:9500,house:10000000,desc:'空污稽查、垃圾清運與環境教育，半夜被檢舉電話叫醒是常態。'},
+ {id:'tp_tax',u:'county',name:'臺北市稅捐稽徵處',pop:1.0,q:0.5,only:['tax'],b:{tax:4},ren:{副局長:'副處長'},rent:19000,house:23000000,desc:'地價稅、房屋稅與使用牌照稅的核課機關，每年年底與五月，櫃檯都有人潮。'},
+ {id:'ks_tax',u:'county',name:'高雄市稅捐稽徵處',pop:0.8,q:0.5,only:['tax'],b:{tax:4},ren:{副局長:'副處長'},rent:9500,house:10000000,desc:'房屋稅、地價稅與契稅，案件量穩定，同事之間感情融洽。'},
+ {id:'tp_land',u:'county',name:'臺北市中山地政事務所',pop:1.1,q:0.5,only:['land'],b:{land:4},ren:{副局長:'副主任',專門委員:'秘書'},rent:19000,house:23000000,desc:'土地登記、測量與鑑界，櫃檯天天有人排隊，測量員與地政士各有各的脾氣。'},
+ {id:'zl_land',u:'county',name:'桃園市中壢地政事務所',pop:0.9,q:0.5,only:['land'],b:{land:4},ren:{副局長:'副主任',專門委員:'秘書'},rent:11000,house:12000000,desc:'桃園人口快速成長，登記案件量大，重劃區的買賣更是接不完。'},
  {id:'tp_dit',u:'county',name:'臺北市政府資訊局',pop:1.1,q:0.5,only:['it'],b:{it:5},rent:19000,house:23000000,desc:'智慧城市、資安與市府系統維運，市長一句話，你就要上線新系統。'},
 ];
 const ORGMAP=Object.fromEntries(ORGS.map(o=>[o.id,o]));
+/* 各專業類科可填的機關：一般行政可填全部；其他職系只能填業務相關的機關 */
+const TKMAP={metro:['social','civil','env','it'],remote:['social','civil','env','it'],county:['civil','it'],
+ moi:['land','civil','social','it'],mof:['tax','it'],moe:['social','it'],moea:['civil','env','it'],motc:['civil','it'],mohw:['social','it'],moenv:['env','civil','it'],moda:['it'],mol:['social','it'],
+ tourism:['civil','it'],imm:['it'],tpetax:['tax','it'],customs:['tax','it'],nla:['land','civil'],highway:['civil','it'],cdc:['social','it'],fda:['env','it'],bli:['social','it'],ipo:['it'],forest:['env','civil']};
+ORGS.forEach(o=>{o.tk=o.only||TKMAP[o.id]||TKMAP[o.u]||[];});
 const CATN={metro:'區公所',remote:'偏遠鄉鎮',central:'中央部會',county:'縣市政府',agency:'署局'};
 function orgW(o){const t=S.track||'general';
-  if(t==='general'?o.only:(o.only&&!o.only.includes(t))) return 0;
+  if(t!=='general'&&!o.tk.includes(t)) return 0;
   return (TRACKS[t].units[o.u]||1)*(o.q||1)*((o.b&&o.b[t])||1);}
 function eligibleOrgs(){return ORGS.filter(o=>orgW(o)>0);}
 function makeUnit(o){const b=UNITS.find(u=>u.id===o.u),ren=o.ren||{};
@@ -369,15 +379,84 @@ function mod(d,raw){
 }
 const CN={1:'嘉獎一次',2:'嘉獎二次',3:'記功一次',6:'記功二次',9:'記一大功'};
 const DN={1:'申誡一次',2:'申誡二次',3:'記過一次',6:'記過二次',9:'記一大過'};
-function commend(n,why){const j=S.job;if(/模範/.test(why))F().model=1;j.commend+=n;j.totalC+=n;log(`🏅 ${why}，${CN[n]}`,'good');return `<div class="award">🏅 ${why}，${CN[n]}</div>`;}
+function commend(n,why){const j=S.job;hist('c',why,n);if(/模範/.test(why))F().model=1;j.commend+=n;j.totalC+=n;log(`🏅 ${why}，${CN[n]}`,'good');return `<div class="award">🏅 ${why}，${CN[n]}</div>`;}
 function demerit(n,why){const j=S.job;
   if(j.rel&&j.rel.boss>=75&&n<=3&&rnd()<0.5){const n2=n===3?1:0;log(`🛡 ${S.job.boss.name}出面緩頰（${why}）`,'good');
     if(!n2)return `<div class="award">🛡 長官出面緩頰，${why}一事免予議處。</div>`;
     j.demerit+=n2;j.totalD+=n2;log(`📕 ${why}，${DN[n2]}`,'bad');return `<div class="pun">🛡 長官出面緩頰，${why}改為${DN[n2]}</div>`;}
-  j.demerit+=n;j.totalD+=n;if(n>=9)j.major++;log(`📕 ${why}，${DN[n]}`,'bad');
+  j.demerit+=n;j.totalD+=n;if(n>=9)j.major++;log(`📕 ${why}，${DN[n]}`,'bad');hist('d',why,n);if(n>=3)failScene(why,'d');
   let t=`<div class="pun">📕 ${why}，${DN[n]}</div>`;
   if(j.demerit-j.commend>=18)t+=`<div class="pun">⚠ 本年度懲處抵銷後已達二大過，年終考績將列丁等（免職）。</div>`;
   return t;}
+
+
+/* ================== 轉折點紀錄（結案時回顧）================== */
+function recTP(c,ch,p,okf){
+  const j=S.job;if(!j)return;
+  const dp=j.perf-p.p,ds=S.stress-p.s,dm=S.money-p.m,dc=j.totalC-p.c,dd=j.totalD-p.d,db=rel().boss-p.b;
+  const sc=Math.abs(dp)*1.2+Math.abs(ds)/2+Math.abs(dm)/25000+dc*7+dd*9+Math.abs(db)*0.7;
+  if(sc<12)return;
+  const parts=[];
+  if(dc>0)parts.push(`獎勵折計+${dc}`);
+  if(dd>0)parts.push(`懲處折計+${dd}`);
+  if(Math.abs(dp)>=2)parts.push(`年度表現${dp>0?'+':''}${Math.round(dp)}`);
+  if(Math.abs(db)>=3)parts.push(`長官好感${db>0?'+':''}${Math.round(db)}`);
+  if(Math.abs(dm)>=20000)parts.push(`存款${dm>0?'+':'−'}${wan(Math.abs(dm))}`);
+  if(Math.abs(ds)>=6)parts.push(`壓力${ds>0?'+':''}${Math.round(ds)}%`);
+  const tp=S.tp||(S.tp=[]);
+  tp.push({y:ROC(),a:AGE(),t:c.title,p:ch.t,ok:okf,s:parts.join('、'),sc:Math.round(sc),c:dc>0,d:dd>0,b:Math.round(db),m:Math.round(dm),mo:j.months});
+  if(tp.length>50){tp.sort((a,b)=>b.sc-a.sc);tp.length=40;tp.sort((a,b)=>a.mo-b.mo);}
+}
+function pickTP(){
+  const tp=(S.tp||[]).slice().sort((a,b)=>b.sc-a.sc),out=[];
+  for(const t of tp){if(out.every(o=>Math.abs(o.mo-t.mo)>=24))out.push(t);if(out.length>=3)break;}
+  for(const t of tp){if(out.length>=3)break;if(!out.includes(t))out.push(t);}
+  return out.sort((a,b)=>a.mo-b.mo);
+}
+function tpAfter(t){
+  if(t.d)return '這筆懲處記錄後來跟了你好幾年，每次考績和升遷評比，都有人翻出來看。';
+  if(t.c)return '這份獎勵成了你考績表上的亮點，往後多了幾分底氣。';
+  if(t.b>=8)return '長官從此對你另眼相看，之後有重要的案子，第一個想到的就是你。';
+  if(t.b<=-8)return '長官對你的看法明顯變了，之後的每一次簽辦，你都多花了一分心力。';
+  if(t.m>=100000)return '這筆錢讓你的生活寬裕了一陣子，也讓你多了些選擇。';
+  if(t.m<=-100000)return '荷包大失血，你也因此更謹慎地看待之後的每個決定。';
+  return '這個選擇悄悄改變了你之後的工作節奏與人際。';
+}
+function tpHTML(){
+  const L=pickTP();if(!L.length)return '';
+  return `<div class="sec"><h4>🔀 你人生的轉折點</h4>${L.map((t,i)=>`<div class="tp"><b>${['一','二','三'][i]}、民國 ${t.y} 年（${t.a} 歲）・${t.t}</b><br>你選擇了「${t.p}」${t.ok===true?'（判定成功）':t.ok===false?'（判定失敗）':''}。${t.s?`<span class="note">　${t.s}</span>`:''}<br><span class="tpa">${tpAfter(t)}</span></div>`).join('')}</div>`;
+}
+
+/* ================== 獎懲紀錄與失敗場景 ================== */
+function hist(k,why,n){const h=F().h||(F().h=[]);h.push({k,w:why,n,mo:S.job.months});if(h.length>40)h.shift();}
+const FS_D=[
+ {t:'人事室約談：議處前的說明',b:why=>`人事室來電，請你到會議室一趟。考績委員會的幾位長官正襟危坐，桌上放著「${why}」的調查報告。主任委員問：「對這件事，你有什麼要說明的？」`,c:[
+  ['誠懇檢討，說明處理過程',['eq',52],'你態度誠懇，委員們聽完點了點頭，只留下一句「以後注意」。',{stress:-3,eq:1,boss:2},'你越說越緊張，講到一半聲音發抖，場面一度尷尬。',{stress:6}],
+  ['援引法規，據理力爭',['int',58],'你一條一條引法條，委員們面面相覷，最後同意從輕處理。',{perf:2,int:1,stress:-2},'你被反問得啞口無言，會議室氣氛降到冰點。',{stress:8,boss:-3}],
+  ['低頭不語，等待結果','你默默聽完，走出會議室才發現手一直在抖。',{stress:5}]]},
+ {t:'走廊上的目光',b:why=>`處分公告貼出的那天，你一路從茶水間走回座位，彷彿每個人都在竊竊私語。「${why}」這幾個字，在辦公室裡被傳了一整個下午。`,c:[
+  ['主動向同事說明，不逃避',['eq',50],'你坦然說明來龍去脈，有同事拍拍你的肩：「換成我也會踩到。」',{stress:-4,mates:3},'有人聽了點頭，也有人仍然保持距離。',{stress:4}],
+  ['戴上耳機假裝沒事','你把音樂開到最大聲，一整天都沒抬頭。',{stress:4,mates:-1}],
+  ['請同事吃宵夜，轉移話題','一頓宵夜讓氣氛鬆了不少，大家也沒再提那件事。',{money:-1500,mates:3,stress:-3}]]},
+ {t:'深夜的辦公室',b:why=>`下班後你一個人留在辦公室，盯著那張處分令。你想起當初報考公職時的心情，也想起「${why}」發生的那一天。`,c:[
+  ['把它當成學費，重新整理流程',['int',48],'你把整個作業流程重新畫了一遍，附上檢核表。隔天，科長把它納入全科標準作業。',{perf:3,int:1,stress:-4},'整理到一半你累得趴在桌上睡著，被清潔阿姨叫醒。',{stress:3}],
+  ['打電話給家人，說聲「我沒事」','電話那頭沉默了一下：「不要緊，人沒事就好。」你的眼眶有點紅。',{stress:-8}],
+  ['在筆記本寫下三個教訓','你寫完收起筆記本，把它鎖進抽屜。這一頁，你不想再看到第二次。',{int:1,stress:-2}]]},
+];
+const FS_C=[
+ {t:'長官約談：這次的考績',b:()=>`${BN()}把你叫進辦公室，桌上放著你的考績表。「今年的表現……我想跟你聊聊。」`,c:[
+  ['虛心請教，詢問改進方向',['eq',50],'長官語重心長地給了你幾點建議，你一邊記一邊點頭。他最後說：「我看得到你的努力。」',{boss:5,stress:-3,eq:1},'長官講了半小時，句句都是你不愛聽的實話，你笑得很僵。',{stress:6,boss:1}],
+  ['為自己辯解，列出今年的貢獻',['int',55],'你把貢獻整理成條列式，長官看完沉默了一會兒，說：「這些我會記得。」',{perf:2,boss:2},'長官淡淡地說：「我知道，但這些不夠。」',{stress:7,boss:-3}],
+  ['沉默點頭，離開辦公室','你回到座位，盯著電腦螢幕，什麼也看不進去。',{stress:6}]]},
+ {t:'丙等之後的下班路上',b:()=>'打開考績通知書的那一刻，你的心像被什麼東西壓住了。下班走在回家的路上，你突然有點不想回家。',c:[
+  ['找朋友出來吃飯，聊一聊',['eq',45],'朋友聽完只說：「吃飽再想。」你竟然笑了。',{stress:-8,eq:1,money:-800},'朋友忙著傳訊息，你吃完默默買單。',{stress:-2,money:-800}],
+  ['到河濱公園跑步','你跑到喘不過氣，才發現這件事好像沒那麼大。',{sta:2,stress:-7}],
+  ['回家倒頭就睡','你睡了很長的一覺，醒來時天已經亮了。',{stress:-3}]]},
+];
+function failScene(why,kind){
+  const v=pick(kind==='c'?FS_C:FS_D);
+  Q.splice(1,0,{tag:'人事',title:v.t,body:v.b(why),choices:v.c.map(x=>mkC(x,v.t))});
+}
 
 /* ================== 薪資計算 ================== */
 function pos(){return ladder()[S.job.pos];}
@@ -401,16 +480,18 @@ function netWorth(){const l=S.life;return S.money+l.stockUnits*l.stockPrice+(l.h
 
 /* ================== 卡片佇列 ================== */
 function pushCard(c){Q.push(c);}
-function pushEvent(ev){pushCard({tag:CAT[ev.cat],title:ev.title,body:ev.body(),choices:ev.choices.filter(c=>!c.cond||c.cond())});}
+function pushEvent(ev){pushCard({ev:1,tag:CAT[ev.cat],title:ev.title,body:ev.body(),choices:ev.choices.filter(c=>!c.cond||c.cond())});}
 function processQueue(){while(Q.length&&Q[0].fn){const f=Q.shift();f.fn();if(S.phase==='end'){Q=[];break;}}}
 function choose(i){
   const c=Q[0],ch=c.choices[i]; if(c.result) return;
   if(S.yr&&S.job) S.yr.ev++;
-  let r;
-  if(ch.check){const ok=rnd()<chance(ch.check[0],ch.check[1]);r=(ok?'<b class="ok">【判定成功】</b>':'<b class="ng">【判定失敗】</b>')+(ok?ch.ok():ch.fail());}
+  const pre=S.job&&(c.ev||c.arc)?{p:S.job.perf,s:S.stress,m:S.money,c:S.job.totalC,d:S.job.totalD,b:rel().boss}:null;
+  let r,okf=null;
+  if(ch.check){const ok=rnd()<chance(ch.check[0],ch.check[1]);okf=ok;r=(ok?'<b class="ok">【判定成功】</b>':'<b class="ng">【判定失敗】</b>')+(ok?ch.ok():ch.fail());}
   else r=ch.fn();
   if(S.phase==='end') return;
   c.result=r||'已簽辦。'; c.picked=ch.t;
+  if(pre) recTP(c,ch,pre,okf);
   render();
 }
 function ack(){Q.shift();processQueue();save();render();}
@@ -822,6 +903,92 @@ E({cat:'fest',org:['tycity_tour','tn_tour'],t:'連假遊客爆量',b:'三天連�
  ['到現場巡視，協調交通與清潔',['sta',52],'你在現場調度，狀況很快獲得改善，市長在社群上稱讚觀光局「反應迅速」。',{perf:5,stress:6,sta:-3,c:1},'人潮太多，協調到一半就被民眾罵「怎麼這麼亂」。',{stress:11,sta:-3}],
  ['在辦公室待命，電話指揮','遠端協調效率有限，被民意代表批評「官員不到現場」。',{stress:6,perf:-1,boss:-2}]);
 
+/* ---------- 事件連動：過去的獎懲，會在日後留下後續 ---------- */
+const RE_AUD=/審計|採購|標案|查核|廠商|工程|驗收|開口契約|糾正/,RE_REP=/陳情|議員|立委|民代|里長|關說|質詢|議會|立法院/;
+const HS=(re,k,win)=>(F().h||[]).some(h=>h.k===k&&re.test(h.w)&&S.job.months-h.mo<=(win||36));
+const fuOK=id=>{const f=(F().fu||{})[id];return f===undefined||S.job.months-f>=60;};
+const fuSet=id=>()=>{(F().fu||(F().fu={}))[id]=S.job.months;};
+E({cat:'audit',w:3,t:'審計部複查：去年的缺失改善了嗎？',cond:()=>HS(RE_AUD,'d')&&fuOK('aud_bad'),b:'審計部來函：針對先前缺失，將派員赴機關複查改善情形。這次的承辦人，剛好是上次開單的那位。'},
+ ['逐項改善並附佐證資料',['int',52],'審計人員翻完資料，點頭說：「這次的改善很確實。」你的名字在會議紀錄上被正面提了一句。',{perf:5,stress:-3,c:1,go:fuSet('aud_bad')},'資料有一處前後不一致，審計人員要求再補件。',{stress:8,perf:1,go:fuSet('aud_bad')}],
+ ['簡單回覆「已改善完畢」','審計人員看了你的回覆，面無表情地說：「我們還是看看現場。」',{stress:6,risk:[0.45,'複查發現問題仍然存在，你被簽報檢討。',2],go:fuSet('aud_bad')}]);
+E({cat:'audit',w:3,t:'標案經驗分享會',cond:()=>HS(RE_AUD,'c')&&fuOK('aud_good'),b:'因為先前標案辦得漂亮，長官要你在跨機關的採購研習上分享經驗：「站上去講十五分鐘就好。」'},
+ ['認真準備簡報，大方分享',['eq',50],'你的案例講得生動，台下有人當場拍照。長官在群組裡 tag 你：「與有榮焉。」',{perf:5,eq:1,boss:3,c:1,go:fuSet('aud_good')},'你講到一半詞窮，但案例本身夠硬，大家還是記下來了。',{perf:2,stress:4,go:fuSet('aud_good')}],
+ ['推辭：「我只是照規定辦理」','長官有些意外，但也尊重你的決定。',{stress:-2,boss:-1,go:fuSet('aud_good')}]);
+E({cat:'rep',w:3,t:'議員在議會公開稱讚你',cond:()=>HS(RE_REP,'c')&&fuOK('rep_good'),b:'你處理過的陳情案，被議員在議會總質詢時當成「公務員典範」公開提及。隔天，議員辦公室還送了一盒伴手禮來。'},
+ ['依規定婉拒伴手禮，致電道謝',['eq',50],'議員秘書在電話那頭笑說：「你很謹慎。」從此對你的案子總是客氣三分。',{eq:1,perf:3,luck:1,go:fuSet('rep_good')},'電話講到一半，秘書順勢提了另一個案子，你只好先記下來。',{stress:4,go:fuSet('rep_good')}],
+ ['簽報政風室處理','政風室收下了伴手禮，並簽辦完成。流程乾淨，一點把柄也沒有。',{stress:-1,perf:2,go:fuSet('rep_good')}]);
+E({cat:'rep',w:3,t:'議員翻舊帳',cond:()=>HS(RE_REP,'d')&&fuOK('rep_bad'),b:'議員在質詢時突然提起你先前處理的陳情案：「這位承辦人當時是怎麼辦的？我要看書面資料。」台下的長官全都轉頭看你。'},
+ ['整理完整書面說明，逐一回應',['int',54],'你的說明有理有據，議員翻完資料沒再追問，只丟下一句：「以後注意」。',{perf:3,stress:-2,go:fuSet('rep_bad')},'資料裡有一處被議員挑出來，現場一陣尷尬。',{stress:10,boss:-2,go:fuSet('rep_bad')}],
+ ['請長官出面說明','長官替你擋了下來，但你欠了一個人情。',{boss:-1,stress:2,go:fuSet('rep_bad')}]);
+E({cat:'boss',w:3,t:'長官私下問你願不願意接重要專案',cond:()=>rel().boss>=80&&S.job.grade>=6&&fuOK('boss_trust'),b:()=>`${BN()}把你叫進辦公室，關上門：「有一個很重要的專案，我想交給你。成功了，對你的升遷有幫助；失敗了，我也會幫你扛一點。」`},
+ ['接下專案，全力以赴',['int',54],'專案漂亮落幕，首長親自在院會上提到你的名字。',{perf:7,boss:3,c:3,stress:8,go:fuSet('boss_trust')},'專案遇到阻力，雖然沒成功，但長官說：「這次輪到我幫你擋。」',{perf:2,stress:10,boss:2,go:fuSet('boss_trust')}],
+ ['婉拒：「我手上的事還沒做好」','長官點點頭，沒有勉強，但你知道這個機會不會再來第二次。',{stress:-3,boss:-2,go:fuSet('boss_trust')}]);
+E({cat:'life',w:3,t:'加班的代價：健檢紅字',cond:()=>(S.cnt.ot||0)>=40&&S.sta<60&&fuOK('health'),b:'機關例行健檢報告出爐，你的報告上多了好幾個紅字：血壓、血脂、睡眠品質。醫師說：「你最近是不是常加班？」'},
+ ['認真調整作息，開始運動','你從每週一次的散步開始，三個月後，指數開始往下掉。',{sta:5,stress:-6,go:fuSet('health')}],
+ ['先掛號複檢，再說','複檢結果沒大礙，但醫師要你「不要再熬夜了」。',{money:-1200,stress:-2,go:fuSet('health')}],
+ ['繼續衝，等忙完再說','你把報告收進抽屜，繼續加班。',{sta:-4,stress:5,go:fuSet('health')}]);
+
+/* ---------- 同事故事線：每位同事各有三段小故事 ---------- */
+const MF=(T,v)=>()=>{const m=mateOf(T);if(m)m.f=clamp(m.f+v,0,100);};
+function CE(T,step,gap,t,body,...cs){
+  E({cat:'office',t,w:2.2,cond:()=>{const m=mateOf(T);return !!m&&(m.st||0)===step&&S.job.months>=6&&S.job.months-(m.last||0)>=gap&&!S.job.stop;},b:()=>body.replace(/\$N/g,mateOf(T).n)},...cs);
+  EV[EV.length-1].choices.forEach(ch=>{
+    ['fn','ok','fail'].forEach(k=>{if(ch[k]){const f=ch[k];ch[k]=()=>{let r=f();const m=mateOf(T);if(m){m.st=(m.st||0)+1;m.last=S.job.months;if(typeof r==='string')r=r.replace(/\$N/g,m.n);}return r;};}});
+  });
+}
+// 熱心學姊
+CE('熱心學姊',0,6,'學姊的茶水間祕笈','$N把你拉到茶水間，壓低聲音：「新人我跟你說，哪個長官喜歡看摘要、哪個承辦不能得罪，我整理成了一張表。」',
+ ['認真聽並道謝','你把那張表存進手機，之後少踩了好幾個雷。',{int:1,perf:2,stress:-2,go:MF('熱心學姊',8)}],
+ ['笑笑婉拒：「我自己摸索就好」','$N聳聳肩，但眼神有點失落。',{go:MF('熱心學姊',-6)}]);
+CE('熱心學姊',1,18,'學姊要調走了','$N突然宣布：她申請調到別的機關，下個月就走。送別會上她對你說：「之後有問題隨時找我。」',
+ ['送上手寫卡片與小禮物','$N紅著眼眶抱了你一下：「你一定會越來越好。」',{money:-800,eq:1,go:MF('熱心學姊',10)}],
+ ['祝福她，但沒多說什麼','$N笑著說：「保持聯絡。」你點點頭，卻不太知道該說什麼。',{go:MF('熱心學姊',2)}]);
+CE('熱心學姊',2,36,'學姊來電：有個缺要不要來？','幾年後，$N已經在新機關當上科長。她打電話給你：「我們這裡缺一個可靠的人，你願意來幫忙一個專案嗎？」',
+ ['答應，借力使力',['eq',50],'專案做得漂亮，兩個機關都記得你的名字。',{perf:6,luck:2,c:1,stress:6},'專案時程太緊，你勉強撐完，但$N的臉色有點為難。',{stress:10,perf:1}],
+ ['婉拒：「我先把手上的事做好」','$N笑說：「好，隨時歡迎。」',{stress:-2}]);
+// 老鳥前輩
+CE('老鳥前輩',0,6,'前輩的「公文心法」','$N慢悠悠地說：「公文啊，不是寫得多漂亮，是寫得讓長官一眼看懂。」他拿紅筆把你的簽呈整份改了一遍。',
+ ['虛心接受，逐條請教',['int',45],'之後你的簽呈再也沒被退件過。',{int:1,perf:3,go:MF('老鳥前輩',8)},'改得你有點懂又有點不懂，但他說：「慢慢來。」',{perf:1,go:MF('老鳥前輩',4)}],
+ ['覺得他太囉嗦，敷衍帶過','他嘆口氣，把紅筆收回口袋。',{go:MF('老鳥前輩',-6)}]);
+CE('老鳥前輩',1,24,'前輩的退休茶會','$N終於到了退休的日子，茶會上大家輪流說話。他最後把一本舊筆記遞給你：「這是我三十年的案子，也許你用得到。」',
+ ['鄭重收下，說會好好保管','你翻開筆記，裡面有許多沒有寫進任何規定的經驗。',{int:2,luck:1,stress:-3,go:MF('老鳥前輩',10)}],
+ ['客氣收下，放進抽屜','你把筆記放進抽屜，之後也沒怎麼翻過。',{go:MF('老鳥前輩',2)}]);
+CE('老鳥前輩',2,36,'退休前輩回來探望','$N帶著一袋鳳梨酥回機關探望大家，看到你時笑說：「聽說你現在出息了？」',
+ ['請他吃飯，聊聊業務上的困境',['eq',48],'前輩一句話點醒了你卡了很久的問題。',{int:1,perf:5,luck:2,stress:-5},'聊著聊著只剩懷念往事，但心情輕鬆了不少。',{stress:-6}],
+ ['道聲謝謝，忙回座位','他點點頭，沒再多說。',{stress:1}]);
+// 卷王同期
+CE('卷王同期',0,6,'同期的卷王日常','$N每天最早到、最晚走，連簽呈都編頁碼。長官在會議上拿他當範例：「你們看看人家。」',
+ ['維持自己的步調','你還是準時下班，但心裡有點不踏實。',{stress:2}],
+ ['也加班拚一下',['sta',50],'你拚出一份漂亮的成果，長官開始把你們擺在一起比較。',{perf:4,stress:6,sta:-2,go:MF('卷王同期',-3)},'撐了兩週，體力先見底。',{stress:9,sta:-3}],
+ ['約他吃午餐，聊聊壓力','他愣了一下，然後笑說：「其實我也很累。」',{stress:-3,go:MF('卷王同期',10)}]);
+CE('卷王同期',1,18,'只有一個名額','科長出缺，$N與你都在考慮名單內。長官說：「看年終考績與平時表現，公平競爭。」',
+ ['全力衝刺，證明自己',['int',54],'你的成績略勝一籌，長官在會議上公開肯定你。',{perf:6,boss:3,c:1,stress:6},'他的資歷與成績更勝一籌，你被上了一課。',{stress:10,perf:2,go:MF('卷王同期',-3)}],
+ ['公平競爭，同時幫他把簡報再看一遍','兩人互相打氣，結果不論，氣氛反而更好。',{eq:1,stress:2,go:MF('卷王同期',10)}]);
+CE('卷王同期',2,30,'結果揭曉之後','名單公布了。$N站在你桌邊，沉默了幾秒，說：「無論如何，這幾年謝謝你。」',
+ ['握手說：「我們都值得更好的」','你們都笑了。這段同期情，比職稱更久。',{eq:1,stress:-4,luck:1,go:MF('卷王同期',8)}],
+ ['點個頭，繼續工作','氣氛有點微妙，但也沒人多說什麼。',{stress:2}]);
+// 八卦王
+CE('八卦王',0,6,'關於你的傳聞','茶水間傳出一個關於你的小道消息，據說你跟某位長官關係「不尋常」。傳播者，就是$N。',
+ ['直接找八卦來源談談',['eq',52],'$N尷尬地承認「只是閒聊」，並答應幫你澄清。',{stress:-3,eq:1,go:MF('八卦王',6)},'$N拒絕承認，還把這件事又講了一遍。',{stress:8,go:MF('八卦王',-8)}],
+ ['不予理會，用實力說話','過幾週，傳聞被新的八卦蓋過去了。',{stress:3}],
+ ['也傳一個無傷大雅的消息回敬','你放了一個小八卦出去，傳得比預期快，辦公室氣氛有點微妙。',{mates:-2,stress:2}]);
+CE('八卦王',1,18,'八卦王的情報','$N神秘兮兮地靠過來：「我聽說新首長下個月要大幅調整人事，你要不要先準備一下？」',
+ ['認真聽，保持低調準備',['luck',45],'情報居然是真的！你提前調整了手上的業務。',{perf:3,luck:1,boss:2},'情報有一半是錯的，你白緊張一場。',{stress:6}],
+ ['一笑置之：「別亂講啦」','後來證明他說的只有一半是對的。',{stress:-1}]);
+CE('八卦王',2,30,'八卦的反噬','這次的主角換成了$N自己。他被人說「向上司打小報告」，一時成為眾人討論的焦點，他來找你訴苦。',
+ ['挺他：說出你所知道的真實情況',['eq',52],'你的幾句公道話澄清了誤會，他感動地說會報答你。',{eq:1,stress:3,go:MF('八卦王',12)},'你也被扯進話題，場面變得更複雜。',{stress:8,mates:-1}],
+ ['保持距離，不介入','他苦笑著說「懂」，但眼神有些黯淡。',{go:MF('八卦王',-6)}]);
+// 佛系同事
+CE('佛系同事',0,6,'請你代班','$N突然說有急事，想請你幫忙代個班，你手上的業務也不少。',
+ ['爽快答應','他連聲道謝，答應下次還你一個人情。',{stress:4,go:MF('佛系同事',10)}],
+ ['婉拒：「我今天也很滿」','他笑笑說「沒關係」，但看得出有點為難。',{go:MF('佛系同事',-3)}]);
+CE('佛系同事',1,18,'佛系同事的親戚','你無意間得知，$N其實是某位民意代表的遠房親戚，只是他從來不說。有一次他輕輕地說：「如果有需要，我可以幫你問一下。」',
+ ['婉謝：「公事公辦就好」','他點點頭：「你這樣很好。」彼此的信任更深了。',{eq:1,stress:-2,go:MF('佛系同事',8)}],
+ ['請他幫忙打聽相關訊息',['luck',50],'他幫你問到了關鍵訊息，讓你提前準備。',{perf:4,luck:1,go:MF('佛系同事',5)},'消息沒打聽到，還讓人覺得你在走後門。',{stress:7,luck:-1}]);
+CE('佛系同事',2,30,'佛系的底牌','考核會議上有人質疑你經手的案子，一向沉默的$N難得開口：「這件事我知道，是我們一起辦的。」會議室安靜了下來。',
+ ['事後請他吃飯致謝','他說：「小事。」但你知道這不是小事。',{eq:1,stress:-4,money:-1200,go:MF('佛系同事',10)}],
+ ['默默記在心裡，下次換你扛','你在心裡記下這份人情。',{perf:2,stress:-3,go:MF('佛系同事',8)}]);
+
 /* ---------- 新人期（通用）---------- */
 E({cat:'boss',st:'new',t:'打錯機關的電話',b:'電話那頭的阿姨講了 20 分鐘，你才聽懂她想問垃圾車幾點來——但這裡是地政事務所……不，這裡是你們機關。'},
  ['耐心查好清潔隊電話再轉介',['eq',40],'阿姨連說三次謝謝，還說你聲音很好聽。',{eq:1,perf:1},'轉介到一半電話斷線，阿姨又打來從頭講一次。',{stress:6}],
@@ -1165,7 +1332,7 @@ function arcNext(id,delay){const a=S.arcs[id];a.step++;a.due=S.m+(delay||1);}
 function arcEnd(id,good){delete S.arcs[id];S.arcDone=S.arcDone||{};S.arcDone[id]=good?'good':'done';log(`📁 劇情線「${ARCS[id].n}」結案${good?'（圓滿落幕）':''}`,good?'good':'key');}
 function arcDue(){if(!S.arcs)return null;for(const k in S.arcs){if(S.arcs[k].due<=S.m)return k;}return null;}
 function arcD(id){return S.arcs[id].d;}
-function pushArc(k){const a=S.arcs[k],c=ARCS[k].steps[a.step](a.d);pushCard({tag:`劇情・${ARCS[k].n}（${a.step+1}/${ARCS[k].steps.length}）`,title:c.t,body:c.b,choices:c.c.map(x=>mkC(x,c.t))});}
+function pushArc(k){const a=S.arcs[k],c=ARCS[k].steps[a.step](a.d);pushCard({arc:1,tag:`劇情・${ARCS[k].n}（${a.step+1}/${ARCS[k].steps.length}）`,title:c.t,body:c.b,choices:c.c.map(x=>mkC(x,c.t))});}
 const arcCond=id=>()=>!(S.arcs&&S.arcs[id])&&!(S.arcDone&&S.arcDone[id])&&!S.job.stop;
 function A(id,n,start,steps){ARCS[id]={n,steps:[null,...steps]};
   const wrap=fx=>{const f={...(fx||{})};const g=f.go;f.go=()=>{arcStart(id);if(g)g();};return f;};
@@ -1300,7 +1467,7 @@ const heat=p=>p>=1.6?'🔥🔥🔥':p>=1.2?'🔥🔥':p>=0.8?'🔥':'❄️';
 function pushPref(){
   const N=S.flags.N,rk=S.flags.rank,els=eligibleOrgs(),q0=orgQuota(N);
   if(!S.pref||S.pref.length!==els.length||S.pref.some(id=>!q0[id])) S.pref=els.map(o=>o.id).sort((a,b)=>ORGMAP[b].pop-ORGMAP[a].pop);
-  pushCard({tag:'分發',title:'填寫分配志願',body:`你的錄取名次：<b>第 ${rk} 名</b>／本類科錄取 ${N} 名。<br>保訓會將<b>依考試成績名次及志願順序</b>分配實務訓練機關：名次在前的人先選，熱門機關名額可能在輪到你之前就被選完。<br><span class="note">共 ${els.length} 個機關可填（依你的職系列出）。用 ▲▼ 或「置頂」調整順序，確認後送出。名額與熱度為遊戲設定。</span>`,
+  pushCard({tag:'分發',title:'填寫分配志願',body:`你的錄取名次：<b>第 ${rk} 名</b>／本類科錄取 ${N} 名。<br>保訓會將<b>依考試成績名次及志願順序</b>分配實務訓練機關：名次在前的人先選，熱門機關名額可能在輪到你之前就被選完。<br><span class="note">共 ${els.length} 個機關可填（${TR().n}${S.track&&S.track!=='general'?'只能填業務相關機關':'可填全部機關'}）。用 ▲▼ 或「置頂」調整順序，確認後送出。名額與熱度為遊戲設定。</span>`,
     custom:()=>`<ol class="pref prefbox">${S.pref.map((id,i)=>{const o=ORGMAP[id];return `<li><b>第${i+1}志願</b><span class="pname">${o.name}<span class="note">　${CATN[o.u]}・${heat(o.pop)}・名額 ${q0[id]}</span></span><span class="pbtns"><button class="btns" ${i?'':'disabled'} onclick="movePref(${i},'top')">置頂</button><button class="btns" ${i?'':'disabled'} onclick="movePref(${i},-1)">▲</button><button class="btns" ${i<S.pref.length-1?'':'disabled'} onclick="movePref(${i},1)">▼</button></span></li>`;}).join('')}</ol>`,
     choices:[{t:'確認送出志願',fn:()=>{const r=allocate(rk,N),o=ORGMAP[r.got];S.flags.prefIdx=r.idx;Q.push({fn:()=>startCareer(r.got,r)});
       const rows=S.pref.slice(0,Math.min(Math.max(r.idx+1,3),8));
@@ -1451,6 +1618,7 @@ function startGame(){
     stats:{collapse:0,hosp:0,maxGrade:0,units:[]},log:[],last:null,ending:null,recent:[],flags:{},cnt:{},hist:[]};
   Q=[];ROLLS=null;REROLL=3;TAB='log';
   log(`${name}（${GENDER[S.gender].n}）以「${ARCH[R.focus]}」之姿，開始準備${target==='高考'?'高考三級':'普考'}「${TRACKS[FORM.track].n}」類科。`,'key');
+  pushTut('prep');
   save();render();
 }
 function continueGame(){S=loadSave();Q=[];render();}
@@ -1530,6 +1698,7 @@ function startCareer(uid,ar){
   pushCard({tag:'分發通知',title:`派令：分發至「${unit.name}」`,
     body:`${unit.desc}<br><span class="lbl">職系：</span>${TR().n}<br><span class="lbl">職稱：</span>${rank()}第${grade}職等 ${title()}（${lvName(grade,0)}，${ptOf(grade,0)}俸點）<br><span class="lbl">直屬長官：</span>${boss.name}——${boss.desc}<br><span class="lbl">業務量：</span>${'■'.repeat(Math.round(unit.load/20))}${'□'.repeat(5-Math.round(unit.load/20))}　<span class="lbl">加班費：</span>${unit.ot>=0.8?'大多照實發放':unit.ot>=0.6?'部分發放、部分改補休':'多以補休代替'}<br><span class="lbl">俸給總額：</span>${fmt(d.g)}（本俸${fmt(d.b)}＋專業加給${fmt(d.pro)}${d.r?`＋地域加給${fmt(d.r)}`:''}）<br><span class="lbl">預估實發月薪：</span>${fmt(d.net)}<br><span class="note">※ 民國112年7月1日以後初任者適用「個人專戶制」退撫：每月提撥俸額×2×15%（自繳35%、政府65%）存入個人帳戶。</span>`,
     choices:[{t:'敬悉，即日報到',fn:()=>'你穿上新買的襯衫，在人事室簽下到職單。鐵飯碗，到手！'+mod({stress:-5})}]});
+  pushTut('career');
 }
 function doMonth(key,quiet){
   if(Q.length||S.phase!=='career')return;
@@ -1669,6 +1838,7 @@ function review(){
   log(`民國${ROC()-1}年${other?'另予':''}考績：${gr}等（${score}分），領取獎金 ${wan(bonus+ybonus)}`,gr==='甲'?'good':gr==='丙'?'bad':'');
   endY();
   pushCard({tag:'年終考績',title:`民國${ROC()-1}年考績通知`,body:html,choices:[{t:'敬悉',fn:()=>gr==='甲'?'今年辛苦沒有白費！'+mod({stress:-6},true):gr==='乙'?'乙等也是很多人的日常啦。':'被打丙等，你在廁所待了很久。'}]});
+  if(gr==='丙')Q.push({fn:()=>failScene('','c')});
   Q.push({fn:promoCheck});
   Q.push({fn:()=>{snap(ROC()-1);pushYearReview();}});
 }
@@ -1762,7 +1932,68 @@ function retireNow(){life(()=>{const p=pensionCalc();
   pushCard({tag:'人事',title:'申請自願退休',body:pensionText(p),
     choices:[{t:'依規定辦理退休',fn:()=>{ending('retire');}},{t:'再撐幾年',fn:()=>'你把申請書收回抽屜。'}]});});}
 function resign(){life(()=>{pushCard({tag:'人事',title:'遞出辭呈',body:'你把辭呈放在長官桌上。真的要離開公門嗎？鐵飯碗一旦放下就回不去了。',choices:[
-  {t:'確定離職',fn:()=>{ending(netWorth()>=20000000?'fire':'deliver');}},{t:'再想想',fn:()=>'你偷偷把辭呈收回來。'}]});});}
+  {t:'確定離職',fn:()=>{Q.push({fn:exitPaths});return '你深呼吸，把辭呈遞了上去。接下來的人生，要怎麼走？';}},{t:'再想想',fn:()=>'你偷偷把辭呈收回來。'}]});});}
+
+/* ================== 離職出路 ================== */
+const EXIT_TRACK={
+ general:{n:'進入民間企業擔任顧問',k:'consult',a:'eq',d:55,y:5},
+ tax:{n:'考取會計師，加入事務所',k:'cpa',a:'int',d:60,y:3},
+ it:{n:'轉職科技業',k:'tech',a:'int',d:55,y:3},
+ land:{n:'開業地政士事務所',k:'scribe',a:'int',d:52,y:5},
+ civil:{n:'轉任營造業或技師事務所',k:'engineer',a:'int',d:52,y:5},
+ env:{n:'加入環境顧問公司',k:'esg',a:'int',d:52,y:4},
+ social:{n:'加入非營利組織',k:'npo',a:'eq',d:50,y:3},
+};
+function exitPaths(){
+  const j=S.job,yrs=j.months/12,nw=netWorth(),X=EXIT_TRACK[S.track||'general'],ex=k=>()=>{Q.push({fn:()=>ending(k)});};
+  const mk=(t,need,needT,a,d,okK,okT,failK,failT)=>({t,need:()=>need,needT,check:[a,d],ok:()=>{ex(okK)();return okT;},fail:()=>{ex(failK)();return failT;}});
+  const ch=[
+    mk(`${X.n}（${ATTR[X.a]}判定）`,yrs>=X.y,`需年資滿 ${X.y} 年`,X.a,X.d,X.k,'面試很順利，對方說：「你的歷練正是我們需要的。」','deliver','履歷投了十幾封，大多石沉大海，最後你還是得先另覓生計。'),
+    mk('創業開咖啡店（情商判定，需存款 150 萬）',S.money>=1500000,'需存款 150 萬以上','eq',50,'cafe','店面開幕那天，連里長都來捧場。','cafe_fail','開業三個月，房租與人事先把你的積蓄吃掉了一半。'),
+    mk('到補習班或大學兼課（智力判定，需智力 58）',S.int>=58&&yrs>=3,'需智力 58 以上、年資滿 3 年','int',58,'tutor','你的第一堂課，座位爆滿。','deliver','招生不如預期，補習班老闆客氣地說：「我們再聯絡。」'),
+    {t:'財富自由，環遊世界（需淨資產 2,000 萬）',need:()=>nw>=20000000,needT:'需淨資產 2,000 萬以上',fn:()=>{ex('fire')();return '你把辭呈上的「理由」填上了四個字：「另有規劃」。';}},
+    {t:'先送外送再說',fn:()=>{ex('deliver')();return '你換上外送背包，手機裡的訂單聲，成了新的上班鈴。';}},
+    {t:'我再想想（取消離職）',fn:()=>'你把辭呈撕了，假裝什麼事都沒發生過。'},
+  ];
+  pushCard({tag:'人生抉擇',title:'離職後的下一步',body:'辭呈遞出去了，人事室正在簽辦。離開公門之後，你打算怎麼走？<br><span class="note">各選項需要的條件與判定，會依你的職系、年資、存款與屬性而不同。</span>',choices:ch});
+}
+
+/* ================== 新手引導 ================== */
+const TUT_KEY='tw-civil-servant-sim-tut';
+const TUT={
+ prep:[
+  {t:'歡迎來到公職之路',b:'你現在是一名國考生。這個遊戲會帶你從<b>準備高普考</b>開始，歷經分發、升遷，一直走到<b>退休或離開公門</b>。<br><br>左邊的「人事資料卡」是你的屬性：<b>智力</b>影響念書效率，<b>體力</b>和<b>情商</b>影響壓力累積的速度，<b>官運</b>影響機運與考績。<b>壓力達到 100% 會崩潰</b>。'},
+  {t:'每個月怎麼玩',b:'每回合是一個月。你要把本月<b>四週</b>分配給：念書（進度↑）、運動（體力↑、壓力↓）、打工（賺生活費）、休閒（壓力↓）。<br><br>每月也會隨機收到「公文」事件。選項若標示<b>判定</b>，成功率會依相關屬性而定，數字越高越容易成功。'},
+  {t:'國考與考古題',b:'高普考每年 <b>7 月</b>舉行。備考進度越高、壓力越低，錄取機率越大。<br><br>考試時會抽出 <b>3 題真實歷屆考古題</b>，每答對一題可再提高錄取機率，三題全對還有額外加成。'},
+  {t:'上榜之後的分發',b:'考上後，會依<b>錄取名次</b>與你填的<b>志願順序</b>分配機關。名次越前面，越有機會選到熱門機關。<br><br><b>一般行政</b>可填全部機關；其他專業類科只能填業務相關的機關。熱門機關可能在輪到你之前就額滿。',r:'接下來，專心備考吧！'},
+ ],
+ career:[
+  {t:'報到第一天',b:'恭喜上班！每回合一個月，每個月你要選一項<b>本月工作重點</b>：依規定辦理（穩穩來）、加班趕辦（表現↑，但體力↓、壓力↑，有加班費）、經營人脈、休假、運動等。<br><br>每個月約有六成機率收到一件「公文」事件。'},
+  {t:'考績與升遷',b:'每年 <b>12 月</b>辦理考績：甲、乙、丙、丁。<b>二年甲等</b>或<b>一年甲等加二年乙等</b>，才有機會升職等。<br><br>平時的<b>嘉獎／記功</b>與<b>申誡／記過</b>可互相抵銷；請事病假超過 14 日，就不能考甲等。'},
+  {t:'公文、判定與劇情線',b:'事件卡裡，你的每個選擇都會影響<b>年度表現、長官與同事好感、獎懲</b>。有些事件會延伸成<b>連續好幾個月的劇情線</b>，前面的選擇會改變後面的發展。<br><br>過去的獎懲也會留下後續：被審計開單，之後可能會被複查；辦得漂亮，也可能被請去分享經驗。'},
+  {t:'長官、同事與人脈',b:'右側「人際」面板會顯示長官與同事的好感。好感高的同事成為<b>盟友</b>，每月幫你分擔壓力。<br><br>每位同事都有自己的<b>三段小故事</b>，會隨著年資慢慢發展，你的選擇會影響彼此的關係。'},
+  {t:'錢與生活',b:'你的實發薪水是「俸給總額」扣掉退撫基金、公保與健保。右側「生活」面板可以<b>投資股票、買房、結婚生子</b>，也可以申請育嬰留職停薪、進修與調動。<br><br>錢不夠時壓力會跟著上升，記得留意存款。'},
+  {t:'退休、離職與結局',b:'年資滿 25 年，或滿 60 歲且年資滿 5 年，可以申請退休。你也可以<b>遞出辭呈</b>離開公門，出路依你的<b>職系、年資、存款與屬性</b>而不同。<br><br>人生結案時，會回顧你的<b>三個轉折點</b>。上方「💾存檔管理」可存檔，「🧭新手引導」隨時可以重看。',r:'祝你一路順遂，依規定辦理！'},
+ ]};
+function tutSeen(k){try{return !!JSON.parse(sget(TUT_KEY)||'{}')[k];}catch(e){return false;}}
+function tutMark(k){try{const o=JSON.parse(sget(TUT_KEY)||'{}');o[k]=1;sset(TUT_KEY,JSON.stringify(o));}catch(e){}}
+function pushTut(k,force){
+  if(!force&&tutSeen(k))return;tutMark(k);
+  const a=TUT[k];
+  a.forEach((s,i)=>{
+    const last=i===a.length-1;
+    Q.push({tut:1,tag:`新手引導 ${i+1}/${a.length}`,title:s.t,body:s.b,
+      choices:[{t:last?'了解，開始！':'了解，下一步',fn:()=>last?(s.r||'引導結束了。'):'繼續看下一則。'},
+        ...(last?[]:[{t:'略過引導（可按上方「🧭新手引導」重看）',fn:()=>{Q=Q.filter((x,ix)=>ix===0||!x.tut);return '已略過引導。';}}])]});
+  });
+}
+function openTut(){
+  if(!S){toast('請先開始遊戲');return;}
+  if(S.phase==='end'){toast('這一局已結案');return;}
+  if(Q.length){toast('請先處理目前的公文');return;}
+  pushTut(S.phase==='prep'?'prep':'career',true);render();
+}
+
 function pensionCalc(){
   const j=S.job,yrs=j.months/12,b=basePay();
   const lumpOnly=yrs<15;                                 // 個人專戶制：年資未滿15年限領一次退休金
@@ -1791,6 +2022,16 @@ const ENDINGS={
  politics:{i:'🗳',hidden:true,t:'【隱藏】轉戰政壇',d:'多年基層服務累積的好口碑，讓你從答詢台下的承辦人，變成坐在議事廳質詢官員的民意代表。第一次質詢，你就把公文流程問得官員冷汗直流。'},
  lawyer:{i:'⚖',hidden:true,t:'【隱藏】轉換跑道當律師',d:'你考上律師，帶著對行政程序的熟悉，專接行政訴訟與國賠案件。昔日的同事看到你出庭，都有點怕怕的。'},
  legend:{i:'🐉',hidden:true,t:'【隱藏】傳奇公務員',d:'二十年以上年年甲等、零懲處，你的名字成了機關裡的傳說。新人報到時，前輩都會指著牆上的照片說：「那是一個從來沒出包的人。」'},
+ consult:{i:'💼',t:'華麗轉身・民間企業顧問',d:'你把多年的行政歷練帶到民間，成為企業與政府之間的「翻譯官」。簡報的第一頁，永遠是「依規定辦理」的新解釋。'},
+ cpa:{i:'🧮',t:'考取會計師・自立門戶',d:'你在報稅季看盡人間百態，現在換到事務所的另一邊。客戶問你「這樣申報安不安全」，你總是先說：「我們來看法條。」'},
+ tech:{i:'💻',t:'轉戰科技業・年薪翻倍',d:'你把政府系統的維運經驗帶進科技公司，從資安到流程都難不倒你。只是開會時偶爾還是會下意識地問：「這個有沒有公文？」'},
+ scribe:{i:'🏡',t:'開業地政士・土地達人',d:'你對測量、登記與地價瞭若指掌，客戶一拿出地籍圖，你就知道哪裡有問題。不少老鄰居都特地來找你辦繼承。'},
+ engineer:{i:'🏗️',t:'轉任營造業・工地主任',d:'你曾經是發包的那一方，如今站在工地另一邊。安全帽比文件夾更常帶在身上，驗收時你比任何人都清楚哪裡不能偷。'},
+ esg:{i:'🌱',t:'環境顧問・淨零推手',d:'你把稽查經驗化為企業的永續報告書，從「被查的一方」變成「幫忙準備的一方」。收入多了，但你還是習慣先看排放數據。'},
+ npo:{i:'🤝',t:'加入非營利組織・走進社區',d:'你離開了體系，卻沒有離開對社會的在乎。在 NPO 裡預算少、事情多，但那些笑容，讓你覺得值得。'},
+ cafe:{i:'☕',t:'開咖啡店・慢活老闆',d:'你把辭呈換成一間小咖啡店，店名取為「簽辦」。客人點餐時，你下意識會說：「請稍候，依序辦理。」'},
+ cafe_fail:{i:'📉',t:'咖啡店歇業・重新出發',d:'房租、人事與咖啡豆價格，比任何公文都難審。咖啡店撐了兩年後熄燈，你把招牌收起來說：「下一次，我會先做個簽呈。」'},
+ tutor:{i:'🎓',t:'名師誕生・補教界新星',d:'你把高普考的血淚史變成講義，課堂上一邊分享考古題，一邊講「當年我在機關是怎麼被退文的」。學生都記得你的口頭禪。'},
  safe:{i:'🛬',t:'順利降落・平安退休',d:'不求有功、但求無過，你穩穩地降落在退休跑道上。最後一天下班，你把「依規定辦理」的印章留給了學弟妹。'},
 };
 function ending(reason){
@@ -1811,7 +2052,7 @@ function renderEnd(){
   let score=0;
   score+=j?S.stats.maxGrade*4:0; score+=clamp(nw/500000,0,40); score+=S.sta/5; score+=A*1.5-C*3;
   if(['corrupt','fired'].includes(S.ending))score-=40;
-  if(['burnout','failexam','deliver'].includes(S.ending))score-=15;
+  if(['burnout','failexam','deliver'].includes(S.ending))score-=15;if(S.ending==='cafe_fail')score-=8;
   const grade=score>=90?'甲上':score>=70?'甲':score>=50?'乙':score>=30?'丙':'丁';
   $('#app').innerHTML=`<div class="start" style="max-width:820px"><div class="doc">
     <div class="dochead"><div class="org serif">人生結案簽</div><div class="meta">檔號：${ROC()}/人生/結案<br>保存年限：永久</div></div>
@@ -1831,6 +2072,7 @@ function renderEnd(){
       ${p?`<dt>退撫專戶累積</dt><dd>${wan(p.acct)}</dd>${p.lumpOnly?'<dt>專戶給付</dt><dd>年資未滿15年，一次領</dd>':`<dt>專戶月領</dt><dd>${fmt(p.annuity)}</dd>`}<dt>公保養老年金</dt><dd>${fmt(p.gb)}</dd><dt>所得替代率</dt><dd>${(p.ratio*100).toFixed(1)}%</dd>`:''}
       <dt>終場屬性</dt><dd>智${Math.round(S.int)}・體${Math.round(S.sta)}・壓${Math.round(S.stress)}%・情${Math.round(S.eq)}・運${Math.round(S.luck)}</dd>
     </dl>
+    ${tpHTML()}
     ${S.hist&&S.hist.length>1?`<div class="sec"><h4>📈 人生曲線</h4>${chartsHTML()}</div>`:''}
     ${(S.achRun||[]).length?`<div class="sec"><h4>🏆 本局達成的成就</h4><div class="gallery">${S.achRun.map(id=>{const a=ACH.find(x=>x.id===id);return a?`<div class="gi" title="${a.d}">${a.i}<span>${a.n}</span></div>`:'';}).join('')}</div></div>`:''}
     <div style="text-align:center;margin:14px 0"><span class="lbl">人生總考評：</span><b style="font-size:26px;color:var(--red)" class="serif">${grade}</b></div>
@@ -1957,7 +2199,7 @@ function relPanel(){
   const bar=f=>`<div class="bar"><i style="width:${f}%;background:${f>=70?'var(--green)':f<=25?'var(--red)':'var(--blue2)'}"></i></div>`;
   return `<div class="sec"><h4>👔 直屬長官</h4><div class="stat"><div class="row"><span>${b.name}</span><span>${Math.round(r.boss)}・${bossTag(r.boss)}</span></div>${bar(r.boss)}</div>
     <div class="note">${b.desc}<br>好感影響：考績分數與甲等名額、陞遷機會；好感達75時，長官有機會幫你擋下懲處；低於35，被甩鍋機率大增。</div></div>
-    <div class="sec"><h4>🧑‍🤝‍🧑 同事</h4>${r.mates.map(m=>`<div class="stat"><div class="row"><span>${m.n}（${m.t}）</span><span>${Math.round(m.f)}・${relTag(m.f)}</span></div>${bar(m.f)}</div>`).join('')}
+    <div class="sec"><h4>🧑‍🤝‍🧑 同事</h4>${r.mates.map(m=>`<div class="stat"><div class="row"><span>${m.n}（${m.t}）${m.st?`<span class="note"> 故事${'●'.repeat(m.st)}${'○'.repeat(Math.max(0,3-m.st))}</span>`:''}</span><span>${Math.round(m.f)}・${relTag(m.f)}</span></div>${bar(m.f)}</div>`).join('')}
     <div class="note">好感≥70成為盟友，每位盟友每月幫你分擔壓力；≤25會不合，可能在背後打小報告。用「同事聯誼」「經營人脈」或在事件中的選擇經營關係。調動後會換一批長官與同事。</div></div>`;
 }
 function lifePanel(){
@@ -2008,9 +2250,10 @@ function openHelp(){
   <p><b>九、人際關係</b>：長官好感影響考績分數、甲等名額與陞遷；達 75 有機會幫你擋懲處，低於 35 容易被甩鍋。同事好感≥70 為盟友（每月分擔壓力），≤25 為不合（可能打小報告）。調動後換一批人。</p>
   <p><b>十、假勤與家庭</b>：休假依年資（滿1年7日→滿14年30日）。事、病假合計超過14日不得考列甲等，家庭照顧假不計。子女未滿3歲可申請育嬰留職停薪（每名最長2年，前6個月領本俸60%津貼＋政府加發20%）；父母年老可能需要照顧，可選長照2.0、外籍看護或侍親留職停薪；父母辭世給喪假15日及喪葬補助。年度中有留職停薪者辦理「另予考績」（不晉級，只發一次獎金）。本遊戲簡化：留職停薪期間不提撥退撫、不計年資。</p>
   <p><b>十一、職涯機會</b>：資深後可能獲邀借調行政法人（每次2年、最長4年，薪水較高，回任後陞遷加分）；可報考碩士在職專班（升簡任遴選加分，並放寬升官等訓練人員的職務列等限制）；40歲前可能遇到國營事業招考（考上即轉職結局）。</p>
-  <p><b>十二、國考與分發</b>：考試時會隨機出 3 題「法學知識與英文」歷屆試題（考選部公開試題），每答對一題錄取機率 +5%，全對再 +3%。上榜後依錄取名次與志願順序分配機關：志願表列出約 25～30 個具體機關（如交通部觀光署、臺北國稅局、內政部移民署、各區公所與縣市局處，依職系不同），名次在前者先選，熱門機關可能先額滿。各機關另有專屬事件，名額與熱度為遊戲設定。</p>
+  <p><b>十二、國考與分發</b>：考試時會隨機出 3 題「法學知識與英文」歷屆試題（考選部公開試題），每答對一題錄取機率 +5%，全對再 +3%。上榜後依錄取名次與志願順序分配機關：志願表列出具體機關（如交通部觀光署、臺北國稅局、內政部移民署、各區公所與縣市局處）：<b>一般行政可填全部機關</b>，其他專業職系（財稅、社會、土木、地政、環保、資訊）只能填業務相關的機關。名次在前者先選，熱門機關可能先額滿。各機關另有專屬事件，名額與熱度為遊戲設定。</p>
   <p><b>十三、事件與劇情</b>：事件依職涯階段分為新人期、中堅期、主管期（擔任主管或薦任九職等以上），並有各職系專屬事件。另有 6 條跨月劇情線（陳情案、標案、新首長、議會會期、審計查核、帶新人），選擇會影響後續發展。</p>
   <p><b>十四、數值回饋與重玩</b>：每年 12 月出年度回顧並記錄數值，「📈 人生曲線」可看歷年變化；「🏆 成就」有 30 項跨局保留的成就；另有 4 種隱藏結局等你發掘。</p>
+  <p><b>十六、結案回顧、同事故事與離職出路</b>：人生結案時會列出你的「三個轉折點」。每位同事各有三段會隨年資發展的小故事；過去的獎懲（例如被審計開單、被議員稱讚）日後會有後續。遞辭呈後可依職系選擇離職出路（顧問、會計師、科技業、地政士、營造業、環境顧問、NPO、開咖啡店、補教等），能否成功看年資、存款與屬性判定。第一次遊玩會出現新手引導，隨時可按上方「🧭新手引導」重看。</p>
   <p><b>十五、存檔與操作</b>：每回合結束自動存檔；「💾 存檔管理」可手動存 3 格、讀取、刪除，也能匯出／匯入 .json 備份。快捷鍵：數字鍵 1～4 選擇選項，Enter 或空白鍵「存查」，Esc 關閉視窗。</p></div>`;
   $('#modal').classList.add('on');
 }
