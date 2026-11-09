@@ -3,7 +3,16 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>分帳神器</title>
+<title>分帳神器｜旅遊聚餐分帳、自動算轉帳</title>
+<meta name="description" content="免費分帳工具：記下誰付了錢，自動算出最少轉帳次數，一鍵貼到 LINE 群組。">
+<meta name="theme-color" content="#16a34a">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" type="image/png" href="icons/icon-192.png">
+<link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="分帳神器">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
 <style>
   :root { --bg:#f5f6f8; --card:#fff; --fg:#1d1f23; --mut:#7a7f88; --acc:#16a34a; --acc2:#e8f7ee; --red:#dc2626; --line:#e6e8ec; }
   * { box-sizing:border-box; }
@@ -53,6 +62,12 @@
   .xfer { flex-wrap:wrap; }
   .xfer .row1 { display:flex; justify-content:space-between; align-items:center; width:100%; }
   #imgOut { width:100%; border-radius:10px; display:block; margin-top:6px; border:1px solid var(--line); }
+  .install { display:flex; align-items:center; gap:10px; background:#e8f7ee; border-radius:14px; padding:10px 12px; margin-bottom:12px; }
+  .install img { width:40px; height:40px; border-radius:10px; flex:none; }
+  .install .tx { flex:1; font-size:14px; color:#14532d; line-height:1.4; }
+  .install button { padding:8px 12px; font-size:14px; }
+  .install .x { background:none; color:#14532d; padding:4px 6px; font-size:20px; }
+  .steps { margin:0; padding-left:20px; line-height:1.9; font-size:15px; }
   .pos { color:var(--acc); } .neg { color:var(--red); }
   table { width:100%; border-collapse:collapse; font-size:14px; }
   td, th { padding:7px 4px; text-align:right; border-top:1px solid var(--line); font-variant-numeric:tabular-nums; }
@@ -70,6 +85,13 @@
 <main>
   <h1>💸 分帳神器</h1>
   <div class="sub">記下誰付了錢，自動算出最少轉帳次數，一鍵貼到 LINE 群組。</div>
+
+  <div class="install hidden" id="installBar">
+    <img src="icons/icon-192.png" alt="">
+    <div class="tx"><b>加到主畫面</b><br>像 App 一樣一鍵打開，沒網路也能用</div>
+    <button id="installBtn">安裝</button>
+    <button class="x" id="installX" aria-label="不再顯示">×</button>
+  </div>
 
   <div class="bookbar">
     <select id="bookSel" aria-label="切換帳本"></select>
@@ -180,6 +202,18 @@
       <button class="ghost" id="imgClose" style="flex:1">關閉</button>
       <button id="imgShare" style="flex:1">分享 / 下載</button>
     </div>
+  </div>
+</div>
+<div class="modal hidden" id="iosModal">
+  <div class="card">
+    <h2 style="display:block">📲 加到主畫面</h2>
+    <ol class="steps">
+      <li>用 <b>Safari</b> 打開這個網頁</li>
+      <li>點下方的「分享」按鈕 <b>⬆︎</b></li>
+      <li>往下滑，選「<b>加入主畫面</b>」</li>
+      <li>右上角按「<b>新增</b>」就完成了</li>
+    </ol>
+    <button class="full" id="iosClose" style="width:100%">知道了</button>
   </div>
 </div>
 <div class="toast" id="toast"></div>
@@ -747,6 +781,46 @@ $('imgShare').addEventListener('click', function () {
 
 render();
 checkHash();
+
+
+// ===== 加到主畫面（PWA）=====
+(function () {
+  var deferred = null;
+  function standalone() {
+    try { return window.matchMedia('(display-mode: standalone)').matches || navigator.standalone === true; } catch (e) { return false; }
+  }
+  function dismissed() { try { return localStorage.getItem('splitInstallX') === '1'; } catch (e) { return false; } }
+  var ua = navigator.userAgent || '';
+  var isIOS = /iPhone|iPad|iPod/.test(ua) || (/Macintosh/.test(ua) && navigator.maxTouchPoints > 1);
+  var canSW = false;
+  try { canSW = 'serviceWorker' in navigator && (location.protocol === 'https:' || location.hostname === 'localhost') && !/claude/.test(location.hostname); } catch (e) {}
+  function showBar(on) { $('installBar').classList.toggle('hidden', !on || standalone() || dismissed()); }
+
+  // 離線快取：只在自己的網站（https）上啟用
+  if (canSW) {
+    try { navigator.serviceWorker.register('sw.js').catch(function () {}); } catch (e) {}
+    if (isIOS) showBar(true);
+  }
+  window.addEventListener('beforeinstallprompt', function (e) { e.preventDefault(); deferred = e; showBar(true); });
+  window.addEventListener('appinstalled', function () { deferred = null; showBar(false); toast('已加到主畫面 🎉'); });
+
+  $('installBtn').addEventListener('click', function () {
+    if (deferred) {
+      try {
+        deferred.prompt();
+        deferred.userChoice.then(function (r) { if (r && r.outcome === 'accepted') showBar(false); }).catch(function () {});
+      } catch (e) {}
+      deferred = null;
+      return;
+    }
+    $('iosModal').classList.remove('hidden');
+  });
+  $('iosClose').addEventListener('click', function () { $('iosModal').classList.add('hidden'); });
+  $('installX').addEventListener('click', function () {
+    try { localStorage.setItem('splitInstallX', '1'); } catch (e) {}
+    showBar(false);
+  });
+})();
 </script>
 </body>
 </html>
