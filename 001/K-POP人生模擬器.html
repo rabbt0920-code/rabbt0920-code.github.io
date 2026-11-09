@@ -297,6 +297,11 @@ button,.tab,.choice,.btn{touch-action:manipulation}
 [data-theme=dark] .pl-row,[data-theme=dark] .pl-card{background:#242238;border-color:#3a3658}[data-theme=dark] .pl-row.on,[data-theme=dark] .pl-card.on{background:#3a2640;border-color:#ff5fa2}[data-theme=dark] .pl-sum{background:#1c1a30;border-color:#3a3658}[data-theme=dark] .pl-row em{background:#312d52;color:#b9b2ff}
 .corow{display:grid;grid-template-columns:22px 1fr 90px 34px;gap:8px;align-items:center;padding:5px 0;font-size:13px}.corow.me{font-weight:700;color:#ff5fa2}.corow span{color:#8a84a3;text-align:center}.corow em{font-style:normal;text-align:right}.cobar{height:8px;border-radius:99px;background:#eee9fb;overflow:hidden}.cobar i{display:block;height:100%;background:linear-gradient(90deg,#ff8bbd,#ff5fa2)}.corow.me .cobar i{background:linear-gradient(90deg,#8b7bff,#6c63ff)}
 .pl-al{display:flex;gap:6px;align-items:center;margin:4px 0}.pl-al label{flex:0 0 5.5em;font-size:12px;opacity:.8}.pl-al input{flex:1;min-width:0}
+.cere{position:fixed;inset:0;z-index:9999;background:#120a24;display:flex;flex-direction:column;align-items:center;color:#fff}
+.cere-top{width:100%;max-width:480px;display:flex;justify-content:space-between;align-items:center;padding:8px 10px;box-sizing:border-box;font-size:13px;font-weight:700}
+.cere-svg{width:100%;max-width:480px;flex:1;min-height:0}
+.cere-sub{width:100%;max-width:480px;padding:10px 16px;box-sizing:border-box;text-align:center;font-size:16px;font-weight:700;min-height:44px;background:rgba(0,0,0,.35)}
+.cere-bar{width:100%;max-width:480px;height:4px;background:rgba(255,255,255,.15)}.cere-bar i{display:block;height:100%;width:0;background:#ffd54a}
 
 </style>
 </head>
@@ -6182,6 +6187,12 @@ Idol.awards = function () {
   const showNote = yW ? `\n\n🎤 今年你在打歌舞台拿下 ${yW} 次一位${yB ? '，並擊敗了路線大魔王' : ''}，替評審印象加了分。` : '';
   I.flags.yWins = 0; I.flags.yBoss = 0;
   won.forEach(n => I.awards.push({ y, n }));
+  { // 頒獎典禮動畫：實際競爭的獎項依序揭曉（得獎結果與上方判定一致）
+    const names = (I.chart && I.chart.rivals || []).map(r => r.name), used = new Set(), pick = () => { const l = names.filter(n => !used.has(n)); const n = l.length ? U.pick(l) : U.pick(['NOVA 9', 'LUNARIA', 'PRISM', 'ECLIPSE']); used.add(n); return n; };
+    const cats = [];
+    if (debutRecent) cats.push('最佳新人獎'); if (I.stage >= 2) cats.push('本賞（唱片）'); if (I.stage >= 3) cats.push('年度大賞');
+    if (cats.length) I.queue.push({ t: 'cere', y, av: I.av, g: I.g, pname: I.grp && I.grp.name ? I.grp.name : Idol.dn(), cats: cats.map(n => won.includes(n) ? { n, win: true } : { n, win: false, winner: pick() }) });
+  }
   I.queue.push({ t: 'msg', title: `🏆 ${y} 年終頒獎典禮`, text: (won.length ? `你獲得了：${won.join('、')}！\n站在台上，你想起第一次走進練習室的那天。` : '今年的典禮上，你只是坐在台下鼓掌。但你告訴自己：明年，換我。') + showNote, chips: Idol.chips(r) });
   if (won.length) Idol.log(`🏆 ${y} 年終頒獎：${won.join('、')}`, 'win');
   Idol.checkStage();
@@ -6520,8 +6531,9 @@ IdolUI.fanModal = function (edit) {
     <div class="btn-row">${edit ? '<button class="btn ghost" data-act="u.close">取消</button>' : ''}<button class="btn pink" data-act="i.fanname" data-edit="${edit ? 1 : 0}">確定</button></div>`, { cls: 'event' });
 };
 Idol.flush = function () {
-  if (!I || UI.isOpen()) return;
+  if (!I || UI.isOpen() || Cere.active) return;
   const q = I.queue[0];
+  if (q && q.t === 'cere') { I.queue.shift(); Cere.play(q, () => { Idol.save('auto'); Idol.flush(); }); return; }
   if (!q) {
     if (I._pauseRun) { I._pauseRun = false; if (IdolUI.run) { IdolUI.run = false; UI.toast('💿 專輯發行，自動排程已暫停——宣傳期請自己安排行程', 'ok'); Idol.render(); return; } }
     if (IdolUI.run && !I.over) { if (Idol.runMonth(IdolUI.plan)) IdolUI.run = false; Idol.save('auto'); Idol.render(); if (I.queue.length) return Idol.flush(); return; }
@@ -6803,6 +6815,131 @@ const ShowFx = (function () {
   return { show };
 })();
 
+
+/* ===== ceremony.js ===== */
+/* =========================================================
+ * 年末頒獎典禮動畫（向量 SVG，約 10～20 秒，可跳過／快轉）
+ * Cere.play({ y, pname, cats:[{ n, win, winner }] }, done)
+ *   win=true 代表玩家得獎；否則 winner 是對手名稱
+ * ========================================================= */
+const Cere = (() => {
+  const W = 360, H = 640, INTRO = 3, PER = 4.5, OUTRO = 2;
+  const rnd = (i, n) => { const x = Math.sin(i * 97.13 + n * 31.7) * 43758.5453; return x - Math.floor(x); };
+  const CONF = Array.from({ length: 70 }, (_, i) => ({ x: rnd(i, 1) * W, y: -rnd(i, 2) * 160 - 20, vx: (rnd(i, 3) - .5) * 90, vy: rnd(i, 4) * 150 + 130, rot: rnd(i, 5) * 360, vr: (rnd(i, 6) - .5) * 720, w: 5 + rnd(i, 7) * 5, h: 8 + rnd(i, 8) * 6, c: ['#ff6fb5', '#ffd54a', '#7be0ff', '#b79bff', '#7dffb0'][i % 5] }));
+  const STARS = Array.from({ length: 36 }, (_, i) => ({ x: rnd(i, 11) * W, y: rnd(i, 12) * 330, r: .6 + rnd(i, 13) * 1.4, p: rnd(i, 14) * 6 }));
+  const svg = () => `<svg viewBox="0 0 ${W} ${H}" xmlns="http://www.w3.org/2000/svg" class="cere-svg">
+  <defs>
+    <linearGradient id="cbg" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#1a0f3a"/><stop offset="1" stop-color="#3b1a5e"/></linearGradient>
+    <linearGradient id="cscr" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#2a2060"/><stop offset="1" stop-color="#4b2a88"/></linearGradient>
+    <linearGradient id="cgold" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#fff2a8"/><stop offset=".5" stop-color="#ffc83a"/><stop offset="1" stop-color="#d98b00"/></linearGradient>
+    <linearGradient id="ccur" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#7a1030"/><stop offset=".5" stop-color="#b3204f"/><stop offset="1" stop-color="#7a1030"/></linearGradient>
+    <radialGradient id="cglow"><stop offset="0" stop-color="#fff6c0" stop-opacity=".9"/><stop offset="1" stop-color="#ffd54a" stop-opacity="0"/></radialGradient>
+  </defs>
+  <rect width="${W}" height="${H}" fill="url(#cbg)"/>
+  <g id="cstars">${STARS.map((s, i) => `<circle id="cs${i}" cx="${s.x.toFixed(1)}" cy="${s.y.toFixed(1)}" r="${s.r.toFixed(1)}" fill="#fff"/>`).join('')}</g>
+  <polygon id="csp1" points="60,0 100,0 190,560 20,560" fill="#ffe9a8" opacity=".12"/>
+  <polygon id="csp2" points="260,0 300,0 340,560 170,560" fill="#a8d8ff" opacity=".12"/>
+  <rect x="24" y="64" width="312" height="140" rx="14" fill="url(#cscr)" stroke="#ffd54a" stroke-width="3"/>
+  <text id="chead" x="180" y="92" text-anchor="middle" font-size="13" fill="#ffd54a" font-weight="700"></text>
+  <text id="cmain" x="180" y="152" text-anchor="middle" font-size="28" fill="#fff" font-weight="800"></text>
+  <text id="csubm" x="180" y="185" text-anchor="middle" font-size="12" fill="#cbb8ff"></text>
+  <ellipse cx="180" cy="590" rx="200" ry="34" fill="#2a1450"/>
+  <ellipse cx="180" cy="580" rx="190" ry="26" fill="#4a2a80"/>
+  <g id="cmc"><g id="cmcb">
+    <path d="M-36 190 L-30 52 Q0 40 30 52 L36 190 Z" fill="#2b2547"/>
+    <path d="M-10 52 L0 92 L10 52 Z" fill="#fff"/><path d="M-9 56 L0 50 L9 56 L0 62 Z" fill="#ff6fb5"/>
+    <circle cx="0" cy="22" r="25" fill="#ffd9b8"/>
+    <path d="M-27 20 Q-27 -10 0 -10 Q27 -10 27 20 Q18 2 0 2 Q-18 2 -27 20 Z" fill="#ff6fb5"/>
+    <circle cx="-9" cy="24" r="2.6" fill="#3a2a2a"/><circle cx="9" cy="24" r="2.6" fill="#3a2a2a"/>
+    <ellipse id="cmouth" cx="0" cy="34" rx="5" ry="2" fill="#c0305a"/>
+    <path d="M-30 60 Q-44 100 -34 140" stroke="#2b2547" stroke-width="12" fill="none" stroke-linecap="round"/>
+    <g id="carm"><path d="M30 60 Q50 74 58 40" stroke="#2b2547" stroke-width="12" fill="none" stroke-linecap="round"/><circle cx="58" cy="36" r="7" fill="#ffd9b8"/><rect x="55" y="12" width="6" height="22" rx="3" fill="#888"/><circle cx="58" cy="10" r="7" fill="#444"/></g>
+  </g></g>
+  <g id="ctrophy" opacity="0"><circle cx="0" cy="-30" r="70" fill="url(#cglow)"/><path d="M-24 -62 H24 Q24 -20 0 -14 Q-24 -20 -24 -62 Z" fill="url(#cgold)"/><path d="M-24 -56 Q-44 -56 -38 -38 Q-34 -28 -22 -30" fill="none" stroke="#ffc83a" stroke-width="5"/><path d="M24 -56 Q44 -56 38 -38 Q34 -28 22 -30" fill="none" stroke="#ffc83a" stroke-width="5"/><rect x="-5" y="-14" width="10" height="22" fill="#e0a010"/><rect x="-22" y="8" width="44" height="10" rx="3" fill="url(#cgold)"/><text x="0" y="-38" text-anchor="middle" font-size="18" fill="#fff8d6">★</text></g>
+  <g id="cav" opacity="0"></g>
+  <g id="ccurt"><rect id="curl" x="0" y="0" width="190" height="${H}" fill="url(#ccur)"/><rect id="curr" x="170" y="0" width="190" height="${H}" fill="url(#ccur)"/></g>
+  <g id="cconf">${CONF.map((c, i) => `<rect id="cf${i}" width="${c.w.toFixed(1)}" height="${c.h.toFixed(1)}" fill="${c.c}" opacity="0"/>`).join('')}</g>
+</svg>`;
+  let st = null;
+  const play = (d, done) => {
+    if (st) return;
+    const cats = d.cats || [], T = INTRO + cats.length * PER + OUTRO;
+    if (!cats.length) { done && done(); return; }
+    const el = document.createElement('div'); el.className = 'cere';
+    el.innerHTML = `<div class="cere-top"><span class="cere-ttl">🏆 ${d.y} 年終頒獎典禮</span><span><button class="btn sm ghost" id="cff">⏩ 快轉</button> <button class="btn sm ghost" id="cskip">跳過 ⏭</button></span></div>${svg()}<div class="cere-sub" id="csub"></div><div class="cere-bar"><i id="cbar"></i></div>`;
+    document.body.appendChild(el);
+    const $ = id => el.querySelector('#' + id);
+    const avBox = $('cav');
+    if (d.av && typeof Avatar !== 'undefined') { try { avBox.innerHTML = `<circle cx="0" cy="0" r="50" fill="#fff4d0" stroke="url(#cgold)" stroke-width="5"/><g transform="translate(-40,-40)">${Avatar.svg(d.av, 80, d.g)}</g>`; } catch (e) { avBox.innerHTML = ''; } }
+    st = { t: 0, speed: 1, last: performance.now(), raf: 0, el, done: false };
+    const phaseAt = t => {
+      if (t < INTRO) return { k: 'intro', u: t / INTRO };
+      if (t >= T - OUTRO) return { k: 'outro', u: (t - (T - OUTRO)) / OUTRO };
+      const i = Math.min(cats.length - 1, Math.floor((t - INTRO) / PER)), l = t - INTRO - i * PER;
+      return l < 1.7 ? { k: 'ann', i, u: l / 1.7 } : l < 3 ? { k: 'drum', i, u: (l - 1.7) / 1.3 } : { k: 'rev', i, u: (l - 3) / 1.5, l: l - 3 };
+    };
+    const setT = (id, v) => { const n = $(id); if (n.textContent !== v) n.textContent = v; };
+    const render = t => {
+      const p = phaseAt(t), c = p.i != null ? cats[p.i] : null;
+      // 布幕
+      const open = Math.min(1, t / 1.4), ease = 1 - Math.pow(1 - open, 3), outroC = p.k === 'outro' ? Math.max(0, (p.u - .4) / .6) : 0, cur = Math.max(0, ease - outroC) * 175;
+      $('curl').setAttribute('x', -cur); $('curr').setAttribute('x', 170 + cur);
+      // 星星 / 聚光燈
+      STARS.forEach((s, i) => { $('cs' + i).setAttribute('opacity', (.35 + .65 * Math.abs(Math.sin(t * 2 + s.p))).toFixed(2)); });
+      const sw = Math.sin(t * 1.3) * 22, boost = p.k === 'drum' ? (Math.sin(t * 24) > 0 ? 1.6 : .6) : 1;
+      $('csp1').setAttribute('points', `${60 + sw},0 ${100 + sw},0 ${190 + sw * 2},560 ${20 + sw * 2},560`);
+      $('csp2').setAttribute('points', `${260 - sw},0 ${300 - sw},0 ${340 - sw * 2},560 ${170 - sw * 2},560`);
+      $('csp1').setAttribute('opacity', (.12 * boost).toFixed(3)); $('csp2').setAttribute('opacity', (.12 * boost).toFixed(3));
+      // 主持人
+      const speaking = p.k === 'intro' ? t > 1.3 : p.k === 'ann' ? p.u < .85 : p.k === 'drum' ? p.u < .6 : p.k === 'rev' ? p.u < .7 : p.k === 'outro' ? p.u < .6 : false;
+      $('cmouth').setAttribute('ry', speaking ? (2 + 4.5 * Math.abs(Math.sin(t * 15))).toFixed(1) : '2');
+      const bob = Math.sin(t * 3) * 2.5;
+      $('cmc').setAttribute('transform', `translate(96,${365 + bob})`);
+      const arm = p.k === 'ann' ? -28 * Math.min(1, p.u * 3) : p.k === 'rev' ? -42 + Math.sin(t * 9) * 12 : p.k === 'drum' ? -10 : 0;
+      $('carm').setAttribute('transform', `rotate(${arm} 30 60)`);
+      // 螢幕
+      let head = '', main = '', subm = '', line = '', ms = 28;
+      if (p.k === 'intro') { head = '★ ANNUAL AWARDS ★'; main = `${d.y}`; subm = '年終頒獎典禮'; line = `各位晚安！歡迎來到 ${d.y} 年終頒獎典禮！`; ms = 40; }
+      else if (p.k === 'outro') { head = '★ THANK YOU ★'; main = '明年再見！'; subm = ''; line = '感謝各位收看，我們明年再見！'; }
+      else if (p.k === 'ann') { head = `第 ${p.i + 1} 個獎項`; main = c.n; subm = '提名中……'; line = `接下來要公布的是——${c.n}！`; ms = c.n.length > 6 ? 22 : 28; }
+      else if (p.k === 'drum') { head = c.n; main = '？ ？ ？'; subm = ''; line = '本年度的得主是……'; ms = 34; }
+      else { const nm = c.win ? d.pname : c.winner; head = c.n; main = nm; subm = c.win ? '🎉 恭喜得獎！' : '台下的你，為得主鼓掌'; line = `恭喜 ${nm}！`; ms = nm.length <= 6 ? 30 : nm.length <= 10 ? 22 : 16; }
+      setT('chead', head); setT('cmain', main); setT('csubm', subm); $('cmain').setAttribute('font-size', ms); setT('csub', line);
+      const pulse = p.k === 'drum' ? 1 + .08 * Math.sin(t * 20) : p.k === 'rev' ? 1 + Math.max(0, .25 - p.u) * 1.2 : 1;
+      $('cmain').setAttribute('transform', `translate(${180 * (1 - pulse)},${152 * (1 - pulse)}) scale(${pulse})`);
+      $('cmain').setAttribute('fill', p.k === 'rev' && c.win ? '#ffd54a' : '#fff');
+      // 獎盃 / 頭像 / 彩帶
+      const tr = p.k === 'rev' ? Math.min(1, p.l / .6) : 0, bounce = 1 + .15 * Math.sin(tr * Math.PI);
+      $('ctrophy').setAttribute('opacity', tr.toFixed(2)); $('ctrophy').setAttribute('transform', `translate(262,${470 - tr * 20}) scale(${(tr * bounce).toFixed(3)})`);
+      const showAv = p.k === 'rev' && c.win ? Math.min(1, p.l / .5) : 0;
+      $('cav').setAttribute('opacity', showAv.toFixed(2)); $('cav').setAttribute('transform', `translate(262,300) scale(${(.6 + .4 * showAv).toFixed(2)})`);
+      const b = p.k === 'rev' ? p.l : p.k === 'intro' && t > 1.4 ? t - 1.4 : -1, big = p.k === 'rev' && c.win ? 1 : .55;
+      CONF.forEach((q, i) => {
+        const n = $('cf' + i);
+        if (b < 0 || (i / CONF.length) > big || b > 3.2) { n.setAttribute('opacity', 0); return; }
+        const x = q.x + q.vx * b, y = q.y + q.vy * b + 60 * b * b;
+        n.setAttribute('opacity', Math.max(0, 1 - b / 3.2).toFixed(2)); n.setAttribute('transform', `translate(${x.toFixed(1)},${y.toFixed(1)}) rotate(${(q.rot + q.vr * b).toFixed(0)})`);
+      });
+      $('cbar').style.width = (t / T * 100).toFixed(1) + '%';
+    };
+    const finish = () => {
+      if (!st || st.done) return; st.done = true; cancelAnimationFrame(st.raf); st.el.remove(); st = null;
+      Cere.active = false; done && done();
+    };
+    Cere.active = true;
+    $('cskip').onclick = finish;
+    $('cff').onclick = () => { st.speed = st.speed === 1 ? 3 : 1; $('cff').textContent = st.speed === 1 ? '⏩ 快轉' : '▶ 正常'; };
+    const loop = now => {
+      if (!st || st.done) return;
+      const dt = Math.min(.1, (now - st.last) / 1000); st.last = now; st.t += dt * st.speed;
+      if (st.t >= T) { render(T - .001); finish(); return; }
+      render(st.t); st.raf = requestAnimationFrame(loop);
+    };
+    render(0); st.raf = requestAnimationFrame(loop);
+    Cere._seek = x => { if (st) st.t = x; };
+  };
+  return { play, active: false, total: n => INTRO + n * PER + OUTRO };
+})();
 
 /* ===== spend.js ===== */
 /* ============================================================
