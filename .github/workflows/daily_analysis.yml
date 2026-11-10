@@ -4,7 +4,7 @@ name: Daily US Market Analysis V2
 on:
   workflow_dispatch:
   schedule:
-    - cron: "45 22 * * 1-5"
+    - cron: "15 23 * * 1-5"
 
 permissions:
   contents: write
