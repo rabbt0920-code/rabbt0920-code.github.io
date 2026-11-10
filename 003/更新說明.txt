@@ -1,0 +1,24 @@
+美股市場情報中心 V2.0.1 修正版
+
+修正內容：
+1. 修正「盤勢重點／操作觀察」空白問題：舊版 dashboard 只接受 market_snapshot，
+   但自動分析版 JSON 沒有該欄位，renderSessionBrief 因此直接 return。
+2. 現在同時支援歷史快照 JSON 與自動量化分析 JSON。
+3. 自動分析版會以 SPY、QQQ、DIA、IWM 顯示大盤 ETF 卡片。
+4. 若 JSON 沒有 action_plan，網頁會依市場評分、VIX、科技股 SMA20 比例及個股漲跌產生規則式觀察。
+5. analyze.py 新增 report_type、session_date、action_plan 欄位。
+6. 產生報告時會同步更新 latest.json、index.html 與 美股夜盤懶人包.html。
+
+部署方式：
+1. 解壓縮本 ZIP。
+2. 將裡面的檔案全部上傳並覆蓋 GitHub Repository 的 003 資料夾內同名檔案。
+3. 不要把這些檔案再放進新的子資料夾。
+4. Commit changes。
+5. 到 Actions 手動執行 Daily US Market Analysis V2。
+6. 成功後重新整理：
+   https://rabbt0920-code.github.io/003/美股夜盤懶人包.html
+
+注意：
+- 不需要更動 Repository 根目錄的 .github/workflows/daily_analysis.yml。
+- 本修正版不會新增付費 AI API；摘要與操作觀察均為透明的規則式文字。
+- 量化觀察僅供研究參考，不構成投資建議。

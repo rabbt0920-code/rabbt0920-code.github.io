@@ -15,7 +15,7 @@ button.active{border-color:#22d3ee!important;background:#123047!important}canvas
 <div class="text-right text-sm"><div class="muted">報告更新時間（台灣）</div><b id="updated">讀取中…</b></div></div></header>
 <main class="max-w-7xl mx-auto px-5 py-7 space-y-6">
 <div id="status" class="panel p-4 text-sm muted">正在載入報告…</div>
-<section id="sessionBrief" class="panel p-5 space-y-4"><div><div class="text-xs tracking-widest text-cyan-400">LAST US SESSION · 2026-11-09</div><h2 class="font-bold text-xl mt-1">昨日美股盤勢摘要</h2><p class="muted text-sm mt-1">首次自動分析執行前，先提供最近一個交易日的市場快照</p></div><div id="indexCards" class="grid grid-cols-2 lg:grid-cols-4 gap-3"></div><div class="grid grid-cols-1 lg:grid-cols-2 gap-4"><div><h3 class="font-bold mb-2">盤勢重點</h3><div id="briefNotes" class="text-sm muted space-y-2"></div></div><div><h3 class="font-bold mb-2">操作觀察</h3><div id="actionPlan" class="text-sm muted space-y-2"></div></div></div><div id="stockMoves" class="grid grid-cols-1 lg:grid-cols-2 gap-4"></div><div id="sourceLinks" class="text-xs muted"></div></section>
+<section id="sessionBrief" class="panel p-5 space-y-4"><div><div id="sessionLabel" class="text-xs tracking-widest text-cyan-400">LATEST US SESSION</div><h2 id="sessionTitle" class="font-bold text-xl mt-1">美股盤勢摘要</h2><p id="sessionSubtitle" class="muted text-sm mt-1">依最近一個交易日資料整理</p></div><div id="indexCards" class="grid grid-cols-2 lg:grid-cols-4 gap-3"></div><div class="grid grid-cols-1 lg:grid-cols-2 gap-4"><div><h3 class="font-bold mb-2">盤勢重點</h3><div id="briefNotes" class="text-sm muted space-y-2"></div></div><div><h3 class="font-bold mb-2">操作觀察</h3><div id="actionPlan" class="text-sm muted space-y-2"></div></div></div><div id="stockMoves" class="grid grid-cols-1 lg:grid-cols-2 gap-4"></div><div id="sourceLinks" class="text-xs muted"></div></section>
 <section><div class="flex items-end justify-between mb-3"><div><h2 class="font-bold text-lg">市場環境總覽</h2><p class="muted text-xs">先判斷大盤，再評估個股</p></div><span class="muted text-xs">規則式模型</span></div>
 <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3" id="marketCards"></div></section>
 <section class="grid grid-cols-1 lg:grid-cols-3 gap-4">
@@ -68,13 +68,51 @@ function drawStock(s){
 }
 function selectStock(sym){const s=data.stocks.find(x=>x.symbol===sym);if(s){$('stockSelect').value=sym;drawStock(s)}}
 function renderSessionBrief(d){
- const snap=d.market_snapshot;if(!snap)return;
- $('indexCards').innerHTML=(snap.indices||[]).map(x=>card(x.name,Number(x.close).toLocaleString('en-US'),pct(x.change_pct),tone(x.change_pct))).join('');
- $('briefNotes').innerHTML=(d.market?.notes||[]).map(x=>`<div>• ${safe(x)}</div>`).join('')+(d.news_brief||[]).map(x=>`<div>• ${safe(x)}</div>`).join('');
- $('actionPlan').innerHTML=(d.action_plan||[]).map(x=>`<div>• ${safe(x)}</div>`).join('');
- const movers=(title,arr)=>`<div class="rounded-xl bg-slate-900/70 p-3"><h3 class="font-bold mb-2">${title}</h3>${(arr||[]).map(x=>`<div class="flex justify-between gap-2 py-1 border-b border-slate-800 text-sm"><span><b>${safe(x.symbol)}</b> ${safe(x.name)}</span><span class="${tone(x.change_pct)}">${pct(x.change_pct)}</span></div>`).join('')}</div>`;
- $('stockMoves').innerHTML=movers('主要強勢股',snap.leaders)+movers('落後與盤後異動', [...(snap.laggards||[]),...(snap.after_hours||[])]);
- $('sourceLinks').innerHTML='資料來源：'+(d.sources||[]).map(x=>`<a class="underline mr-3" target="_blank" rel="noopener" href="${safe(x.url)}">${safe(x.publisher)}</a>`).join('');
+ const snap=d.market_snapshot||null;
+ const market=d.market||{};
+ const etfs=d.market_etfs||[];
+ const stocks=d.stocks||[];
+ const date=(d.session_date || snap?.date || etfs.find(x=>x.daily?.length)?.daily?.slice(-1)[0]?.date || '').toString();
+ $('sessionLabel').textContent=(d.report_type==='historical_session_snapshot'?'LAST US SESSION':'LATEST US SESSION')+(date?' · '+date:'');
+ $('sessionTitle').textContent=d.report_type==='historical_session_snapshot'?'昨日美股盤勢摘要':'最新美股盤勢摘要';
+ $('sessionSubtitle').textContent=d.report_type==='historical_session_snapshot'?'歷史市場快照':'依最近一個交易日收盤資料與規則式指標自動整理';
+
+ // Historical snapshot and live V2 reports have different schemas. Support both.
+ if(snap){
+  $('indexCards').innerHTML=(snap.indices||[]).map(x=>card(x.name,Number(x.close).toLocaleString('en-US'),pct(x.change_pct),tone(x.change_pct))).join('');
+ }else{
+  const names={SPY:'S&P 500 ETF',QQQ:'Nasdaq 100 ETF',DIA:'Dow Jones ETF',IWM:'Russell 2000 ETF'};
+  const items=['SPY','QQQ','DIA','IWM'].map(sym=>etfs.find(x=>x.symbol===sym)).filter(Boolean);
+  $('indexCards').innerHTML=items.map(x=>card(names[x.symbol]||x.symbol,'$'+f(x.price),pct(x.change_pct),tone(x.change_pct))).join('') || '<div class="muted text-sm">目前沒有可用的大盤 ETF 報價。</div>';
+ }
+ const notes=[...(market.notes||[]),...(d.news_brief||[])];
+ if(!notes.length && market.summary) notes.push(market.summary);
+ $('briefNotes').innerHTML=notes.map(x=>`<div>• ${safe(x)}</div>`).join('') || '<div>目前沒有足夠的市場重點資料。</div>';
+
+ let plan=Array.isArray(d.action_plan)?d.action_plan.filter(Boolean):[];
+ if(!plan.length){
+  const regime=market.regime||'震盪／中性';
+  if(regime==='偏多') plan.push('大盤環境偏多，但仍以分批布局為原則；優先挑選技術分數與相對 SPY 強度較佳的標的。');
+  else if(regime==='偏空') plan.push('大盤環境偏空，降低追價與新增部位意願；優先檢查持倉風險及個股停損參考。');
+  else plan.push('大盤訊號尚未一致，先觀望並等待指數與個股趨勢確認，避免在震盪區間追價。');
+  if(market.mega_cap_above_sma20_pct!=null) plan.push(`監控科技股站上 SMA20 的比例為 ${f(market.mega_cap_above_sma20_pct)}%；觀察市場廣度能否持續改善。`);
+  if(market.vix!=null) plan.push(`VIX 為 ${f(market.vix)}；若波動指數快速升高，應重新評估部位大小與風險。`);
+  const strongest=[...stocks].filter(x=>x.change_pct!=null).sort((a,b)=>b.change_pct-a.change_pct).slice(0,2);
+  const weakest=[...stocks].filter(x=>x.change_pct!=null).sort((a,b)=>a.change_pct-b.change_pct).slice(0,2);
+  if(strongest.length) plan.push(`相對強勢觀察：${strongest.map(x=>x.symbol).join('、')}；需確認強勢是否延續，而非只看單日漲幅。`);
+  if(weakest.length) plan.push(`相對弱勢留意：${weakest.map(x=>x.symbol).join('、')}；檢查是否跌破均線或個股風險參考。`);
+ }
+ $('actionPlan').innerHTML=plan.map(x=>`<div>• ${safe(x)}</div>`).join('') || '<div>目前沒有可用的操作觀察。</div>';
+
+ const movers=(title,arr)=>`<div class="rounded-xl bg-slate-900/70 p-3"><h3 class="font-bold mb-2">${title}</h3>${(arr||[]).length?(arr).map(x=>`<div class="flex justify-between gap-2 py-1 border-b border-slate-800 text-sm"><span><b>${safe(x.symbol)}</b> ${safe(x.name||'')}</span><span class="${tone(x.change_pct)}">${pct(x.change_pct)}</span></div>`).join(''):'<div class="muted text-sm">目前沒有資料</div>'}</div>`;
+ if(snap){
+  $('stockMoves').innerHTML=movers('主要強勢股',snap.leaders)+movers('落後與盤後異動',[...(snap.laggards||[]),...(snap.after_hours||[])]);
+ }else{
+  const valid=stocks.filter(x=>x.change_pct!=null);
+  const sorted=[...valid].sort((a,b)=>b.change_pct-a.change_pct);
+  $('stockMoves').innerHTML=movers('監控個股漲幅領先',sorted.slice(0,4))+movers('監控個股漲幅落後',sorted.slice(-4).reverse());
+ }
+ $('sourceLinks').innerHTML=(d.sources||[]).length?'資料來源：'+d.sources.map(x=>`<a class="underline mr-3" target="_blank" rel="noopener" href="${safe(x.url)}">${safe(x.publisher)}</a>`).join(''):'';
 }
 async function init(){
  try{
