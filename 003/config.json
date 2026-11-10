@@ -41,5 +41,10 @@
   "extended_hours_period": "5d",
   "extended_hours_interval": "5m",
   "news_limit": 4,
-  "top_rank_count": 5
+  "top_rank_count": 5,
+  "taiwan_futures": {
+    "symbol": "WTX&",
+    "name": "台指期近一",
+    "description": "Yahoo Finance 台灣期貨近一連續商品"
+  }
 }

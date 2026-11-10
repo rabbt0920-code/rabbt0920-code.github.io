@@ -295,6 +295,26 @@ def main():
     )
     macros = safe_fetch_group(config["macro_tickers"], config["history_period"], errors)
 
+    # Taiwan TAIEX futures: Yahoo Finance continuous front-month ticker (WTX&).
+    # Keep it separate from US market scoring; do not silently substitute spot TAIEX.
+    taiwan_futures = None
+    tw_cfg = config.get("taiwan_futures", {})
+    tw_symbol = tw_cfg.get("symbol", "WTX&")
+    try:
+        print(f"Fetching Taiwan futures {tw_symbol}")
+        taiwan_futures = fetch_asset(
+            tw_symbol, config["history_period"], benchmark_close=None,
+            news_limit=0, include_extended=False
+        )
+        taiwan_futures["name"] = tw_cfg.get("name", "台指期近一")
+        taiwan_futures["description"] = tw_cfg.get(
+            "description", "Yahoo Finance 台灣期貨近一連續商品"
+        )
+        taiwan_futures["market"] = "TAIFEX"
+    except Exception as exc:
+        errors.append({"symbol": tw_symbol, "error": f"Taiwan futures unavailable: {exc}"})
+        print(f"FAILED Taiwan futures {tw_symbol}: {exc}")
+
     if not etfs and not stocks:
         raise RuntimeError("所有主要標的均無法取得資料，請檢查網路或 Yahoo Finance 可用性")
 
@@ -320,7 +340,8 @@ def main():
 
     now = datetime.now(timezone.utc).astimezone(TAIPEI)
     report = {
-        "version": "2.0",
+        "version": "2.4",
+        "taiwan_futures": taiwan_futures,
         "generated_at": now.isoformat(),
         "generated_at_taipei": now.strftime("%Y-%m-%d %H:%M:%S"),
         "market": market,
@@ -334,7 +355,8 @@ def main():
             "日線指標使用調整後日線資料；盤前盤後 5 分鐘資料僅作延伸行情參考。",
             "市場廣度僅以本系統監控的大型科技股樣本計算，不代表全市場廣度。",
             "VIX、10 年期殖利率及美元指數可能有延遲或缺值；缺值時不會虛構數值。",
-            "新聞僅列標題與來源，尚未進行情緒分類或事件驗證。"
+            "新聞僅列標題與來源，尚未進行情緒分類或事件驗證。",
+            "台指期使用 Yahoo Finance WTX& 近一連續商品歷史資料；非交易所保證即時報價，換月時連續價格可能有跳空或調整差異。"
         ],
         "disclaimer": "本系統為規則式研究工具，不構成投資建議。停損參考值為收盤價減 2 倍 ATR 的風險參考，不保證成交或適合所有持倉。"
     }
