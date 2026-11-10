@@ -1,5 +1,5 @@
 {
-  "version": "2.7",
+  "version": "2.8",
   "taiwan_futures": {
     "symbol": "TX",
     "name": "臺股期貨近月（官方夜盤）",
@@ -48,6 +48,10 @@
     "contract_month": "202611",
     "source": "TAIFEX OpenAPI DailyMarketReportFut",
     "open_interest": null,
+    "volume_scope": "單一 TX 契約月份；非所有月份合計",
+    "validated": true,
+    "validation_note": "已確認 Contract=TX、TradingSession=盤後，並使用官方 Last 作收盤、Volume 作該契約月份成交量。",
+    "contract_count_for_date": 5,
     "history_count": 1,
     "history_note": "本次取得期交所最新夜盤資料。歷史夜盤資料由 GitHub Actions 每次執行後累積；首次部署前不會自動補齊完整歷史。",
     "description": "臺灣期貨交易所 DailyMarketReportFut 官方盤後資料；以 TX 近月契約夜盤為主",
@@ -4245,28 +4249,28 @@
       "extended_note": "已取得部分延伸交易時段資料；可用性依 Yahoo Finance 回傳為準",
       "news": [
         {
+          "title": "Why Is TSM Stock Rising Overnight?",
+          "publisher": "Stocktwits",
+          "published": "2026-11-10T07:02:08Z",
+          "url": "https://stocktwits.com/news-articles/markets/equity/why-is-tsm-stock-rising-overnight/cNGuJ4aR97V"
+        },
+        {
+          "title": "TSMC Oct revenue jumps 60% as AI-fueled demand remains strong",
+          "publisher": "Investing.com",
+          "published": "2026-11-10T06:44:07Z",
+          "url": "https://finance.yahoo.com/technology/ai/articles/tsmc-oct-revenue-jumps-60-064407771.html"
+        },
+        {
+          "title": "Asian stocks rise after technology shares advance on Wall Street ahead of US inflation data",
+          "publisher": "Associated Press",
+          "published": "2026-11-10T03:44:21Z",
+          "url": "https://finance.yahoo.com/markets/world-indices/articles/asian-stocks-rise-technology-shares-034421581.html"
+        },
+        {
           "title": "A New Generation of Traders Is Trapped in Asia’s Market Meltdown",
           "publisher": "The Wall Street Journal",
           "published": "2026-11-10T01:00:00Z",
           "url": "https://www.wsj.com/finance/stocks/a-new-generation-of-traders-is-trapped-in-asias-market-meltdown-636d5da4?siteid=yhoof2&yptr=yahoo"
-        },
-        {
-          "title": "Nvidia stock sinks 4% as chipmaker investigates CEO Jensen Huang's relationship with alleged Chinese spy",
-          "publisher": "Yahoo Finance",
-          "published": "2026-11-09T13:03:46Z",
-          "url": "https://finance.yahoo.com/markets/article/nvidia-stock-sinks-as-chipmaker-investigates-ceo-jensen-huangs-relationship-with-alleged-chinese-spy-130346548.html"
-        },
-        {
-          "title": "Micron Soars 5% as TSMC Sticks to the “Global Logic IC” Industry, Not Memory",
-          "publisher": "TIKR",
-          "published": "2026-11-09T19:35:54Z",
-          "url": "https://www.tikr.com/blog/micron-soars-5-as-tsmc-sticks-to-the-global-logic-ic-industry-not-memory?ref=yahoofinance&tlnk=yf-261109-346xjcj3"
-        },
-        {
-          "title": "Why Jensen Huang wants to keep China on Nvidia chips",
-          "publisher": "Yahoo Finance Video",
-          "published": "2026-11-09T19:00:19Z",
-          "url": "https://finance.yahoo.com/video/why-jensen-huang-wants-to-keep-china-on-nvidia-chips-190019440.html"
         }
       ],
       "name": "台灣積體電路製造（台積電）",
@@ -8082,6 +8086,12 @@
       "extended_note": "已取得部分延伸交易時段資料；可用性依 Yahoo Finance 回傳為準",
       "news": [
         {
+          "title": "Why Is TSM Stock Rising Overnight?",
+          "publisher": "Stocktwits",
+          "published": "2026-11-10T07:02:08Z",
+          "url": "https://stocktwits.com/news-articles/markets/equity/why-is-tsm-stock-rising-overnight/cNGuJ4aR97V"
+        },
+        {
           "title": "Asian Equities Traded in the US as American Depositary Receipts Advance Sharply in Monday Trading",
           "publisher": "MT Newswires",
           "published": "2026-11-09T15:45:49Z",
@@ -8098,12 +8108,6 @@
           "publisher": "MT Newswires",
           "published": "2026-11-06T15:44:51Z",
           "url": "https://finance.yahoo.com/markets/world-indices/articles/asian-equities-traded-us-american-154451331.html"
-        },
-        {
-          "title": "ACMR Q3 Earnings Beat Estimates on ECP Growth, Revenues Rise Y/Y",
-          "publisher": "Zacks",
-          "published": "2026-11-06T15:09:00Z",
-          "url": "https://finance.yahoo.com/markets/stocks/articles/acmr-q3-earnings-beat-estimates-150900469.html"
         }
       ],
       "name": "日月光投控",
@@ -16560,8 +16564,8 @@
       "investment_view": "風險優先"
     }
   ],
-  "generated_at": "2026-11-10T14:48:23.657176+08:00",
-  "generated_at_taipei": "2026-11-10 14:48:23",
+  "generated_at": "2026-11-10T15:37:14.884348+08:00",
+  "generated_at_taipei": "2026-11-10 15:37:14",
   "market": {
     "score": -3,
     "regime": "震盪／中性",
@@ -33059,7 +33063,7 @@
           "volume": 10548800,
           "sma20": 148.21,
           "sma50": 146.25,
-          "bb_upper": 153.98,
+          "bb_upper": 153.97,
           "bb_lower": 142.44
         },
         {
@@ -49319,7 +49323,7 @@
           "volume": 10548800,
           "sma20": 148.21,
           "sma50": 146.25,
-          "bb_upper": 153.98,
+          "bb_upper": 153.97,
           "bb_lower": 142.44
         },
         {
@@ -57969,26 +57973,26 @@
     },
     {
       "symbol": "DX-Y.NYB",
-      "price": 101.61,
-      "change_pct": -0.03,
+      "price": 101.56,
+      "change_pct": -0.09,
       "day_high": 101.74,
-      "day_low": 101.61,
+      "day_low": 101.55,
       "volume": 0,
-      "rsi": 48.63,
-      "macd": 0.0941,
-      "macd_signal": 0.1827,
-      "sma20": 101.9,
-      "sma50": 101.18,
+      "rsi": 47.84,
+      "macd": 0.0894,
+      "macd_signal": 0.1817,
+      "sma20": 101.89,
+      "sma50": 101.17,
       "sma200": 99.75,
-      "atr14": 0.5,
-      "atr_pct": 0.49,
-      "adx14": 23.07,
+      "atr14": 0.51,
+      "atr_pct": 0.5,
+      "adx14": 22.91,
       "volume_ratio": null,
-      "bb_upper": 102.45,
-      "bb_lower": 101.34,
+      "bb_upper": 102.46,
+      "bb_lower": 101.33,
       "support20": 101.1,
       "resistance20": 102.95,
-      "stop_reference": 100.61,
+      "stop_reference": 100.54,
       "relative_strength_vs_spy_pct": null,
       "technical_score": -2,
       "trend": "偏空",
@@ -59432,13 +59436,13 @@
           "date": "2026-11-10",
           "open": 101.72,
           "high": 101.74,
-          "low": 101.61,
-          "close": 101.61,
+          "low": 101.55,
+          "close": 101.56,
           "volume": 0,
-          "sma20": 101.9,
-          "sma50": 101.18,
-          "bb_upper": 102.45,
-          "bb_lower": 101.34
+          "sma20": 101.89,
+          "sma50": 101.17,
+          "bb_upper": 102.46,
+          "bb_lower": 101.33
         }
       ],
       "extended": [],
@@ -61526,6 +61530,18 @@
       "extended_note": "已取得部分延伸交易時段資料；可用性依 Yahoo Finance 回傳為準",
       "news": [
         {
+          "title": "Tech leads Asian stock rally as traders track Wall St rebound",
+          "publisher": "AFP",
+          "published": "2026-11-10T07:08:38Z",
+          "url": "https://finance.yahoo.com/markets/world-indices/articles/tech-leads-asian-stock-rally-023930562.html"
+        },
+        {
+          "title": "Alphabet, Amazon and Meta Haven’t Bought Back a Share in 2026. Big Tech Buybacks Fell 90%",
+          "publisher": "TIKR",
+          "published": "2026-11-10T06:12:48Z",
+          "url": "https://www.tikr.com/blog/alphabet-amazon-and-meta-havent-bought-back-a-share-in-2026-big-tech-buybacks-fell-90?ref=yahoofinance&tlnk=yf-261110-mv2r372c"
+        },
+        {
           "title": "CRWV Rallies Ahead Of Quarterly Report: Wells Fargo Calls CoreWeave ‘Highest Quality’ Firm Among Neocloud Peers, Sees Upside",
           "publisher": "Stocktwits",
           "published": "2026-11-10T05:58:27Z",
@@ -61536,18 +61552,6 @@
           "publisher": "Simply Wall St.",
           "published": "2026-11-10T04:27:34Z",
           "url": "https://finance.yahoo.com/technology/ai/articles/microsoft-msft-signs-global-ai-042734846.html"
-        },
-        {
-          "title": "Post-Midterms AI Selloff on Data-Center Buildout Concerns Appears Overdone",
-          "publisher": "The Wall Street Journal",
-          "published": "2026-11-10T02:48:00Z",
-          "url": "https://www.wsj.com/finance/stocks/nikkei-rises-2-8-led-by-bank-machinery-stocks-c0a653b1?siteid=yhoof2&yptr=yahoo"
-        },
-        {
-          "title": "Tech leads Asian stock rally as traders track Wall St rebound",
-          "publisher": "AFP",
-          "published": "2026-11-10T02:39:30Z",
-          "url": "https://finance.yahoo.com/markets/world-indices/articles/tech-leads-asian-stock-rally-023930562.html"
         }
       ],
       "relative_strength_bonus": 1,
@@ -63634,10 +63638,16 @@
       "extended_note": "已取得部分延伸交易時段資料；可用性依 Yahoo Finance 回傳為準",
       "news": [
         {
-          "title": "One nugget overlooked during the AI sell-off: token costs",
-          "publisher": "Yahoo Finance Video",
-          "published": "2026-11-09T15:16:11Z",
-          "url": "https://finance.yahoo.com/video/one-nugget-overlooked-during-the-ai-sell-off-token-costs-151611529.html"
+          "title": "Tech leads Asian stock rally as traders track Wall St rebound",
+          "publisher": "AFP",
+          "published": "2026-11-10T07:08:38Z",
+          "url": "https://finance.yahoo.com/markets/world-indices/articles/tech-leads-asian-stock-rally-023930562.html"
+        },
+        {
+          "title": "Alphabet, Amazon and Meta Haven’t Bought Back a Share in 2026. Big Tech Buybacks Fell 90%",
+          "publisher": "TIKR",
+          "published": "2026-11-10T06:12:48Z",
+          "url": "https://www.tikr.com/blog/alphabet-amazon-and-meta-havent-bought-back-a-share-in-2026-big-tech-buybacks-fell-90?ref=yahoofinance&tlnk=yf-261110-mv2r372c"
         },
         {
           "title": "Anthropic's S-1 Says It Will Expand Its Data Center Footprint. Here's Who Could Pour the Concrete, Wire the Power, and Cool the Chips.",
@@ -63650,12 +63660,6 @@
           "publisher": "The Wall Street Journal",
           "published": "2026-11-10T02:48:00Z",
           "url": "https://www.wsj.com/finance/stocks/nikkei-rises-2-8-led-by-bank-machinery-stocks-c0a653b1?siteid=yhoof2&yptr=yahoo"
-        },
-        {
-          "title": "Tech leads Asian stock rally as traders track Wall St rebound",
-          "publisher": "AFP",
-          "published": "2026-11-10T02:39:30Z",
-          "url": "https://finance.yahoo.com/markets/world-indices/articles/tech-leads-asian-stock-rally-023930562.html"
         }
       ],
       "relative_strength_bonus": 1,
@@ -65748,16 +65752,16 @@
           "url": "https://finance.yahoo.com/markets/article/ai-stocks-have-2-major-headwinds-driving-recent-volatility-160346646.html"
         },
         {
-          "title": "One nugget overlooked during the AI sell-off: token costs",
-          "publisher": "Yahoo Finance Video",
-          "published": "2026-11-09T15:16:11Z",
-          "url": "https://finance.yahoo.com/video/one-nugget-overlooked-during-the-ai-sell-off-token-costs-151611529.html"
-        },
-        {
           "title": "Tech leads Asian stock rally as traders track Wall St rebound",
           "publisher": "AFP",
-          "published": "2026-11-10T02:39:30Z",
+          "published": "2026-11-10T07:08:38Z",
           "url": "https://finance.yahoo.com/markets/world-indices/articles/tech-leads-asian-stock-rally-023930562.html"
+        },
+        {
+          "title": "Why Is TSM Stock Rising Overnight?",
+          "publisher": "Stocktwits",
+          "published": "2026-11-10T07:02:08Z",
+          "url": "https://stocktwits.com/news-articles/markets/equity/why-is-tsm-stock-rising-overnight/cNGuJ4aR97V"
         },
         {
           "title": "Democrats Are Wasting No Time Investigating Corporate America’s Biggest Names",
@@ -67868,10 +67872,10 @@
           "url": "https://finance.yahoo.com/markets/stocks/article/musk-says-tesla-on-the-hook-for-cybertruck-deposits-after-cancellation-162604829.html"
         },
         {
-          "title": "Tesla planning to return deposits for many Cybertruck buyers",
-          "publisher": "Yahoo Finance Video",
-          "published": "2026-11-09T14:58:06Z",
-          "url": "https://finance.yahoo.com/video/tesla-planning-to-return-deposits-for-many-cybertruck-buyers-145806961.html"
+          "title": "EVgo: 3 Key Takeaways for Long-Term Investors",
+          "publisher": "Motley Fool",
+          "published": "2026-11-10T05:56:08Z",
+          "url": "https://www.fool.com/earnings/takeaways/2026/11/10/evgo-3-key-takeaways-for-long-term-investors/"
         }
       ],
       "relative_strength_bonus": 1,
@@ -74175,28 +74179,28 @@
       "extended_note": "已取得部分延伸交易時段資料；可用性依 Yahoo Finance 回傳為準",
       "news": [
         {
+          "title": "These 5 Internet Platform Stocks Run on Advertising Dollars",
+          "publisher": "Motley Fool",
+          "published": "2026-11-10T07:07:02Z",
+          "url": "https://www.fool.com/investing/2026/11/10/these-5-internet-platform-stocks-run-on-advertising-dollars/"
+        },
+        {
           "title": "Sandisk And 2 Cash Flow Stocks To Watch",
           "publisher": "Simply Wall St.",
           "published": "2026-11-10T06:13:28Z",
           "url": "https://finance.yahoo.com/markets/stocks/articles/sandisk-2-cash-flow-stocks-061328934.html"
         },
         {
+          "title": "Alphabet, Amazon and Meta Haven’t Bought Back a Share in 2026. Big Tech Buybacks Fell 90%",
+          "publisher": "TIKR",
+          "published": "2026-11-10T06:12:48Z",
+          "url": "https://www.tikr.com/blog/alphabet-amazon-and-meta-havent-bought-back-a-share-in-2026-big-tech-buybacks-fell-90?ref=yahoofinance&tlnk=yf-261110-mv2r372c"
+        },
+        {
           "title": "Warby Parker’s (WRBY) Prospects Are Looking Brighter — Here’s Why",
           "publisher": "Insider Monkey",
           "published": "2026-11-10T03:34:28Z",
           "url": "https://finance.yahoo.com/markets/stocks/articles/warby-parker-wrby-prospects-looking-033428066.html"
-        },
-        {
-          "title": "Anthropic's S-1 Says It Will Expand Its Data Center Footprint. Here's Who Could Pour the Concrete, Wire the Power, and Cool the Chips.",
-          "publisher": "Motley Fool",
-          "published": "2026-11-10T03:14:00Z",
-          "url": "https://www.fool.com/investing/2026/11/09/anthropics-s-1-says-it-will-expand-its-data-center/"
-        },
-        {
-          "title": "If I Could Buy Just 1 Stock in November and Hold for 5 Years, It Would Be Alphabet",
-          "publisher": "Motley Fool",
-          "published": "2026-11-10T02:50:00Z",
-          "url": "https://www.fool.com/investing/2026/11/09/if-i-could-buy-just-1-stock-in-november-and-hold-f/"
         }
       ],
       "relative_strength_bonus": -1,
@@ -76283,6 +76287,18 @@
       "extended_note": "已取得部分延伸交易時段資料；可用性依 Yahoo Finance 回傳為準",
       "news": [
         {
+          "title": "These 5 Internet Platform Stocks Run on Advertising Dollars",
+          "publisher": "Motley Fool",
+          "published": "2026-11-10T07:07:02Z",
+          "url": "https://www.fool.com/investing/2026/11/10/these-5-internet-platform-stocks-run-on-advertising-dollars/"
+        },
+        {
+          "title": "Alphabet, Amazon and Meta Haven’t Bought Back a Share in 2026. Big Tech Buybacks Fell 90%",
+          "publisher": "TIKR",
+          "published": "2026-11-10T06:12:48Z",
+          "url": "https://www.tikr.com/blog/alphabet-amazon-and-meta-havent-bought-back-a-share-in-2026-big-tech-buybacks-fell-90?ref=yahoofinance&tlnk=yf-261110-mv2r372c"
+        },
+        {
           "title": "Post-Midterms AI Selloff on Data-Center Buildout Concerns Appears Overdone",
           "publisher": "The Wall Street Journal",
           "published": "2026-11-10T02:48:00Z",
@@ -76293,18 +76309,6 @@
           "publisher": "Stocktwits",
           "published": "2026-11-10T01:30:23Z",
           "url": "https://stocktwits.com/news-articles/markets/equity/asts-q3-sales-miss-1b-revenue-opportunity-ai-partnerships-growth-focus/cNGuGazR97f"
-        },
-        {
-          "title": "Tech, Media & Telecom Roundup: Market Talk",
-          "publisher": "The Wall Street Journal",
-          "published": "2026-11-09T21:58:00Z",
-          "url": "https://www.wsj.com/business/tech-media-telecom-roundup-market-talk-a6a9d766?siteid=yhoof2&yptr=yahoo"
-        },
-        {
-          "title": "Meta Platforms Stock: Is it a Steal of a Deal at $650?",
-          "publisher": "Motley Fool",
-          "published": "2026-11-09T20:58:01Z",
-          "url": "https://www.fool.com/investing/2026/11/09/meta-platforms-stock-is-it-a-steal-of-a-deal-at-650/"
         }
       ],
       "relative_strength_bonus": -1,
@@ -80499,6 +80503,12 @@
       "extended_note": "已取得部分延伸交易時段資料；可用性依 Yahoo Finance 回傳為準",
       "news": [
         {
+          "title": "Alphabet, Amazon and Meta Haven’t Bought Back a Share in 2026. Big Tech Buybacks Fell 90%",
+          "publisher": "TIKR",
+          "published": "2026-11-10T06:12:48Z",
+          "url": "https://www.tikr.com/blog/alphabet-amazon-and-meta-havent-bought-back-a-share-in-2026-big-tech-buybacks-fell-90?ref=yahoofinance&tlnk=yf-261110-mv2r372c"
+        },
+        {
           "title": "AI Capacity Risks Following Democrats' Win Overblown, UBS Says",
           "publisher": "MT Newswires",
           "published": "2026-11-09T20:28:58Z",
@@ -80515,12 +80525,6 @@
           "publisher": "Simply Wall St.",
           "published": "2026-11-09T19:13:42Z",
           "url": "https://finance.yahoo.com/markets/stocks/articles/credo-technology-group-holding-crdo-191342028.html"
-        },
-        {
-          "title": "ING Is Getting Cold Feet on the AI Boom",
-          "publisher": "Moby",
-          "published": "2026-11-09T18:49:25Z",
-          "url": "https://app.moby.co/home/news/news-ing-is-getting-cold-feet-on-the-ai-boom?utm_source=yahoo_finance&utm_medium=rss"
         }
       ],
       "relative_strength_bonus": -1,
@@ -82614,12 +82618,6 @@
           "url": "https://finance.yahoo.com/video/nvidia-vs-amd-why-lisa-170000159.html"
         },
         {
-          "title": "Tech stocks rally as Nvidia stock and oil prices fall: AlphaCheck",
-          "publisher": "Yahoo Finance",
-          "published": "2026-11-09T15:22:08Z",
-          "url": "https://finance.yahoo.com/markets/article/tech-stocks-rally-as-nvidia-stock-and-oil-prices-fall-alphacheck-152208023.html"
-        },
-        {
           "title": "AMD Stock Clocks Best Day In 6 Months —  But Michael Burry Won’t Touch The Nvidia Headline Trade",
           "publisher": "Stocktwits",
           "published": "2026-11-10T05:59:07Z",
@@ -82630,6 +82628,12 @@
           "publisher": "Simply Wall St.",
           "published": "2026-11-10T05:20:25Z",
           "url": "https://finance.yahoo.com/markets/stocks/articles/3-growth-stocks-watch-58-052025265.html"
+        },
+        {
+          "title": "Amtech, Intel, Applied Materials, AMD, and KLA Corporation shares are soaring, what you need to know",
+          "publisher": "StockStory",
+          "published": "2026-11-10T02:37:36Z",
+          "url": "https://finance.yahoo.com/markets/stocks/articles/amtech-intel-applied-materials-amd-023736161.html"
         }
       ],
       "relative_strength_bonus": -1,
