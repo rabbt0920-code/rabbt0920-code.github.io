@@ -1,0 +1,35 @@
+美股市場情報中心 PWA 安裝說明
+
+部署：
+1. 將本 ZIP 解壓縮。
+2. 把 ZIP 內所有檔案與 icons 資料夾的內容，上傳到 GitHub Repository 的 003 資料夾根目錄。
+3. 覆蓋 dashboard.html 與 美股夜盤懶人包.html。
+4. 確認以下檔案都位於 003 根目錄：
+   - manifest.webmanifest
+   - service-worker.js
+   - icons/icon-192.png
+   - icons/icon-512.png
+   - icons/icon-maskable-512.png
+   - icons/apple-touch-icon.png
+5. Commit changes，等待 GitHub Pages 更新。
+
+安裝：
+Android Chrome：
+- 開啟 https://rabbt0920-code.github.io/003/美股夜盤懶人包.html
+- 網頁載入後，若出現「安裝到手機／桌面」按鈕，點擊並確認安裝。
+- 若按鈕沒有出現，可使用 Chrome 右上角 ⋮ →「安裝應用程式」或「新增至主畫面」。
+
+iPhone/iPad Safari：
+- 用 Safari 開啟上述網址。
+- 點擊分享按鈕 →「加入主畫面」→「加入」。
+- iOS 不一定會顯示網頁內的安裝按鈕，這是平台限制。
+
+離線能力：
+- Service Worker 會快取網頁外殼、圖示及最近一次成功取得的 latest.json。
+- 首次必須連線開啟一次，才能建立快取。
+- 離線時可開啟已快取的介面與最後一次報告；即時行情、外部新聞及 CDN 圖表套件仍需要網路。
+- 有新版本時重新連線載入即可更新快取。
+
+注意：
+- PWA 必須透過 HTTPS 或 localhost 使用；GitHub Pages HTTPS 符合要求。
+- 本 PWA 不是 App Store / Google Play 上架 App，而是可安裝到主畫面的網頁應用程式。
