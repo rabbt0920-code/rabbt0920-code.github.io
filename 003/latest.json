@@ -1,0 +1,175 @@
+{
+  "version": "2.1-seed",
+  "generated_at": "2026-11-10T04:55:00+00:00",
+  "generated_at_taipei": "2026-11-10 12:55:00",
+  "report_type": "historical_session_snapshot",
+  "session_date": "2026-11-09",
+  "market": {
+    "score": null,
+    "regime": "反彈偏多（單日）",
+    "risk_level": "中高",
+    "summary": "美股週一出現強勁反彈，四大指數全面上漲；但這是急跌後的單日修復，尚不足以單憑一天漲幅確認中期趨勢反轉。",
+    "vix": 19.92,
+    "mega_cap_above_sma20_pct": null,
+    "notes": [
+      "S&P 500 +2.35%，Nasdaq Composite +2.74%，Dow +2.15%，Russell 2000 +3.15%。",
+      "Brent 原油下跌約 5.8%，能源價格回落為風險資產反彈提供助力。",
+      "VIX 收在 19.92，單日下降約 22.3%，恐慌情緒明顯降溫。",
+      "NVIDIA 收跌 4.27%，與大盤及多數大型科技股反向，科技股內部走勢分歧。"
+    ]
+  },
+  "market_snapshot": {
+    "date": "2026-11-09",
+    "indices": [
+      {
+        "name": "S&P 500",
+        "symbol": "SPX",
+        "close": 7549.94,
+        "change_pct": 2.35
+      },
+      {
+        "name": "Nasdaq Composite",
+        "symbol": "IXIC",
+        "close": 25253.14,
+        "change_pct": 2.74
+      },
+      {
+        "name": "Dow Jones",
+        "symbol": "DJI",
+        "close": 52389.75,
+        "change_pct": 2.15
+      },
+      {
+        "name": "Russell 2000",
+        "symbol": "RUT",
+        "close": 2840.81,
+        "change_pct": 3.15
+      }
+    ],
+    "volatility": {
+      "name": "VIX",
+      "close": 19.92,
+      "change_pct": -22.31
+    },
+    "commodities": [
+      {
+        "name": "Brent 原油",
+        "close": 92.45,
+        "unit": "USD/桶",
+        "change_pct": -5.97
+      },
+      {
+        "name": "黃金",
+        "close": 4149.0,
+        "unit": "USD/盎司",
+        "change_pct": 1.82
+      }
+    ],
+    "leaders": [
+      {
+        "symbol": "AVGO",
+        "name": "Broadcom",
+        "change_pct": 8.78,
+        "note": "晶片股反彈領漲"
+      },
+      {
+        "symbol": "AMD",
+        "name": "AMD",
+        "change_pct": 13.26,
+        "note": "半導體股強勢反彈"
+      },
+      {
+        "symbol": "AAPL",
+        "name": "Apple",
+        "change_pct": 2.43,
+        "note": "大型權值股上漲"
+      },
+      {
+        "symbol": "MSFT",
+        "name": "Microsoft",
+        "change_pct": 2.75,
+        "note": "大型權值股上漲"
+      }
+    ],
+    "laggards": [
+      {
+        "symbol": "NVDA",
+        "name": "NVIDIA",
+        "change_pct": -4.27,
+        "note": "逆勢下跌，拖累指數表現"
+      }
+    ],
+    "after_hours": [
+      {
+        "symbol": "SANM",
+        "name": "Sanmina",
+        "change_pct": 20.21,
+        "note": "盤後因財報及展望受到市場關注"
+      },
+      {
+        "symbol": "TTWO",
+        "name": "Take-Two",
+        "change_pct": 4.32,
+        "note": "盤後上漲"
+      },
+      {
+        "symbol": "APPS",
+        "name": "Digital Turbine",
+        "change_pct": -26.13,
+        "note": "盤後大幅下跌"
+      },
+      {
+        "symbol": "GRPN",
+        "name": "Groupon",
+        "change_pct": -18.57,
+        "note": "盤後大幅下跌"
+      },
+      {
+        "symbol": "RKLB",
+        "name": "Rocket Lab",
+        "change_pct": -6.66,
+        "note": "盤後下跌"
+      }
+    ]
+  },
+  "market_etfs": [],
+  "sector_etfs": [],
+  "macros": [],
+  "stocks": [],
+  "errors": [],
+  "data_notes": [
+    "本頁預置的是 2026-11-09 美國正常交易時段收盤摘要，不是即時報價。",
+    "指數收盤數據與個股漲跌幅引用公開市場報導；盤後個股變動為報導所列盤後快照，時間點可能不同。",
+    "此預置快照不包含完整個股 SMA、RSI、MACD 或歷史 K 線；首次執行 GitHub Actions 後，將由 yfinance 自動更新為量化技術報告。",
+    "盤後漲跌幅流動性較低，可能快速變動，不應直接視為下一交易日方向。"
+  ],
+  "news_brief": [
+    "油價回落帶動風險偏好回升，美股四大指數全面上漲，S&P 500 創 4 月以來單日最大漲幅。",
+    "市場仍在消化上週對 AI 資料中心投資速度的疑慮；NVIDIA 逆勢下跌，顯示 AI 半導體族群並非全面同步反彈。",
+    "盤後個股因財報與公司展望出現明顯分化，Sanmina、Take-Two 上漲，Digital Turbine、Groupon、Rocket Lab 下跌。"
+  ],
+  "action_plan": [
+    "大盤：將本次行情視為急跌後反彈，觀察 SPY／QQQ 是否能連續數日守住反彈區，不宜因單日大漲追高。",
+    "科技股：優先觀察 AVGO、AMD 等強勢股能否延續相對強度；NVDA 需先觀察是否止跌並重新站回短期關鍵均線。",
+    "風險：若油價反彈、VIX 再度升高，或指數回吐本次漲幅，應降低追價與槓桿曝險。",
+    "事件：留意接下來公布的通膨數據與企業財報指引，確認本次反彈是否有基本面支持。"
+  ],
+  "sources": [
+    {
+      "publisher": "Associated Press / Yahoo Finance",
+      "title": "How major US stock indexes fared Monday 11/9/2026",
+      "url": "https://finance.yahoo.com/markets/world-indices/articles/major-us-stock-indexes-fared-212258454.html"
+    },
+    {
+      "publisher": "PrimerIQ",
+      "title": "Wall Street rallies more than 2% as oil slides on Iran hopes; Nvidia lags",
+      "url": "https://app.primeriq.com/market/2026-11-09/us_close"
+    },
+    {
+      "publisher": "StockTitan",
+      "title": "The Stock Market Today, November 9, 2026",
+      "url": "https://www.stocktitan.net/articles/stock-market-today-live-november-9-2026"
+    }
+  ],
+  "disclaimer": "本頁為市場研究資訊，不構成投資建議。指數漲跌及個股變動均為歷史行情；盤後報價可能流動性不足且快速變動。"
+}

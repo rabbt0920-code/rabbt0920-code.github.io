@@ -15,6 +15,7 @@ button.active{border-color:#22d3ee!important;background:#123047!important}canvas
 <div class="text-right text-sm"><div class="muted">報告更新時間（台灣）</div><b id="updated">讀取中…</b></div></div></header>
 <main class="max-w-7xl mx-auto px-5 py-7 space-y-6">
 <div id="status" class="panel p-4 text-sm muted">正在載入報告…</div>
+<section id="sessionBrief" class="panel p-5 space-y-4"><div><div class="text-xs tracking-widest text-cyan-400">LAST US SESSION · 2026-11-09</div><h2 class="font-bold text-xl mt-1">昨日美股盤勢摘要</h2><p class="muted text-sm mt-1">首次自動分析執行前，先提供最近一個交易日的市場快照</p></div><div id="indexCards" class="grid grid-cols-2 lg:grid-cols-4 gap-3"></div><div class="grid grid-cols-1 lg:grid-cols-2 gap-4"><div><h3 class="font-bold mb-2">盤勢重點</h3><div id="briefNotes" class="text-sm muted space-y-2"></div></div><div><h3 class="font-bold mb-2">操作觀察</h3><div id="actionPlan" class="text-sm muted space-y-2"></div></div></div><div id="stockMoves" class="grid grid-cols-1 lg:grid-cols-2 gap-4"></div><div id="sourceLinks" class="text-xs muted"></div></section>
 <section><div class="flex items-end justify-between mb-3"><div><h2 class="font-bold text-lg">市場環境總覽</h2><p class="muted text-xs">先判斷大盤，再評估個股</p></div><span class="muted text-xs">規則式模型</span></div>
 <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3" id="marketCards"></div></section>
 <section class="grid grid-cols-1 lg:grid-cols-3 gap-4">
@@ -45,6 +46,7 @@ function card(label,value,sub,cls=''){return `<div class="panel p-4"><div class=
 function drawMarket(){
  const ids=['SPY','QQQ','DIA','IWM'];const items=ids.map(id=>data.market_etfs.find(x=>x.symbol===id)).filter(Boolean);
  const labels=items[0]?.daily.map(x=>x.date)||[];
+ if(!items.length){$('marketChart').parentElement.innerHTML='<div class="muted text-sm py-16 text-center">目前載入的是歷史市場摘要；首次自動分析完成後將顯示 ETF 技術走勢圖。</div>';return;}
  if(marketChart)marketChart.destroy();
  marketChart=new Chart($('marketChart'),{type:'line',data:{labels,datasets:items.map((s,i)=>({label:s.symbol,data:s.daily.map(x=>x.close),borderWidth:2,pointRadius:0,tension:.15}))},options:{maintainAspectRatio:false,plugins:{legend:{labels:{color:'#cbd5e1'}}},scales:{x:{ticks:{color:'#94a3b8',maxTicksLimit:8},grid:{color:'#263449'}},y:{ticks:{color:'#94a3b8'},grid:{color:'#263449'}}}}});
 }
@@ -65,14 +67,25 @@ function drawStock(s){
  $('news').innerHTML=(s.news||[]).length?s.news.map(n=>`<a class="block border-b border-slate-800 pb-3 hover:text-cyan-300" href="${safe(n.url)}" target="_blank" rel="noopener"><div>${safe(n.title)}</div><div class="muted text-xs mt-1">${safe(n.publisher)} ${safe(n.published)}</div></a>`).join(''):'<div class="muted text-sm">目前沒有可用新聞</div>';
 }
 function selectStock(sym){const s=data.stocks.find(x=>x.symbol===sym);if(s){$('stockSelect').value=sym;drawStock(s)}}
+function renderSessionBrief(d){
+ const snap=d.market_snapshot;if(!snap)return;
+ $('indexCards').innerHTML=(snap.indices||[]).map(x=>card(x.name,Number(x.close).toLocaleString('en-US'),pct(x.change_pct),tone(x.change_pct))).join('');
+ $('briefNotes').innerHTML=(d.market?.notes||[]).map(x=>`<div>• ${safe(x)}</div>`).join('')+(d.news_brief||[]).map(x=>`<div>• ${safe(x)}</div>`).join('');
+ $('actionPlan').innerHTML=(d.action_plan||[]).map(x=>`<div>• ${safe(x)}</div>`).join('');
+ const movers=(title,arr)=>`<div class="rounded-xl bg-slate-900/70 p-3"><h3 class="font-bold mb-2">${title}</h3>${(arr||[]).map(x=>`<div class="flex justify-between gap-2 py-1 border-b border-slate-800 text-sm"><span><b>${safe(x.symbol)}</b> ${safe(x.name)}</span><span class="${tone(x.change_pct)}">${pct(x.change_pct)}</span></div>`).join('')}</div>`;
+ $('stockMoves').innerHTML=movers('主要強勢股',snap.leaders)+movers('落後與盤後異動', [...(snap.laggards||[]),...(snap.after_hours||[])]);
+ $('sourceLinks').innerHTML='資料來源：'+(d.sources||[]).map(x=>`<a class="underline mr-3" target="_blank" rel="noopener" href="${safe(x.url)}">${safe(x.publisher)}</a>`).join('');
+}
 async function init(){
  try{
- const res=await fetch('./latest.json?t='+Date.now());if(!res.ok)throw Error('latest.json HTTP '+res.status);data=await res.json();
+ const base=new URL('.',window.location.href);const dataUrl=new URL('latest.json',base);dataUrl.searchParams.set('t',Date.now());
+ const res=await fetch(dataUrl.toString(),{cache:'no-store'});if(!res.ok)throw Error('latest.json HTTP '+res.status+'（請確認 JSON 與 HTML 位於同一個 GitHub Pages 發布目錄）');data=await res.json();
+ renderSessionBrief(data);
  $('updated').textContent=data.generated_at_taipei||data.generated_at;
- $('status').textContent=`V${data.version} 報告已載入。成功取得 ${data.market_etfs.length} 檔大盤／產業 ETF、${data.stocks.length} 檔個股、${data.macros.length} 項宏觀代理指標。`+(data.errors.length?` 部分資料缺失：${data.errors.map(x=>x.symbol).join(', ')}`:'');
+ $('status').textContent=data.report_type==='historical_session_snapshot'?'已載入 2026-11-09 美股收盤快照。完成首次自動分析後，將切換為技術指標與個股排行榜。':`V${data.version} 報告已載入。成功取得 ${data.market_etfs.length} 檔大盤／產業 ETF、${data.stocks.length} 檔個股、${data.macros.length} 項宏觀代理指標。`+(data.errors.length?` 部分資料缺失：${data.errors.map(x=>x.symbol).join(', ')}`:'');
  const m=data.market, vix=m.vix==null?'—':f(m.vix);
  $('marketCards').innerHTML=[
- card('市場環境',m.regime,'綜合市場分數 '+m.score,m.regime==='偏多'?'up':m.regime==='偏空'?'down':''),
+ card('市場環境',m.regime,data.report_type==='historical_session_snapshot'?'單日反彈快照':'綜合市場分數 '+m.score,m.regime==='偏多'?'up':m.regime==='偏空'?'down':''),
  card('市場風險',m.risk_level,'依指數趨勢與 VIX 評估',m.risk_level==='偏高'?'down':''),
  card('VIX 波動指數',vix,'波動風險代理'),
  card('科技股 SMA20 上方比例',m.mega_cap_above_sma20_pct==null?'—':f(m.mega_cap_above_sma20_pct)+'%','僅限本系統監控樣本')
@@ -80,13 +93,13 @@ async function init(){
  $('marketSummary').innerHTML=`<div class="text-2xl font-bold ${m.regime==='偏多'?'up':m.regime==='偏空'?'down':''}">${safe(m.regime)}</div><p class="text-sm mt-3 leading-6">${safe(m.summary)}</p>`;
  $('marketNotes').innerHTML=(m.notes||[]).map(x=>`<div>• ${safe(x)}</div>`).join('');
  drawMarket();
- $('ranking').innerHTML=data.stocks.map(s=>`<tr class="border-b border-slate-800"><td class="py-3 font-bold">${s.symbol}</td><td>$${f(s.price)}</td><td class="${tone(s.change_pct)}">${pct(s.change_pct)}</td><td>${f(s.rsi)}</td><td class="${tone(s.relative_strength_vs_spy_pct)}">${pct(s.relative_strength_vs_spy_pct)}</td><td>${s.technical_score}</td><td class="font-bold">${s.combined_score}</td><td>${safe(s.rank_action)}</td></tr>`).join('');
+ $('ranking').innerHTML=data.stocks.length?data.stocks.map(s=>`<tr class="border-b border-slate-800"><td class="py-3 font-bold">${s.symbol}</td><td>$${f(s.price)}</td><td class="${tone(s.change_pct)}">${pct(s.change_pct)}</td><td>${f(s.rsi)}</td><td class="${tone(s.relative_strength_vs_spy_pct)}">${pct(s.relative_strength_vs_spy_pct)}</td><td>${s.technical_score}</td><td class="font-bold">${s.combined_score}</td><td>${safe(s.rank_action)}</td></tr>`).join(''):'<tr><td colspan="8" class="py-5 muted">目前顯示歷史市場摘要；首次執行 GitHub Actions 後會自動產生個股技術排行榜。</td></tr>';
  $('stockSelect').innerHTML=data.stocks.map(s=>`<option value="${s.symbol}">${s.symbol}</option>`).join('');
  $('stockSelect').addEventListener('change',e=>selectStock(e.target.value));
  if(data.stocks.length)selectStock(data.stocks[0].symbol);
- $('sectorList').innerHTML=data.sector_etfs.map(s=>`<div class="flex justify-between border-b border-slate-800 pb-2 text-sm"><b>${s.symbol}</b><span>$${f(s.price)}</span><span class="${tone(s.change_pct)}">${pct(s.change_pct)}</span><span class="muted">${s.trend}</span></div>`).join('');
+ $('sectorList').innerHTML=data.sector_etfs.length?data.sector_etfs.map(s=>`<div class="flex justify-between border-b border-slate-800 pb-2 text-sm"><b>${s.symbol}</b><span>$${f(s.price)}</span><span class="${tone(s.change_pct)}">${pct(s.change_pct)}</span><span class="muted">${s.trend}</span></div>`).join(''):'<div class="muted text-sm">等待首次自動分析取得產業 ETF 報價。</div>';
  $('dataNotes').innerHTML=(data.data_notes||[]).map(x=>`• ${safe(x)}`).join('<br>')+(data.disclaimer?'<br><br>'+safe(data.disclaimer):'');
- }catch(e){$('status').textContent='報告載入失敗：'+e.message+'。請確認 docs/latest.json 是否存在。'}
+ }catch(e){$('status').textContent='報告載入失敗：'+e.message+'。請確認 latest.json 是否與此 HTML 位於同一個發布目錄。'}
 }
 init();
 </script></body></html>

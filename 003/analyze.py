@@ -343,8 +343,14 @@ def main():
     DOCS.mkdir(exist_ok=True)
     payload = json.dumps(report, ensure_ascii=False, indent=2)
     (REPORTS / "latest.json").write_text(payload, encoding="utf-8")
+    # GitHub Pages for this repository is configured to publish from the repository root.
+    # Keep latest.json beside the HTML files so relative fetch('./latest.json') always resolves.
+    (ROOT / "latest.json").write_text(payload, encoding="utf-8")
     shutil.copy2(REPORTS / "latest.json", DOCS / "latest.json")
     shutil.copy2(ROOT / "dashboard.html", DOCS / "index.html")
+    shutil.copy2(ROOT / "dashboard.html", ROOT / "index.html")
+    if (ROOT / "美股夜盤懶人包.html").exists():
+        shutil.copy2(ROOT / "dashboard.html", ROOT / "美股夜盤懶人包.html")
     print(f"Generated V2 report at {now.strftime('%Y-%m-%d %H:%M:%S')} Taipei")
     print(f"Market: {market['regime']} | risk: {market['risk_level']}")
     print(f"Stocks: {len(stocks)} | ETF: {len(etfs)} | Macro: {len(macros)} | errors: {len(errors)}")
