@@ -1,0 +1,45 @@
+美股市場情報中心 V2.7｜台指期官方夜盤修正版
+
+本版修正
+1. 台指期夜盤不再依賴 Yahoo Finance 的 WTX& yfinance 歷史日線。
+2. 改用臺灣期貨交易所官方 OpenAPI：
+   https://openapi.taifex.com.tw/v1/DailyMarketReportFut
+3. 只取 TX（臺股期貨）「盤後」資料，不會把日盤行情或加權指數現貨冒充夜盤。
+4. 近月選擇：同一夜盤交易日內，依契約月份排序，取最接近到期的月份。
+5. 將夜盤 OHLC、成交量與日期累積到 reports/taifex_night_history.json，計算 RSI、MACD、SMA20/50/200、ADX、ATR、20日支撐壓力及風險參考。
+6. 若週末、假日或手動執行時官方尚未發布新夜盤資料，沿用最後一筆已保存的夜盤資料，並在畫面註明，不會誤報成最新。
+7. 修正友達光電代號 AUO → AUOTY，交易市場標示為美國 OTC。
+8. PWA Service Worker 快取版本升級至 v2.7，避免手機持續載入舊版。
+
+台指期夜盤資料說明
+- 官方期交所股價指數期貨夜盤時段：15:00 至次日 05:00（台灣時間）。
+- 期交所將盤後交易歸屬次一交易日；報告日期依官方資料欄位呈現。
+- GitHub Actions 建議在台灣時間 06:45 執行，讓夜盤收盤及官方日報有時間更新。
+- 官方 DailyMarketReportFut 為最新日報資料；歷史夜盤由本專案每次執行後累積，不會在第一次執行時自動回補多年歷史。
+- 初次部署可能只有少量歷史樣本，SMA50/SMA200 等長週期指標需要持續累積交易日後才會完整。
+- 本功能不是即時逐筆報價；盤中即時下單請以期交所資訊或券商交易介面為準。
+
+部署方式
+A. 專案檔案
+1. 解壓縮 ZIP。
+2. 將 ZIP 根目錄中的專案檔案（analyze.py、config.json、dashboard.html、service-worker.js、manifest.webmanifest、icons、requirements.txt、reports、docs 等）全部上傳並覆蓋 GitHub Repository 的 003 資料夾。
+3. 不要把整個 ZIP 再放進新的子資料夾。
+4. workflow_template 資料夾不是網站檔案，不要上傳到 003 網站目錄。
+
+B. 更新 GitHub Actions（重要：確保夜盤歷史會持續保存）
+1. Repository 根目錄的 .github/workflows/daily_analysis.yml 已存在的話，開啟它並編輯。
+2. 將 ZIP 內 workflow_template/daily_analysis.yml 的完整內容貼上覆蓋。
+3. 若用 GitHub 網頁新增檔案，檔名請輸入：
+   .github/workflows/daily_analysis.yml
+   GitHub 會自動建立隱藏資料夾，不需要從手機檔案管理器上傳 .github。
+4. Commit changes。
+5. Actions → Daily US Market Analysis V2 → Run workflow。
+6. 確認執行成功後，報告與夜盤歷史檔會一起 commit。
+
+網站網址
+https://rabbt0920-code.github.io/003/美股夜盤懶人包.html
+
+注意
+- 若 Actions 工作流的執行目錄不是 003，請勿直接使用本範本；此範本是依照使用者目前專案放在 repository/003 的結構撰寫。
+- AUOTY 為友達美國 OTC ADR，與台股 2409 普通股不同，流動性、交易時段、幣別與資料完整度可能不同。
+- 量化觀察僅供研究參考，不構成投資建議。

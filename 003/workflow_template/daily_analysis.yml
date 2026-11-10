@@ -1,0 +1,46 @@
+name: Daily US Market Analysis V2
+
+on:
+  workflow_dispatch:
+  schedule:
+    # 22:45 UTC = 06:45 Taiwan time (Tuesday-Saturday Taiwan).
+    # Runs after the TAIFEX night session closes at 05:00 and its daily report is normally published.
+    - cron: "45 22 * * 1-5"
+
+permissions:
+  contents: write
+
+concurrency:
+  group: daily-market-report-v27
+  cancel-in-progress: false
+
+jobs:
+  build-report:
+    runs-on: ubuntu-latest
+    timeout-minutes: 35
+    defaults:
+      run:
+        working-directory: 003
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+          cache-dependency-path: 003/requirements.txt
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+      - name: Generate V2.7 report
+        run: python analyze.py
+      - name: Commit report and accumulated TAIFEX night history
+        working-directory: .
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add 003/latest.json 003/index.html 003/dashboard.html 003/"美股夜盤懶人包.html" 003/reports/latest.json 003/reports/taifex_night_history.json 003/docs/latest.json 003/docs/index.html
+          git diff --cached --quiet || git commit -m "Update US market and TAIFEX night report"
+          git push

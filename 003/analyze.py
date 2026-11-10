@@ -10,6 +10,7 @@ from zoneinfo import ZoneInfo
 
 import numpy as np
 import pandas as pd
+import requests
 import yfinance as yf
 
 ROOT = Path(__file__).resolve().parent
@@ -33,6 +34,175 @@ def fetch_history(symbol: str, period: str) -> pd.DataFrame:
     df = df.dropna(subset=["Open", "High", "Low", "Close"])
     return df
 
+
+
+def fetch_taifex_night_session(config: dict) -> dict:
+    """
+    Fetch official TAIFEX daily futures report and retain only TX after-hours rows.
+    TAIFEX labels an after-hours session by the next trading date.
+    The official endpoint returns the latest report; history is accumulated in Git.
+    """
+    api_url = config.get("api_url", "https://openapi.taifex.com.tw/v1/DailyMarketReportFut")
+    response = requests.get(
+        api_url,
+        headers={"User-Agent": "Mozilla/5.0 (compatible; MarketMonitor/2.7)"},
+        timeout=25,
+    )
+    response.raise_for_status()
+    payload = response.json()
+    if isinstance(payload, dict):
+        rows = payload.get("data") or payload.get("Data") or payload.get("result") or []
+    else:
+        rows = payload
+    if not isinstance(rows, list) or not rows:
+        raise RuntimeError("TAIFEX 官方 API 沒有回傳期貨日報資料")
+
+    def getv(row, *names):
+        for name in names:
+            if name in row and row[name] not in (None, "", "-", "－"):
+                return row[name]
+        return None
+
+    candidates = []
+    for row in rows:
+        contract = str(getv(row, "Contract", "contract", "商品代號") or "").strip().upper()
+        session = str(getv(row, "TradingSession", "tradingSession", "交易時段") or "").strip()
+        if contract not in {"TX", "TXF"}:
+            continue
+        if not any(token in session.lower() for token in ("盤後", "after", "night", "ah")):
+            continue
+        month = str(getv(row, "ContractMonth(Week)", "ContractMonth", "contractMonth", "到期月份") or "")
+        if "/" in month:
+            continue
+        date_raw = str(getv(row, "Date", "date", "日期") or "").strip()
+        if not date_raw:
+            continue
+        date_clean = date_raw.replace("/", "").replace("-", "")
+        if len(date_clean) == 8 and date_clean.isdigit():
+            date_key = f"{date_clean[:4]}-{date_clean[4:6]}-{date_clean[6:]}"
+        else:
+            continue
+        def num(*keys):
+            value = getv(row, *keys)
+            if value is None:
+                return None
+            try:
+                return float(str(value).replace(",", "").replace("%", "").strip())
+            except (TypeError, ValueError):
+                return None
+        candidates.append({
+            "date": date_key, "contract": contract, "contract_month": month,
+            "open": num("Open", "open", "開盤價"),
+            "high": num("High", "high", "最高價"),
+            "low": num("Low", "low", "最低價"),
+            "close": num("Last", "Close", "close", "最後成交價", "收盤價"),
+            "change": num("Change", "change", "漲跌"),
+            "change_pct": num("%", "ChangePercent", "changePercent", "漲跌%"),
+            "volume": num("Volume", "volume", "成交量"),
+            "open_interest": num("OpenInterest", "openInterest", "未平倉量"),
+            "session": "盤後",
+            "source": "TAIFEX OpenAPI DailyMarketReportFut",
+        })
+    if not candidates:
+        raise RuntimeError("TAIFEX 官方日報目前沒有 TX 盤後（夜盤）資料；可能尚未於夜盤收盤後更新")
+
+    # Pick the nearest listed delivery month for the latest after-hours trading date.
+    latest_date = max(x["date"] for x in candidates)
+    same_date = [x for x in candidates if x["date"] == latest_date]
+    same_date.sort(key=lambda x: x["contract_month"])
+    selected = same_date[0]
+    if selected["close"] is None or selected["high"] is None or selected["low"] is None:
+        raise RuntimeError("TAIFEX 夜盤資料缺少有效 OHLC/Last 欄位")
+    return selected
+
+
+def load_taifex_night_history(config: dict) -> tuple[pd.DataFrame, dict]:
+    archive_path = REPORTS / "taifex_night_history.json"
+    history = []
+    if archive_path.exists():
+        try:
+            history = json.loads(archive_path.read_text(encoding="utf-8"))
+            if not isinstance(history, list):
+                history = []
+        except Exception:
+            history = []
+    fresh_status = "fresh"
+    try:
+        latest = fetch_taifex_night_session(config.get("taiwan_futures", {}))
+        # One record per session date + delivery month; update rather than duplicate.
+        keyed = {(x.get("date"), x.get("contract_month")): x for x in history if isinstance(x, dict)}
+        keyed[(latest["date"], latest["contract_month"])] = latest
+        history = sorted(keyed.values(), key=lambda x: (x.get("date", ""), x.get("contract_month", "")))[-260:]
+    except Exception:
+        if not history:
+            raise
+        # Keep the last verified night session when the official daily feed has not
+        # published a new after-hours row yet (weekend/holiday/manual daytime run).
+        latest = sorted(history, key=lambda x: (x.get("date", ""), x.get("contract_month", "")))[-1]
+        fresh_status = "cached"
+    REPORTS.mkdir(exist_ok=True)
+    archive_path.write_text(json.dumps(history, ensure_ascii=False, indent=2), encoding="utf-8")
+    frame = pd.DataFrame(history)
+    frame["date"] = pd.to_datetime(frame["date"])
+    frame = frame.sort_values("date").drop_duplicates("date", keep="last").set_index("date")
+    for col in ["open", "high", "low", "close", "volume"]:
+        frame[col] = pd.to_numeric(frame[col], errors="coerce")
+    frame = frame.dropna(subset=["open", "high", "low", "close"])
+    frame = frame.rename(columns={
+        "open": "Open", "high": "High", "low": "Low", "close": "Close", "volume": "Volume"
+    })
+    if "Volume" not in frame:
+        frame["Volume"] = 0
+    frame["Volume"] = frame["Volume"].fillna(0)
+    latest["_fresh_status"] = fresh_status
+    return frame[["Open", "High", "Low", "Close", "Volume"]], latest
+
+
+def build_taifex_night_asset(config: dict) -> dict:
+    frame, latest = load_taifex_night_history(config)
+    df = indicators(frame)
+    row = df.iloc[-1]
+    previous = df.iloc[-2] if len(df) > 1 else row
+    score, reasons = technical_score(row)
+    close = float(row["Close"])
+    change_pct = latest.get("change_pct")
+    if change_pct is None and float(previous["Close"]) != 0:
+        change_pct = (close / float(previous["Close"]) - 1) * 100
+    if score >= 3:
+        trend, action = "偏多", "夜盤技術面偏強，可觀察回測 SMA20／前低是否有支撐；避免追逐單根急漲。"
+    elif score <= -2:
+        trend, action = "偏空", "夜盤技術面偏弱，優先控管槓桿與部位；等待重新站回關鍵均線再評估。"
+    else:
+        trend, action = "中性", "夜盤方向尚未明確，等待價格、均線與 MACD 同向，不宜僅憑單一夜盤漲跌追單。"
+    if pd.notna(row.get("RSI")) and row["RSI"] >= 70:
+        action += " RSI 偏熱，短線避免追價。"
+    elif pd.notna(row.get("RSI")) and row["RSI"] <= 30:
+        action += " RSI 處於低檔不代表止跌，避免單憑超賣訊號抄底。"
+    daily = series_payload(df, count=260)
+    # Preserve session dates as YYYY-MM-DD for chart labels.
+    return {
+        "symbol": "TX", "name": "臺股期貨近月（官方夜盤）",
+        "price": number(close), "change_pct": number(change_pct),
+        "day_high": number(row["High"]), "day_low": number(row["Low"]),
+        "volume": int(latest.get("volume") or 0),
+        "rsi": number(row.get("RSI")), "macd": number(row.get("MACD"), 4),
+        "macd_signal": number(row.get("MACD_SIGNAL"), 4),
+        "sma20": number(row.get("SMA20")), "sma50": number(row.get("SMA50")),
+        "sma200": number(row.get("SMA200")), "atr14": number(row.get("ATR14")),
+        "atr_pct": number(row.get("ATR_PCT")), "adx14": number(row.get("ADX14")),
+        "volume_ratio": number(row.get("VOL_RATIO")), "bb_upper": number(row.get("BB_UPPER")),
+        "bb_lower": number(row.get("BB_LOWER")),
+        "support20": number(df["Low"].tail(20).min()),
+        "resistance20": number(df["High"].tail(20).max()),
+        "stop_reference": number(close - 2 * float(row["ATR14"])) if pd.notna(row.get("ATR14")) else None,
+        "technical_score": score, "trend": trend, "action": action, "reasons": reasons,
+        "daily": daily, "extended": [], "extended_note": "採用期交所官方盤後（夜盤）日行情，不使用美股盤前盤後資料。",
+        "session": "盤後（夜盤）", "session_date": latest["date"],
+        "contract_month": latest["contract_month"], "source": latest["source"],
+        "open_interest": latest.get("open_interest"),
+        "history_count": len(frame),
+        "history_note": ("本次取得期交所最新夜盤資料。" if latest.get("_fresh_status") == "fresh" else "本次官方 API 尚未發布新夜盤資料，暫顯示最近一次已保存的夜盤紀錄。") + "歷史夜盤資料由 GitHub Actions 每次執行後累積；首次部署前不會自動補齊完整歷史。",
+    }
 
 def indicators(df: pd.DataFrame) -> pd.DataFrame:
     x = df.copy()
@@ -353,25 +523,19 @@ def main():
         reverse=True
     )
 
-    # Taiwan TAIEX futures: Yahoo Finance continuous front-month ticker (WTX&).
-    # Keep it separate from US market scoring; do not silently substitute spot TAIEX.
+    # Taiwan index futures: official TAIFEX after-hours report, separate from US market scoring.
     taiwan_futures = None
     tw_cfg = config.get("taiwan_futures", {})
-    tw_symbol = tw_cfg.get("symbol", "WTX&")
     try:
-        print(f"Fetching Taiwan futures {tw_symbol}")
-        taiwan_futures = fetch_asset(
-            tw_symbol, config["history_period"], benchmark_close=None,
-            news_limit=0, include_extended=False
-        )
-        taiwan_futures["name"] = tw_cfg.get("name", "台指期近一")
+        print("Fetching official TAIFEX TX after-hours session")
+        taiwan_futures = build_taifex_night_asset(tw_cfg)
         taiwan_futures["description"] = tw_cfg.get(
-            "description", "Yahoo Finance 台灣期貨近一連續商品"
+            "description", "臺灣期貨交易所官方 TX 盤後（夜盤）資料"
         )
         taiwan_futures["market"] = "TAIFEX"
     except Exception as exc:
-        errors.append({"symbol": tw_symbol, "error": f"Taiwan futures unavailable: {exc}"})
-        print(f"FAILED Taiwan futures {tw_symbol}: {exc}")
+        errors.append({"symbol": "TX-NIGHT", "error": f"TAIFEX night session unavailable: {exc}"})
+        print(f"FAILED TAIFEX night session: {exc}")
 
     if not etfs and not stocks:
         raise RuntimeError("所有主要標的均無法取得資料，請檢查網路或 Yahoo Finance 可用性")
@@ -396,7 +560,7 @@ def main():
 
     now = datetime.now(timezone.utc).astimezone(TAIPEI)
     report = {
-        "version": "2.5",
+        "version": "2.7",
         "taiwan_futures": taiwan_futures,
         "taiwan_us_stocks": taiwan_us_stocks,
         "generated_at": now.isoformat(),
@@ -413,8 +577,9 @@ def main():
             "市場廣度僅以本系統監控的大型科技股樣本計算，不代表全市場廣度。",
             "VIX、10 年期殖利率及美元指數可能有延遲或缺值；缺值時不會虛構數值。",
             "新聞僅列標題與來源，尚未進行情緒分類或事件驗證。",
-            "台指期使用 Yahoo Finance WTX& 近一連續商品歷史資料；非交易所保證即時報價，換月時連續價格可能有跳空或調整差異。",
+            "台指期夜盤改用臺灣期貨交易所官方 OpenAPI DailyMarketReportFut，僅採 TX 盤後時段資料；歷史序列由 GitHub Actions 累積，首次部署需逐日建立歷史。",
             "台灣企業美股分頁包含美國市場交易的台灣企業股票／存託憑證；以美元報價，與台股普通股價格、交易時段及匯率不同。",
+            "AUOTY 為友達光電美國 OTC Pink ADR，並非 NYSE 上市股票；OTC 流動性、報價延遲及歷史資料完整度可能較低。",
             "台灣企業美股操作觀察由技術指標及美股大盤環境規則式產生，未納入完整財報估值、ADR費用、匯率與個人持倉成本。"
         ],
         "disclaimer": "本系統為規則式研究工具，不構成投資建議。停損參考值為收盤價減 2 倍 ATR 的風險參考，不保證成交或適合所有持倉。"
@@ -424,6 +589,9 @@ def main():
     DOCS.mkdir(exist_ok=True)
     payload = json.dumps(report, ensure_ascii=False, indent=2)
     (REPORTS / "latest.json").write_text(payload, encoding="utf-8")
+    history_file = REPORTS / "taifex_night_history.json"
+    if history_file.exists():
+        shutil.copy2(history_file, ROOT / "taifex_night_history.json")
     # GitHub Pages for this repository is configured to publish from the repository root.
     # Keep latest.json beside the HTML files so relative fetch('./latest.json') always resolves.
     (ROOT / "latest.json").write_text(payload, encoding="utf-8")

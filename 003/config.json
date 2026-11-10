@@ -43,9 +43,9 @@
   "news_limit": 4,
   "top_rank_count": 5,
   "taiwan_futures": {
-    "symbol": "WTX&",
-    "name": "台指期近一",
-    "description": "Yahoo Finance 台灣期貨近一連續商品"
+    "symbol": "TX",
+    "name": "臺股期貨近月（官方夜盤）",
+    "description": "臺灣期貨交易所 DailyMarketReportFut 官方盤後資料；以 TX 近月契約夜盤為主"
   },
   "taiwan_us_stocks": [
     {
@@ -89,12 +89,12 @@
       "profile": "電信與數位服務；觀察營收穩定度、資本支出及股息政策。"
     },
     {
-      "symbol": "AUO",
+      "symbol": "AUOTY",
       "name": "友達光電",
       "tw_symbol": "2409",
       "sector": "面板與顯示技術",
-      "exchange": "NYSE",
-      "profile": "面板與顯示解決方案；留意面板報價、產能利用率及景氣循環。"
+      "exchange": "OTC",
+      "profile": "友達光電美國 OTC 存託憑證；觀察面板報價、產能利用率及景氣循環。美國 OTC 報價流動性與資料完整度可能較低。"
     },
     {
       "symbol": "IMOS",

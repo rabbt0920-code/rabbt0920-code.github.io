@@ -27,7 +27,7 @@ button.active{border-color:#22d3ee!important;background:#123047!important}canvas
 <section id="sessionBrief" class="panel p-5 space-y-4"><div><div id="sessionLabel" class="text-xs tracking-widest text-cyan-400">LATEST US SESSION</div><h2 id="sessionTitle" class="font-bold text-xl mt-1">美股盤勢摘要</h2><p id="sessionSubtitle" class="muted text-sm mt-1">依最近一個交易日資料整理</p></div><div id="indexCards" class="grid grid-cols-2 lg:grid-cols-4 gap-3"></div><div class="grid grid-cols-1 lg:grid-cols-2 gap-4"><div><h3 class="font-bold mb-2">盤勢重點</h3><div id="briefNotes" class="text-sm muted space-y-2"></div></div><div><h3 class="font-bold mb-2">操作觀察</h3><div id="actionPlan" class="text-sm muted space-y-2"></div></div></div><div id="stockMoves" class="grid grid-cols-1 lg:grid-cols-2 gap-4"></div><div id="sourceLinks" class="text-xs muted"></div></section>
 <section class="panel p-5 space-y-4">
 <div class="flex flex-wrap items-start justify-between gap-2">
-  <div><div class="text-xs tracking-widest text-cyan-400">TAIWAN INDEX FUTURES</div><h2 class="font-bold text-xl mt-1">台指期近一</h2><p class="muted text-xs mt-1">WTX& · Yahoo Finance 近一連續商品日線資料</p></div>
+  <div><div class="text-xs tracking-widest text-cyan-400">TAIWAN INDEX FUTURES</div><h2 class="font-bold text-xl mt-1">台指期夜盤</h2><p class="muted text-xs mt-1">TX · 臺灣期交所官方盤後（夜盤）資料</p></div>
   <span id="twfTrend" class="pill border border-slate-600 muted">讀取中</span>
 </div>
 <div id="twfCards" class="grid grid-cols-2 md:grid-cols-4 gap-3"><div class="muted text-sm">正在載入台指期資料…</div></div>
@@ -35,7 +35,7 @@ button.active{border-color:#22d3ee!important;background:#123047!important}canvas
   <div class="lg:col-span-2"><h3 class="font-bold mb-2">台指期走勢與均線</h3><div class="h-[280px]"><canvas id="taiwanFuturesChart"></canvas></div></div>
   <div><h3 class="font-bold mb-2">技術與風險觀察</h3><div id="twfMetrics" class="space-y-2 text-sm muted"></div></div>
 </div>
-<div id="twfNotice" class="text-xs muted leading-5">台指期報價可能延遲；近一連續商品換月時可能出現價格跳動，請以期交所及券商報價核對。</div>
+<div id="twfNotice" class="text-xs muted leading-5">資料來源：臺灣期貨交易所官方 OpenAPI，僅分析 TX 盤後夜盤（15:00 至次日 05:00）；官方日報通常於夜盤收盤後更新。歷史資料由 GitHub Actions 自動累積，首次部署後需逐日建立樣本；夜盤屬次一交易日。請以期交所／券商交易介面核對即時報價。</div>
 </section>
 <section><div class="flex items-end justify-between mb-3"><div><h2 class="font-bold text-lg">市場環境總覽</h2><p class="muted text-xs">先判斷大盤，再評估個股</p></div><span class="muted text-xs">規則式模型</span></div>
 <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3" id="marketCards"></div></section>
@@ -54,7 +54,7 @@ button.active{border-color:#22d3ee!important;background:#123047!important}canvas
 <div class="panel p-5"><h2 class="font-bold text-lg mb-1">所選個股新聞</h2><p class="muted text-xs mb-4">僅呈現來源標題，未進行情緒判讀</p><div id="news" class="space-y-3"></div></div>
 </section>
 <section class="panel p-5"><h2 class="font-bold text-lg mb-3">資料品質與使用限制</h2><div id="dataNotes" class="text-xs muted leading-6"></div></section>
-<footer class="text-xs muted leading-6 pb-8">Yahoo Finance / yfinance。資料可能延遲、缺漏或修訂。模型為規則式研究輔助，不構成投資建議；停損參考並非保證成交價格。</footer>
+<footer class="text-xs muted leading-6 pb-8">美股資料：Yahoo Finance / yfinance；台指期夜盤：臺灣期貨交易所官方 OpenAPI。資料可能延遲、缺漏或修訂。模型為規則式研究輔助，不構成投資建議；停損參考並非保證成交價格。</footer>
 </main>
 <script>
 let data,marketChart,stockChart,taiwanFuturesChart;
@@ -68,17 +68,17 @@ function drawTaiwanFutures(){
  const s=data.taiwan_futures;
  if(!s || !s.daily || !s.daily.length){
   $('twfTrend').textContent='暫無資料';
-  $('twfCards').innerHTML='<div class="muted text-sm col-span-full">目前無法取得台指期近一歷史資料。請稍後重跑 Actions，並確認 Yahoo Finance 是否提供 WTX& 歷史報價。</div>';
+  $('twfCards').innerHTML='<div class="muted text-sm col-span-full">目前尚未取得期交所 TX 夜盤資料。請確認 Actions 是否於夜盤收盤後執行（建議台灣時間 06:00 後），並查看報告中的資料錯誤。</div>';
   $('twfMetrics').innerHTML='<div class="muted">台指期資料未取得；不會以加權指數現貨代替期貨報價。</div>';
   return;
  }
  $('twfTrend').textContent=s.trend||'中性';
  $('twfTrend').className='pill border '+(s.trend==='偏多'?'border-emerald-500/50 text-emerald-300':s.trend==='偏空'?'border-rose-500/50 text-rose-300':'border-slate-600 text-slate-300');
  $('twfCards').innerHTML=[
-  card('近一最新收盤',f(s.price)+' 點',pct(s.change_pct),tone(s.change_pct)),
+  card('夜盤最新收盤',f(s.price)+' 點',pct(s.change_pct),tone(s.change_pct)),
   card('技術趨勢',safe(s.trend),`技術分數 ${f(s.technical_score)}`),
   card('RSI(14)',f(s.rsi),'動能指標'),
-  card('成交量',f(s.volume),'Yahoo Finance 回傳值')
+  card('夜盤成交量',f(s.volume),'期交所官方日報')
  ].join('');
  if(taiwanFuturesChart) taiwanFuturesChart.destroy();
  const canvas=$('taiwanFuturesChart');
@@ -92,12 +92,12 @@ function drawTaiwanFutures(){
   scales:{x:{ticks:{color:'#94a3b8',maxTicksLimit:8},grid:{color:'#263449'}},
   y:{ticks:{color:'#94a3b8'},grid:{color:'#263449'}}}}});
  $('twfMetrics').innerHTML=[
-  ['日內漲跌',pct(s.change_pct)],['SMA20',f(s.sma20)+' 點'],['SMA50',f(s.sma50)+' 點'],
+  ['夜盤交易日',safe(s.session_date||'—')],['契約月份',safe(s.contract_month||'近月')],['歷史樣本',f(s.history_count)+' 場'],['資料來源',safe(s.source||'TAIFEX')],['夜盤漲跌',pct(s.change_pct)],['SMA20',f(s.sma20)+' 點'],['SMA50',f(s.sma50)+' 點'],
   ['SMA200',f(s.sma200)+' 點'],['MACD',f(s.macd)],['ADX(14)',f(s.adx14)],
   ['ATR(14)',f(s.atr14)+' 點'],['20日支撐',f(s.support20)+' 點'],
   ['20日壓力',f(s.resistance20)+' 點'],['2×ATR風險參考',f(s.stop_reference)+' 點']
  ].map(([k,v])=>`<div class="flex justify-between gap-3 border-b border-slate-800 pb-2"><span>${k}</span><b class="text-slate-200">${v}</b></div>`).join('')+
- `<div class="rounded-xl bg-slate-900 p-3 mt-3 text-slate-200"><div class="muted text-xs mb-1">規則式觀察</div>${safe(s.action)}</div>`;
+ `<div class="rounded-xl bg-slate-900 p-3 mt-3 text-slate-200"><div class="muted text-xs mb-1">規則式觀察</div>${safe(s.action)}</div><div class="text-xs muted mt-2">${safe(s.history_note||'')}</div>`;
 }
 function drawMarket(){
  const ids=['SPY','QQQ','DIA','IWM'];const items=ids.map(id=>data.market_etfs.find(x=>x.symbol===id)).filter(Boolean);
@@ -177,7 +177,7 @@ async function init(){
  renderSessionBrief(data);
  drawTaiwanFutures();
  $('updated').textContent=data.generated_at_taipei||data.generated_at;
- $('status').textContent=data.report_type==='historical_session_snapshot'?'已載入 2026-11-09 美股收盤快照。完成首次自動分析後，將切換為技術指標與個股排行榜。':`V${data.version} 報告已載入。成功取得 ${data.market_etfs.length} 檔大盤／產業 ETF、${data.stocks.length} 檔個股、${data.macros.length} 項宏觀代理指標。`+(data.errors.length?` 部分資料缺失：${data.errors.map(x=>x.symbol).join(', ')}`:'');
+ $('status').textContent=data.report_type==='historical_session_snapshot'?'已載入 2026-11-09 美股收盤快照。完成首次自動分析後，將切換為技術指標與個股排行榜。':`V${data.version} 報告已載入。成功取得 ${data.market_etfs.length} 檔大盤／產業 ETF、${data.stocks.length} 檔個股、${data.macros.length} 項宏觀代理指標。`+(data.errors.length?` 部分資料缺失：${data.errors.map(x=>x.symbol+': '+x.error).join('；')}`:'');
  const m=data.market, vix=m.vix==null?'—':f(m.vix);
  $('marketCards').innerHTML=[
  card('市場環境',m.regime,data.report_type==='historical_session_snapshot'?'單日反彈快照':'綜合市場分數 '+m.score,m.regime==='偏多'?'up':m.regime==='偏空'?'down':''),
