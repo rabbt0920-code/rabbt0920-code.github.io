@@ -322,7 +322,14 @@ const TRAITS = {
   star: { n: '明星相', d: '先發時每週聲望微幅成長', good: 1 },
 };
 const TRK = Object.keys(TRAITS);
-const NICKS = ['Shadow', 'Ming', 'Kira', 'Zero', 'Nova', 'Ace', 'Blaze', 'Echo', 'Frost', 'Ghost', 'Hawk', 'Ivy', 'Jinx', 'Koi', 'Luna', 'Mars', 'Neo', 'Onyx', 'Pulse', 'Quin', 'Rex', 'Sora', 'Titan', 'Uno', 'Vex', 'Wolf', 'Xeno', 'Yuki', 'Zed', 'Aki', 'Bolt', 'Crow', 'Dusk', 'Ember', 'Fang', 'Gale', 'Halo', 'Ion', 'Jade', 'Kite', 'Lynx', 'Mist', 'Nyx', 'Orca', 'Pax', 'Rune', 'Sage', 'Tao', 'Volt', 'Wren', '小虎', '阿凱', '大雄', '阿翔', '小傑', '阿豪', '小宇', '阿哲', '小魚', '阿文', '小龍', '阿杰', '小安', '阿倫', '小軒', '老K', '阿修', '小白', '阿樂', '小天', 'Bin', 'Chen', 'Dawn', 'Eli', 'Finn', 'Gin', 'Hiro', 'Jay', 'Ken', 'Leo', 'Moon', 'Nine', 'Owl', 'Pine', 'Ray', 'Sky', 'Tide', 'Vic', 'Wing', 'Yan'];
+const NICKS = ['Shadow', 'Ming', 'Kira', 'Zero', 'Nova', 'Ace', 'Blaze', 'Echo', 'Frost', 'Ghost', 'Hawk', 'Ivy', 'Jinx', 'Koi', 'Luna', 'Mars', 'Neo', 'Onyx', 'Pulse', 'Quin', 'Rex', 'Sora', 'Titan', 'Uno', 'Vex', 'Wolf', 'Xeno', 'Yuki', 'Zed', 'Aki', 'Bolt', 'Crow', 'Dusk', 'Ember', 'Fang', 'Gale', 'Halo', 'Ion', 'Jade', 'Kite', 'Lynx', 'Mist', 'Nyx', 'Orca', 'Pax', 'Rune', 'Sage', 'Tao', 'Volt', 'Wren', '小虎', '阿凱', '大雄', '阿翔', '小傑', '阿豪', '小宇', '阿哲', '小魚', '阿文', '小龍', '阿杰', '小安', '阿倫', '小軒', '老K', '阿修', '小白', '阿樂', '小天', 'YouSee', 'Eastdoor', 'MapleSyrup', 'ToysRUs', 'ClearHate', 'KarsaSofa', 'BigTiger', 'GodGG', 'StandUp', 'ByeBye', 'Catgo', 'Besty', 'Daylight', 'FourFour', 'JackieChan', 'SevenEightNine', 'BinGo', 'GalaDinner', 'MaLaGuo', 'PinDuoDuo', 'Stopgoing', 'MiSoup', 'Crying', 'Flanders', 'ShieldArt', 'NoRest', 'Wasabi', 'Zip', 'Valley', 'NeverLos'];
+const PRO = {
+  上路: ['Faker', 'TheShy', 'Smeb', 'Khan', 'Nuguri', 'Zeus', 'Kiin', 'Doran', 'Impact', 'CuVee', 'Duke', 'GimGoon', 'Bin', '369', 'Flandre', 'Letme', 'Koro1', 'Gogoing', 'PDD', 'sOAZ', 'Wunder', 'Bwipo', 'Dyrus', 'Huni', 'Licorice', 'Stanley', 'Ziv', 'Hanabi', 'Rest', 'Breathe'],
+  打野: ['Bengi', 'Canyon', 'Score', 'Peanut', 'Oner', 'Tarzan', 'Ambition', 'Dandy', 'Kakao', 'Blank', 'Clearlove', 'Tian', 'Ning', 'Jiejie', 'Mlxg', 'Wei', 'Karsa', 'Xun', 'Jankos', 'Diamondprox', 'Broxah', 'Inspired', 'InSec', 'Blaber', 'Xmithie', 'TheOddOne', 'Svenskeren', 'Mountain', 'JunJia', 'Pyosik'],
+  中路: ['Faker', 'Rookie', 'Scout', 'Chovy', 'ShowMaker', 'BDD', 'Crown', 'PawN', 'Easyhoon', 'Dade', 'Knight', 'Doinb', 'Xiaohu', 'Yagao', 'Cool', 'Misaya', 'Caps', 'xPeke', 'Froggen', 'Febiven', 'Perkz', 'Bjergsen', 'Jensen', 'Hai', 'Alex Ich', 'Toyz', 'Maple', 'FoFo', 'Westdoor', 'Zeka'],
+  下路: ['Uzi', 'Deft', 'Ruler', 'Bang', 'Viper', 'Gumayusi', 'Peyz', 'Imp', 'Piglet', 'PraY', 'JackeyLove', 'GALA', 'Lwx', 'iBoy', 'Namei', 'Wx', 'Rekkles', 'Hans Sama', 'Forg1ven', 'Upset', 'Doublelift', 'Sneaky', 'WildTurtle', 'Stixxay', 'FBI', 'BeBe', 'NL', 'Betty', 'Doggo', 'Elk'],
+  輔助: ['Mata', 'MadLife', 'Wolf', 'BeryL', 'Keria', 'CoreJJ', 'Lehends', 'Delight', 'GorillA', 'PoohManDu', 'Meiko', 'Crisp', 'Ming', 'MISSING', 'ON', 'Baolan', 'Pyl', 'Tabe', 'YellOwStaR', 'Mikyx', 'Hylissang', 'Mithy', 'Lustboy', 'Aphromoo', 'Biofrost', 'Smoothie', 'MiSTakE', 'SwordArt', 'Kaiwing', 'Woody'],
+};
 const TEAMS1 = ['蒼穹龍騎', '赤焰戰神', '極光電競', '雷霆獵鷹', '黑曜石', '銀河艦隊', '颶風之眼', '白虎重工'];
 const TEAMS2 = ['夜市少年', '港都海豚', '台地野狼', '竹塹風城', '雨都鐵衛', '府城鳳凰', '後山雲豹', '湖畔天鵝'];
 const TEAMSW = ['首爾王朝', '上海天啟', '柏林方舟', '洛杉磯聖光', '杭州烈焰', '釜山浪潮', '巴黎光年'];
@@ -511,14 +518,27 @@ const phaseShort = C => C.phase === 'off' ? `休賽${C.offW + 1}` : C.phase === 
 const CONTRA = [['clutch', 'choke'], ['hard', 'lazy'], ['iron', 'glass'], ['pool', 'onetrick'], ['loyal', 'greedy']];
 const Sim = {
   ovr: p => avg(ATTR.map(a => p.attr[a])),
-  name() { const used = new Set(S && S.C ? [...S.C.players, ...S.C.market, ...S.C.youth].map(p => p.name) : []); for (let i = 0; i < 30; i++) { const n = pick(NICKS) + (chance(0.25) ? randi(1, 99) : ''); if (!used.has(n)) return n; } return pick(NICKS) + randi(100, 999); },
+  usedNames() { const C = S && S.C; if (!C) return new Set(); const u = new Set([...C.players, ...C.market, ...C.youth].map(p => p.name)); [...(C.lg ? C.lg.teams : []), ...(C.other || [])].forEach(t => (t.ps || []).forEach(p => u.add(p.name))); return u; },
+  proName(pos, ovr, used) {
+    const L = PRO[pos], r = clamp(Math.round((93 - ovr) / 0.8 + rand(-2, 2)), 0, 29);
+    for (let d = 0; d < 30; d++) for (const i of [r + d, r - d]) if (i >= 0 && i < 30 && !used.has(L[i])) return L[i];
+    return null;
+  },
+  nameFor(pos, ovr, d1, used) {
+    let n = d1 && ovr >= 67 ? Sim.proName(pos, ovr, used) : null;
+    for (let i = 0; !n && i < 40; i++) { const c = pick(NICKS) + (chance(0.25) ? randi(1, 99) : ''); if (!used.has(c)) n = c; }
+    n = n || pick(NICKS) + randi(100, 999); used.add(n); return n;
+  },
+  name(pos, ovr) { return Sim.nameFor(pos, ovr, !!(S && S.C && S.C.div === 1), Sim.usedNames()); },
+  nameTeam(t, d1, used) { [...t.ps].sort((a, b) => b.rt - a.rt).forEach(p => { p.name = Sim.nameFor(p.pos, p.rt, d1, used); }); },
+  nameLeague(teams, d1) { const used = new Set(); [...teams].filter(t => !t.me).sort((a, b) => b.pw - a.pw).forEach(t => Sim.nameTeam(t, d1, used)); },
   gen(o = {}) {
     const pos = o.pos || pick(POS), age = o.age || randi(17, 26), ov = o.ovr || 55, attr = {};
     ATTR.forEach(a => attr[a] = ov + rand(-6, 6)); const m = avg(Object.values(attr)); ATTR.forEach(a => attr[a] = clamp(attr[a] - m + ov, 20, 99));
     let pot = o.pot; if (pot == null) pot = ov + (age <= 18 ? rand(4, 24) : age <= 21 ? rand(2, 14) : age <= 23 ? rand(0, 6) : 0);
     const traits = []; const n = (chance(0.55) ? 1 : 0) + (chance(0.2) ? 1 : 0);
     for (let i = 0; i < n; i++) { const t = pick(TRK); if (!traits.includes(t) && !CONTRA.some(c => c.includes(t) && traits.some(x => c.includes(x)))) traits.push(t); }
-    return { id: uid(), av: Av.gen(), name: Sim.name(), pos, age, attr, pot: clamp(Math.max(pot, ov), 30, 99), traits, pool: traits.includes('pool') ? 5 : traits.includes('onetrick') ? 1 : randi(2, 4), form: randi(-1, 1), fat: randi(5, 20), morale: 60, sal: salOf(ov), con: 2, inj: 0, gp: 0, mvp: 0, rs: 0, joinAge: age };
+    return { id: uid(), av: Av.gen(), name: Sim.name(pos, ov), pos, age, attr, pot: clamp(Math.max(pot, ov), 30, 99), traits, pool: traits.includes('pool') ? 5 : traits.includes('onetrick') ? 1 : randi(2, 4), form: randi(-1, 1), fat: randi(5, 20), morale: 60, sal: salOf(ov), con: 2, inj: 0, gp: 0, mvp: 0, rs: 0, joinAge: age };
   },
   val(p) { const o = Sim.ovr(p), am = p.age <= 19 ? 1.5 : p.age <= 22 ? 1.2 : p.age <= 24 ? 0.9 : 0.5; return Math.round(salOf(o) * 60 * am * (1 + Math.max(0, p.pot - o) / 50) / 1000) * 1000; },
   ask(p, C) { const o = Sim.ovr(p); return Math.round(salOf(o) * (1 + Math.max(0, p.pot - o) / 120) * (p.traits.includes('greedy') ? 1.15 : p.traits.includes('loyal') ? 0.92 : 1) * (1 - C.skill.neg * 0.006) / 50) * 50; },
@@ -558,7 +578,7 @@ const Sim = {
     ps[randi(0, 4)].rt += rand(2, 5); const m = avg(ps.map(p => p.rt)); ps.forEach(p => p.rt = p.rt - m + pw);
     return { id: uid(), name, pw, base: pw, style: pick(STRK), ps, w: 0, l: 0, gw: 0, gl: 0 };
   },
-  regen(t) { t.ps.forEach(p => { p.rt = t.pw + rand(-3, 3); if (chance(0.25)) { p.name = pick(NICKS) + (chance(0.3) ? randi(1, 99) : ''); p.pool = randi(1, 5); } }); t.ps[randi(0, 4)].rt += rand(2, 5); const m = avg(t.ps.map(p => p.rt)); t.ps.forEach(p => p.rt = p.rt - m + t.pw); if (chance(0.2)) t.style = pick(STRK); },
+  regen(t) { t.ps.forEach(p => { p.rt = t.pw + rand(-3, 3); if (chance(0.25)) p.pool = randi(1, 5); }); t.ps[randi(0, 4)].rt += rand(2, 5); const m = avg(t.ps.map(p => p.rt)); t.ps.forEach(p => p.rt = p.rt - m + t.pw); if (chance(0.2)) t.style = pick(STRK); },
   meTeam: C => ({ id: 'me', name: C.name, me: true, w: 0, l: 0, gw: 0, gl: 0 }),
   schedule(ids) {
     const n = ids.length, arr = [...ids], half = [];
@@ -591,6 +611,7 @@ const Sim = {
     const y = Sim.gen({ ovr: randi(46, 50), age: 17, pot: randi(74, 84) }); y.sal = 400; y.con = 3; C.players.push(y);
     C.other = TEAMS1.map((n, i) => Sim.genTeam(n, 70 + i * 2.4 + rand(-1, 1) + D.ai));
     C.lg = { teams: [Sim.meTeam(C), ...TEAMS2.slice(0, 7).map((n, i) => Sim.genTeam(n, 50 + i * 1.9 + rand(-1, 1) + D.ai))], sched: [] };
+    Sim.nameLeague(C.other, true); Sim.nameLeague(C.lg.teams, false);
     Sim.refreshMarket(C, true); Sim.setSponsor(C, Sim.sponsorOffers(C)[0]);
     log(`🏢 ${C.name} 成立，${C.mgr} 以老闆兼總教練的身分從次級聯賽出發。`, 'sys');
     return C;
@@ -745,7 +766,7 @@ const Sim = {
       if (place === 2) { C.phase = 'pr'; C.pr = { kind: 'promo', opp: oth[1] }; S.queue.push({ kind: 'html', html: `<div class="text-center"><div class="text-4xl">⚔️</div><h3 class="text-xl font-black mt-2">升降賽</h3><p class="text-sm text-slate-300 mt-2">亞軍可以挑戰頂級聯賽第 7 名 <b>${esc(oth[1].name)}</b>。五戰三勝，贏了就升級。</p></div>` }); return; }
     } else {
       C.swapIn = oth[oth.length - 1].id;
-      if (place <= 2) { const w = TEAMSW.map(n => Sim.genTeam(n, rand(86, 95) + DIFF[C.diff].ai)).sort((a, b) => a.pw - b.pw); C.phase = 'wd'; C.wd = { stage: 0, opps: [w[randi(0, 2)], w[randi(3, 4)], w[randi(5, 6)]] }; Ach.unlock('worlds');
+      if (place <= 2) { const w = TEAMSW.map(n => Sim.genTeam(n, rand(86, 95) + DIFF[C.diff].ai)).sort((a, b) => a.pw - b.pw); Sim.nameLeague(w, true); C.phase = 'wd'; C.wd = { stage: 0, opps: [w[randi(0, 2)], w[randi(3, 4)], w[randi(5, 6)]] }; Ach.unlock('worlds');
         S.queue.push({ kind: 'html', html: `<div class="text-center"><div class="text-4xl">🌍</div><h3 class="text-xl font-black mt-2">取得世界賽門票！</h3><p class="text-sm text-slate-300 mt-2">八強對手：<b>${esc(C.wd.opps[0].name)}</b>。全部五戰三勝，輸了就回家。</p></div>` }); return; }
       if (place === 7) { C.phase = 'pr'; C.pr = { kind: 'releg', opp: oth[oth.length - 2] }; S.queue.push({ kind: 'html', html: `<div class="text-center"><div class="text-4xl">🆘</div><h3 class="text-xl font-black mt-2">保級生死戰</h3><p class="text-sm text-slate-300 mt-2">例行賽第 7 名，必須迎戰次級聯賽亞軍 <b>${esc(oth[oth.length - 2].name)}</b>。輸了就降級。</p></div>` }); return; }
       if (place === 8) C.relegated = true;
@@ -785,6 +806,7 @@ const Sim = {
     }
     const drift = (t, top) => { if (t.base == null) t.base = t.pw; t.base = clamp(t.base + rand(-1.2, 1.2) + (top && t.base < 69 + D.ai ? 3 : !top && t.base > 65 + D.ai ? -3 : 0), 46, 90); t.pw = clamp(t.pw + rand(-2, 2) + (t.base - t.pw) * 0.3, 44, 91); Sim.regen(t); };
     C.lg.teams.filter(t => !t.me).forEach(t => drift(t, C.div === 1)); C.other.forEach(t => drift(t, C.div !== 1));
+    Sim.nameLeague(C.lg.teams, C.div === 1); Sim.nameLeague(C.other, C.div !== 1);
     /* 選手 */
     const notes = [];
     if (C.relegated) notes.push('⚠️ 降級後贊助與直播收入大減，但選手薪資不變。請趁休賽季轉會窗賣掉高薪選手，否則很快會破產。');
