@@ -3,6 +3,11 @@
 <head>
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <title>美股市場情報中心 V2</title>
+<meta name="theme-color" content="#080d18">
+<meta name="description" content="美股大盤、科技股強弱、技術指標與風險管理量化儀表板。">
+<link rel="manifest" href="./manifest.webmanifest">
+<link rel="icon" type="image/png" sizes="192x192" href="./icons/icon-192.png">
+<link rel="apple-touch-icon" href="./icons/apple-touch-icon.png">
 <script src="https://cdn.tailwindcss.com"></script><script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <style>
 body{background:#080d18;color:#e5e7eb}.panel{background:#111a2b;border:1px solid #26344a;border-radius:16px}
@@ -12,10 +17,26 @@ button.active{border-color:#22d3ee!important;background:#123047!important}canvas
 <body class="min-h-screen">
 <header class="border-b border-slate-800 bg-slate-950/80"><div class="max-w-7xl mx-auto px-5 py-5 flex flex-wrap justify-between gap-3 items-center">
 <div><div class="text-xs tracking-[.25em] text-cyan-400 uppercase">Quant market intelligence · V2</div><h1 class="text-2xl md:text-3xl font-bold mt-1">美股市場情報中心</h1><p class="text-sm muted mt-1">大盤環境 × 科技股強弱 × 風險管理</p></div>
-<div class="text-right text-sm"><div class="muted">報告更新時間（台灣）</div><b id="updated">讀取中…</b></div></div></header>
+<div class="flex flex-col items-end gap-2 text-sm">
+<div class="text-right"><div class="muted">報告更新時間（台灣）</div><b id="updated">讀取中…</b></div>
+<button id="installBtn" type="button" hidden class="rounded-lg border border-cyan-500/60 bg-cyan-950 px-3 py-2 text-xs font-bold text-cyan-200">安裝到手機／桌面</button>
+<div id="iosInstallHint" class="muted text-xs text-right" hidden>可使用瀏覽器「分享」→「加入主畫面」</div>
+</div></div></header>
 <main class="max-w-7xl mx-auto px-5 py-7 space-y-6">
 <div id="status" class="panel p-4 text-sm muted">正在載入報告…</div>
-<section id="sessionBrief" class="panel p-5 space-y-4"><div><div class="text-xs tracking-widest text-cyan-400">LAST US SESSION · 2026-11-09</div><h2 class="font-bold text-xl mt-1">昨日美股盤勢摘要</h2><p class="muted text-sm mt-1">首次自動分析執行前，先提供最近一個交易日的市場快照</p></div><div id="indexCards" class="grid grid-cols-2 lg:grid-cols-4 gap-3"></div><div class="grid grid-cols-1 lg:grid-cols-2 gap-4"><div><h3 class="font-bold mb-2">盤勢重點</h3><div id="briefNotes" class="text-sm muted space-y-2"></div></div><div><h3 class="font-bold mb-2">操作觀察</h3><div id="actionPlan" class="text-sm muted space-y-2"></div></div></div><div id="stockMoves" class="grid grid-cols-1 lg:grid-cols-2 gap-4"></div><div id="sourceLinks" class="text-xs muted"></div></section>
+<section id="sessionBrief" class="panel p-5 space-y-4"><div><div id="sessionLabel" class="text-xs tracking-widest text-cyan-400">LATEST US SESSION</div><h2 id="sessionTitle" class="font-bold text-xl mt-1">美股盤勢摘要</h2><p id="sessionSubtitle" class="muted text-sm mt-1">依最近一個交易日資料整理</p></div><div id="indexCards" class="grid grid-cols-2 lg:grid-cols-4 gap-3"></div><div class="grid grid-cols-1 lg:grid-cols-2 gap-4"><div><h3 class="font-bold mb-2">盤勢重點</h3><div id="briefNotes" class="text-sm muted space-y-2"></div></div><div><h3 class="font-bold mb-2">操作觀察</h3><div id="actionPlan" class="text-sm muted space-y-2"></div></div></div><div id="stockMoves" class="grid grid-cols-1 lg:grid-cols-2 gap-4"></div><div id="sourceLinks" class="text-xs muted"></div></section>
+<section class="panel p-5 space-y-4">
+<div class="flex flex-wrap items-start justify-between gap-2">
+  <div><div class="text-xs tracking-widest text-cyan-400">TAIWAN INDEX FUTURES</div><h2 class="font-bold text-xl mt-1">台指期近一</h2><p class="muted text-xs mt-1">WTX& · Yahoo Finance 近一連續商品日線資料</p></div>
+  <span id="twfTrend" class="pill border border-slate-600 muted">讀取中</span>
+</div>
+<div id="twfCards" class="grid grid-cols-2 md:grid-cols-4 gap-3"><div class="muted text-sm">正在載入台指期資料…</div></div>
+<div class="grid grid-cols-1 lg:grid-cols-3 gap-4">
+  <div class="lg:col-span-2"><h3 class="font-bold mb-2">台指期走勢與均線</h3><div class="h-[280px]"><canvas id="taiwanFuturesChart"></canvas></div></div>
+  <div><h3 class="font-bold mb-2">技術與風險觀察</h3><div id="twfMetrics" class="space-y-2 text-sm muted"></div></div>
+</div>
+<div id="twfNotice" class="text-xs muted leading-5">台指期報價可能延遲；近一連續商品換月時可能出現價格跳動，請以期交所及券商報價核對。</div>
+</section>
 <section><div class="flex items-end justify-between mb-3"><div><h2 class="font-bold text-lg">市場環境總覽</h2><p class="muted text-xs">先判斷大盤，再評估個股</p></div><span class="muted text-xs">規則式模型</span></div>
 <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3" id="marketCards"></div></section>
 <section class="grid grid-cols-1 lg:grid-cols-3 gap-4">
@@ -36,13 +57,48 @@ button.active{border-color:#22d3ee!important;background:#123047!important}canvas
 <footer class="text-xs muted leading-6 pb-8">Yahoo Finance / yfinance。資料可能延遲、缺漏或修訂。模型為規則式研究輔助，不構成投資建議；停損參考並非保證成交價格。</footer>
 </main>
 <script>
-let data,marketChart,stockChart;
+let data,marketChart,stockChart,taiwanFuturesChart;
 const $=id=>document.getElementById(id);
 const f=v=>v==null?'—':Number(v).toLocaleString('en-US',{maximumFractionDigits:2});
 const pct=v=>v==null?'—':`${v>=0?'+':''}${f(v)}%`;
 const safe=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 function tone(v){return v>0?'up':v<0?'down':'muted'}
 function card(label,value,sub,cls=''){return `<div class="panel p-4"><div class="muted text-xs">${label}</div><div class="text-2xl font-bold mt-2 ${cls}">${value}</div><div class="muted text-xs mt-2">${sub||''}</div></div>`}
+function drawTaiwanFutures(){
+ const s=data.taiwan_futures;
+ if(!s || !s.daily || !s.daily.length){
+  $('twfTrend').textContent='暫無資料';
+  $('twfCards').innerHTML='<div class="muted text-sm col-span-full">目前無法取得台指期近一歷史資料。請稍後重跑 Actions，並確認 Yahoo Finance 是否提供 WTX& 歷史報價。</div>';
+  $('twfMetrics').innerHTML='<div class="muted">台指期資料未取得；不會以加權指數現貨代替期貨報價。</div>';
+  return;
+ }
+ $('twfTrend').textContent=s.trend||'中性';
+ $('twfTrend').className='pill border '+(s.trend==='偏多'?'border-emerald-500/50 text-emerald-300':s.trend==='偏空'?'border-rose-500/50 text-rose-300':'border-slate-600 text-slate-300');
+ $('twfCards').innerHTML=[
+  card('近一最新收盤',f(s.price)+' 點',pct(s.change_pct),tone(s.change_pct)),
+  card('技術趨勢',safe(s.trend),`技術分數 ${f(s.technical_score)}`),
+  card('RSI(14)',f(s.rsi),'動能指標'),
+  card('成交量',f(s.volume),'Yahoo Finance 回傳值')
+ ].join('');
+ if(taiwanFuturesChart) taiwanFuturesChart.destroy();
+ const canvas=$('taiwanFuturesChart');
+ taiwanFuturesChart=new Chart(canvas,{type:'line',data:{
+  labels:s.daily.map(x=>x.date),
+  datasets:[
+   {label:'台指期近一',data:s.daily.map(x=>x.close),borderColor:'#e2e8f0',borderWidth:2,pointRadius:0},
+   {label:'SMA20',data:s.daily.map(x=>x.sma20),borderColor:'#38bdf8',borderWidth:1.5,pointRadius:0},
+   {label:'SMA50',data:s.daily.map(x=>x.sma50),borderColor:'#fbbf24',borderWidth:1.5,pointRadius:0}
+  ]},options:{maintainAspectRatio:false,plugins:{legend:{labels:{color:'#cbd5e1'}}},
+  scales:{x:{ticks:{color:'#94a3b8',maxTicksLimit:8},grid:{color:'#263449'}},
+  y:{ticks:{color:'#94a3b8'},grid:{color:'#263449'}}}}});
+ $('twfMetrics').innerHTML=[
+  ['日內漲跌',pct(s.change_pct)],['SMA20',f(s.sma20)+' 點'],['SMA50',f(s.sma50)+' 點'],
+  ['SMA200',f(s.sma200)+' 點'],['MACD',f(s.macd)],['ADX(14)',f(s.adx14)],
+  ['ATR(14)',f(s.atr14)+' 點'],['20日支撐',f(s.support20)+' 點'],
+  ['20日壓力',f(s.resistance20)+' 點'],['2×ATR風險參考',f(s.stop_reference)+' 點']
+ ].map(([k,v])=>`<div class="flex justify-between gap-3 border-b border-slate-800 pb-2"><span>${k}</span><b class="text-slate-200">${v}</b></div>`).join('')+
+ `<div class="rounded-xl bg-slate-900 p-3 mt-3 text-slate-200"><div class="muted text-xs mb-1">規則式觀察</div>${safe(s.action)}</div>`;
+}
 function drawMarket(){
  const ids=['SPY','QQQ','DIA','IWM'];const items=ids.map(id=>data.market_etfs.find(x=>x.symbol===id)).filter(Boolean);
  const labels=items[0]?.daily.map(x=>x.date)||[];
@@ -68,19 +124,58 @@ function drawStock(s){
 }
 function selectStock(sym){const s=data.stocks.find(x=>x.symbol===sym);if(s){$('stockSelect').value=sym;drawStock(s)}}
 function renderSessionBrief(d){
- const snap=d.market_snapshot;if(!snap)return;
- $('indexCards').innerHTML=(snap.indices||[]).map(x=>card(x.name,Number(x.close).toLocaleString('en-US'),pct(x.change_pct),tone(x.change_pct))).join('');
- $('briefNotes').innerHTML=(d.market?.notes||[]).map(x=>`<div>• ${safe(x)}</div>`).join('')+(d.news_brief||[]).map(x=>`<div>• ${safe(x)}</div>`).join('');
- $('actionPlan').innerHTML=(d.action_plan||[]).map(x=>`<div>• ${safe(x)}</div>`).join('');
- const movers=(title,arr)=>`<div class="rounded-xl bg-slate-900/70 p-3"><h3 class="font-bold mb-2">${title}</h3>${(arr||[]).map(x=>`<div class="flex justify-between gap-2 py-1 border-b border-slate-800 text-sm"><span><b>${safe(x.symbol)}</b> ${safe(x.name)}</span><span class="${tone(x.change_pct)}">${pct(x.change_pct)}</span></div>`).join('')}</div>`;
- $('stockMoves').innerHTML=movers('主要強勢股',snap.leaders)+movers('落後與盤後異動', [...(snap.laggards||[]),...(snap.after_hours||[])]);
- $('sourceLinks').innerHTML='資料來源：'+(d.sources||[]).map(x=>`<a class="underline mr-3" target="_blank" rel="noopener" href="${safe(x.url)}">${safe(x.publisher)}</a>`).join('');
+ const snap=d.market_snapshot||null;
+ const market=d.market||{};
+ const etfs=d.market_etfs||[];
+ const stocks=d.stocks||[];
+ const date=(d.session_date || snap?.date || etfs.find(x=>x.daily?.length)?.daily?.slice(-1)[0]?.date || '').toString();
+ $('sessionLabel').textContent=(d.report_type==='historical_session_snapshot'?'LAST US SESSION':'LATEST US SESSION')+(date?' · '+date:'');
+ $('sessionTitle').textContent=d.report_type==='historical_session_snapshot'?'昨日美股盤勢摘要':'最新美股盤勢摘要';
+ $('sessionSubtitle').textContent=d.report_type==='historical_session_snapshot'?'歷史市場快照':'依最近一個交易日收盤資料與規則式指標自動整理';
+
+ // Historical snapshot and live V2 reports have different schemas. Support both.
+ if(snap){
+  $('indexCards').innerHTML=(snap.indices||[]).map(x=>card(x.name,Number(x.close).toLocaleString('en-US'),pct(x.change_pct),tone(x.change_pct))).join('');
+ }else{
+  const names={SPY:'S&P 500 ETF',QQQ:'Nasdaq 100 ETF',DIA:'Dow Jones ETF',IWM:'Russell 2000 ETF'};
+  const items=['SPY','QQQ','DIA','IWM'].map(sym=>etfs.find(x=>x.symbol===sym)).filter(Boolean);
+  $('indexCards').innerHTML=items.map(x=>card(names[x.symbol]||x.symbol,'$'+f(x.price),pct(x.change_pct),tone(x.change_pct))).join('') || '<div class="muted text-sm">目前沒有可用的大盤 ETF 報價。</div>';
+ }
+ const notes=[...(market.notes||[]),...(d.news_brief||[])];
+ if(!notes.length && market.summary) notes.push(market.summary);
+ $('briefNotes').innerHTML=notes.map(x=>`<div>• ${safe(x)}</div>`).join('') || '<div>目前沒有足夠的市場重點資料。</div>';
+
+ let plan=Array.isArray(d.action_plan)?d.action_plan.filter(Boolean):[];
+ if(!plan.length){
+  const regime=market.regime||'震盪／中性';
+  if(regime==='偏多') plan.push('大盤環境偏多，但仍以分批布局為原則；優先挑選技術分數與相對 SPY 強度較佳的標的。');
+  else if(regime==='偏空') plan.push('大盤環境偏空，降低追價與新增部位意願；優先檢查持倉風險及個股停損參考。');
+  else plan.push('大盤訊號尚未一致，先觀望並等待指數與個股趨勢確認，避免在震盪區間追價。');
+  if(market.mega_cap_above_sma20_pct!=null) plan.push(`監控科技股站上 SMA20 的比例為 ${f(market.mega_cap_above_sma20_pct)}%；觀察市場廣度能否持續改善。`);
+  if(market.vix!=null) plan.push(`VIX 為 ${f(market.vix)}；若波動指數快速升高，應重新評估部位大小與風險。`);
+  const strongest=[...stocks].filter(x=>x.change_pct!=null).sort((a,b)=>b.change_pct-a.change_pct).slice(0,2);
+  const weakest=[...stocks].filter(x=>x.change_pct!=null).sort((a,b)=>a.change_pct-b.change_pct).slice(0,2);
+  if(strongest.length) plan.push(`相對強勢觀察：${strongest.map(x=>x.symbol).join('、')}；需確認強勢是否延續，而非只看單日漲幅。`);
+  if(weakest.length) plan.push(`相對弱勢留意：${weakest.map(x=>x.symbol).join('、')}；檢查是否跌破均線或個股風險參考。`);
+ }
+ $('actionPlan').innerHTML=plan.map(x=>`<div>• ${safe(x)}</div>`).join('') || '<div>目前沒有可用的操作觀察。</div>';
+
+ const movers=(title,arr)=>`<div class="rounded-xl bg-slate-900/70 p-3"><h3 class="font-bold mb-2">${title}</h3>${(arr||[]).length?(arr).map(x=>`<div class="flex justify-between gap-2 py-1 border-b border-slate-800 text-sm"><span><b>${safe(x.symbol)}</b> ${safe(x.name||'')}</span><span class="${tone(x.change_pct)}">${pct(x.change_pct)}</span></div>`).join(''):'<div class="muted text-sm">目前沒有資料</div>'}</div>`;
+ if(snap){
+  $('stockMoves').innerHTML=movers('主要強勢股',snap.leaders)+movers('落後與盤後異動',[...(snap.laggards||[]),...(snap.after_hours||[])]);
+ }else{
+  const valid=stocks.filter(x=>x.change_pct!=null);
+  const sorted=[...valid].sort((a,b)=>b.change_pct-a.change_pct);
+  $('stockMoves').innerHTML=movers('監控個股漲幅領先',sorted.slice(0,4))+movers('監控個股漲幅落後',sorted.slice(-4).reverse());
+ }
+ $('sourceLinks').innerHTML=(d.sources||[]).length?'資料來源：'+d.sources.map(x=>`<a class="underline mr-3" target="_blank" rel="noopener" href="${safe(x.url)}">${safe(x.publisher)}</a>`).join(''):'';
 }
 async function init(){
  try{
  const base=new URL('.',window.location.href);const dataUrl=new URL('latest.json',base);dataUrl.searchParams.set('t',Date.now());
  const res=await fetch(dataUrl.toString(),{cache:'no-store'});if(!res.ok)throw Error('latest.json HTTP '+res.status+'（請確認 JSON 與 HTML 位於同一個 GitHub Pages 發布目錄）');data=await res.json();
  renderSessionBrief(data);
+ drawTaiwanFutures();
  $('updated').textContent=data.generated_at_taipei||data.generated_at;
  $('status').textContent=data.report_type==='historical_session_snapshot'?'已載入 2026-11-09 美股收盤快照。完成首次自動分析後，將切換為技術指標與個股排行榜。':`V${data.version} 報告已載入。成功取得 ${data.market_etfs.length} 檔大盤／產業 ETF、${data.stocks.length} 檔個股、${data.macros.length} 項宏觀代理指標。`+(data.errors.length?` 部分資料缺失：${data.errors.map(x=>x.symbol).join(', ')}`:'');
  const m=data.market, vix=m.vix==null?'—':f(m.vix);
@@ -100,6 +195,36 @@ async function init(){
  $('sectorList').innerHTML=data.sector_etfs.length?data.sector_etfs.map(s=>`<div class="flex justify-between border-b border-slate-800 pb-2 text-sm"><b>${s.symbol}</b><span>$${f(s.price)}</span><span class="${tone(s.change_pct)}">${pct(s.change_pct)}</span><span class="muted">${s.trend}</span></div>`).join(''):'<div class="muted text-sm">等待首次自動分析取得產業 ETF 報價。</div>';
  $('dataNotes').innerHTML=(data.data_notes||[]).map(x=>`• ${safe(x)}`).join('<br>')+(data.disclaimer?'<br><br>'+safe(data.disclaimer):'');
  }catch(e){$('status').textContent='報告載入失敗：'+e.message+'。請確認 latest.json 是否與此 HTML 位於同一個發布目錄。'}
+}
+// PWA install support. Android/desktop browsers expose the install prompt;
+ // iOS Safari uses the manual Share -> Add to Home Screen flow.
+let deferredInstallPrompt = null;
+const installBtn = $('installBtn');
+const iosHint = $('iosInstallHint');
+window.addEventListener('beforeinstallprompt', (event) => {
+  event.preventDefault();
+  deferredInstallPrompt = event;
+  installBtn.hidden = false;
+});
+installBtn?.addEventListener('click', async () => {
+  if (!deferredInstallPrompt) return;
+  deferredInstallPrompt.prompt();
+  await deferredInstallPrompt.userChoice;
+  deferredInstallPrompt = null;
+  installBtn.hidden = true;
+});
+window.addEventListener('appinstalled', () => {
+  installBtn.hidden = true;
+  iosHint.hidden = true;
+});
+const isIOS = /iphone|ipad|ipod/i.test(navigator.userAgent);
+const isStandalone = window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone;
+if (isIOS && !isStandalone) iosHint.hidden = false;
+if ('serviceWorker' in navigator && location.protocol === 'https:') {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('./service-worker.js', { scope: './' })
+      .catch(err => console.warn('PWA service worker registration failed:', err));
+  });
 }
 init();
 </script></body></html>

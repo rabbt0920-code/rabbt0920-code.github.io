@@ -1,7 +1,8 @@
 {
-  "version": "2.0",
-  "generated_at": "2026-11-10T13:23:21.454819+08:00",
-  "generated_at_taipei": "2026-11-10 13:23:21",
+  "version": "2.4",
+  "taiwan_futures": null,
+  "generated_at": "2026-11-10T13:44:28.351731+08:00",
+  "generated_at_taipei": "2026-11-10 13:44:28",
   "market": {
     "score": -3,
     "regime": "震盪／中性",
@@ -41409,26 +41410,26 @@
     },
     {
       "symbol": "DX-Y.NYB",
-      "price": 101.65,
-      "change_pct": 0.0,
+      "price": 101.64,
+      "change_pct": -0.01,
       "day_high": 101.74,
-      "day_low": 101.63,
+      "day_low": 101.62,
       "volume": 0,
-      "rsi": 49.15,
-      "macd": 0.0972,
-      "macd_signal": 0.1833,
+      "rsi": 48.95,
+      "macd": 0.0961,
+      "macd_signal": 0.183,
       "sma20": 101.9,
       "sma50": 101.18,
       "sma200": 99.75,
       "atr14": 0.5,
       "atr_pct": 0.49,
-      "adx14": 23.14,
+      "adx14": 23.1,
       "volume_ratio": null,
       "bb_upper": 102.45,
       "bb_lower": 101.35,
       "support20": 101.1,
       "resistance20": 102.95,
-      "stop_reference": 100.65,
+      "stop_reference": 100.64,
       "relative_strength_vs_spy_pct": null,
       "technical_score": -2,
       "trend": "偏空",
@@ -42872,8 +42873,8 @@
           "date": "2026-11-10",
           "open": 101.72,
           "high": 101.74,
-          "low": 101.63,
-          "close": 101.65,
+          "low": 101.62,
+          "close": 101.64,
           "volume": 0,
           "sma20": 101.9,
           "sma50": 101.18,
@@ -66060,16 +66061,16 @@
           "url": "https://finance.yahoo.com/markets/article/tech-stocks-rally-as-nvidia-stock-and-oil-prices-fall-alphacheck-152208023.html"
         },
         {
+          "title": "3 Growth Stocks To Watch With Up To 58% Earnings Growth",
+          "publisher": "Simply Wall St.",
+          "published": "2026-11-10T05:20:25Z",
+          "url": "https://finance.yahoo.com/markets/stocks/articles/3-growth-stocks-watch-58-052025265.html"
+        },
+        {
           "title": "Amtech, Intel, Applied Materials, AMD, and KLA Corporation shares are soaring, what you need to know",
           "publisher": "StockStory",
           "published": "2026-11-10T02:37:36Z",
           "url": "https://finance.yahoo.com/markets/stocks/articles/amtech-intel-applied-materials-amd-023736161.html"
-        },
-        {
-          "title": "Sanmina Q4 Earnings Call Highlights",
-          "publisher": "MarketBeat",
-          "published": "2026-11-10T02:14:36Z",
-          "url": "https://www.marketbeat.com/instant-alerts/transcript-sanmina-q4-earnings-call-highlights-2026-11-09/?utm_source=yahoofinance&utm_medium=yahoofinance"
         }
       ],
       "relative_strength_bonus": -1,
@@ -66078,13 +66079,19 @@
       "rank_action": "降低優先級，先控管風險"
     }
   ],
-  "errors": [],
+  "errors": [
+    {
+      "symbol": "WTX&",
+      "error": "Taiwan futures unavailable: Yahoo Finance 沒有回傳日線資料"
+    }
+  ],
   "data_notes": [
     "資料由 Yahoo Finance/yfinance 提供，並非交易所保證即時報價。",
     "日線指標使用調整後日線資料；盤前盤後 5 分鐘資料僅作延伸行情參考。",
     "市場廣度僅以本系統監控的大型科技股樣本計算，不代表全市場廣度。",
     "VIX、10 年期殖利率及美元指數可能有延遲或缺值；缺值時不會虛構數值。",
-    "新聞僅列標題與來源，尚未進行情緒分類或事件驗證。"
+    "新聞僅列標題與來源，尚未進行情緒分類或事件驗證。",
+    "台指期使用 Yahoo Finance WTX& 近一連續商品歷史資料；非交易所保證即時報價，換月時連續價格可能有跳空或調整差異。"
   ],
   "disclaimer": "本系統為規則式研究工具，不構成投資建議。停損參考值為收盤價減 2 倍 ATR 的風險參考，不保證成交或適合所有持倉。"
 }
