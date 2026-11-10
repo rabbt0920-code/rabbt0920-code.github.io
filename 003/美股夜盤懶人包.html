@@ -78,7 +78,7 @@ function drawTaiwanFutures(){
   card('夜盤最新收盤',f(s.price)+' 點',pct(s.change_pct),tone(s.change_pct)),
   card('技術趨勢',safe(s.trend),`技術分數 ${f(s.technical_score)}`),
   card('RSI(14)',f(s.rsi),'動能指標'),
-  card('夜盤成交量',f(s.volume),'期交所官方日報')
+  card('夜盤成交量',f(s.volume),safe(s.volume_scope||'單一 TX 契約月份'))
  ].join('');
  if(taiwanFuturesChart) taiwanFuturesChart.destroy();
  const canvas=$('taiwanFuturesChart');
@@ -97,7 +97,7 @@ function drawTaiwanFutures(){
   ['ATR(14)',f(s.atr14)+' 點'],['20日支撐',f(s.support20)+' 點'],
   ['20日壓力',f(s.resistance20)+' 點'],['2×ATR風險參考',f(s.stop_reference)+' 點']
  ].map(([k,v])=>`<div class="flex justify-between gap-3 border-b border-slate-800 pb-2"><span>${k}</span><b class="text-slate-200">${v}</b></div>`).join('')+
- `<div class="rounded-xl bg-slate-900 p-3 mt-3 text-slate-200"><div class="muted text-xs mb-1">規則式觀察</div>${safe(s.action)}</div><div class="text-xs muted mt-2">${safe(s.history_note||'')}</div>`;
+ `<div class="rounded-xl bg-slate-900 p-3 mt-3 text-slate-200"><div class="muted text-xs mb-1">規則式觀察</div>${safe(s.action)}</div><div class="text-xs muted mt-2">${safe(s.validation_note||'')+' '+safe(s.history_note||'')}</div>`;
 }
 function drawMarket(){
  const ids=['SPY','QQQ','DIA','IWM'];const items=ids.map(id=>data.market_etfs.find(x=>x.symbol===id)).filter(Boolean);

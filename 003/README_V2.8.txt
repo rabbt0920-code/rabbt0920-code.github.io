@@ -1,0 +1,1 @@
+V2.8 台指期夜盤解析修正版。部署步驟請閱讀「更新說明_V2.8.txt」。工作流範本位於 workflow_template/daily_analysis.yml，需放在 Repository 根目錄 .github/workflows/daily_analysis.yml。

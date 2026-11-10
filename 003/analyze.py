@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import json
 import math
+import re
 import shutil
 import time
 from datetime import datetime, timezone
@@ -38,81 +39,149 @@ def fetch_history(symbol: str, period: str) -> pd.DataFrame:
 
 def fetch_taifex_night_session(config: dict) -> dict:
     """
-    Fetch official TAIFEX daily futures report and retain only TX after-hours rows.
-    TAIFEX labels an after-hours session by the next trading date.
-    The official endpoint returns the latest report; history is accumulated in Git.
+    Parse the TAIFEX DailyMarketReportFut schema strictly.
+
+    Official field names:
+      Date, Contract, ContractMonth(Week), TradingSession,
+      Open, High, Low, Last, Change, %, Volume, OpenInterest.
+
+    Important: Volume is for the selected contract/month row, not the
+    aggregated volume of all TX contract months and not the continuous
+    Yahoo WTX& series.
     """
     api_url = config.get("api_url", "https://openapi.taifex.com.tw/v1/DailyMarketReportFut")
     response = requests.get(
         api_url,
-        headers={"User-Agent": "Mozilla/5.0 (compatible; MarketMonitor/2.7)"},
+        headers={"User-Agent": "Mozilla/5.0 (compatible; MarketMonitor/2.8)"},
         timeout=25,
     )
     response.raise_for_status()
     payload = response.json()
-    if isinstance(payload, dict):
-        rows = payload.get("data") or payload.get("Data") or payload.get("result") or []
-    else:
-        rows = payload
-    if not isinstance(rows, list) or not rows:
-        raise RuntimeError("TAIFEX 官方 API 沒有回傳期貨日報資料")
 
-    def getv(row, *names):
-        for name in names:
-            if name in row and row[name] not in (None, "", "-", "－"):
-                return row[name]
-        return None
+    if isinstance(payload, list):
+        rows = payload
+    elif isinstance(payload, dict):
+        rows = payload.get("data") or payload.get("Data") or payload.get("result")
+    else:
+        rows = None
+    if not isinstance(rows, list) or not rows:
+        raise RuntimeError("TAIFEX DailyMarketReportFut 回傳格式錯誤或沒有資料")
+
+    required = {
+        "Date", "Contract", "ContractMonth(Week)", "TradingSession",
+        "Open", "High", "Low", "Last", "Change", "%", "Volume",
+    }
+    sample = next((r for r in rows if isinstance(r, dict)), None)
+    if sample is None:
+        raise RuntimeError("TAIFEX API 資料列不是 JSON 物件")
+    missing = sorted(required - set(sample.keys()))
+    if missing:
+        raise RuntimeError(
+            "TAIFEX API 欄位與預期 schema 不符，缺少：" + ", ".join(missing)
+            + "；本次停止更新，避免錯誤欄位被當成行情。"
+        )
+
+    def parse_num(value, field):
+        if value is None:
+            return None
+        text_value = str(value).strip().replace(",", "").replace("%", "")
+        if text_value in {"", "-", "－", "NULL", "null", "N/A"}:
+            return None
+        try:
+            result = float(text_value)
+        except (TypeError, ValueError):
+            raise RuntimeError(f"TAIFEX 欄位 {field} 無法轉成數字：{value!r}")
+        if not math.isfinite(result):
+            raise RuntimeError(f"TAIFEX 欄位 {field} 不是有限數值")
+        return result
 
     candidates = []
     for row in rows:
-        contract = str(getv(row, "Contract", "contract", "商品代號") or "").strip().upper()
-        session = str(getv(row, "TradingSession", "tradingSession", "交易時段") or "").strip()
-        if contract not in {"TX", "TXF"}:
+        if not isinstance(row, dict):
             continue
-        if not any(token in session.lower() for token in ("盤後", "after", "night", "ah")):
+        contract = str(row.get("Contract", "")).strip().upper()
+        session = str(row.get("TradingSession", "")).strip()
+        if contract != "TX" or session != "盤後":
             continue
-        month = str(getv(row, "ContractMonth(Week)", "ContractMonth", "contractMonth", "到期月份") or "")
-        if "/" in month:
+
+        month = str(row.get("ContractMonth(Week)", "")).strip()
+        # TX monthly futures only: exclude weekly contracts and calendar spreads.
+        if not re.fullmatch(r"\d{6}", month):
             continue
-        date_raw = str(getv(row, "Date", "date", "日期") or "").strip()
-        if not date_raw:
+
+        date_raw = str(row.get("Date", "")).strip()
+        date_digits = re.sub(r"\D", "", date_raw)
+        if len(date_digits) != 8:
             continue
-        date_clean = date_raw.replace("/", "").replace("-", "")
-        if len(date_clean) == 8 and date_clean.isdigit():
-            date_key = f"{date_clean[:4]}-{date_clean[4:6]}-{date_clean[6:]}"
-        else:
-            continue
-        def num(*keys):
-            value = getv(row, *keys)
-            if value is None:
-                return None
-            try:
-                return float(str(value).replace(",", "").replace("%", "").strip())
-            except (TypeError, ValueError):
-                return None
-        candidates.append({
-            "date": date_key, "contract": contract, "contract_month": month,
-            "open": num("Open", "open", "開盤價"),
-            "high": num("High", "high", "最高價"),
-            "low": num("Low", "low", "最低價"),
-            "close": num("Last", "Close", "close", "最後成交價", "收盤價"),
-            "change": num("Change", "change", "漲跌"),
-            "change_pct": num("%", "ChangePercent", "changePercent", "漲跌%"),
-            "volume": num("Volume", "volume", "成交量"),
-            "open_interest": num("OpenInterest", "openInterest", "未平倉量"),
+        date_key = f"{date_digits[:4]}-{date_digits[4:6]}-{date_digits[6:8]}"
+
+        record = {
+            "date": date_key,
+            "contract": contract,
+            "contract_month": month,
+            "open": parse_num(row.get("Open"), "Open"),
+            "high": parse_num(row.get("High"), "High"),
+            "low": parse_num(row.get("Low"), "Low"),
+            # Do not silently fall back to settlement/close/other fields.
+            "close": parse_num(row.get("Last"), "Last"),
+            "change": parse_num(row.get("Change"), "Change"),
+            "change_pct": parse_num(row.get("%"), "%"),
+            "volume": parse_num(row.get("Volume"), "Volume"),
+            "open_interest": parse_num(row.get("OpenInterest"), "OpenInterest"),
             "session": "盤後",
             "source": "TAIFEX OpenAPI DailyMarketReportFut",
-        })
-    if not candidates:
-        raise RuntimeError("TAIFEX 官方日報目前沒有 TX 盤後（夜盤）資料；可能尚未於夜盤收盤後更新")
+            "volume_scope": "單一 TX 契約月份；非所有月份合計",
+            "raw_field_mapping": {
+                "open": "Open", "high": "High", "low": "Low",
+                "close": "Last", "change": "Change", "change_pct": "%",
+                "volume": "Volume",
+            },
+        }
 
-    # Pick the nearest listed delivery month for the latest after-hours trading date.
+        o, h, l, c, v = (
+            record["open"], record["high"], record["low"],
+            record["close"], record["volume"],
+        )
+        if any(x is None for x in (o, h, l, c, v)):
+            continue
+        if min(o, h, l, c) <= 0 or v < 0:
+            continue
+        if h < max(o, l, c) or l > min(o, h, c) or h < l:
+            continue
+        # Reject malformed price rows; never publish a questionable quote.
+        if not (20000 <= c <= 60000):
+            continue
+        candidates.append(record)
+
+    if not candidates:
+        raise RuntimeError(
+            "TAIFEX 日報沒有通過驗證的 TX 盤後月契約資料；"
+            "請檢查官方 API 欄位、夜盤日報是否已發布。"
+        )
+
     latest_date = max(x["date"] for x in candidates)
     same_date = [x for x in candidates if x["date"] == latest_date]
+    # The closest expiry is the smallest YYYYMM among listed monthly TX contracts.
     same_date.sort(key=lambda x: x["contract_month"])
     selected = same_date[0]
-    if selected["close"] is None or selected["high"] is None or selected["low"] is None:
-        raise RuntimeError("TAIFEX 夜盤資料缺少有效 OHLC/Last 欄位")
+
+    # If the adjacent listed month is implausibly far from the selected month,
+    # stop instead of silently selecting a malformed or mismapped row.
+    if len(same_date) > 1:
+        next_month = same_date[1]
+        gap_pct = abs(selected["close"] / next_month["close"] - 1) * 100
+        if gap_pct > 5:
+            raise RuntimeError(
+                "TX 近月與次近月收盤價差異超過 5%，疑似欄位或契約資料異常；"
+                "本次不更新夜盤行情。"
+            )
+
+    selected["contract_count_for_date"] = len(same_date)
+    selected["validated"] = True
+    selected["validation_note"] = (
+        "已確認 Contract=TX、TradingSession=盤後，"
+        "並使用官方 Last 作收盤、Volume 作該契約月份成交量。"
+    )
     return selected
 
 
@@ -126,6 +195,24 @@ def load_taifex_night_history(config: dict) -> tuple[pd.DataFrame, dict]:
                 history = []
         except Exception:
             history = []
+    # Validate persisted rows too; never reuse malformed legacy rows as current quotes.
+    clean_history = []
+    for item in history:
+        if not isinstance(item, dict):
+            continue
+        try:
+            o, h, l, c, v = [float(item.get(k)) for k in ("open", "high", "low", "close", "volume")]
+            valid_date = bool(re.fullmatch(r"\d{4}-\d{2}-\d{2}", str(item.get("date", ""))))
+            valid_month = bool(re.fullmatch(r"\d{6}", str(item.get("contract_month", ""))))
+            valid = (valid_date and valid_month and item.get("contract") == "TX"
+                     and item.get("session") == "盤後" and 20000 <= c <= 60000
+                     and min(o, h, l, c) > 0 and v >= 0
+                     and h >= max(o, l, c) and l <= min(o, h, c))
+            if valid:
+                clean_history.append(item)
+        except (TypeError, ValueError):
+            continue
+    history = clean_history
     fresh_status = "fresh"
     try:
         latest = fetch_taifex_night_session(config.get("taiwan_futures", {}))
@@ -200,6 +287,10 @@ def build_taifex_night_asset(config: dict) -> dict:
         "session": "盤後（夜盤）", "session_date": latest["date"],
         "contract_month": latest["contract_month"], "source": latest["source"],
         "open_interest": latest.get("open_interest"),
+        "volume_scope": latest.get("volume_scope", "單一 TX 契約月份；非所有月份合計"),
+        "validated": bool(latest.get("validated", False)),
+        "validation_note": latest.get("validation_note", ""),
+        "contract_count_for_date": latest.get("contract_count_for_date"),
         "history_count": len(frame),
         "history_note": ("本次取得期交所最新夜盤資料。" if latest.get("_fresh_status") == "fresh" else "本次官方 API 尚未發布新夜盤資料，暫顯示最近一次已保存的夜盤紀錄。") + "歷史夜盤資料由 GitHub Actions 每次執行後累積；首次部署前不會自動補齊完整歷史。",
     }
@@ -560,7 +651,7 @@ def main():
 
     now = datetime.now(timezone.utc).astimezone(TAIPEI)
     report = {
-        "version": "2.7",
+        "version": "2.8",
         "taiwan_futures": taiwan_futures,
         "taiwan_us_stocks": taiwan_us_stocks,
         "generated_at": now.isoformat(),

@@ -1,0 +1,21 @@
+美股市場情報中心 V2.8｜台指期夜盤解析修正版
+
+修正內容
+1. 嚴格依 TAIFEX DailyMarketReportFut 原始欄位解析：Date、Contract、ContractMonth(Week)、TradingSession、Open、High、Low、Last、Change、%、Volume、OpenInterest。
+2. 收盤價只讀 Last，不再猜測 Close 或結算價欄位。
+3. 成交量只讀 Volume，並明確標示為單一 TX 契約月份成交量；不能與 Yahoo WTX& 連續商品或全月份合計成交量直接比較。
+4. 只接受 Contract=TX、TradingSession=盤後、YYYYMM 月契約；排除 MTX、週契約、價差契約及日盤。
+5. 對 OHLC、成交量、日期、契約月份做資料驗證；API 欄位不符或行情不合理時停止更新，不猜欄位。
+6. 對歷史快取也執行驗證，避免不合格舊資料被當成最新行情。
+7. 近月選擇依最新交易日期的 YYYYMM 月契約排序；近月與次近月價差異常超過 5% 時停止更新。
+8. 儀表板明確標示成交量口徑與資料驗證說明，並更新 PWA 快取版本。
+
+部署
+- 將 ZIP 根目錄內容覆蓋上傳至 GitHub 的 003 資料夾。
+- 更新 Repository 根目錄 .github/workflows/daily_analysis.yml，使用 workflow_template/daily_analysis.yml。
+- Actions 手動執行一次，確認成功後再查看網站。
+- 若要排除舊快取，可刪除 003/reports/taifex_night_history.json 後重新執行；新版也會先驗證歷史列。
+- 官方 API 欄位若改版，程式會明確報錯，不會顯示猜測行情。
+
+口徑提醒
+Yahoo WTX& 是連續商品報價，期交所單一 TX 契約月份不是完全相同的資料口徑；成交量尤其不可直接比較。比較時需指定相同交易日期、TX 契約月份與盤別。
