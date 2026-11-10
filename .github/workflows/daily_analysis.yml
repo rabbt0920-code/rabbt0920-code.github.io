@@ -30,13 +30,13 @@ jobs:
           cache-dependency-path: 003/requirements.txt
 
       - name: Install dependencies
-        working-directory: 003
+        working-directory: "003"
         run: |
           python -m pip install --upgrade pip
           pip install -r requirements.txt
 
       - name: Generate V2 report
-        working-directory: 003
+        working-directory: "003"
         run: python analyze.py
 
       - name: Commit report
