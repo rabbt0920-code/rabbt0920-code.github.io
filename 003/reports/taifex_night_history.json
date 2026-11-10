@@ -1,1 +1,17 @@
-[]
+[
+  {
+    "date": "2026-11-09",
+    "contract": "TX",
+    "contract_month": "202611",
+    "open": 39742.0,
+    "high": 40845.0,
+    "low": 39129.0,
+    "close": 40298.0,
+    "change": 646.0,
+    "change_pct": 1.63,
+    "volume": 69882.0,
+    "open_interest": null,
+    "session": "盤後",
+    "source": "TAIFEX OpenAPI DailyMarketReportFut"
+  }
+]
