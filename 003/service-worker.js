@@ -1,4 +1,4 @@
-const VERSION = 'market-pwa-v2-2.8';
+const VERSION = 'market-pwa-v3.0';
 const SHELL_CACHE = `${VERSION}-shell`;
 const DATA_CACHE = `${VERSION}-data`;
 const APP_SHELL = [

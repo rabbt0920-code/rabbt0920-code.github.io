@@ -2,7 +2,7 @@
 <html lang="zh-Hant">
 <head>
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>美股市場情報中心 V2</title>
+<title>美股市場情報中心 V3.0</title>
 <meta name="theme-color" content="#080d18">
 <meta name="description" content="美股大盤、科技股強弱、技術指標與風險管理量化儀表板。">
 <link rel="manifest" href="./manifest.webmanifest">
@@ -16,7 +16,7 @@ button.active{border-color:#22d3ee!important;background:#123047!important}canvas
 </style></head>
 <body class="min-h-screen">
 <header class="border-b border-slate-800 bg-slate-950/80"><div class="max-w-7xl mx-auto px-5 py-5 flex flex-wrap justify-between gap-3 items-center">
-<div><div class="text-xs tracking-[.25em] text-cyan-400 uppercase">Quant market intelligence · V2</div><h1 class="text-2xl md:text-3xl font-bold mt-1">美股市場情報中心</h1><p class="text-sm muted mt-1">大盤環境 × 科技股強弱 × 風險管理</p></div>
+<div><div class="text-xs tracking-[.25em] text-cyan-400 uppercase">Quant market intelligence · V3.0</div><h1 class="text-2xl md:text-3xl font-bold mt-1">美股市場情報中心</h1><p class="text-sm muted mt-1">大盤環境 × 科技股強弱 × 風險管理</p></div>
 <div class="flex flex-col items-end gap-2 text-sm">
 <div class="text-right"><div class="muted">報告更新時間（台灣）</div><b id="updated">讀取中…</b></div>
 <button id="installBtn" type="button" hidden class="rounded-lg border border-cyan-500/60 bg-cyan-950 px-3 py-2 text-xs font-bold text-cyan-200">安裝到手機／桌面</button>
@@ -27,7 +27,7 @@ button.active{border-color:#22d3ee!important;background:#123047!important}canvas
 <section id="sessionBrief" class="panel p-5 space-y-4"><div><div id="sessionLabel" class="text-xs tracking-widest text-cyan-400">LATEST US SESSION</div><h2 id="sessionTitle" class="font-bold text-xl mt-1">美股盤勢摘要</h2><p id="sessionSubtitle" class="muted text-sm mt-1">依最近一個交易日資料整理</p></div><div id="indexCards" class="grid grid-cols-2 lg:grid-cols-4 gap-3"></div><div class="grid grid-cols-1 lg:grid-cols-2 gap-4"><div><h3 class="font-bold mb-2">盤勢重點</h3><div id="briefNotes" class="text-sm muted space-y-2"></div></div><div><h3 class="font-bold mb-2">操作觀察</h3><div id="actionPlan" class="text-sm muted space-y-2"></div></div></div><div id="stockMoves" class="grid grid-cols-1 lg:grid-cols-2 gap-4"></div><div id="sourceLinks" class="text-xs muted"></div></section>
 <section class="panel p-5 space-y-4">
 <div class="flex flex-wrap items-start justify-between gap-2">
-  <div><div class="text-xs tracking-widest text-cyan-400">TAIWAN INDEX FUTURES</div><h2 class="font-bold text-xl mt-1">台指期夜盤</h2><p class="muted text-xs mt-1">TX · 臺灣期交所官方盤後（夜盤）資料</p></div>
+  <div><div class="text-xs tracking-widest text-cyan-400">TAIWAN INDEX FUTURES</div><h2 class="font-bold text-xl mt-1">台指期夜盤</h2><p class="muted text-xs mt-1">TX 近月 · 官方夜盤收盤以 TAIFEX Last 為準；盤中參考另列</p></div>
   <span id="twfTrend" class="pill border border-slate-600 muted">讀取中</span>
 </div>
 <div id="twfCards" class="grid grid-cols-2 md:grid-cols-4 gap-3"><div class="muted text-sm">正在載入台指期資料…</div></div>
@@ -35,7 +35,7 @@ button.active{border-color:#22d3ee!important;background:#123047!important}canvas
   <div class="lg:col-span-2"><h3 class="font-bold mb-2">台指期走勢與均線</h3><div class="h-[280px]"><canvas id="taiwanFuturesChart"></canvas></div></div>
   <div><h3 class="font-bold mb-2">技術與風險觀察</h3><div id="twfMetrics" class="space-y-2 text-sm muted"></div></div>
 </div>
-<div id="twfNotice" class="text-xs muted leading-5">資料來源：臺灣期貨交易所官方 OpenAPI，僅分析 TX 盤後夜盤（15:00 至次日 05:00）；官方日報通常於夜盤收盤後更新。歷史資料由 GitHub Actions 自動累積，首次部署後需逐日建立樣本；夜盤屬次一交易日。請以期交所／券商交易介面核對即時報價。</div>
+<div id="twfNotice" class="text-xs muted leading-5">官方收盤：<a class="underline" href="https://openapi.taifex.com.tw/" target="_blank" rel="noopener">TAIFEX OpenAPI</a>。盤中參考：<a class="underline" href="https://www.taifex.com.tw/eventTaifexTradingCenter/enl/index.do" target="_blank" rel="noopener">TAIFEX Info Hub</a>（官方註明採樣資料，與正式報表可能有差異）。卡片只顯示通過新鮮度檢查的官方夜盤 Last；資料過期時會隱藏最新報價並暫停操作建議。夜盤為 15:00 至次日 05:00，交易日期依期交所歸屬規則。</div>
 </section>
 <section><div class="flex items-end justify-between mb-3"><div><h2 class="font-bold text-lg">市場環境總覽</h2><p class="muted text-xs">先判斷大盤，再評估個股</p></div><span class="muted text-xs">規則式模型</span></div>
 <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3" id="marketCards"></div></section>
@@ -54,7 +54,7 @@ button.active{border-color:#22d3ee!important;background:#123047!important}canvas
 <div class="panel p-5"><h2 class="font-bold text-lg mb-1">所選個股新聞</h2><p class="muted text-xs mb-4">僅呈現來源標題，未進行情緒判讀</p><div id="news" class="space-y-3"></div></div>
 </section>
 <section class="panel p-5"><h2 class="font-bold text-lg mb-3">資料品質與使用限制</h2><div id="dataNotes" class="text-xs muted leading-6"></div></section>
-<footer class="text-xs muted leading-6 pb-8">美股資料：Yahoo Finance / yfinance；台指期夜盤：臺灣期貨交易所官方 OpenAPI。資料可能延遲、缺漏或修訂。模型為規則式研究輔助，不構成投資建議；停損參考並非保證成交價格。</footer>
+<footer class="text-xs muted leading-6 pb-8">美股資料：Yahoo Finance / yfinance；台指期夜盤官方收盤：TAIFEX OpenAPI；盤中參考：TAIFEX Info Hub（抽樣資料）。資料可能延遲、缺漏或修訂。模型為規則式研究輔助，不構成投資建議；停損參考並非保證成交價格。</footer>
 </main>
 <script>
 let data,marketChart,stockChart,taiwanFuturesChart;
@@ -72,13 +72,13 @@ function drawTaiwanFutures(){
   $('twfMetrics').innerHTML='<div class="muted">台指期資料未取得；不會以加權指數現貨代替期貨報價。</div>';
   return;
  }
- $('twfTrend').textContent=s.trend||'中性';
- $('twfTrend').className='pill border '+(s.trend==='偏多'?'border-emerald-500/50 text-emerald-300':s.trend==='偏空'?'border-rose-500/50 text-rose-300':'border-slate-600 text-slate-300');
+ $('twfTrend').textContent=s.is_stale?'資料過期':(s.trend||'中性');
+ $('twfTrend').className='pill border '+(s.is_stale?'border-rose-500/50 text-rose-300':s.trend==='偏多'?'border-emerald-500/50 text-emerald-300':s.trend==='偏空'?'border-rose-500/50 text-rose-300':'border-slate-600 text-slate-300');
  $('twfCards').innerHTML=[
-  card('夜盤最新收盤',f(s.price)+' 點',pct(s.change_pct),tone(s.change_pct)),
-  card('技術趨勢',safe(s.trend),`技術分數 ${f(s.technical_score)}`),
+  card(s.is_stale?'最後有效夜盤價（資料過期）':'夜盤最後成交價（TX近月）',f(s.price)+' 點',s.is_stale?`資料日期 ${safe(s.session_date)}；不可視為最新報價`:`${pct(s.change_pct)} · ${safe(s.session_date||'')}`,s.is_stale?'down':tone(s.change_pct)),
+  card('技術趨勢',safe(s.trend),s.is_stale?'資料過期，暫停操作建議':`技術分數 ${f(s.technical_score)}`),
   card('RSI(14)',f(s.rsi),'動能指標'),
-  card('夜盤成交量',f(s.volume),safe(s.volume_scope||'單一 TX 契約月份'))
+  card(s.is_stale?'歷史夜盤成交量':'夜盤成交量',f(s.volume),safe(s.volume_scope||'單一 TX 契約月份'))
  ].join('');
  if(taiwanFuturesChart) taiwanFuturesChart.destroy();
  const canvas=$('taiwanFuturesChart');
@@ -92,12 +92,12 @@ function drawTaiwanFutures(){
   scales:{x:{ticks:{color:'#94a3b8',maxTicksLimit:8},grid:{color:'#263449'}},
   y:{ticks:{color:'#94a3b8'},grid:{color:'#263449'}}}}});
  $('twfMetrics').innerHTML=[
-  ['夜盤交易日',safe(s.session_date||'—')],['契約月份',safe(s.contract_month||'近月')],['歷史樣本',f(s.history_count)+' 場'],['資料來源',safe(s.source||'TAIFEX')],['夜盤漲跌',pct(s.change_pct)],['SMA20',f(s.sma20)+' 點'],['SMA50',f(s.sma50)+' 點'],
+  ['資料狀態',s.is_stale?'過期／僅供歷史參考':'最新官方資料'],['夜盤交易日',safe(s.session_date||'—')],['契約月份',safe(s.contract_month||'近月')],['歷史樣本',f(s.history_count)+' 場'],['資料來源',safe(s.source||'TAIFEX')],['抓取時間',safe(s.retrieved_at_taipei||'—')],['夜盤漲跌',pct(s.change_pct)],['SMA20',f(s.sma20)+' 點'],['SMA50',f(s.sma50)+' 點'],
   ['SMA200',f(s.sma200)+' 點'],['MACD',f(s.macd)],['ADX(14)',f(s.adx14)],
   ['ATR(14)',f(s.atr14)+' 點'],['20日支撐',f(s.support20)+' 點'],
   ['20日壓力',f(s.resistance20)+' 點'],['2×ATR風險參考',f(s.stop_reference)+' 點']
  ].map(([k,v])=>`<div class="flex justify-between gap-3 border-b border-slate-800 pb-2"><span>${k}</span><b class="text-slate-200">${v}</b></div>`).join('')+
- `<div class="rounded-xl bg-slate-900 p-3 mt-3 text-slate-200"><div class="muted text-xs mb-1">規則式觀察</div>${safe(s.action)}</div><div class="text-xs muted mt-2">${safe(s.validation_note||'')+' '+safe(s.history_note||'')}</div>`;
+ `<div class="rounded-xl bg-slate-900 p-3 mt-3 text-slate-200"><div class="muted text-xs mb-1">${s.is_stale?'資料警示':'規則式觀察'}</div>${safe(s.action)}</div><div class="text-xs muted mt-2">${safe(s.latest_status_note||'')+' '+safe(s.validation_note||'')+' '+safe(s.history_note||'')}</div>`;
 }
 function drawMarket(){
  const ids=['SPY','QQQ','DIA','IWM'];const items=ids.map(id=>data.market_etfs.find(x=>x.symbol===id)).filter(Boolean);

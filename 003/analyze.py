@@ -5,7 +5,7 @@ import math
 import re
 import shutil
 import time
-from datetime import datetime, timezone
+from datetime import datetime, timezone, date
 from pathlib import Path
 from zoneinfo import ZoneInfo
 
@@ -130,6 +130,8 @@ def fetch_taifex_night_session(config: dict) -> dict:
             "open_interest": parse_num(row.get("OpenInterest"), "OpenInterest"),
             "session": "盤後",
             "source": "TAIFEX OpenAPI DailyMarketReportFut",
+            "source_url": "https://openapi.taifex.com.tw/",
+            "retrieved_at_taipei": datetime.now(TAIPEI).strftime("%Y-%m-%d %H:%M:%S"),
             "volume_scope": "單一 TX 契約月份；非所有月份合計",
             "raw_field_mapping": {
                 "open": "Open", "high": "High", "low": "Low",
@@ -200,7 +202,7 @@ def load_taifex_night_history(config: dict) -> tuple[pd.DataFrame, dict]:
     # explicitly written by this parser version and mapped from official Last.
     clean_history = []
     for item in history:
-        if not isinstance(item, dict) or item.get("parser_version") != "2.9":
+        if not isinstance(item, dict) or item.get("parser_version") not in {"2.9", "3.0"}:
             continue
         try:
             o, h, l, c, v = [float(item.get(k)) for k in ("open", "high", "low", "close", "volume")]
@@ -226,7 +228,7 @@ def load_taifex_night_history(config: dict) -> tuple[pd.DataFrame, dict]:
     fresh_status = "fresh"
     try:
         latest = fetch_taifex_night_session(config.get("taiwan_futures", {}))
-        latest["parser_version"] = "2.9"
+        latest["parser_version"] = "3.0"
         # The latest official near-month record replaces every expiry for that date.
         history = [x for x in history if x.get("date") != latest["date"]]
         history.append(latest)
@@ -250,7 +252,20 @@ def load_taifex_night_history(config: dict) -> tuple[pd.DataFrame, dict]:
     if "Volume" not in frame:
         frame["Volume"] = 0
     frame["Volume"] = frame["Volume"].fillna(0)
-    latest["_fresh_status"] = fresh_status
+    # Fail-safe freshness gate: never label an old cached close as the latest quote.
+    # One missed weekday is tolerated (weekends/holidays can delay publication);
+    # two or more weekdays old is stale and must not produce a live-looking card.
+    today_tw = datetime.now(TAIPEI).date()
+    session_day = datetime.strptime(latest["date"], "%Y-%m-%d").date()
+    weekday_age = sum(1 for i in range((today_tw - session_day).days) if (session_day + pd.Timedelta(days=i+1)).weekday() < 5)
+    is_stale = (fresh_status == "cached") or weekday_age > 1
+    latest["_fresh_status"] = "stale" if is_stale else fresh_status
+    latest["is_stale"] = is_stale
+    latest["weekday_age"] = int(weekday_age)
+    latest["latest_status_note"] = (
+        f"官方夜盤資料交易日期 {latest['date']}；距台灣今日已過 {weekday_age} 個平日。"
+        + ("資料已過期，保留歷史參考但不提供最新報價／操作建議。" if is_stale else "資料日期通過新鮮度檢查。")
+    )
     return frame[["Open", "High", "Low", "Close", "Volume"]], latest
 
 
@@ -271,7 +286,9 @@ def build_taifex_night_asset(config: dict) -> dict:
     change_pct = latest.get("change_pct")
     if change_pct is None and float(previous["Close"]) != 0:
         change_pct = (close / float(previous["Close"]) - 1) * 100
-    if score >= 3:
+    if latest.get("is_stale"):
+        trend, action = "資料過期", "目前顯示的是最後一筆已驗證歷史夜盤資料，不是最新行情；暫停依此價格產生操作建議，請等待期交所更新。"
+    elif score >= 3:
         trend, action = "偏多", "夜盤技術面偏強，可觀察回測 SMA20／前低是否有支撐；避免追逐單根急漲。"
     elif score <= -2:
         trend, action = "偏空", "夜盤技術面偏弱，優先控管槓桿與部位；等待重新站回關鍵均線再評估。"
@@ -285,9 +302,15 @@ def build_taifex_night_asset(config: dict) -> dict:
     # Preserve session dates as YYYY-MM-DD for chart labels.
     return {
         "symbol": "TX", "name": "臺股期貨近月（官方夜盤）",
-        "price": number(close), "change_pct": number(change_pct),
-        "day_high": number(row["High"]), "day_low": number(row["Low"]),
-        "volume": int(latest.get("volume") or 0),
+        "price": None if latest.get("is_stale") else number(close),
+        "last_verified_price": number(close), "quote_status": "stale" if latest.get("is_stale") else "fresh",
+        "retrieved_at_taipei": latest.get("retrieved_at_taipei"),
+        "weekday_age": latest.get("weekday_age", 0),
+        "latest_status_note": latest.get("latest_status_note", ""),
+        "change_pct": None if latest.get("is_stale") else number(change_pct),
+        "day_high": None if latest.get("is_stale") else number(row["High"]),
+        "day_low": None if latest.get("is_stale") else number(row["Low"]),
+        "volume": None if latest.get("is_stale") else int(latest.get("volume") or 0),
         "rsi": number(row.get("RSI")), "macd": number(row.get("MACD"), 4),
         "macd_signal": number(row.get("MACD_SIGNAL"), 4),
         "sma20": number(row.get("SMA20")), "sma50": number(row.get("SMA50")),
@@ -298,17 +321,18 @@ def build_taifex_night_asset(config: dict) -> dict:
         "support20": number(df["Low"].tail(20).min()),
         "resistance20": number(df["High"].tail(20).max()),
         "stop_reference": number(close - 2 * float(row["ATR14"])) if pd.notna(row.get("ATR14")) else None,
-        "technical_score": score, "trend": trend, "action": action, "reasons": reasons,
-        "daily": daily, "extended": [], "extended_note": "採用期交所官方 TX 近月盤後（夜盤）Last 欄位；卡片價格與走勢序列末筆通過一致性檢查。",
+        "technical_score": None if latest.get("is_stale") else score, "trend": trend, "action": action, "reasons": reasons,
+        "daily": daily, "extended": [], "extended_note": "官方收盤資料採 TAIFEX OpenAPI；Info Hub 僅作盤中參考交叉檢視，不覆蓋官方收盤值。",
         "session": "盤後（夜盤）", "session_date": latest["date"],
         "contract_month": latest["contract_month"], "source": latest["source"],
         "open_interest": latest.get("open_interest"),
         "volume_scope": latest.get("volume_scope", "單一 TX 契約月份；非所有月份合計"),
         "validated": bool(latest.get("validated", False)),
+        "is_stale": bool(latest.get("is_stale", False)),
         "validation_note": latest.get("validation_note", ""),
         "contract_count_for_date": latest.get("contract_count_for_date"),
         "history_count": len(frame),
-        "history_note": ("本次取得期交所最新夜盤資料。" if latest.get("_fresh_status") == "fresh" else "官方 API 暫無新資料，顯示最近一次 V2.9 已驗證夜盤紀錄。") + "歷史夜盤資料由 GitHub Actions 每次執行後累積；首次部署前不會自動補齊完整歷史。",
+        "history_note": ("本次取得期交所最新夜盤資料。" if latest.get("_fresh_status") == "fresh" else "官方 API 暫無新資料或回傳日期過舊；僅保留最後有效歷史供圖表參考，報價卡不顯示為最新值。") + "歷史夜盤資料由 GitHub Actions 每次執行後累積；首次部署前不會自動補齊完整歷史。",
     }
 
 def indicators(df: pd.DataFrame) -> pd.DataFrame:
@@ -634,7 +658,7 @@ def main():
     taiwan_futures = None
     tw_cfg = config.get("taiwan_futures", {})
     try:
-        print("Fetching official TAIFEX TX after-hours session")
+        print("Fetching official TAIFEX TX after-hours session (with freshness validation)")
         taiwan_futures = build_taifex_night_asset(tw_cfg)
         taiwan_futures["description"] = tw_cfg.get(
             "description", "臺灣期貨交易所官方 TX 盤後（夜盤）資料"
@@ -667,7 +691,7 @@ def main():
 
     now = datetime.now(timezone.utc).astimezone(TAIPEI)
     report = {
-        "version": "2.9",
+        "version": "3.0",
         "taiwan_futures": taiwan_futures,
         "taiwan_us_stocks": taiwan_us_stocks,
         "generated_at": now.isoformat(),
@@ -684,7 +708,9 @@ def main():
             "市場廣度僅以本系統監控的大型科技股樣本計算，不代表全市場廣度。",
             "VIX、10 年期殖利率及美元指數可能有延遲或缺值；缺值時不會虛構數值。",
             "新聞僅列標題與來源，尚未進行情緒分類或事件驗證。",
-            "台指期夜盤採臺灣期貨交易所官方 OpenAPI DailyMarketReportFut 的 TX 近月盤後 Last 欄位；V2.9 起每個交易日只保留一筆近月資料，舊版歷史資料不沿用，並檢查卡片價格與圖表末筆一致。",
+            "台指期夜盤官方收盤以 TAIFEX OpenAPI DailyMarketReportFut 的 TX 近月盤後 Last 為準；TAIFEX Info Hub 僅作盤中參考（官方註明抽樣差異），不得覆蓋官方收盤。",
+            "台指期資料加入平日新鮮度檢查；官方 API 失敗或日期落後時，只保留歷史圖表，不把快取價格標示為最新報價，也暫停產生操作建議。",
+            "TAIFEX 官方網站說明其網站供瀏覽使用，未提供可直接程式化取得的即時行情指令；需要正式即時行情串流時，須另接有授權的期貨行情供應商（例如券商 API），並由使用者自行完成帳戶／憑證授權。",
             "台灣企業美股分頁包含美國市場交易的台灣企業股票／存託憑證；以美元報價，與台股普通股價格、交易時段及匯率不同。",
             "AUOTY 為友達光電美國 OTC Pink ADR，並非 NYSE 上市股票；OTC 流動性、報價延遲及歷史資料完整度可能較低。",
             "台灣企業美股操作觀察由技術指標及美股大盤環境規則式產生，未納入完整財報估值、ADR費用、匯率與個人持倉成本。"

@@ -45,7 +45,10 @@
   "taiwan_futures": {
     "symbol": "TX",
     "name": "臺股期貨近月（官方夜盤）",
-    "description": "臺灣期貨交易所 DailyMarketReportFut 官方盤後資料；以 TX 近月契約夜盤為主"
+    "description": "官方收盤：TAIFEX OpenAPI TX 近月盤後 Last；盤中參考：TAIFEX Info Hub（抽樣資料，不覆蓋官方收盤）",
+    "api_url": "https://openapi.taifex.com.tw/v1/DailyMarketReportFut",
+    "info_hub_url": "https://www.taifex.com.tw/eventTaifexTradingCenter/enl/index.do",
+    "official_report_url": "https://www.taifex.com.tw/enl/eng3/futDailyMarketReport"
   },
   "taiwan_us_stocks": [
     {
