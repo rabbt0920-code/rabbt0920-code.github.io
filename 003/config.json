@@ -1,0 +1,45 @@
+{
+  "tickers": [
+    "NVDA",
+    "AAPL",
+    "MSFT",
+    "AMZN",
+    "GOOGL",
+    "META",
+    "AVGO",
+    "TSLA",
+    "ORCL",
+    "AMD",
+    "NFLX"
+  ],
+  "market_etfs": [
+    "SPY",
+    "QQQ",
+    "DIA",
+    "IWM"
+  ],
+  "sector_etfs": [
+    "XLK",
+    "SMH",
+    "XLF",
+    "XLY",
+    "XLC",
+    "XLI",
+    "XLP",
+    "XLV",
+    "XLE",
+    "TLT",
+    "GLD"
+  ],
+  "macro_tickers": [
+    "^VIX",
+    "^TNX",
+    "DX-Y.NYB"
+  ],
+  "benchmark": "SPY",
+  "history_period": "1y",
+  "extended_hours_period": "5d",
+  "extended_hours_interval": "5m",
+  "news_limit": 4,
+  "top_rank_count": 5
+}
