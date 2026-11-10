@@ -195,16 +195,19 @@ def load_taifex_night_history(config: dict) -> tuple[pd.DataFrame, dict]:
                 history = []
         except Exception:
             history = []
-    # Validate persisted rows too; never reuse malformed legacy rows as current quotes.
+    # V2.9 migration: discard pre-2.9 history because earlier builds could mix
+    # delivery months when constructing the indicator series. Only retain rows
+    # explicitly written by this parser version and mapped from official Last.
     clean_history = []
     for item in history:
-        if not isinstance(item, dict):
+        if not isinstance(item, dict) or item.get("parser_version") != "2.9":
             continue
         try:
             o, h, l, c, v = [float(item.get(k)) for k in ("open", "high", "low", "close", "volume")]
             valid_date = bool(re.fullmatch(r"\d{4}-\d{2}-\d{2}", str(item.get("date", ""))))
             valid_month = bool(re.fullmatch(r"\d{6}", str(item.get("contract_month", ""))))
-            valid = (valid_date and valid_month and item.get("contract") == "TX"
+            mapping_ok = (item.get("raw_field_mapping") or {}).get("close") == "Last"
+            valid = (valid_date and valid_month and mapping_ok and item.get("contract") == "TX"
                      and item.get("session") == "盤後" and 20000 <= c <= 60000
                      and min(o, h, l, c) > 0 and v >= 0
                      and h >= max(o, l, c) and l <= min(o, h, c))
@@ -212,20 +215,26 @@ def load_taifex_night_history(config: dict) -> tuple[pd.DataFrame, dict]:
                 clean_history.append(item)
         except (TypeError, ValueError):
             continue
-    history = clean_history
+    # One observation per session date. If an old archive contains several
+    # expiries for one date, keep the nearest monthly contract only.
+    by_date = {}
+    for item in clean_history:
+        key = item["date"]
+        if key not in by_date or item["contract_month"] < by_date[key]["contract_month"]:
+            by_date[key] = item
+    history = list(by_date.values())
     fresh_status = "fresh"
     try:
         latest = fetch_taifex_night_session(config.get("taiwan_futures", {}))
-        # One record per session date + delivery month; update rather than duplicate.
-        keyed = {(x.get("date"), x.get("contract_month")): x for x in history if isinstance(x, dict)}
-        keyed[(latest["date"], latest["contract_month"])] = latest
-        history = sorted(keyed.values(), key=lambda x: (x.get("date", ""), x.get("contract_month", "")))[-260:]
+        latest["parser_version"] = "2.9"
+        # The latest official near-month record replaces every expiry for that date.
+        history = [x for x in history if x.get("date") != latest["date"]]
+        history.append(latest)
+        history = sorted(history, key=lambda x: x.get("date", ""))[-260:]
     except Exception:
         if not history:
-            raise
-        # Keep the last verified night session when the official daily feed has not
-        # published a new after-hours row yet (weekend/holiday/manual daytime run).
-        latest = sorted(history, key=lambda x: (x.get("date", ""), x.get("contract_month", "")))[-1]
+            raise RuntimeError("期交所夜盤資料目前無法取得，且沒有 V2.9 已驗證歷史資料；停止發布，避免顯示錯誤報價。")
+        latest = sorted(history, key=lambda x: x.get("date", ""))[-1]
         fresh_status = "cached"
     REPORTS.mkdir(exist_ok=True)
     archive_path.write_text(json.dumps(history, ensure_ascii=False, indent=2), encoding="utf-8")
@@ -251,7 +260,14 @@ def build_taifex_night_asset(config: dict) -> dict:
     row = df.iloc[-1]
     previous = df.iloc[-2] if len(df) > 1 else row
     score, reasons = technical_score(row)
-    close = float(row["Close"])
+    # The headline quote must be the official Last from the selected near-month
+    # night-session row. The indicator series must end at exactly the same value.
+    close = float(latest["close"])
+    series_close = float(row["Close"])
+    if abs(close - series_close) > 0.01:
+        raise RuntimeError(
+            f"TX 夜盤價格一致性檢查失敗：官方 Last={close:.2f}，指標序列末筆={series_close:.2f}；停止發布。"
+        )
     change_pct = latest.get("change_pct")
     if change_pct is None and float(previous["Close"]) != 0:
         change_pct = (close / float(previous["Close"]) - 1) * 100
@@ -283,7 +299,7 @@ def build_taifex_night_asset(config: dict) -> dict:
         "resistance20": number(df["High"].tail(20).max()),
         "stop_reference": number(close - 2 * float(row["ATR14"])) if pd.notna(row.get("ATR14")) else None,
         "technical_score": score, "trend": trend, "action": action, "reasons": reasons,
-        "daily": daily, "extended": [], "extended_note": "採用期交所官方盤後（夜盤）日行情，不使用美股盤前盤後資料。",
+        "daily": daily, "extended": [], "extended_note": "採用期交所官方 TX 近月盤後（夜盤）Last 欄位；卡片價格與走勢序列末筆通過一致性檢查。",
         "session": "盤後（夜盤）", "session_date": latest["date"],
         "contract_month": latest["contract_month"], "source": latest["source"],
         "open_interest": latest.get("open_interest"),
@@ -292,7 +308,7 @@ def build_taifex_night_asset(config: dict) -> dict:
         "validation_note": latest.get("validation_note", ""),
         "contract_count_for_date": latest.get("contract_count_for_date"),
         "history_count": len(frame),
-        "history_note": ("本次取得期交所最新夜盤資料。" if latest.get("_fresh_status") == "fresh" else "本次官方 API 尚未發布新夜盤資料，暫顯示最近一次已保存的夜盤紀錄。") + "歷史夜盤資料由 GitHub Actions 每次執行後累積；首次部署前不會自動補齊完整歷史。",
+        "history_note": ("本次取得期交所最新夜盤資料。" if latest.get("_fresh_status") == "fresh" else "官方 API 暫無新資料，顯示最近一次 V2.9 已驗證夜盤紀錄。") + "歷史夜盤資料由 GitHub Actions 每次執行後累積；首次部署前不會自動補齊完整歷史。",
     }
 
 def indicators(df: pd.DataFrame) -> pd.DataFrame:
@@ -651,7 +667,7 @@ def main():
 
     now = datetime.now(timezone.utc).astimezone(TAIPEI)
     report = {
-        "version": "2.8",
+        "version": "2.9",
         "taiwan_futures": taiwan_futures,
         "taiwan_us_stocks": taiwan_us_stocks,
         "generated_at": now.isoformat(),
@@ -668,7 +684,7 @@ def main():
             "市場廣度僅以本系統監控的大型科技股樣本計算，不代表全市場廣度。",
             "VIX、10 年期殖利率及美元指數可能有延遲或缺值；缺值時不會虛構數值。",
             "新聞僅列標題與來源，尚未進行情緒分類或事件驗證。",
-            "台指期夜盤改用臺灣期貨交易所官方 OpenAPI DailyMarketReportFut，僅採 TX 盤後時段資料；歷史序列由 GitHub Actions 累積，首次部署需逐日建立歷史。",
+            "台指期夜盤採臺灣期貨交易所官方 OpenAPI DailyMarketReportFut 的 TX 近月盤後 Last 欄位；V2.9 起每個交易日只保留一筆近月資料，舊版歷史資料不沿用，並檢查卡片價格與圖表末筆一致。",
             "台灣企業美股分頁包含美國市場交易的台灣企業股票／存託憑證；以美元報價，與台股普通股價格、交易時段及匯率不同。",
             "AUOTY 為友達光電美國 OTC Pink ADR，並非 NYSE 上市股票；OTC 流動性、報價延遲及歷史資料完整度可能較低。",
             "台灣企業美股操作觀察由技術指標及美股大盤環境規則式產生，未納入完整財報估值、ADR費用、匯率與個人持倉成本。"
