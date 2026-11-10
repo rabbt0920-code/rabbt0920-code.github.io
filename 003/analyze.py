@@ -295,6 +295,64 @@ def main():
     )
     macros = safe_fetch_group(config["macro_tickers"], config["history_period"], errors)
 
+    # Assess the US market before generating Taiwan-issuer action observations.
+    market = market_assessment(etfs, macros, stocks)
+
+    # US-listed Taiwanese issuers are analyzed separately from the US mega-cap universe.
+    taiwan_us_stocks = []
+    tw_us_cfg = config.get("taiwan_us_stocks", [])
+    for company in tw_us_cfg:
+        symbol = company["symbol"]
+        try:
+            print(f"Fetching Taiwan issuer {symbol}")
+            item = fetch_asset(
+                symbol, config["history_period"],
+                benchmark_close=benchmark_return_20d,
+                news_limit=config.get("news_limit", 4),
+                include_extended=True,
+                ext_period=config.get("extended_hours_period", "5d"),
+                ext_interval=config.get("extended_hours_interval", "5m")
+            )
+            item.update({
+                "name": company["name"],
+                "tw_symbol": company.get("tw_symbol", "—"),
+                "sector": company.get("sector", ""),
+                "exchange": company.get("exchange", ""),
+                "profile": company.get("profile", "")
+            })
+            rel = item.get("relative_strength_vs_spy_pct")
+            rel_text = (
+                f"近 20 個交易日相對 SPY {'強勢' if rel > 0 else '弱勢'} {abs(rel):.2f} 個百分點"
+                if rel is not None else "相對 SPY 資料不足"
+            )
+            if item["technical_score"] >= 3 and market["regime"] != "偏空":
+                action = "偏多觀察：可等待回檔守住 SMA20／SMA50，或帶量突破近 20 日壓力後再分批評估；不追單日急漲。"
+            elif item["technical_score"] <= -2 or market["regime"] == "偏空":
+                action = "保守觀察：暫不急著加碼，先確認是否重新站回 SMA20／SMA50；若持有，依個人風險承受度檢查停損與部位。"
+            else:
+                action = "中性觀察：等待價格、均線與 MACD 同向；可先列觀察清單，不因單一指標或單日漲跌進場。"
+            if item.get("rsi") is not None and item["rsi"] >= 70:
+                action += " RSI 已進入偏熱區，短線避免追價。"
+            elif item.get("rsi") is not None and item["rsi"] <= 30:
+                action += " RSI 處於低檔不代表已止跌，避免只憑超賣訊號抄底。"
+            item["relative_strength_note"] = rel_text
+            item["action"] = action
+            item["investment_view"] = (
+                "強勢候選" if item["technical_score"] >= 3 and market["regime"] != "偏空"
+                else "風險優先" if item["technical_score"] <= -2 or market["regime"] == "偏空"
+                else "等待確認"
+            )
+            taiwan_us_stocks.append(item)
+            time.sleep(0.6)
+        except Exception as exc:
+            errors.append({"symbol": symbol, "error": f"Taiwan US-listed issuer unavailable: {exc}"})
+            print(f"FAILED Taiwan issuer {symbol}: {exc}")
+
+    taiwan_us_stocks.sort(
+        key=lambda x: (x.get("technical_score", -99), x.get("relative_strength_vs_spy_pct") or -999),
+        reverse=True
+    )
+
     # Taiwan TAIEX futures: Yahoo Finance continuous front-month ticker (WTX&).
     # Keep it separate from US market scoring; do not silently substitute spot TAIEX.
     taiwan_futures = None
@@ -318,8 +376,6 @@ def main():
     if not etfs and not stocks:
         raise RuntimeError("所有主要標的均無法取得資料，請檢查網路或 Yahoo Finance 可用性")
 
-    market = market_assessment(etfs, macros, stocks)
-
     # Combine market regime with stock technical score; this is a ranking overlay, not a buy signal.
     ranked = []
     for item in stocks:
@@ -340,8 +396,9 @@ def main():
 
     now = datetime.now(timezone.utc).astimezone(TAIPEI)
     report = {
-        "version": "2.4",
+        "version": "2.5",
         "taiwan_futures": taiwan_futures,
+        "taiwan_us_stocks": taiwan_us_stocks,
         "generated_at": now.isoformat(),
         "generated_at_taipei": now.strftime("%Y-%m-%d %H:%M:%S"),
         "market": market,
@@ -356,7 +413,9 @@ def main():
             "市場廣度僅以本系統監控的大型科技股樣本計算，不代表全市場廣度。",
             "VIX、10 年期殖利率及美元指數可能有延遲或缺值；缺值時不會虛構數值。",
             "新聞僅列標題與來源，尚未進行情緒分類或事件驗證。",
-            "台指期使用 Yahoo Finance WTX& 近一連續商品歷史資料；非交易所保證即時報價，換月時連續價格可能有跳空或調整差異。"
+            "台指期使用 Yahoo Finance WTX& 近一連續商品歷史資料；非交易所保證即時報價，換月時連續價格可能有跳空或調整差異。",
+            "台灣企業美股分頁包含美國市場交易的台灣企業股票／存託憑證；以美元報價，與台股普通股價格、交易時段及匯率不同。",
+            "台灣企業美股操作觀察由技術指標及美股大盤環境規則式產生，未納入完整財報估值、ADR費用、匯率與個人持倉成本。"
         ],
         "disclaimer": "本系統為規則式研究工具，不構成投資建議。停損參考值為收盤價減 2 倍 ATR 的風險參考，不保證成交或適合所有持倉。"
     }
@@ -375,7 +434,7 @@ def main():
         shutil.copy2(ROOT / "dashboard.html", ROOT / "美股夜盤懶人包.html")
     print(f"Generated V2 report at {now.strftime('%Y-%m-%d %H:%M:%S')} Taipei")
     print(f"Market: {market['regime']} | risk: {market['risk_level']}")
-    print(f"Stocks: {len(stocks)} | ETF: {len(etfs)} | Macro: {len(macros)} | errors: {len(errors)}")
+    print(f"Stocks: {len(stocks)} | Taiwan US issuers: {len(taiwan_us_stocks)} | ETF: {len(etfs)} | Macro: {len(macros)} | errors: {len(errors)}")
 
 
 if __name__ == "__main__":

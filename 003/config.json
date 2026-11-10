@@ -46,5 +46,71 @@
     "symbol": "WTX&",
     "name": "台指期近一",
     "description": "Yahoo Finance 台灣期貨近一連續商品"
-  }
+  },
+  "taiwan_us_stocks": [
+    {
+      "symbol": "TSM",
+      "name": "台灣積體電路製造（台積電）",
+      "tw_symbol": "2330",
+      "sector": "晶圓代工",
+      "exchange": "NYSE",
+      "profile": "全球晶圓代工龍頭；觀察先進製程、AI/HPC需求與資本支出。"
+    },
+    {
+      "symbol": "UMC",
+      "name": "聯華電子（聯電）",
+      "tw_symbol": "2303",
+      "sector": "成熟製程晶圓代工",
+      "exchange": "NYSE",
+      "profile": "成熟與特殊製程；觀察產能利用率、報價及庫存循環。"
+    },
+    {
+      "symbol": "ASX",
+      "name": "日月光投控",
+      "tw_symbol": "3711",
+      "sector": "封裝測試",
+      "exchange": "NYSE",
+      "profile": "半導體封裝測試；觀察先進封裝需求、稼動率與資本支出。"
+    },
+    {
+      "symbol": "HIMX",
+      "name": "奇景光電",
+      "tw_symbol": "—",
+      "sector": "顯示驅動與影像技術",
+      "exchange": "NASDAQ",
+      "profile": "顯示驅動IC與影像技術；留意終端需求與產品組合變化。"
+    },
+    {
+      "symbol": "CHT",
+      "name": "中華電信",
+      "tw_symbol": "2412",
+      "sector": "電信服務",
+      "exchange": "NYSE",
+      "profile": "電信與數位服務；觀察營收穩定度、資本支出及股息政策。"
+    },
+    {
+      "symbol": "AUO",
+      "name": "友達光電",
+      "tw_symbol": "2409",
+      "sector": "面板與顯示技術",
+      "exchange": "NYSE",
+      "profile": "面板與顯示解決方案；留意面板報價、產能利用率及景氣循環。"
+    },
+    {
+      "symbol": "IMOS",
+      "name": "南茂科技",
+      "tw_symbol": "8150",
+      "sector": "半導體封測",
+      "exchange": "NASDAQ",
+      "profile": "半導體封裝測試；觀察記憶體與顯示器驅動IC需求。"
+    },
+    {
+      "symbol": "SIMO",
+      "name": "慧榮科技",
+      "tw_symbol": "—",
+      "sector": "NAND控制晶片",
+      "exchange": "NASDAQ",
+      "profile": "NAND控制晶片；觀察SSD需求、NAND價格與客戶庫存。"
+    }
+  ]
 }
