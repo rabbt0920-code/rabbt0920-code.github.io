@@ -1,0 +1,442 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#2c3e50">
+<title>北門觀光大戰略｜BEIMEN 2027</title>
+<style>
+:root{--amber:#e67e22;--burn:#d35400;--salt:#fafafa;--teal:#16a085;--mint:#1abc9c;--slate:#2c3e50;--ink:#20313f;--muted:#71808b;--paper:#f4f1e9;--line:#e5dfd3;--red:#c94c4c;--green:#287c67;--shadow:0 12px 34px #20313f12}
+*{box-sizing:border-box}body{margin:0;background:linear-gradient(135deg,#f6f2e9,#eaf1ed);color:var(--ink);font-family:system-ui,-apple-system,"Noto Sans TC","Microsoft JhengHei",sans-serif}button{font:inherit;cursor:pointer}.app{max-width:1440px;margin:auto;padding:20px}#gameApp{display:none}.topbar{display:flex;align-items:center;justify-content:space-between;gap:16px;margin-bottom:16px}.brand{display:flex;align-items:center;gap:13px}.seal{width:48px;height:48px;border-radius:15px;background:linear-gradient(145deg,var(--amber),var(--burn));display:grid;place-items:center;color:white;font-size:24px;box-shadow:0 7px 18px #d3540038}.brand h1{font-size:20px;margin:0;letter-spacing:.04em}.brand small{color:var(--muted);letter-spacing:.13em}.top-actions{display:flex;gap:8px;flex-wrap:wrap}.btn{border:1px solid var(--line);background:#fff;color:var(--slate);padding:9px 13px;border-radius:10px;font-weight:700}.btn.primary{background:var(--slate);color:#fff;border-color:var(--slate)}.btn:disabled{opacity:.4;cursor:not-allowed}.hero{background:linear-gradient(110deg,#263b4d,#315a5b 70%,#b66c37);color:#fff;border-radius:20px;padding:20px 24px;box-shadow:var(--shadow);position:relative;overflow:hidden}.hero:after{content:"";position:absolute;width:280px;height:280px;border:1px solid #ffffff24;border-radius:50%;right:8%;top:-170px;box-shadow:0 0 0 28px #ffffff0c,0 0 0 58px #ffffff08}.hero-top{display:flex;justify-content:space-between;align-items:flex-start;gap:20px;position:relative;z-index:1}.eyebrow{font-size:11px;letter-spacing:.18em;color:#f7c58d;font-weight:800}.hero h2{font-size:clamp(23px,3vw,34px);margin:5px 0}.hero p{margin:0;color:#e5eeee;max-width:760px;line-height:1.65}.month-pill{background:#ffffff18;border:1px solid #ffffff30;border-radius:12px;padding:10px 14px;text-align:right;white-space:nowrap}.month-pill strong{display:block;font-size:20px}.progress{height:7px;background:#ffffff28;border-radius:9px;margin-top:18px;overflow:hidden;position:relative;z-index:1}.progress span{display:block;height:100%;background:linear-gradient(90deg,#f4bd72,#f7e5b8);border-radius:9px;transition:width .4s}.metrics{display:grid;grid-template-columns:repeat(5,1fr);gap:12px;margin:15px 0}.metric{background:#fff;border:1px solid var(--line);border-radius:15px;padding:14px;box-shadow:0 5px 18px #20313f08;min-width:0}.metric-head{display:flex;justify-content:space-between;gap:8px;color:var(--muted);font-size:12px;font-weight:700}.metric .value{font-size:25px;font-weight:850;color:var(--slate);margin:5px 0 8px;font-variant-numeric:tabular-nums}.meter{height:6px;background:#edf0ed;border-radius:8px;overflow:hidden}.meter i{display:block;height:100%;border-radius:8px;transition:width .35s}.metric small{color:var(--muted);font-size:11px}.layout{display:grid;grid-template-columns:minmax(0,1.7fr) minmax(260px,.8fr);gap:15px;align-items:start}.panel{background:#fff;border:1px solid var(--line);border-radius:17px;box-shadow:var(--shadow);overflow:hidden}.panel-head{padding:15px 18px;border-bottom:1px solid var(--line);display:flex;justify-content:space-between;align-items:center;gap:10px}.panel-head h3{margin:0;font-size:16px}.panel-body{padding:18px}.tag{display:inline-flex;align-items:center;border-radius:99px;padding:5px 9px;font-size:11px;font-weight:800;background:#fdf0df;color:#a65a13}.tag.teal{background:#e4f5f0;color:#14745f}.tag.red{background:#fcebea;color:#ae4545}.memo{background:#fbfaf6;border:1px solid #e8e1d3;border-left:4px solid var(--amber);padding:14px 16px;border-radius:10px;margin:14px 0;color:#45535b;line-height:1.75}.memo b{color:#8c4c16}.event-title{font-size:23px;margin:8px 0 5px}.event-meta{font-size:12px;color:var(--muted)}.story{line-height:1.85;color:#46545d;margin:12px 0}.options{display:grid;gap:9px;margin-top:16px}.option{width:100%;text-align:left;border:1px solid var(--line);background:#fff;border-radius:12px;padding:13px 14px;display:flex;gap:12px;align-items:flex-start;transition:.18s}.option:hover:not(:disabled){border-color:var(--amber);transform:translateY(-1px);box-shadow:0 7px 18px #d3540012}.option:disabled{background:#f3f3f0;color:#9aa1a4;cursor:not-allowed}.opt-key{width:27px;height:27px;border-radius:8px;background:#f7eadb;color:#a85b18;display:grid;place-items:center;font-weight:900;flex:none}.option b{display:block;margin-bottom:3px;color:var(--slate)}.option small{display:block;line-height:1.55;color:var(--muted)}.option .lock{color:#b65b4b;font-weight:700}.side-stack{display:grid;gap:15px}.side-item{display:flex;justify-content:space-between;gap:10px;padding:10px 0;border-bottom:1px solid #f0ede7;font-size:13px}.side-item:last-child{border:0}.side-item span{color:var(--muted)}.side-item strong{text-align:right}.budget-big{font-size:30px;font-weight:850;color:var(--teal);margin:3px 0}.budget-note{font-size:12px;color:var(--muted);line-height:1.6}.tabs{display:flex;gap:6px;flex-wrap:wrap;padding:12px;background:#fff;border:1px solid var(--line);border-radius:14px;margin:15px 0}.tab{border:0;background:transparent;padding:10px 14px;border-radius:9px;color:#65727a;font-weight:750}.tab.active{background:var(--slate);color:#fff}.tab-content{min-height:270px}.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(235px,1fr));gap:12px}.card{border:1px solid var(--line);border-radius:14px;padding:15px;background:linear-gradient(160deg,#fff,#fcfbf7)}.card h4{margin:5px 0 6px}.card p{font-size:13px;color:#64717a;line-height:1.65;margin:7px 0}.card-foot{display:flex;justify-content:space-between;align-items:center;gap:8px;margin-top:12px;padding-top:10px;border-top:1px solid #eee9df}.cost{font-size:12px;color:#a65a13;font-weight:800}.level{display:flex;gap:4px}.dot{width:7px;height:7px;border-radius:50%;background:#e9e4d9}.dot.on{background:var(--amber)}.action{background:#fff;border:1px solid var(--line);border-radius:10px;padding:8px 11px;font-weight:750;color:var(--slate)}.action:hover{border-color:var(--teal);color:var(--teal)}.action:disabled{opacity:.4;cursor:not-allowed}.log{display:grid;gap:9px}.log-entry{padding:12px;border:1px solid var(--line);border-radius:11px;background:#fff}.log-entry small{color:var(--muted)}.log-entry p{margin:5px 0 0;font-size:13px;line-height:1.6}.codex-card{display:flex;gap:12px;align-items:flex-start}.codex-icon{width:44px;height:44px;border-radius:12px;background:#eaf3ef;display:grid;place-items:center;font-size:22px;flex:none}.codex-card.locked{opacity:.48;filter:grayscale(1)}.notice{padding:12px 14px;border-radius:11px;background:#eef6f3;color:#356b5c;font-size:13px;line-height:1.6;margin-bottom:12px}.notice.warn{background:#fff3e7;color:#92541e}.footer{color:#879198;text-align:center;font-size:11px;padding:20px 8px}.modal-back{position:fixed;inset:0;background:#17263099;display:none;place-items:center;padding:18px;z-index:10}.modal-back.show{display:grid}.modal{background:#fff;border-radius:18px;max-width:520px;width:100%;padding:22px;box-shadow:0 25px 70px #0003}.modal h3{margin-top:0}.modal p{line-height:1.7;color:#56636b}.toast{position:fixed;bottom:20px;left:50%;transform:translate(-50%,20px);opacity:0;background:#253b4a;color:white;padding:11px 16px;border-radius:10px;z-index:20;transition:.25s;pointer-events:none}.toast.show{opacity:1;transform:translate(-50%,0)}.end-screen{text-align:center;padding:26px 10px}.end-screen .medal{font-size:54px}.end-screen h2{font-size:28px}.small-muted{font-size:11px;color:var(--muted)}.two-col{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+
+.contract-flow{display:grid;grid-template-columns:repeat(4,1fr);gap:7px;margin:12px 0 16px}.contract-step{border:1px solid var(--line);background:#faf9f5;border-radius:10px;padding:9px 7px;text-align:center;font-size:11px;color:#8a9499;font-weight:750}.contract-step.done{background:#e5f4ef;border-color:#c9e7dc;color:#16745e}.contract-step.current{background:#fff1df;border-color:#f0c58f;color:#9b5718}.contract-project{border:1px solid var(--line);border-radius:13px;padding:13px;background:#fff}.contract-project.active{border-color:#dba56e;box-shadow:0 0 0 2px #e67e2212}.contract-project h4{margin:5px 0}.contract-project p{font-size:12px;line-height:1.55;color:var(--muted);margin:5px 0}.contract-project button{margin-top:8px}.contract-project-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:9px;margin-bottom:16px}.contract-panel{border:1px solid var(--line);border-radius:14px;padding:16px;background:linear-gradient(160deg,#fff,#fbfaf6)}.contract-panel h4{margin:4px 0 8px}.spec-list{display:grid;gap:6px;margin:10px 0}.spec-list div{font-size:13px;line-height:1.55;padding:7px 9px;border-radius:8px;background:#f7f6f1}.vendor-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:10px;margin-top:12px}.vendor-card{border:1px solid var(--line);border-radius:12px;padding:13px}.vendor-score{font-size:25px;font-weight:850;color:var(--teal)}.score-lines{font-size:11px;color:var(--muted);line-height:1.7;margin:7px 0}.meeting-option{display:flex;gap:10px;align-items:flex-start;width:100%;padding:12px;border:1px solid var(--line);border-radius:11px;background:white;text-align:left;margin-top:8px}.meeting-option:hover{border-color:var(--teal);background:#fbfefd}.meeting-option b{display:block;color:var(--slate);margin-bottom:3px}.meeting-option small{display:block;color:var(--muted);line-height:1.55}.contract-stamp{display:inline-block;border:2px solid #19866e;color:#19866e;padding:4px 9px;border-radius:5px;font-size:11px;font-weight:900;letter-spacing:.1em;transform:rotate(-2deg)}
+@media(max-width:900px){.metrics{grid-template-columns:repeat(3,1fr)}.layout{grid-template-columns:1fr}.side-stack{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:600px){.app{padding:11px}.topbar{align-items:flex-start}.brand h1{font-size:16px}.seal{width:40px;height:40px}.top-actions .btn{padding:7px 9px;font-size:12px}.hero{padding:17px}.hero-top{display:block}.month-pill{display:inline-block;text-align:left;margin-top:12px}.metrics{grid-template-columns:repeat(2,1fr);gap:8px}.metric{padding:11px}.metric .value{font-size:22px}.side-stack{grid-template-columns:1fr}.tabs{overflow:auto;flex-wrap:nowrap}.tab{white-space:nowrap}.event-title{font-size:20px}.two-col{grid-template-columns:1fr}}
+
+.gameover-wrap{text-align:center;padding:8px 4px 4px}.gameover-art{width:190px;max-width:60%;margin:0 auto 8px;display:block}.gameover-art .coin{transform-box:fill-box;transform-origin:center;animation:coinDrop 1.8s ease-in infinite}.gameover-art .coin:nth-of-type(2){animation-delay:.35s}.gameover-art .coin:nth-of-type(3){animation-delay:.7s}.gameover-art .balance-line{transform-origin:100px 110px;animation:tilt 1.6s ease-in-out infinite alternate}.gameover-art .warning-pulse{animation:pulse 1s ease-in-out infinite}.gameover-title{font-size:30px;font-weight:950;letter-spacing:.12em;color:#b63e37}.specialty{display:inline-block;padding:3px 7px;border-radius:99px;background:#eaf3ef;color:#287c67;font-size:10px;font-weight:800;margin:2px 3px 2px 0}.vendor-card .vendor-score{margin-top:3px}.vendor-card .score-lines{margin:8px 0}.monthly-drift{font-size:12px;padding:9px 11px;background:#f7f5ee;border-radius:9px;color:#66727a;margin-top:10px}.budget-negative{color:#c0392b!important}
+@keyframes coinDrop{0%{transform:translateY(-13px) rotate(-15deg);opacity:.3}35%{opacity:1}75%{transform:translateY(14px) rotate(18deg);opacity:1}100%{transform:translateY(22px) rotate(25deg);opacity:0}}
+@keyframes tilt{from{transform:rotate(-5deg)}to{transform:rotate(7deg)}}
+@keyframes pulse{0%,100%{opacity:.45;transform:scale(.94)}50%{opacity:1;transform:scale(1.06)}}
+
+
+/* ===== TITLE MENU & STORY INTRO ===== */
+body.menu-mode{min-height:100vh;background:#182c39;overflow-x:hidden}
+.title-screen,.story-screen{position:fixed;inset:0;z-index:50;display:none;overflow:auto;color:#fff;background:linear-gradient(145deg,#182e3d 0%,#28515a 52%,#b56d3b 100%)}
+.title-screen.show,.story-screen.show{display:flex}
+.title-screen{align-items:center;justify-content:center;padding:clamp(16px,3vw,42px)}
+.title-screen:before,.story-screen:before{content:"";position:absolute;inset:0;background:radial-gradient(circle at 76% 16%,#ffcb7d38,transparent 28%),linear-gradient(0deg,#10263488,transparent 48%);pointer-events:none}
+.title-wrap{position:relative;width:min(1280px,100%);min-height:min(760px,92vh);border:1px solid #ffffff38;border-radius:28px;overflow:hidden;box-shadow:0 32px 90px #08192370;background:#1c3944}
+.menu-landscape{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+.menu-landscape .sun{transform-origin:790px 175px;animation:sunBreathe 5s ease-in-out infinite}
+.menu-landscape .waterline{animation:waterShift 8s ease-in-out infinite alternate}
+.menu-landscape .bird-flock{animation:birdGlide 12s ease-in-out infinite alternate}
+.menu-landscape .salt-glint{animation:glint 3.4s ease-in-out infinite alternate}
+.title-content{position:relative;z-index:2;min-height:min(760px,92vh);display:grid;grid-template-columns:minmax(0,1.3fr) minmax(280px,.7fr);align-items:end;gap:24px;padding:clamp(24px,5vw,64px)}
+.title-copy{padding-bottom:16px;text-shadow:0 3px 16px #10263480}
+.title-kicker{font-size:12px;letter-spacing:.22em;font-weight:850;color:#ffd18f}
+.title-name{font-size:clamp(42px,7vw,82px);line-height:1.05;letter-spacing:.05em;margin:13px 0 8px;font-weight:950}
+.title-en{font-size:clamp(12px,1.5vw,16px);letter-spacing:.24em;color:#f7d9b4;font-weight:750}
+.title-tagline{font-size:clamp(16px,2vw,22px);line-height:1.7;margin:28px 0 12px;color:#fff5e8;max-width:590px}
+.title-sub{font-size:12px;color:#e4e8df;letter-spacing:.05em}
+.menu-card{align-self:center;background:#f9f7f0f2;color:var(--slate);border:1px solid #fff;border-radius:22px;padding:24px;box-shadow:0 18px 45px #10263442;backdrop-filter:blur(12px)}
+.menu-card h2{font-size:19px;margin:0 0 5px}.menu-card>p{font-size:12px;color:#71808b;margin:0 0 20px;line-height:1.6}
+.menu-actions{display:grid;gap:10px}.menu-button{width:100%;border:1px solid #dcd7cb;border-radius:12px;background:#fff;color:#2c3e50;padding:14px 16px;text-align:left;font-weight:850;display:flex;align-items:center;justify-content:space-between;gap:12px;transition:.2s}
+.menu-button:hover:not(:disabled){transform:translateY(-2px);border-color:#d58a41;box-shadow:0 8px 18px #b76e2920}.menu-button.primary{background:linear-gradient(110deg,#e67e22,#ca6328);border-color:#c96829;color:#fff}.menu-button:disabled{opacity:.4;cursor:not-allowed}
+.menu-button small{display:block;font-weight:500;opacity:.76;margin-top:3px}.menu-arrow{font-size:20px;opacity:.75}
+.menu-settings{display:flex;justify-content:space-between;align-items:center;margin-top:16px;padding-top:14px;border-top:1px solid #e7e1d5;font-size:12px;color:#66747b}
+.menu-settings button{border:1px solid #d7d1c5;background:#fff;border-radius:9px;padding:7px 10px;color:#2c3e50;font-weight:750}
+.menu-save-status{margin-top:13px;font-size:11px;color:#7c878b;display:flex;align-items:center;gap:7px}.status-dot{width:7px;height:7px;background:#9aaba8;border-radius:50%}.status-dot.ready{background:#16a085;box-shadow:0 0 0 4px #16a0851c}
+.title-footer{position:absolute;z-index:2;bottom:16px;left:clamp(24px,5vw,64px);font-size:10px;color:#ffffff9c;letter-spacing:.08em}
+.story-screen{align-items:center;justify-content:center;padding:20px}
+.story-wrap{position:relative;z-index:1;width:min(1050px,100%);border:1px solid #ffffff32;border-radius:24px;background:#f8f7f1;color:#2c3e50;overflow:hidden;box-shadow:0 30px 90px #08192370}
+.story-top{display:flex;justify-content:space-between;align-items:center;padding:15px 22px;border-bottom:1px solid #e8e1d5;background:#fff}.story-top strong{font-size:12px;letter-spacing:.12em}.story-progress{display:flex;gap:6px}.story-progress i{width:25px;height:5px;border-radius:9px;background:#e2ded4}.story-progress i.active{background:#e67e22}.story-main{display:grid;grid-template-columns:1.1fr .9fr;min-height:390px}.story-illustration{position:relative;overflow:hidden;min-height:350px;background:linear-gradient(155deg,#d8e7e1,#f1c78c 65%,#da9960)}
+.story-illustration svg{position:absolute;width:100%;height:100%;inset:0}.story-illustration .story-svg{opacity:0;transform:scale(.97);transition:opacity .45s,transform .65s}.story-illustration .story-svg.active{opacity:1;transform:scale(1)}
+.story-svg .float-sun{animation:sunBreathe 4s ease-in-out infinite;transform-origin:76% 28%}.story-svg .flying-birds{animation:birdGlide 8s ease-in-out infinite alternate}.story-svg .paper{transform-origin:center;animation:paperFloat 3.6s ease-in-out infinite}.story-svg .route{stroke-dasharray:8 9;animation:routeDash 2.5s linear infinite}
+.story-text{padding:clamp(22px,4vw,42px);display:flex;flex-direction:column;justify-content:center}.story-chapter{font-size:11px;color:#bd6e29;letter-spacing:.17em;font-weight:900}.story-text h2{font-size:clamp(23px,3vw,32px);margin:10px 0 12px;line-height:1.3}.story-text p{font-size:14px;line-height:1.9;color:#627078;margin:0}.story-quote{border-left:3px solid #e6a65e;padding:9px 12px;margin-top:19px;background:#f5f1e7;border-radius:0 9px 9px 0;font-size:12px;color:#80562f;line-height:1.7}.story-controls{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:15px 22px;border-top:1px solid #e8e1d5;background:#fff}.story-controls .left,.story-controls .right{display:flex;gap:8px}.story-controls button{border:1px solid #ddd7cc;border-radius:10px;padding:10px 15px;background:#fff;color:#52616a;font-weight:750}.story-controls button.next{background:#2c3e50;color:#fff;border-color:#2c3e50}.story-controls button:disabled{opacity:.35;cursor:not-allowed}
+@keyframes sunBreathe{0%,100%{transform:scale(1);filter:drop-shadow(0 0 5px #ffd17a55)}50%{transform:scale(1.045);filter:drop-shadow(0 0 18px #ffcc7788)}}
+@keyframes waterShift{from{transform:translateX(-7px)}to{transform:translateX(9px)}}
+@keyframes birdGlide{from{transform:translate(0,0)}to{transform:translate(24px,-8px)}}
+@keyframes glint{from{opacity:.25}to{opacity:.9}}
+@keyframes paperFloat{0%,100%{transform:translateY(0) rotate(-1deg)}50%{transform:translateY(-7px) rotate(1deg)}}
+@keyframes routeDash{to{stroke-dashoffset:-34}}
+@media(max-width:760px){.title-wrap{min-height:calc(100vh - 32px)}.title-content{grid-template-columns:1fr;align-content:end;gap:18px;padding:24px}.title-copy{padding-bottom:0}.title-name{font-size:clamp(42px,12vw,66px);margin:8px 0}.title-tagline{margin:14px 0 7px}.menu-card{padding:18px;max-width:440px;width:100%;justify-self:center}.title-footer{display:none}.story-main{grid-template-columns:1fr}.story-illustration{min-height:220px;max-height:32vh}.story-text{padding:22px}.story-text h2{font-size:24px}.story-controls{padding:12px;flex-wrap:wrap}.story-controls .left{display:none}}
+@media(prefers-reduced-motion:reduce){.menu-landscape *, .story-illustration *, .menu-landscape .sun,.menu-landscape .waterline,.menu-landscape .bird-flock{animation:none!important;transition:none!important}}
+
+</style>
+</head>
+<body class="menu-mode">
+<section class="title-screen show" id="titleScreen" aria-label="遊戲主選單">
+ <div class="title-wrap">
+  <svg class="menu-landscape" viewBox="0 0 1200 760" preserveAspectRatio="xMidYMid slice" role="img" aria-label="夕陽下的北門鹽田與潟湖">
+   <defs><linearGradient id="menuSky" x1="0" y1="0" x2="0" y2="1"><stop stop-color="#365b68"/><stop offset=".52" stop-color="#d28b5a"/><stop offset="1" stop-color="#f0c38b"/></linearGradient><linearGradient id="menuSea" x1="0" y1="0" x2="0" y2="1"><stop stop-color="#4c8985"/><stop offset="1" stop-color="#244e57"/></linearGradient><linearGradient id="menuSalt" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#f8e9cb"/><stop offset="1" stop-color="#d9c6a1"/></linearGradient></defs>
+   <rect width="1200" height="760" fill="url(#menuSky)"/><circle class="sun" cx="850" cy="190" r="83" fill="#f8d18d" opacity=".95"/><circle cx="850" cy="190" r="112" fill="#f8d18d" opacity=".12"/>
+   <path d="M0 390Q150 345 300 378T610 370T920 380T1200 355V760H0Z" fill="#54766e" opacity=".72"/><path d="M0 440Q200 395 390 433T780 425T1200 410V760H0Z" fill="#315f60"/>
+   <path d="M0 475Q180 455 350 478T700 470T1000 475T1200 458V760H0Z" fill="url(#menuSea)"/>
+   <g class="waterline" fill="none" stroke="#d8c69e" stroke-width="3" opacity=".45"><path d="M0 520Q180 506 350 520T700 520T1000 515T1200 510"/><path d="M40 568Q220 550 420 568T800 562T1160 562"/><path d="M-20 624Q170 610 350 624T720 620T1240 616"/></g>
+   <g opacity=".96"><path d="M0 590L360 540L510 760H0Z" fill="url(#menuSalt)"/><path d="M0 612L300 572L395 760H0Z" fill="#ead9b8"/><path d="M360 540L570 548L720 760H510Z" fill="#f5e8ce"/><path d="M570 548L820 530L950 760H720Z" fill="#d8c7a5"/><path d="M820 530L1050 555L1120 760H950Z" fill="#f0e0bf"/></g>
+   <g fill="none" stroke="#bca985" stroke-width="5" opacity=".8"><path d="M0 590L360 540M0 650L410 625M150 760L360 540M510 760L570 548M720 760L820 530M950 760L1050 555"/></g>
+   <g class="salt-glint" fill="#fff8e6"><circle cx="190" cy="623" r="4"/><circle cx="270" cy="675" r="3"/><circle cx="630" cy="610" r="4"/><circle cx="880" cy="643" r="3"/><circle cx="1020" cy="590" r="4"/></g>
+   <g class="bird-flock" fill="none" stroke="#243f47" stroke-width="4" stroke-linecap="round"><path d="M680 280q15 -16 30 0q15 -16 30 0"/><path d="M760 315q12 -13 24 0q12 -13 24 0"/><path d="M560 300q10 -11 20 0q10 -11 20 0"/><path d="M930 295q12 -13 24 0q12 -13 24 0"/></g>
+   <g opacity=".65" fill="#213e45"><path d="M1040 450V350h16v100ZM1032 350l16-34 16 34Z"/><path d="M1062 450V390h38v60Z"/><path d="M1080 390l-10-13h18Z"/></g>
+   <path d="M0 710Q150 690 280 715T560 710T840 710T1200 695V760H0Z" fill="#1e4448" opacity=".8"/>
+  </svg>
+  <div class="title-content">
+   <div class="title-copy"><div class="title-kicker">雲嘉南濱海國家風景區管理處・代理科長紀事</div><div class="title-name">北門觀光<br>大戰略</div><div class="title-en">BEIMEN 2027 · COASTAL TOURISM SIMULATOR</div><div class="title-tagline">一片鹽田、一座潟湖，還有 24 個月。<br>讓世界看見北門，也讓北門好好生活。</div><div class="title-sub">民國 116 年 1 月 1 日任官　｜　24 個月代理任期</div></div>
+   <div class="menu-card"><h2>遊憩科代理科長</h2><p>你的任期即將開始。請選擇要如何展開這段濱海觀光經營旅程。</p>
+    <div class="menu-actions"><button class="menu-button primary" id="newGameBtn"><span>開始新任期<small>從任官派令與開場故事開始</small></span><span class="menu-arrow">→</span></button><button class="menu-button" id="continueGameBtn"><span>繼續任期<small>讀取上次儲存的進度</small></span><span class="menu-arrow">↗</span></button></div>
+    <div class="menu-settings"><span>音效設定</span><button id="menuSoundBtn">♫ 音效：關</button></div>
+    <div class="menu-save-status"><i class="status-dot" id="saveStatusDot"></i><span id="saveStatusText">尚無儲存紀錄</span></div>
+   </div>
+  </div>
+  <div class="title-footer">A STRATEGY STORY ABOUT CULTURE, ECOLOGY & LOCAL LIFE</div>
+ </div>
+</section>
+<section class="story-screen" id="storyScreen" aria-label="開場故事">
+ <div class="story-wrap">
+  <div class="story-top"><strong>序章｜一紙派令，兩年任期</strong><div class="story-progress" id="storyProgress"><i class="active"></i><i></i><i></i></div></div>
+  <div class="story-main">
+   <div class="story-illustration">
+    <svg class="story-svg active" data-scene="0" viewBox="0 0 620 420" preserveAspectRatio="xMidYMid slice"><defs><linearGradient id="s0sky" x2="0" y2="1"><stop stop-color="#789b9b"/><stop offset="1" stop-color="#f2c38c"/></linearGradient></defs><rect width="620" height="420" fill="url(#s0sky)"/><circle class="float-sun" cx="462" cy="110" r="51" fill="#ffe0a2"/><path d="M0 205Q130 175 260 205T620 190V420H0Z" fill="#6e9183"/><path d="M0 255Q180 220 360 250T620 235V420H0Z" fill="#39736d"/><path d="M0 292L170 262L245 420H0Z" fill="#f4e7cc"/><path d="M170 262L330 272L400 420H245Z" fill="#dfcfac"/><path d="M330 272L490 250L520 420H400Z" fill="#f7edd8"/><path d="M0 292L170 262M245 420L170 262M400 420L330 272M520 420L490 250" stroke="#b69f79" stroke-width="4" fill="none"/><path d="M0 330Q150 317 300 333T620 322" stroke="#fff3d7" stroke-width="4" opacity=".6" fill="none"/><g class="flying-birds" fill="none" stroke="#294d50" stroke-width="4" stroke-linecap="round"><path d="M250 110q13-14 26 0q13-14 26 0M325 145q9-10 18 0q9-10 18 0M185 155q10-11 20 0q10-11 20 0"/></g><text x="28" y="380" fill="#fff9ed" font-size="15" letter-spacing="4">BEIMEN · SALT & LAGOON</text></svg>
+    <svg class="story-svg" data-scene="1" viewBox="0 0 620 420" preserveAspectRatio="xMidYMid slice"><defs><linearGradient id="s1bg" x2="0" y2="1"><stop stop-color="#344f5b"/><stop offset="1" stop-color="#c58a61"/></linearGradient></defs><rect width="620" height="420" fill="url(#s1bg)"/><path d="M0 305Q155 265 310 303T620 290V420H0Z" fill="#263f4c"/><g class="paper"><rect x="176" y="57" width="270" height="315" rx="12" fill="#f8f3e7" stroke="#d8c6a6" stroke-width="4"/><rect x="204" y="87" width="214" height="44" rx="5" fill="#304b5a"/><text x="311" y="115" fill="#fff" font-size="17" text-anchor="middle" letter-spacing="5">派令通知</text><path d="M210 164H410M210 188H390M210 212H400M210 236H360" stroke="#a9a08f" stroke-width="5" stroke-linecap="round"/><circle cx="370" cy="292" r="43" fill="none" stroke="#c85c43" stroke-width="5"/><text x="370" y="300" fill="#c85c43" font-size="22" text-anchor="middle" font-weight="bold">任命</text><path d="M335 332L407 260" stroke="#c85c43" stroke-width="3"/></g><path d="M40 340H140M480 340H580" stroke="#f4d7a8" stroke-width="3" opacity=".6"/><text x="310" y="398" fill="#fff4e5" font-size="14" text-anchor="middle" letter-spacing="3">OFFICIAL APPOINTMENT</text></svg>
+    <svg class="story-svg" data-scene="2" viewBox="0 0 620 420" preserveAspectRatio="xMidYMid slice"><defs><linearGradient id="s2bg" x2="0" y2="1"><stop stop-color="#294b5a"/><stop offset="1" stop-color="#df9b65"/></linearGradient></defs><rect width="620" height="420" fill="url(#s2bg)"/><circle cx="308" cy="190" r="106" fill="#f5d49e" opacity=".13" stroke="#f5d49e" stroke-width="2"/><circle cx="308" cy="190" r="74" fill="none" stroke="#f7e4bf" stroke-width="2" opacity=".8"/><path d="M246 176q62-60 124 0M246 205q62 60 124 0" fill="none" stroke="#f7e4bf" stroke-width="2" opacity=".5"/><path class="route" d="M96 270Q205 65 308 190T512 115" fill="none" stroke="#ffdf9e" stroke-width="4" stroke-linecap="round"/><circle cx="96" cy="270" r="9" fill="#f6d28d"/><circle cx="512" cy="115" r="9" fill="#f6d28d"/><path d="M82 291l14-28 14 28-14-8Z" fill="#fff0d1"/><path d="M500 130l12-28 12 28-12-8Z" fill="#fff0d1"/><g class="flying-birds" fill="none" stroke="#fff0d1" stroke-width="4" stroke-linecap="round"><path d="M355 90q12-13 24 0q12-13 24 0M410 250q9-10 18 0q9-10 18 0"/></g><text x="96" y="317" fill="#fff4e5" text-anchor="middle" font-size="17" font-weight="bold">北門</text><text x="512" y="80" fill="#fff4e5" text-anchor="middle" font-size="15">世界</text><text x="310" y="390" fill="#fff4e5" font-size="14" text-anchor="middle" letter-spacing="3">24 MONTHS · ONE SHARED FUTURE</text></svg>
+   </div>
+   <div class="story-text"><div class="story-chapter" id="storyChapter">CHAPTER 01 · THE COAST</div><h2 id="storyHeading">鹽田的夕陽，正等著下一個故事</h2><p id="storyCopy">北門，位於臺灣西南沿海。這裡有映照天空的瓦盤鹽田、潮汐流動的潟湖，也有每年遠道而來的候鳥。它有動人的風景，卻還沒被世界好好認識。</p><div class="story-quote" id="storyQuote">「一個地方真正的魅力，不只在於它有什麼，更在於人們如何與它一起生活。」</div></div>
+  </div>
+  <div class="story-controls"><div class="left"><button id="storyBackBtn">返回主選單</button></div><div class="right"><button id="storySkipBtn">略過故事</button><button class="next" id="storyNextBtn">下一段 →</button></div></div>
+ </div>
+</section>
+<div class="app" id="gameApp">
+<header class="topbar">
+ <div class="brand"><div class="seal">鹽</div><div><h1>北門觀光大戰略</h1><small>BEIMEN 2027 · COASTAL TOURISM SIMULATOR</small></div></div>
+ <div class="top-actions"><button class="btn" id="menuBtn">⌂ 主選單</button><button class="btn" id="soundBtn">♫ 音效：關</button><button class="btn" id="saveBtn">⭳ 儲存進度</button><button class="btn" id="resetBtn">↻ 重新任職</button></div>
+</header>
+<section class="hero">
+ <div class="hero-top"><div><div class="eyebrow">交通部觀光署・雲嘉南濱海國家風景區管理處</div><h2>把北門，帶向全世界。</h2><p>你是處長特別抽調的遊憩科代理科長。接下來 24 個月，你必須在有限預算、地方期待與濕地生態之間，為北門寫下新的觀光篇章。</p></div><div class="month-pill"><span class="eyebrow">目前任期</span><strong id="monthLabel">第 1 / 24 月</strong><span id="dateLabel">116 年 1 月</span></div></div>
+ <div class="progress"><span id="progressBar" style="width:4.17%"></span></div>
+</section>
+<section class="metrics" id="metrics"></section>
+<nav class="tabs" aria-label="遊戲分頁">
+ <button class="tab active" data-tab="month">每月決策</button><button class="tab" data-tab="policies">政策卡牌</button><button class="tab" data-tab="landmarks">地標建設</button><button class="tab" data-tab="contracts">活動契約</button><button class="tab" data-tab="codex">鹽鄉圖鑑</button><button class="tab" data-tab="journal">公務日誌</button>
+</nav>
+<section class="panel tab-content"><div class="panel-head"><h3 id="tabTitle">每月決策</h3><span class="small-muted" id="tabHint">完成本月事件與政策，推進任期</span></div><div class="panel-body" id="tabContent"></div></section>
+<div class="layout">
+ <main class="panel" id="mainPanel">
+  <div class="panel-head"><h3>▣ 本月公務事件</h3><span class="tag" id="eventType">任官交接</span></div>
+  <div class="panel-body" id="eventArea"></div>
+ </main>
+ <aside class="side-stack">
+  <section class="panel"><div class="panel-head"><h3>年度預算執行概況</h3><span class="tag teal">主計追蹤</span></div><div class="panel-body"><div class="small-muted">可用預算餘額</div><div class="budget-big" id="budgetValue">1,600 萬</div><div class="budget-note" id="budgetNote">年度核定額度 1,600 萬元。各項支出均須依程序核實辦理。</div><button class="action" id="requestBudget" style="margin:10px 0;width:100%">向處長室爭取追加經費</button><div class="side-item"><span>已支用／決標承諾</span><strong id="spentValue">0 萬</strong></div><div class="side-item"><span>年度執行率</span><strong id="execValue">0%</strong></div><div class="side-item"><span>文創商品收入</span><strong id="incomeValue">0 萬</strong></div></div></section>
+  <section class="panel"><div class="panel-head"><h3>處長室・本月提醒</h3></div><div class="panel-body" id="directorNote" style="font-size:13px;line-height:1.75;color:#52616a">「觀光不能只看人次，還要看居民是否願意一起走下去。」——處長</div></section>
+  <section class="panel"><div class="panel-head"><h3>機關協調窗口</h3></div><div class="panel-body">
+   <div class="side-item"><span>處長室</span><strong>政策核示／重大協調</strong></div>
+   <div class="side-item"><span>企劃科</span><strong>計畫彙整／行銷宣傳</strong></div>
+   <div class="side-item"><span>工務科</span><strong>設施改善／工程管理</strong></div>
+   <div class="side-item"><span>管理科</span><strong>環境維護／遊憩管理</strong></div>
+   <div class="side-item"><span>遊憩科</span><strong>景點營運／活動推廣</strong></div>
+   <div class="side-item"><span>主計室・人事室</span><strong>經費／人力行政</strong></div>
+   <div class="small-muted">※ 遊戲採公務機關情境化簡化編制，實際組織分工與職掌仍以管理處最新公告為準。</div>
+  </div></section>
+ </aside>
+</div>
+<div class="footer">北門觀光大戰略 BEIMEN 2027 · 架空經營模擬作品｜活動月份依歷年常見季節安排；採購流程為遊戲化簡化模擬，非正式招標文件或法律意見。</div>
+</div>
+<div class="modal-back" id="modal"><div class="modal"><h3 id="modalTitle">任期結束</h3><div id="modalBody"></div><button class="btn primary" id="modalClose">返回遊戲</button></div></div>
+<div class="toast" id="toast"></div>
+<script>
+const $=s=>document.querySelector(s);
+const clamp=(v,min=0,max=100)=>Math.max(min,Math.min(max,v));
+const months=["116年1月","116年2月","116年3月","116年4月","116年5月","116年6月","116年7月","116年8月","116年9月","116年10月","116年11月","116年12月","117年1月","117年2月","117年3月","117年4月","117年5月","117年6月","117年7月","117年8月","117年9月","117年10月","117年11月","117年12月"];
+const events=[
+{type:"任官交接",title:"代理科長報到：處長的第一份交辦",story:"新年度第一個上班日，你帶著任命派令走進管理處。處長在簡報室交代：北門有鹽田、潟湖、候鳥與信仰文化，但國際旅客對這裡仍陌生。請在 24 個月內提出可被看見、也能被地方接受的成果。企劃科送來三份初步方向，地方公所則希望先改善遊客動線。",note:"「先把地方的聲音聽清楚，再談世界看見北門。」",choices:[["先辦跨科室盤點會議","邀集企劃、工務、管理及公所代表，建立共同目標。",{eco:4,green:3,renown:1},0],["立即啟動國際形象宣傳","先建立海外曝光，讓北門進入國際旅遊視野。",{renown:7,spend:2,eco:-2},20],["優先改善居民反映的動線","先處理交通與環境問題，建立地方信任。",{eco:7,green:2,spend:-1},10]]},
+{type:"春節疏運",title:"春節連假：人潮來了，車潮也來了",story:"春節期間，井仔腳鹽田與水晶教堂周邊車流增加。公所反映巷弄停車影響居民出入，商家則希望把握年節商機。管理科建議設置臨時接駁與分流指引，但需要經費與人力。",note:"「不要讓遊客的方便，變成居民的不方便。」",choices:[["設置臨時接駁與分流動線","與公所協調接駁點、停車引導及步行路線。",{eco:5,green:4,spend:2},90],["加強社群宣傳分散人潮","發布即時路況與離峰推薦，成本較低。",{renown:3,eco:1,green:1},25],["集中人力維持主要景點秩序","快速處理現場問題，但改善幅度有限。",{eco:2,spend:1},35]]},
+{type:"濕地保育",title:"候鳥季後的課題：遊憩與棲地如何共存",story:"生態團體指出，部分遊客為了拍攝候鳥靠近敏感棲地。管理科收到通報，建議檢討觀察點、導覽路線與告示。地方業者擔心限制動線會影響生意。",note:"「生態不是觀光的背景板，而是北門最重要的資產。」",choices:[["與保育團體共擬友善觀察規範","建立緩衝區、解說教材與志工巡守。",{green:8,eco:5,renown:1},55],["增設遠距觀察設備","讓遊客不必靠近棲地，也能觀察候鳥。",{green:6,spend:2},120],["暫不調整，先加強口頭勸導","短期不影響遊客體驗，但效果有限。",{eco:-3,green:-4,spend:1},0]]},
+{type:"地方協調",title:"地方座談：觀光收益有沒有留在北門？",story:"北門區地方座談上，居民提出青年外流、店家收益不均與假日垃圾問題。公所希望管理處協助串聯小旅行、在地餐飲與社區導覽。地方民代也來電關切，希望能在下次會勘前提出具體改善方向。",note:"「把人潮變成地方收入，才算真正的觀光。」",choices:[["成立地方觀光協作平台","串連社區、商家、公所與導覽團隊。",{eco:7,spend:5,renown:2},65],["推出店家聯合優惠地圖","快速串聯消費點，鼓勵遊客多停留。",{spend:7,renown:2,eco:1},45],["先完成民代要求的現勘報告","以行政程序釐清問題與權責。",{eco:2,renown:-1},15]]},
+{type:"國際行銷",title:"海外市場提案：北門要用什麼語言說故事？",story:"企劃科彙整海外市場資料，提出以鹽田文化、濕地候鳥與夕陽景觀為主軸的國際宣傳案。處長要求你說明目標客群、轉換方式及地方承載量，不能只追求曝光數字。",note:"「國際化不是把文案翻成英文而已。」",choices:[["鎖定生態旅遊與文化深度客群","與海外鳥會、慢旅媒體及旅行業者合作。",{renown:7,green:4,spend:3},100],["投放短影音與網紅合作","快速增加觸及，但須設計導流與承載量控管。",{renown:9,spend:4,eco:-2},130],["先完成多語導覽基礎建置","補足現場資訊，再擴大海外宣傳。",{green:3,eco:3,renown:3},80]]},
+{type:"活動籌備",title:"一見雙雕藝術季：鹽雕之外，還要留下什麼？",story:"夏季一見雙雕藝術季進入籌備期。活動結合鹽雕、光雕或沙雕等藝術呈現，歷年活動舉辦形式與日期可能調整。廠商提案希望擴大作品規模，環保團體則提醒材料、用電與活動廢棄物管理。",note:"「作品會融化、會消失，但地方記憶要留下來。」",choices:[["採用低耗能展演與材料回收規範","要求施工、用電及廢棄物管理計畫。",{green:6,eco:4,renown:2},110],["擴大主視覺與夜間光雕","提高話題與夜間停留，成本較高。",{renown:8,spend:6,green:-3},180],["結合鹽業職人體驗與小型展演","讓活動收益回流地方職人與店家。",{spend:5,eco:4,renown:3},100]]},
+{type:"活動執行",title:"一見雙雕藝術季開展：人潮、媒體與現場管理",story:"活動正式登場，媒體與遊客陸續抵達。現場出現停車、垃圾與導覽人力需求，社群也開始出現作品照片。你必須決定如何調度現場資源，兼顧體驗與環境品質。",note:"「大型活動的成功，不只在開幕那一晚。」",choices:[["啟動跨單位現場應變小組","整合警政、消防、公所、清潔與管理人力。",{eco:5,green:3,spend:3},90],["加碼媒體與海外直播","把活動聲量推向國際，但現場工作量增加。",{renown:9,spend:4,eco:-2},120],["設置在地商品與職人展售區","提高地方消費與活動收益。",{spend:8,eco:2,renown:3},75]]},
+{type:"暑期管理",title:"暑期尖峰：海岸遊憩安全與環境承載",story:"暑假遊客增加，雙春濱海遊憩區與潟湖周邊出現垃圾、違規進入及安全巡查需求。工務科提出設施改善清單，管理科希望增聘季節性服務人力。",note:"「遊客帶走照片就好，不要帶走沙灘的安寧。」",choices:[["增加巡查、清潔與環境教育人力","降低環境負荷，提升現場服務。",{eco:5,green:5,spend:2},100],["改善指標與線上遊憩資訊","用資訊引導遊客前往合適區域。",{green:3,renown:3,eco:2},60],["推出暑期套裝行程刺激消費","提高消費意願，但尖峰承載壓力上升。",{spend:8,renown:3,eco:-5,green:-3},70]]},
+{type:"自行車籌備",title:"極西點自行車系列活動：串起海岸線",story:"秋季自行車系列活動進入規劃。國聖港燈塔是重要路線節點，主辦團隊希望增加騎乘組別與周邊市集。交通單位提醒需先盤點路線安全、補給、救護與居民通行。",note:"「讓旅客用慢速度，認識海岸的每一個轉彎。」",choices:[["優先完成路線安全與低碳補給規劃","強化交通維安、補水點與垃圾回收。",{green:6,eco:4,renown:2},100],["擴大賽事規模與跨縣市宣傳","增加參與人數與媒體曝光。",{renown:7,spend:5,green:-2},150],["串聯沿線小店與社區補給站","讓騎士消費留在地方。",{spend:6,eco:4,renown:3},90]]},
+{type:"自行車活動",title:"極西點騎行日：國聖港燈塔集結",story:"自行車活動當日，騎士從不同路線抵達國聖港燈塔。天候良好，但部分路段有風沙與車流交織問題。地方店家回報補給消費不錯，交通單位則要求檢討安全措施。",note:"「活動結束後，留下的是安全紀錄，還是事故檢討？」",choices:[["依安全計畫分流並設置機動支援","優先守住交通安全與活動品質。",{eco:5,green:4,renown:2},70],["加辦夕陽終點音樂與市集","延長停留時間，帶動消費。",{spend:7,renown:5,eco:-2},95],["蒐集騎士回饋並優化明年路線","以數據與居民意見改善活動。",{eco:4,green:3,renown:2},35]]},
+{type:"宗教文化",title:"鯤鯓王平安鹽祭：信仰文化與觀光動線",story:"南鯤鯓代天府周邊準備迎接鯤鯓王平安鹽祭。活動具有宗教民俗意涵，地方希望保留儀式尊重與文化主體性，同時改善參與者交通、解說與周邊消費動線。",note:"「文化不是佈景，地方信仰也不只是觀光節目。」",choices:[["由廟方與地方共同規劃友善參與指引","尊重祭典節奏，補足多語資訊與交通服務。",{eco:6,renown:3,spend:3},80],["打造大型觀光宣傳主題","擴大媒體聲量，但需避免過度商業化。",{renown:8,spend:4,eco:-3},120],["優先改善周邊步行與停車秩序","減少居民與參與者衝突。",{eco:5,green:2},95]]},
+{type:"國際觀鳥",title:"臺灣國際觀鳥馬拉松：迎接候鳥季",story:"冬季候鳥季到來，臺灣國際觀鳥馬拉松相關活動進入宣傳與執行期。黑面琵鷺與黑腹燕鷗等鳥類是濱海重要生態資源。鳥會提醒活動應遵循觀察倫理，避免以追鳥、餵食或靠近巢區作為體驗。",note:"「最好的觀鳥體驗，是鳥沒有察覺我們來過。」",choices:[["採預約制小團導覽與觀察倫理課程","兼顧生態承載與深度體驗。",{green:8,eco:5,renown:3},100],["舉辦國際直播與線上鳥類紀錄","擴大國際參與，不增加現地人流。",{renown:8,green:5},90],["推出大量團客賞鳥套裝","短期增加消費，但棲地壓力提高。",{spend:8,renown:4,green:-7,eco:-5},80]]},
+{type:"年度考核",title:"年度成果考核：主計室來函提醒",story:"年底主計室通知年度預算執行率將納入檢討。處長要求彙整活動成果、遊客服務、地方回饋及生態指標。若執行率過低，明年度爭取資源可能受到影響；若為了花完預算而勉強支出，也會被要求說明效益。",note:"「預算不是花得快就好，要花得有理由、有成果。」",choices:[["完成績效盤點並提出跨年度改善計畫","以成果與缺口爭取下一年度合理額度。",{eco:4,green:3,renown:2},0],["加速完成已核定的必要改善案","提高執行率，但須確認驗收與效益。",{eco:2,spend:2},0],["將未執行經費保留並誠實說明","不為執行率犧牲品質，可能影響明年額度。",{eco:3,green:2,renown:-1},0]]},
+{type:"新年度施政",title:"第二年開局：處長要求提出升級藍圖",story:"新年度預算核定前，處長召集科室主管檢討首年成果。若前一年度表現良好，管理處可爭取額外 100 至 400 萬元資源。你需要提出第二年最值得投資的方向。",note:"「第一年讓大家看見北門，第二年要讓大家願意再來。」",choices:[["提出生態與居民共好的中程計畫","用前一年成果爭取永續投資。",{green:5,eco:5,renown:2},0],["提出國際市場拓展專案","以海外合作、媒體與多語服務擴大市場。",{renown:7,spend:3},0],["提出地方產業與文創收益計畫","讓觀光收益與在地就業形成正循環。",{spend:7,eco:3},0]]},
+{type:"春節服務",title:"第二年春節：從觀光景點走向旅遊目的地",story:"首年改善後，遊客開始把北門排進一日或二日遊行程。旅宿與餐飲業者希望延長停留時間，居民則要求避免遊覽車集中在同一時段。",note:"「旅客停留久一點，居民生活也要舒服一點。」",choices:[["推動預約分流與慢遊路線","分散尖峰，鼓勵深度旅遊。",{green:4,eco:5,spend:4},65],["推出跨景點套票與商圈合作","提高消費與景點串聯。",{spend:8,renown:3,eco:1},90],["加強春節交通與環境巡守","先維持服務品質。",{eco:4,green:3},80]]},
+{type:"生態教育",title:"濕地教室：讓孩子成為北門的說書人",story:"學校與社區提出環境教育合作需求，希望將濕地、鹽田與海岸變成戶外教室。導覽人員培訓不足，教材也需要更新。",note:"「真正的國際品牌，從在地孩子認識自己的家開始。」",choices:[["培訓在地生態導覽員","建立解說人才與志工培訓制度。",{green:7,eco:5,renown:2},90],["開發多語數位教材","兼顧國際旅客與學校使用。",{renown:4,green:5},75],["與旅行業合作推出付費體驗","增加服務收入，但須控制團體規模。",{spend:7,eco:1},65]]},
+{type:"地方創生",title:"青年提案：鹽鄉品牌能不能帶來工作？",story:"返鄉青年提出以鹽田、候鳥與海岸生活為題的體驗商品。地方店家願意合作，但擔心品牌收益被外部廠商拿走。",note:"「讓青年留下來，比讓遊客打卡更不容易。」",choices:[["建立在地品牌授權與收益回饋機制","保障地方參與與合理分潤。",{eco:7,spend:5,renown:3},75],["補助青年試辦小旅行","快速測試市場，累積服務經驗。",{spend:5,renown:3,eco:3},90],["委託大型旅行平台統一銷售","擴大通路，但地方自主性較低。",{renown:5,spend:7,eco:-2},55]]},
+{type:"國際認證",title:"國際永續認證行銷案：北門準備好了嗎？",story:"企劃科提出國際永續旅遊認證與海外合作行銷構想。顧問提醒，認證不是買一張標章，而是要有環境管理、居民參與、旅遊承載與持續監測制度。",note:"「國際認證不是獎牌，是長期承諾。」",choices:[["啟動國際永續認證準備計畫","建立指標、盤點缺口並安排外部輔導。",{green:8,renown:7,eco:5},150, {green:60}],["先建立北門永續旅遊公開儀表板","公開環境與服務指標，累積可信度。",{green:6,eco:4,renown:4},85],["先以海外媒體專題打開知名度","先取得曝光，再逐步補足管理制度。",{renown:7,spend:3,green:-2},110]]},
+{type:"藝術季升級",title:"一見雙雕第二年：從活動走向品牌資產",story:"第二屆任期內的藝術季籌備再次啟動。首年經驗顯示，遊客期待作品之外的鹽業知識與在地互動。你可選擇投資展演規模、教育內容或循環材料。",note:"「活動可以每年不同，但北門的核心故事要一致。」",choices:[["導入循環材料與低碳展場","把永續實踐變成活動亮點。",{green:7,eco:4,renown:3},120],["打造國際藝術家交流展區","提高國際能見度與文化交流。",{renown:9,spend:4},190],["增加鹽工職人與居民共創展演","讓地方成為內容共同創作者。",{eco:6,spend:4,renown:4},100]]},
+{type:"旅遊品質",title:"旅遊服務稽核：評論網站出現兩極評價",story:"海外旅客在評論平台反映指標不清、多語資訊不足；部分居民則抱怨假日垃圾與噪音。管理處需建立服務品質改善清單，並追蹤改善結果。",note:"「一則負評不會毀掉目的地，忽視問題才會。」",choices:[["建立旅客回饋與限期改善制度","定期檢視問題、回覆旅客並追蹤改善。",{eco:5,renown:4,green:2},60],["增設多語服務與數位導覽","改善海外旅客自助體驗。",{renown:6,spend:3},100],["集中資源改善垃圾與噪音熱點","先解決居民最有感的問題。",{eco:7,green:4},100]]},
+{type:"自行車籌備",title:"極西點系列活動第二年：低碳移動示範",story:"自行車活動已累積口碑，合作單位提議增加國際騎士參與。你可以把賽事做大，也可以把它做成低碳移動與海岸教育示範。",note:"「最好的路線，不是最快抵達，而是讓人理解沿途。」",choices:[["推出低碳騎旅與在地導覽組合","提高旅遊深度與地方消費。",{green:7,spend:5,renown:4},120],["爭取國際自行車社群合作","增加國際參與及曝光。",{renown:8,spend:4},145],["優先改善路線安全與休憩設施","鞏固活動品質。",{eco:4,green:4},110]]},
+{type:"宗教文化",title:"平安鹽祭第二年：文化尊重與旅遊服務",story:"南鯤鯓代天府與地方團體邀請管理處協助活動資訊、交通與旅遊服務。各方提醒，官方宣傳應清楚區分宗教儀式、文化體驗與商業活動。",note:"「把服務做好，把主體性留給地方。」",choices:[["與廟方共同製作文化禮儀與多語指南","提升理解與尊重，避免文化誤讀。",{eco:6,renown:4,green:2},70],["擴大跨國宗教文化交流宣傳","增加國際曝光，但須充分溝通。",{renown:8,spend:3},100],["改善周邊無障礙與接駁服務","提升參與便利與居民生活品質。",{eco:5,spend:2},120]]},
+{type:"觀鳥季",title:"國際觀鳥馬拉松第二年：北門生態走向世界",story:"鳥會與國際觀察者回饋，北門有機會成為濱海生態旅遊節點。你需要決定如何擴大參與，同時守住觀察倫理、棲地保護與居民生活。",note:"「讓世界來看見北門，也讓北門的鳥安心生活。」",choices:[["建立國際觀鳥夥伴與公民科學資料","以研究合作與線上資料擴大國際參與。",{green:8,renown:8,eco:4},130],["採小團預約制深度觀察","提高體驗品質與生態承載管理。",{green:7,eco:5,spend:4},100],["擴大現地活動人數與市集","增加短期消費，但生態壓力較高。",{spend:8,renown:5,green:-6,eco:-3},110]]},
+{type:"任期總考核",title:"任期最後一份簽：把北門交給下一個明天",story:"117 年 12 月，代理任期即將屆滿。處長要求你提出兩年施政總結：國際市場是否看見北門？居民是否願意支持？生態是否因觀光而更好？預算是否有效運用？你的選擇將決定這 24 個月留下什麼。",note:"「任期會結束，地方與海岸卻會繼續生活。」",choices:[["提出永續治理與地方共管移交方案","把制度、人才與監測機制留給下一任。",{green:5,eco:5,renown:2},0],["提出國際觀光品牌擴張計畫","以市場成果延續北門國際能見度。",{renown:6,spend:4},0],["完成行政成果與風險檢討報告","務實交接，盤點未竟事項。",{eco:2,green:2},0]]}
+];
+const landmarks=[
+{name:"水晶教堂",icon:"⛪",desc:"以婚攝、建築景觀與夕陽意象吸引旅客。",levels:[["多語導覽與動線整理",80,{renown:2,eco:1}],["夜間照明與低耗能展示",120,{renown:3,spend:2,green:1}],["沉浸式鹽海故事互動",160,{renown:3,spend:3}]]},
+{name:"北門出張所／洗滌鹽工場",icon:"🏛️",desc:"保存鹽業行政與產業記憶，深化文化解說。",levels:[["歷史展件與解說牌更新",70,{eco:3,renown:1}],["職人示範與導覽人員培訓",110,{eco:3,spend:2,green:1}],["互動式鹽業常設展",150,{renown:3,eco:2,spend:2}]]},
+{name:"井仔腳瓦盤鹽田",icon:"🧂",desc:"以傳統瓦盤鹽田、夕陽與鹽業體驗構成核心品牌。",levels:[["鹽田解說與步行安全改善",90,{green:2,eco:2,renown:1}],["鹽工體驗與預約導覽",130,{spend:3,eco:2,green:2}],["鹽田環境監測與數位展示",170,{green:4,renown:2}]]},
+{name:"雙春濱海遊憩區",icon:"🌾",desc:"以海岸林、沙灘與濕地環境教育發展低衝擊遊憩。",levels:[["環境教育路線與解說牌",90,{green:3,eco:2}],["生態導覽員與預約管理",130,{green:4,eco:3,spend:1}],["低衝擊觀察設施與監測",180,{green:5,renown:2}]]},
+{name:"北門潟湖觀夕平台",icon:"🌅",desc:"以潟湖地景、夕陽與海岸聚落故事延長旅客停留。",levels:[["觀夕指引與安全設施",80,{renown:2,eco:1}],["在地導覽與夕陽慢旅",120,{spend:3,eco:2}],["多語互動地景展示",160,{renown:4,spend:2,green:1}]]}
+];
+const policies=[
+{name:"國際市場整合行銷",category:"國際行銷",cost:60,desc:"海外媒體、旅行業者與多語內容整合。",effect:{renown:7,spend:3},req:null},
+{name:"濕地友善旅遊管理",category:"生態保育",cost:45,desc:"棲地緩衝、觀察倫理、環境監測與教育。",effect:{green:7,eco:4},req:null},
+{name:"地方店家共同行銷",category:"地方創生",cost:35,desc:"串聯餐飲、文創、導覽與慢遊路線。",effect:{spend:6,eco:3},req:null},
+{name:"多語數位導覽平台",category:"服務升級",cost:45,desc:"整合景點資訊、交通、預約與多語解說。",effect:{renown:4,green:3,spend:2},req:null},
+{name:"國際永續認證輔導",category:"永續治理",cost:80,desc:"盤點管理制度、居民參與與環境績效。",effect:{green:8,renown:6,eco:3},req:{green:60}},
+{name:"北門文創商品開發",category:"文創收益",cost:30,desc:"開發黑面琵鷺傘、鹽花香氛、鹽田明信片等商品。",effect:{renown:3,spend:4,eco:2},req:null,special:"product"},
+{name:"居民參與式環境改善",category:"地方共好",cost:50,desc:"由社區提案改善垃圾熱點、步行空間與解說。",effect:{eco:8,green:3},req:{eco:55}},
+{name:"低碳接駁與自行車串聯",category:"低碳交通",cost:65,desc:"改善景點間轉乘，降低私人車輛依賴。",effect:{green:6,eco:4,spend:2},req:{green:50}},
+{name:"跨科室協作與既有資源自辦",category:"行政協作",cost:0,desc:"不新增委外經費，整合既有宣傳管道、服務人力及跨科室資源，維持基本推廣工作。",effect:{eco:1,green:1},req:null}
+];
+const activityContracts=[
+ {id:"art",name:"一見雙雕藝術季委辦案",short:"一見雙雕藝術季",eventDate:"116年7月",openTurn:3,dueTurn:6,ceiling:120,icon:"🎨",kind:"年度品牌活動",scope:"委託廠商統籌鹽雕、光雕／沙雕展區、藝術家邀請、現場展演、導覽服務、宣傳素材及活動撤場。",deliverables:["主題策展及展區配置圖 1 式","藝術作品與展演執行清冊","低耗能用電、材料再利用與廢棄物清運計畫","多語宣傳素材、活動紀錄及成果報告"],codex:"saltart",baseEffect:{renown:3,spend:2,eco:1},meetTopics:["策展內容、作品數量與施工時程","鹽業職人、地方店家與展售區協調","夜間用電、展場安全與材料回收"],meetContexts:["廠商提出主視覺與藝術家名單，遊憩科需確認作品規模、進場、施工、彩排及開展節點。","地方職人希望參與鹽雕故事解說，店家也希望展售動線公平透明。","展演涉及夜間用電、人流聚集與作品材料，需確認巡檢、清潔、撤場與緊急應變。"]},
+ {id:"bike",name:"極西點自行車系列活動委辦案",short:"極西點自行車系列活動",eventDate:"116年10月",openTurn:6,dueTurn:9,ceiling:100,icon:"🚴",kind:"運動觀光活動",scope:"委託廠商辦理騎乘路線規劃、報名與選手服務、國聖港燈塔周邊活動、補給站、交通維安協調、救護及賽後檢討。",deliverables:["路線圖、交維計畫與風險評估","報名、報到、計時及選手服務流程","補給站、救護配置與緊急應變計畫","活動紀錄、參與數據與檢討報告"],codex:"bike",baseEffect:{green:3,eco:2,spend:3,renown:1},meetTopics:["騎乘路線、交維界面與活動時程","補給站、沿線居民及在地店家協調","天候、救護、事故通報與低碳運補"],meetContexts:["廠商提出路線與分組方案，需與警政、道路權責單位及公所確認路權、交管與居民通行。","補給站位置應兼顧騎士需求、沿線店家參與及垃圾回收，避免影響居民出入。","自行車活動需訂定天候停辦標準、救護待命、事故通報與補給物資回收方式。"]},
+ {id:"saltfest",name:"鯤鯓王平安鹽祭觀光服務委辦案",short:"鯤鯓王平安鹽祭",eventDate:"116年11月",openTurn:8,dueTurn:10,ceiling:90,icon:"🏮",kind:"宗教民俗文化活動協力",scope:"以尊重南鯤鯓代天府及地方祭典主體性為前提，委託廠商協助旅遊資訊、交通引導、多語服務、公共服務設施及周邊觀光串聯。",deliverables:["與廟方確認之活動服務與動線計畫","交通、停車、接駁及人流引導方案","多語文化禮儀與旅遊資訊","現場服務紀錄及地方回饋檢討"],codex:"faith",baseEffect:{eco:3,renown:2,spend:2},meetTopics:["祭典時程、廟方窗口與工作權責","參與動線、接駁與地方攤商溝通","人流安全、儀式區域與環境清潔"],meetContexts:["活動內容須先由廟方確認，管理處與承攬廠商負責旅遊服務協力，不介入祭典核心儀式。","應確認接駁、停車、行人路線與居民生活動線，並讓地方攤商有清楚、公平的參與資訊。","需區分祭典儀式區與觀光服務區，安排人流引導、緊急通道、垃圾清運與噪音管理。"]},
+ {id:"bird",name:"臺灣國際觀鳥馬拉松活動委辦案",short:"臺灣國際觀鳥馬拉松",eventDate:"116年12月",openTurn:8,dueTurn:11,ceiling:100,icon:"🕊️",kind:"國際生態旅遊活動",scope:"委託廠商協助賽事／觀察活動報名、鳥類觀察路線、國際隊伍接待、專業解說、線上參與及生態倫理管理。",deliverables:["鳥況觀察路線及分區承載管理計畫","鳥會、專業解說員與國際隊伍聯繫表","觀察倫理、棲地緩衝及干擾通報機制","活動資料、觀察紀錄與成效報告"],codex:"bird",baseEffect:{green:4,renown:3,eco:2},meetTopics:["鳥況資訊、觀察路線與報名規則","鳥會、導覽員及國際隊伍協作","棲地緩衝、參與人數與遠距備案"],meetContexts:["請廠商與鳥會及專業人員確認觀察區域、時段與路線，活動內容不得以追逐或接近鳥群作為賣點。","確認專業解說、志工、國際隊伍報到及多語聯繫窗口，並建立現場通報流程。","需設定分區人數上限、敏感棲地緩衝、天候應變及線上參與備案，避免活動干擾野生動物。"]},
+ {id:"coast",name:"北門鹽鄉慢遊暨文創市集整合推廣案",short:"北門鹽鄉慢遊暨文創市集",eventDate:"117年6月",openTurn:14,dueTurn:17,ceiling:85,icon:"🧂",kind:"管理處整合型推廣專案（遊戲原創）",scope:"整合鹽業文化、聚落走讀、在地導覽、店家串聯與文創展售，建立可複製的北門慢遊體驗。此為遊戲內新增的整合型專案，不代表現實中已有同名固定年度活動。",deliverables:["鹽業文化與聚落走讀企劃及路線圖","在地導覽人員、店家與文創業者合作名冊","市集攤位管理、品牌識別及收益回饋方案","多語行銷素材與活動成果報告"],codex:"craft",baseEffect:{spend:4,eco:3,renown:2},meetTopics:["慢遊路線、故事腳本與服務節點","社區導覽、店家及文創攤位協調","團體容量、垃圾減量及消費回饋"],meetContexts:["需確認走讀路線、停留時間、導覽腳本與無障礙／替代路線，避免行程過度壓縮。","社區、導覽員、店家與文創業者應清楚分工，攤位遴選及合作收益須公開透明。","設定小團容量、垃圾減量與場地復原規範，並建立地方收益與合作回饋的紀錄方式。"]}
+];
+const activityTenderOptions={
+art:[
+{id:"art_story",name:"鹽雕藝術與策展內容導向",desc:"重視藝術家陣容、作品品質、鹽業故事轉譯與展演創意。",weights:{price:15,quality:55,local:15,green:15}},
+{id:"art_green",name:"低碳展場與循環材料導向",desc:"強化材料再利用、低耗能展演、施工安全及撤場復原。",weights:{price:15,quality:30,local:15,green:40}},
+{id:"art_local",name:"職人共創與地方參與導向",desc:"優先考量鹽工職人、在地藝術團隊及商家共同策展。",weights:{price:15,quality:30,local:40,green:15}}],
+bike:[
+{id:"bike_safety",name:"路線安全與賽事專業導向",desc:"重視交維、救護、路線規劃、選手服務與風險管理。",weights:{price:20,quality:35,local:15,green:30}},
+{id:"bike_event",name:"運動賽事體驗導向",desc:"重視報名系統、計時服務、賽事節奏及選手體驗。",weights:{price:15,quality:50,local:20,green:15}},
+{id:"bike_local",name:"低碳騎旅與沿線共好導向",desc:"重視低碳補給、沿線店家、居民通行與地方消費回饋。",weights:{price:15,quality:25,local:35,green:25}}],
+saltfest:[
+{id:"saltfest_respect",name:"廟方協作與文化尊重導向",desc:"重視廟方確認、祭典主體性、文化禮儀與地方協作。",weights:{price:10,quality:25,local:45,green:20}},
+{id:"saltfest_flow",name:"人流交通與公共服務導向",desc:"重視接駁、停車、無障礙動線、救護與服務設施。",weights:{price:15,quality:35,local:25,green:25}},
+{id:"saltfest_story",name:"民俗文化解說與多語導覽導向",desc:"重視文化解說、海外旅客理解及活動資訊正確性。",weights:{price:15,quality:45,local:30,green:10}}],
+bird:[
+{id:"bird_habitat",name:"棲地保護與觀察倫理導向",desc:"重視敏感棲地緩衝、人數上限、鳥況通報與低干擾設計。",weights:{price:10,quality:30,local:15,green:45}},
+{id:"bird_global",name:"國際鳥會合作與公民科學導向",desc:"重視國際隊伍接待、資料品質、專業鳥導及線上參與。",weights:{price:15,quality:40,local:15,green:30}},
+{id:"bird_small",name:"小團深度導覽與地方參與導向",desc:"重視小團預約、在地解說員、地方交通與承載管理。",weights:{price:10,quality:30,local:25,green:35}}],
+coast:[
+{id:"coast_local",name:"地方採購與收益回饋導向",desc:"重視社區、店家、導覽員及文創業者的參與與分潤。",weights:{price:10,quality:25,local:45,green:20}},
+{id:"coast_story",name:"鹽業文化與慢遊體驗導向",desc:"重視走讀腳本、文化解說、旅遊服務及體驗品質。",weights:{price:10,quality:40,local:30,green:20}},
+{id:"coast_circular",name:"市集循環與環境管理導向",desc:"重視減塑、廢棄物、攤位管理、交通及場地復原。",weights:{price:20,quality:25,local:25,green:30}}]
+};
+const activityMeetingOptions={
+art:[
+[
+{name:"確認藝術家名單、作品尺寸與施工圖說",desc:"先鎖定作品規格、材料、結構安全及創作授權，避免現場追加。",effect:{renown:2,eco:1},points:10},
+{name:"增加藝術家現地創作與媒體探班",desc:"提高話題與現場互動，但須增加場域管制。",effect:{renown:3,spend:1,eco:-1},points:8},
+{name:"縮減作品數量，優先確保品質與工期",desc:"控制風險與成本，活動規模較精簡。",effect:{eco:2,green:1},points:8}],
+[
+{name:"安排鹽工職人及在地學校共同導覽",desc:"讓鹽業知識成為展覽內容，增加社區參與。",effect:{eco:3,renown:1},points:10},
+{name:"以企業包場及品牌合作擴大展售",desc:"增加商業資源，但需清楚管理攤位公平性。",effect:{spend:3,eco:-1},points:7},
+{name:"設置藝術家交流與民眾工作坊",desc:"增加互動體驗及教育價值。",effect:{eco:2,spend:1,renown:1},points:9}],
+[
+{name:"進行夜間照明測試並採分區節能",desc:"兼顧作品效果、用電安全與周邊居民安寧。",effect:{green:3,eco:2},points:10},
+{name:"加強光雕規模與延長展演時間",desc:"提高聲量與停留時間，但能源及噪音負擔上升。",effect:{renown:3,spend:2,green:-2},points:6},
+{name:"要求材料回收、撤場清潔與場地復原保證",desc:"降低活動後環境風險。",effect:{green:3,eco:1},points:9}]
+],
+bike:[
+[
+{name:"與警政及道路權責單位逐段確認交維計畫",desc:"完成路口管制、居民通行替代路線及路權確認。",effect:{eco:2,green:2},points:10},
+{name:"增加競賽組別與路線里程",desc:"擴大參與人數，但路線管理複雜度提高。",effect:{renown:2,spend:2,eco:-1},points:7},
+{name:"改採分梯次出發與電子路線提示",desc:"降低車流集中並改善賽事秩序。",effect:{green:2,eco:2},points:9}],
+[
+{name:"補給站優先與沿線店家合作",desc:"採在地採購並規劃補給物資回收。",effect:{spend:2,eco:3},points:10},
+{name:"由廠商統包大型品牌補給區",desc:"現場效率高，但地方店家參與較少。",effect:{spend:3,eco:-2},points:7},
+{name:"設置飲水補給及自備容器獎勵",desc:"減少一次性包材與垃圾。",effect:{green:3,eco:1},points:9}],
+[
+{name:"訂定高溫、強風及豪雨停辦標準並安排救護",desc:"完善選手安全、救護待命及事故通報。",effect:{eco:3,green:2},points:10},
+{name:"增加終點舞台與頒獎宣傳",desc:"提高活動聲量及消費，但增加活動資源需求。",effect:{renown:3,spend:1,green:-1},points:7},
+{name:"採低碳接駁與物資集中運補",desc:"降低車輛往返及路線沿線干擾。",effect:{green:3,eco:1},points:9}]
+],
+saltfest:[
+[
+{name:"先取得廟方對時程、範圍及宣傳文字確認",desc:"尊重祭典主體性，明確切分宗教儀式與觀光服務責任。",effect:{eco:3,renown:1},points:10},
+{name:"安排跨單位聯合工作小組與固定窗口",desc:"釐清廟方、公所、管理處及承攬廠商分工。",effect:{eco:2,green:1},points:9},
+{name:"以大型觀光主題包裝整體祭典",desc:"擴大曝光，但需防止過度商業化或誤讀儀式。",effect:{renown:3,eco:-2},points:6}],
+[
+{name:"規劃遊客接駁、行人動線及居民通行區",desc:"分離人車動線，保留緊急通道與居民生活空間。",effect:{eco:3,green:2},points:10},
+{name:"增加多語服務台與文化禮儀摺頁",desc:"協助外地及國際旅客理解參與方式。",effect:{renown:2,eco:2},points:9},
+{name:"優先增加商業攤位及展售區",desc:"增加消費機會，但須控制場地與攤位配置。",effect:{spend:3,eco:-1},points:7}],
+[
+{name:"將儀式區列為安靜與限制攝影區",desc:"尊重祭典流程，安排人流引導及清潔班表。",effect:{eco:3,green:2},points:10},
+{name:"加派機動人力處理人潮熱點",desc:"提升現場反應速度。",effect:{eco:2,renown:1},points:8},
+{name:"活動後與廟方、居民共同檢討環境復原",desc:"追蹤垃圾、噪音及地方回饋。",effect:{eco:3,green:2},points:9}]
+],
+bird:[
+[
+{name:"與鳥會及專家共同核定觀察路線與敏感區",desc:"依鳥況調整觀察時段，保留棲地緩衝距離。",effect:{green:3,eco:2},points:10},
+{name:"增加國際觀察隊伍與競賽分組",desc:"提高國際參與，但必須同步設定人數上限。",effect:{renown:3,green:-1},points:7},
+{name:"採小團預約與分時入場",desc:"降低同時進入棲地周邊的人數。",effect:{green:3,eco:2},points:9}],
+[
+{name:"聘用專業鳥導並建立鳥況通報機制",desc:"確保觀察資訊正確，並能即時調整路線。",effect:{green:3,renown:2},points:10},
+{name:"設置遠距觀察直播與線上參與",desc:"擴大國際參與而不增加現地人流。",effect:{renown:3,green:2},points:10},
+{name:"以社群打卡任務吸引一般遊客",desc:"提高觸及，但須嚴格避免追鳥及餵食行為。",effect:{renown:2,green:-2},points:6}],
+[
+{name:"設定觀察區人數上限、靜音及禁止餵食規範",desc:"把觀察倫理納入工作人員巡查及違規通報。",effect:{green:4,eco:2},points:10},
+{name:"因鳥況變化啟動替代路線與延期備案",desc:"必要時調整活動區域，不強求現地觀察。",effect:{green:3,eco:2},points:10},
+{name:"增加主舞台及周邊市集規模",desc:"提高活動消費，但與生態主題的連結較弱。",effect:{spend:2,green:-2},points:6}]
+],
+coast:[
+[
+{name:"由社區共同確認走讀路線與故事腳本",desc:"確認聚落動線、居民同意、導覽節奏及替代路線。",effect:{eco:3,renown:1},points:10},
+{name:"先以網路人氣景點組合快速排程",desc:"宣傳較快，但可能忽略地方生活節奏。",effect:{renown:2,eco:-1},points:7},
+{name:"安排導覽員試走與居民說明會",desc:"提前修正路線並建立溝通共識。",effect:{eco:3,green:1},points:10}],
+[
+{name:"採公開遴選方式邀請店家與文創品牌",desc:"公布資格、費用與分潤原則，提升參與公平性。",effect:{eco:3,spend:2},points:10},
+{name:"優先邀請具穩定供貨能力的成熟品牌",desc:"降低履約風險，但新進地方業者機會較少。",effect:{spend:3,eco:-1},points:8},
+{name:"設置青年與社區團體公益展售名額",desc:"增加地方參與與新品牌曝光。",effect:{eco:3,renown:1},points:9}],
+[
+{name:"實施小團預約、減塑及垃圾減量規範",desc:"依場地承載控管人數，活動後完成復原。",effect:{green:3,eco:3},points:10},
+{name:"延長市集營業時間並增加夜間活動",desc:"提升消費機會，但增加照明、噪音與清潔需求。",effect:{spend:3,green:-2,eco:-1},points:7},
+{name:"建立地方收益回饋及滿意度調查",desc:"追蹤店家收益、居民意見與旅客回訪意願。",effect:{eco:3,spend:2},points:10}]
+]
+};
+
+const contractVendors=[
+ {id:"coastline",name:"海線整合策展有限公司",priceRate:.86,quality:84,local:95,green:82,tag:"地方協作・濱海活動整合",specialties:["art","saltfest","coast","bird"],profile:"熟悉濱海大型活動、地方供應鏈與場域協調；擅長把在地店家及社區納入活動執行。"},
+ {id:"greentide",name:"綠潮永續活動顧問有限公司",priceRate:.94,quality:87,local:82,green:98,tag:"環境管理・低碳活動",specialties:["art","bike","bird","coast"],profile:"擅長環境承載管理、低碳活動、風險控管與永續指標；視覺展演較為穩健。"},
+ {id:"globalstage",name:"全球視野行銷展演有限公司",priceRate:.98,quality:97,local:68,green:72,tag:"大型展演・國際宣傳",specialties:["art","bike","saltfest"],profile:"具大型舞台、藝文展演及海外媒體整合能力；地方採購與環境管理需在履約階段明確要求。"},
+ {id:"rideflow",name:"騎跡運動整合有限公司",priceRate:.90,quality:91,local:79,green:86,tag:"自行車賽事・戶外運動",specialties:["bike","coast"],profile:"專長自行車賽事、路線規劃、選手服務、補給站及戶外緊急應變。"},
+ {id:"templecraft",name:"府城民俗節慶執行有限公司",priceRate:.84,quality:85,local:96,green:78,tag:"宗教民俗・地方節慶",specialties:["saltfest","coast","art"],profile:"熟悉廟埕活動、地方祭典服務、民俗禮儀溝通與社區協作，重視活動主體性。"},
+ {id:"avian",name:"候鳥生態行銷工作室",priceRate:.88,quality:90,local:86,green:99,tag:"觀鳥活動・生態解說",specialties:["bird","bike","coast"],profile:"具鳥類觀察、專業解說、鳥會合作及生態旅遊活動經驗，重視棲地緩衝與觀察倫理。"},
+ {id:"saltstory",name:"鹽鄉文化創意整合有限公司",priceRate:.82,quality:88,local:98,green:88,tag:"鹽業文化・社區市集",specialties:["art","saltfest","coast","bird"],profile:"擅長鹽業文化轉譯、職人展演、文創市集、聚落走讀與地方品牌合作。"}
+];
+const meetingOptions=[
+ [
+  {name:"建立週進度會議與工作里程碑",desc:"逐週確認設計、製作、宣傳、進場與驗收文件。",effect:{renown:2,eco:1},points:9},
+  {name:"要求壓縮前置作業、提前宣傳",desc:"加快曝光速度，但籌備與跨單位確認時間較緊。",effect:{renown:4,eco:-1,green:-1},points:6},
+  {name:"增加現地勘查與彩排演練",desc:"多一次現場確認，降低臨時變更與安全風險。",effect:{eco:3,green:2},points:9}
+ ],
+ [
+  {name:"邀集公所、社區及在地業者共同確認",desc:"確認參與方式、聯絡窗口、動線與合作規則。",effect:{eco:4,spend:2},points:10},
+  {name:"設置單一聯繫窗口與問題追蹤表",desc:"先建立清楚責任分工，降低溝通落差。",effect:{eco:2,renown:1},points:8},
+  {name:"優先擴大企業攤位與外地招商",desc:"增加活動商業規模，但地方參與及分潤空間較小。",effect:{spend:4,eco:-3},points:6}
+ ],
+ [
+  {name:"納入低碳、減廢、人流與緊急應變措施",desc:"將環境管理、安全演練與活動後復原列入查核。",effect:{green:4,eco:3},points:10},
+  {name:"加碼舞台設備與宣傳效果",desc:"強化視覺聲量與體驗，但增加能源及現場負荷。",effect:{renown:3,spend:2,green:-3},points:7},
+  {name:"依最低規格完成安全與清潔計畫",desc:"符合基本要求，但缺少額外的環境品質管理。",effect:{green:-2,eco:-1},points:5}
+ ]
+];
+function createContractState(){return Object.fromEntries(activityContracts.map(a=>[a.id,{stage:0,tender:null,vendor:null,vendorScore:0,price:0,meetingStep:0,meetings:[],deliveryScore:0,revenue:0,result:""}]))}
+let state;
+const initial=()=>({turn:0,stats:{renown:50,eco:50,spend:50,green:50},budget:1600,annual:1600,spent:0,yearSpent:0,income:0,yearIncome:0,yearBase:1600,landmark:[0,0,0,0,0],codex:[],logs:[],eventDone:false,policyDone:false,productMade:false,productIncome:0,ended:false,gameOver:false,gameOverReason:"",monthlyDrift: null,bonus:0,requestUsed:false,contracts:createContractState(),contractFocus:null});
+let soundOn=false,audio;
+const metricDefs=[["預算","budget","萬元","linear"],["國際知名度","renown","%","#e67e22"],["生態與居民滿意度","eco","%","#16a085"],["遊客消費意願","spend","%","#d39b42"],["綠色旅遊指數","green","%","#4e9d79"]];
+function fmt(n){return Math.round(n).toLocaleString("zh-TW")}
+function eventCost(raw){return raw<=0?0:Math.max(5,Math.round((raw*.5)/5)*5)}
+function play(kind="click"){if(!soundOn)return;try{audio=audio||new(window.AudioContext||window.webkitAudioContext)();let o=audio.createOscillator(),g=audio.createGain();o.connect(g);g.connect(audio.destination);let now=audio.currentTime;o.type="sine";o.frequency.setValueAtTime(kind==="bad"?180:kind==="good"?660:kind==="unlock"?520:360,now);if(kind==="unlock")o.frequency.exponentialRampToValueAtTime(990,now+.18);g.gain.setValueAtTime(.0001,now);g.gain.exponentialRampToValueAtTime(.075,now+.015);g.gain.exponentialRampToValueAtTime(.0001,now+(kind==="unlock"?.34:.13));o.start(now);o.stop(now+.36)}catch(e){}}
+function toast(t){let el=$("#toast");el.textContent=t;el.classList.add("show");setTimeout(()=>el.classList.remove("show"),2200)}
+function log(title,detail){state.logs.unshift({date:months[Math.min(state.turn,23)],title,detail});if(state.logs.length>80)state.logs.pop()}
+function apply(effect){let good=true;for(let k in effect){let old=state.stats[k];state.stats[k]=clamp(old+effect[k]);if(effect[k]<0)good=false}play(good?"good":"bad")}
+function addCodex(id){if(!state.codex.includes(id)){state.codex.push(id);play("unlock")}}
+function renderMetrics(){let html="";for(let [label,key,unit,color] of metricDefs){let value=key==="budget"?state.budget:state.stats[key];let pct=key==="budget"?Math.min(100,value/2000*100):value;let c=key==="budget"?"#16a085":color;html+=`<div class="metric"><div class="metric-head"><span>${label}</span><span>${key==="budget"?"💰":"●"}</span></div><div class="value">${fmt(value)}<small> ${unit}</small></div><div class="meter"><i style="width:${pct}%;background:${c}"></i></div><small>${key==="budget"?"年度可用餘額":"目前評估值"}</small></div>`}$("#metrics").innerHTML=html}
+function renderHeader(){let i=Math.min(state.turn,23);$("#monthLabel").textContent=state.ended?"任期已屆滿":`第 ${state.turn+1} / 24 月`;$("#dateLabel").textContent=months[i];$("#progressBar").style.width=(state.ended?100:(state.turn+1)/24*100)+"%";$("#budgetValue").textContent=fmt(state.budget)+" 萬";$("#budgetValue").classList.toggle("budget-negative",state.budget<100);$("#spentValue").textContent=fmt(state.spent)+" 萬";$("#execValue").textContent=(state.annual?Math.round(state.spent/state.annual*100):0)+"%";$("#incomeValue").textContent=fmt(state.income)+" 萬";$("#budgetNote").textContent=`本年度核定額度 ${fmt(state.annual)} 萬元；已支用及已決標承諾 ${fmt(state.spent)} 萬元。每月另扣 10 萬元基本行政及景點維護費。`}
+function currentEvent(){return events[Math.min(state.turn,23)]}
+function renderEvent(){
+ let e=currentEvent();
+ $("#eventType").textContent=state.gameOver?"預算赤字・任期終止":e.type;
+ if(state.gameOver){$("#eventArea").innerHTML='<div class="notice warn">本局因預算赤字提前終止。請查看結算畫面，或重新開始任期。</div>';return}
+ if(state.ended){$("#eventArea").innerHTML=endingMarkup();return}
+ if(state.eventDone){$("#eventArea").innerHTML=`<div class="notice">本月主線事件已完成。請前往「政策卡牌」執行本月政策，或至「地標建設」進行升級。完成兩項後即可推進下個月。</div><h2 class="event-title">${e.title}</h2><p class="story">${e.story}</p><div class="memo">簽辦紀錄：本月事件已決行，請續辦政策執行與經費核銷。</div>`;return}
+ const available=e.choices.some(c=>{let cost=eventCost(c[3]||0),req=c[4];return cost<=state.budget&&!(req&&Object.entries(req).some(([k,v])=>state.stats[k]<v))});
+ let choiceHtml=e.choices.map((c,i)=>{let cost=eventCost(c[3]||0),req=c[4],locked=req&&Object.entries(req).some(([k,v])=>state.stats[k]<v);let label=Object.entries(c[2]).map(([k,v])=>`${({renown:"知名度",eco:"居民滿意",spend:"消費意願",green:"綠色指數"})[k]} ${v>0?"+":""}${v}`).join("／");return `<button class="option" data-choice="${i}" ${locked||cost>state.budget?"disabled":""}><span class="opt-key">${String.fromCharCode(65+i)}</span><span><b>${c[0]}</b><small>${c[1]}</small><small>${label}　｜　預估經費 ${cost} 萬</small>${locked?`<small class="lock">🔒 尚未達成條件：${Object.entries(req).map(([k,v])=>`${({green:"綠色旅遊指數",eco:"居民滿意度"})[k]} ≥ ${v}%`).join("、")}</small>`:cost>state.budget?`<small class="lock">經費不足，請先調整預算或爭取追加。</small>`:""}</span></button>`}).join("");
+ if(!available)choiceHtml+=`<button class="option" data-emergency-event><span class="opt-key">!</span><span><b>改採既有人力與跨科室資源自辦</b><small>不新增委外經費，縮小本月執行規模；短期降低宣傳與服務效益，但可避免公務停擺。</small><small>知名度 -1／居民滿意度 -1／綠色指數 +1　｜　經費 0 萬</small></span></button>`;
+ $("#eventArea").innerHTML=`<div class="event-meta">簽呈字號：雲濱遊字第 ${116000+state.turn+1} 號　｜　承辦單位：遊憩科</div><h2 class="event-title">${e.title}</h2><p class="story">${e.story}</p><div class="memo"><b>處長指示：</b>${e.note}</div><div class="small-muted">請擇一方案辦理；經費以調整後預估金額列示，單位：萬元。</div><div class="options">${choiceHtml}</div>`;
+ $("#eventArea").querySelectorAll("[data-choice]").forEach(b=>b.addEventListener("click",()=>chooseEvent(+b.dataset.choice)));
+ const emergency=$("#eventArea").querySelector("[data-emergency-event]");if(emergency)emergency.onclick=chooseEmergencyEvent;
+}
+function chooseEmergencyEvent(){if(state.ended||state.eventDone)return;apply({renown:-1,eco:-1,green:1});state.eventDone=true;log(currentEvent().title,"預算受限，改採既有人力與跨科室資源自辦，未新增委外支出。");renderAll();toast("已採緊縮自辦方案，請續辦本月政策。")}
+
+function chooseEvent(i){if(state.ended)return;let e=currentEvent(),c=e.choices[i],cost=eventCost(c[3]||0);if(cost>state.budget)return toast("可用預算不足，無法核定。");state.budget-=cost;state.spent+=cost;state.yearSpent+=cost;apply(c[2]);state.eventDone=true;log(e.title,`決行「${c[0]}」，支出 ${cost} 萬元。`);if(state.turn===2||state.turn===11||state.turn===23)addCodex("bird");if(state.turn===5||state.turn===6||state.turn===17)addCodex("saltart");if(state.turn===10||state.turn===22)addCodex("faith");if(state.turn===8||state.turn===9||state.turn===20)addCodex("bike");if(state.turn===0)addCodex("beimen");renderAll();toast("事件決策已送出，請續辦本月政策。")}
+function renderBudgetAndNotes(){let notes=["處長提醒：請先完成年度施政目標盤點。","管理科提醒：連假期間請留意居民通行與垃圾清運。","生態團體來函：請持續追蹤候鳥棲地干擾情形。","公所希望管理處派員參與地方觀光座談。","企劃科請遊憩科提供國際行銷素材與景點亮點。","一見雙雕籌備會議：請確認低碳展場與安全計畫。","活動期間請每日彙整人流、交通與環境巡查紀錄。","暑期結束後請提出遊客承載與環境維護檢討。","工務科請提供自行車路線改善優先順序。","請確認國聖港燈塔周邊活動安全及居民交通。","宗教活動宣傳須尊重廟方與地方文化主體性。","主計室提醒：年度支出請依核定用途辦理核銷。","第二年度資源將依首年績效與計畫完整度核定。","春節服務請同步公告替代停車與接駁資訊。","請將環境教育成果納入年度績效資料。","地方創生計畫請提出在地收益回饋機制。","國際認證須以制度落實為基礎，不宜只做形象宣傳。","請檢討藝術季的廢棄物、用電與地方參與成果。","請建立旅客意見回覆與改善追蹤機制。","自行車活動須完成交通維安及緊急應變規劃。","請與廟方確認活動資訊及參與禮儀。","觀鳥活動請遵守觀察倫理，避免干擾野生動物。","請彙整第二年度預算執行率與成果指標。","任期屆滿前請完成資料、契約及未竟事項移交。"];$("#directorNote").textContent="「"+notes[Math.min(state.turn,23)]+"」——處長室／業務提醒"}
+function renderLandmarks(){let html='<div class="notice">五處核心地標皆已具備基本營運條件。你可以投資軟硬體、導覽人才、靜態展、動態體驗與互動設施；每級升級皆提供每月被動效益。</div><div class="cards">';landmarks.forEach((l,i)=>{let lv=state.landmark[i];let next=l.levels[lv];html+=`<article class="card"><div style="font-size:28px">${l.icon}</div><span class="tag teal">建設等級 ${lv}/3</span><h4>${l.name}</h4><p>${l.desc}</p><div class="level">${[0,1,2].map(n=>`<i class="dot ${n<lv?"on":""}"></i>`).join("")}</div>${next?`<p><b>下一階段：${next[0]}</b></p><div class="card-foot"><span class="cost">工程／服務費 ${next[1]} 萬</span><button class="action" data-build="${i}">核定升級</button></div>`:`<div class="card-foot"><span class="tag">已完成最高級</span><span class="small-muted">持續產生效益</span></div>`}</article>`});html+="</div>";$("#tabContent").innerHTML=html;$("#tabContent").querySelectorAll("[data-build]").forEach(b=>b.onclick=()=>build(+b.dataset.build))}
+function build(i){if(state.ended)return;let l=landmarks[i],lv=state.landmark[i],n=l.levels[lv];if(!n)return;if(state.budget<n[1])return toast("預算不足，無法核定升級。");state.budget-=n[1];state.spent+=n[1];state.yearSpent+=n[1];state.landmark[i]++;apply(n[2]);log(`${l.name}升級`,`${n[0]}，支出 ${n[1]} 萬元。`);addCodex("salt");renderAll();toast(`${l.name}已完成升級。`)}
+function renderPolicies(){let html='<div class="notice">每月可執行一張政策卡。一般政策約 30～65 萬元，認證型專案 80 萬元；另保留零新增經費的跨科室自辦方案。部分高階政策須先達成指定指標。文創商品成功上市後，將依市場反應產生銷售收入。</div><div class="cards">';policies.forEach((p,i)=>{let locked=p.req&&Object.entries(p.req).some(([k,v])=>state.stats[k]<v);html+=`<article class="card"><span class="tag">${p.category}</span><h4>${p.name}</h4><p>${p.desc}</p>${p.req?`<p class="small-muted">解鎖條件：${Object.entries(p.req).map(([k,v])=>`${({green:"綠色旅遊指數",eco:"居民滿意度"})[k]} ≥ ${v}%`).join("、")}</p>`:""}<div class="card-foot"><span class="cost">經費 ${p.cost} 萬</span><button class="action" data-policy="${i}" ${locked||state.policyDone||!state.eventDone||state.budget<p.cost?"disabled":""}>${state.policyDone?"本月已執行":locked?"條件未達":!state.eventDone?"先完成事件":state.budget<p.cost?"預算不足":"執行政策"}</button></div></article>`});html+="</div>";$("#tabContent").innerHTML=html;$("#tabContent").querySelectorAll("[data-policy]").forEach(b=>b.onclick=()=>runPolicy(+b.dataset.policy))}
+function runPolicy(i){if(state.ended)return;let p=policies[i];if(state.policyDone||!state.eventDone||state.budget<p.cost)return;state.budget-=p.cost;state.spent+=p.cost;state.yearSpent+=p.cost;apply(p.effect);let detail=`執行「${p.name}」，支出 ${p.cost} 萬元。`;if(p.special==="product"){state.productMade=true;let demand=Math.round((state.stats.spend+state.stats.renown)/25)+Math.floor(Math.random()*16)+10;let revenue=Math.min(160,Math.max(15,demand));state.budget+=revenue;state.income+=revenue;state.yearIncome+=revenue;state.productIncome+=revenue;detail+=`文創商品（黑面琵鷺傘等）上市，銷售收入 ${revenue} 萬元已回補。`;addCodex("craft")}state.policyDone=true;log("政策執行",detail);renderAll();toast("政策已執行並登錄成果。")}
+const codexItems=[["beimen","北門鹽鄉","🧂","北門以鹽業、潟湖、海岸聚落與信仰文化構成獨特地景。"],["bird","黑面琵鷺與濕地","🕊️","黑面琵鷺是濱海濕地重要的保育旗艦物種；賞鳥應保持距離、不餵食、不追逐。"],["salt","瓦盤鹽田工法","☀️","瓦盤鹽田以瓦片鋪面協助蓄熱與結晶，映照傳統鹽業勞動智慧。"],["saltart","一見雙雕藝術季","🎨","以鹽雕與光雕／沙雕等藝術形式，轉譯鹽業文化與濱海意象。"],["faith","鯤鯓王平安鹽祭","🏮","結合南鯤鯓代天府信仰與平安鹽文化，活動規劃須尊重地方儀式。"],["bike","極西點自行車","🚴","以國聖港燈塔等海岸節點串聯騎行體驗，安全與低碳補給同樣重要。"],["craft","北門文創設計","🛍️","將黑面琵鷺、鹽田與夕陽轉化為雨傘、明信片等實用商品，讓旅遊記憶延伸至日常。"]];
+function renderCodex(){let html=`<div class="notice">已解鎖 ${state.codex.length} / ${codexItems.length} 張典藏。透過主線事件、地標升級與政策執行逐步收集北門文化記憶。</div><div class="cards">`;codexItems.forEach(c=>{let ok=state.codex.includes(c[0]);html+=`<article class="card codex-card ${ok?"":"locked"}"><div class="codex-icon">${ok?c[2]:"🔒"}</div><div><span class="tag ${ok?"teal":""}">${ok?"已典藏":"尚未解鎖"}</span><h4>${ok?c[1]:"未公開典藏"}</h4><p>${ok?c[3]:"持續推動北門觀光、文化與生態工作，解鎖這張典藏卡。"}</p></div></article>`});html+="</div>";$("#tabContent").innerHTML=html}
+function renderJournal(){let html='<div class="notice">公務日誌會記錄事件決行、政策執行、地標升級、活動標案、廠商評選、履約協調、驗收及預算收入。</div><div class="log">';if(!state.logs.length)html+='<p class="small-muted">目前尚無紀錄。完成第一項決策後，系統將自動建立公務日誌。</p>';state.logs.forEach(l=>html+=`<div class="log-entry"><small>${l.date}　｜　${l.title}</small><p>${l.detail}</p></div>`);html+="</div>";$("#tabContent").innerHTML=html}
+function getContract(id){return state.contracts[id]}
+function contractStatus(a,c){if(c.stage===4)return "已驗收結案";if(c.stage===3)return "待履約驗收";if(c.stage===2)return `履約協調 ${c.meetingStep}/3`;if(c.stage===1)return "招標文件完成・待評選";return state.turn<a.openTurn?`尚未開放（${months[a.openTurn]}起）`:"可開始編製標書"}
+function vendorEvaluation(a,tender){let eligible=contractVendors.filter(v=>v.specialties.includes(a.id));let quotes=eligible.map(v=>({v,price:Math.round(a.ceiling*v.priceRate/5)*5}));let lowest=Math.min(...quotes.map(q=>q.price));return quotes.map(q=>{let priceScore=lowest/q.price*100;let w=tender.weights;let score=Math.round(priceScore*w.price/100+q.v.quality*w.quality/100+q.v.local*w.local/100+q.v.green*w.green/100);return {...q,priceScore,score}}).sort((x,y)=>y.score-x.score)}
+function focusContract(id){state.contractFocus=id;renderTab();play()}
+function renderContracts(){
+ const focus=activityContracts.find(a=>a.id===state.contractFocus&& (state.turn>=a.openTurn||getContract(a.id).stage>0)) || activityContracts.find(a=>state.turn>=a.openTurn&&getContract(a.id).stage!==4) || activityContracts.find(a=>getContract(a.id).stage>0) || activityContracts[0];
+ if(!state.contractFocus&&state.turn>=focus.openTurn)state.contractFocus=focus.id;
+ let cards=activityContracts.map(a=>{let c=getContract(a.id),available=state.turn>=a.openTurn||c.stage>0,selected=state.contractFocus===a.id;return `<div class="contract-project ${selected?"active":""}"><div style="display:flex;justify-content:space-between;gap:8px"><span>${a.icon} <b>${a.eventDate}</b></span><span class="tag ${c.stage===4?"teal":available?"":""}">${c.stage===4?"已結案":available?"辦理中":"未開放"}</span></div><h4>${a.short}</h4><p>${a.kind}</p><p>${contractStatus(a,c)}</p><button class="action" data-focus-contract="${a.id}" ${!available?"disabled":""}>${selected?"目前檢視":"查看契約流程"}</button></div>`}).join("");
+ let c=getContract(focus.id),detail="";
+ const flow=["製作招標文件","廠商評選與決標","履約協調會議","成果查驗結案"];
+ if(state.turn<focus.openTurn&&c.stage===0){detail=`<div class="contract-panel"><span class="tag">尚未開放</span><h4>${focus.name}</h4><p>本案預計於 ${months[focus.openTurn]} 開始編製招標文件，活動預定於 ${focus.eventDate} 辦理。可先處理其他月度公務。</p></div>`}
+ else if(c.stage===0){detail=`<div class="contract-panel"><span class="tag">第一階段・招標前置作業</span><h4>一、製作招標文件｜${focus.name}</h4><p>${focus.scope}</p><div class="side-item"><span>預估契約預算上限</span><strong>${focus.ceiling} 萬元</strong></div><div class="side-item"><span>預定活動月份</span><strong>${focus.eventDate}</strong></div><h4>招標需求與主要交付項目</h4><div class="spec-list">${focus.deliverables.map((d,i)=>`<div>${i+1}. ${d}</div>`).join("")}</div><div class="memo"><b>採購承辦提醒：</b>評選項目、配分及履約要求應在招標文件中先行明定，公告後不應為特定投標廠商任意更動。本遊戲以情境化方式簡化採購程序。</div><h4>請決定本案評選方向</h4><div class="cards">${activityTenderOptions[focus.id].map(t=>`<article class="card"><span class="tag">本活動專屬評選配分</span><h4>${t.name}</h4><p>${t.desc}</p><p class="small-muted">價格 ${t.weights.price}%／企劃品質 ${t.weights.quality}%／地方參與 ${t.weights.local}%／環境永續 ${t.weights.green}%</p><button class="action" data-tender="${t.id}">採用此配分，完成招標文件</button></article>`).join("")}</div></div>`}
+ else if(c.stage===1){let t=activityTenderOptions[focus.id].find(x=>x.id===c.tender),ranked=vendorEvaluation(focus,t);detail=`<div class="contract-panel"><span class="tag">第二階段・評選委員會</span><h4>二、廠商評選與決標｜${focus.short}</h4><p>本案依活動專長篩選合格投標廠商，不是所有廠商都能投每一種標案。請比較報價、企劃品質、地方參與及環境永續表現，再決定決標對象。</p><div class="memo"><b>本案評選配分：</b>價格 ${t.weights.price}%／企劃品質 ${t.weights.quality}%／地方參與 ${t.weights.local}%／環境永續 ${t.weights.green}%。評分結果為遊戲模擬，不代表現實採購評選或廠商資訊。</div><div class="vendor-grid">${ranked.map((r,i)=>`<article class="vendor-card"><span class="tag">${i===0?"總分最高":"投標廠商"}</span><h4>${r.v.name}</h4><div class="vendor-score">${r.score} <small style="font-size:12px">／100</small></div><p>${r.v.profile}</p><div>${r.v.specialties.map(k=>`<span class="specialty">${({art:"藝術策展",bike:"自行車活動",saltfest:"民俗節慶",bird:"觀鳥生態",coast:"地方慢遊"})[k]}</span>`).join("")}</div><div class="score-lines">報價：${r.price} 萬元（上限 ${focus.ceiling} 萬）<br>價格 ${Math.round(r.priceScore)}／企劃品質 ${r.v.quality}／地方參與 ${r.v.local}／環境永續 ${r.v.green}<br>${r.v.tag}</div><button class="action" data-award-vendor="${r.v.id}" ${state.budget<r.price?"disabled":""}>選定並辦理決標</button>${state.budget<r.price?'<div class="small-muted">目前可用預算不足</div>':""}</article>`).join("")}</div></div>`}
+ else if(c.stage===2&&c.meetingStep<3){let step=c.meetingStep,opts=activityMeetingOptions[focus.id][step];detail=`<div class="contract-panel"><span class="tag">第三階段・履約管理</span><h4>三、履約協調會議 ${step+1}/3｜${focus.meetTopics[step]}</h4><p>${focus.meetContexts[step]}</p><div class="memo"><b>承辦科長提醒：</b>得標後的協調重點是確認契約範圍內的工作計畫、介面、進度、品質與風險處置；若涉及契約重大變更，仍應依契約及相關程序辦理，不以會議紀錄取代正式程序。</div><div class="small-muted">得標廠商：${contractVendors.find(v=>v.id===c.vendor)?.name||"未指定"}　｜　契約價金：${c.price} 萬元</div>${opts.map((o,i)=>`<button class="meeting-option" data-meeting="${i}"><span class="opt-key">${String.fromCharCode(65+i)}</span><span><b>${o.name}</b><small>${o.desc}</small><small>預估影響：${Object.entries(o.effect).map(([k,v])=>`${({renown:"知名度",eco:"居民滿意度",spend:"消費意願",green:"綠色指數"})[k]} ${v>0?"+":""}${v}`).join("／")}</small></span></button>`).join("")}</div>`}
+ else if(c.stage===2&&c.meetingStep>=3){detail=`<div class="contract-panel"><span class="tag">第四階段・履約成果查驗</span><h4>四、活動成果查驗與驗收｜${focus.short}</h4><p>三次履約協調已完成。請依契約約定核對工作成果、活動紀錄、參與數據、支出憑證、環境復原及缺失改善情形。</p><div class="spec-list"><div>✓ 工作項目及活動內容依核定企劃執行</div><div>✓ 安全、交通、環境與服務措施完成紀錄</div><div>✓ 地方協作及合作單位參與情形有資料可查</div><div>✓ 成果報告、照片、影音及相關文件已提交</div></div><div class="memo">驗收結果將依投標廠商評選表現及三次履約協調決策，換算本案執行品質，並影響觀光指標與活動合作回饋收入。</div><button class="btn primary" id="acceptContract">辦理履約查驗並結案</button></div>`}
+ else {detail=`<div class="contract-panel"><span class="contract-stamp">驗收合格・結案</span><h4>${focus.name}</h4><p>${c.result}</p><div class="two-col"><div class="card"><small>履約品質評分</small><h2>${c.deliveryScore} / 100</h2></div><div class="card"><small>活動合作回饋收入</small><h2>${c.revenue} 萬</h2></div></div><div class="small-muted">決標廠商：${contractVendors.find(v=>v.id===c.vendor)?.name||"—"}｜契約價金：${c.price} 萬元</div></div>`}
+ const flowStage=(c.stage===2&&c.meetingStep>=3)?3:c.stage;const stepsHtml=`<div class="contract-flow">${flow.map((x,i)=>`<div class="contract-step ${(c.stage===4||flowStage>i)?"done":(flowStage===i?"current":"")}">${i+1}. ${x}</div>`).join("")}</div>`;
+ let intro=`<div class="notice">大型活動採「招標文件 → 廠商評選 → 履約協調 → 成果查驗」四階段。每案須在活動月份前完成招標與履約準備，契約價金會占用年度可用預算；活動完成後可取得合作／展售回饋收入。五項中，最後一案為本遊戲設計的管理處整合型推廣專案，非現實既有固定品牌活動。</div>`;
+ let html=intro+`<div class="contract-project-grid">${cards}</div>${stepsHtml}${detail}`;
+ $("#tabContent").innerHTML=html;
+ $("#tabContent").querySelectorAll("[data-focus-contract]").forEach(b=>b.onclick=()=>focusContract(b.dataset.focusContract));
+ $("#tabContent").querySelectorAll("[data-tender]").forEach(b=>b.onclick=()=>prepareTender(focus.id,b.dataset.tender));
+ $("#tabContent").querySelectorAll("[data-award-vendor]").forEach(b=>b.onclick=()=>awardVendor(focus.id,b.dataset.awardVendor));
+ $("#tabContent").querySelectorAll("[data-meeting]").forEach(b=>b.onclick=()=>chooseMeeting(focus.id,+b.dataset.meeting));
+ const accept=$("#acceptContract");if(accept)accept.onclick=()=>acceptContract(focus.id);
+}
+function prepareTender(id,tenderId){if(state.ended)return;let a=activityContracts.find(x=>x.id===id),c=getContract(id);if(!a||c.stage!==0||state.turn<a.openTurn)return;let t=(activityTenderOptions[id]||[]).find(x=>x.id===tenderId);c.tender=tenderId;c.stage=1;log("活動標案文件完成",`${a.name}完成招標需求及評選配分草案：${t.name}。預算上限 ${a.ceiling} 萬元。`);renderAll();toast("招標文件已完成，進入廠商評選程序。")}
+function awardVendor(id,vendorId){if(state.ended)return;let a=activityContracts.find(x=>x.id===id),c=getContract(id),t=(activityTenderOptions[id]||[]).find(x=>x.id===c.tender);if(!a||c.stage!==1||!t)return;let r=vendorEvaluation(a,t).find(x=>x.v.id===vendorId);if(!r||state.budget<r.price)return;let yes=confirm(`確定選定「${r.v.name}」？\n評選總分：${r.score} 分\n決標價金：${r.price} 萬元\n\n決標後將占用年度預算。`);if(!yes)return;state.budget-=r.price;state.spent+=r.price;state.yearSpent+=r.price;c.vendor=vendorId;c.vendorScore=r.score;c.price=r.price;c.stage=2;c.meetingStep=0;log("活動委辦案決標",`${a.name}由「${r.v.name}」得標，評選總分 ${r.score} 分，決標價金 ${r.price} 萬元。`);play("unlock");renderAll();toast("決標完成，請開始履約協調會議。")}
+function chooseMeeting(id,index){if(state.ended)return;let a=activityContracts.find(x=>x.id===id),c=getContract(id);if(!a||c.stage!==2||c.meetingStep>=3)return;let o=activityMeetingOptions[id][c.meetingStep][index];if(!o)return;apply(o.effect);c.meetings.push({name:o.name,points:o.points});log(`履約協調｜${a.short}`,`${a.meetTopics[c.meetingStep]}：${o.name}。`);c.meetingStep++;renderAll();toast(`已完成第 ${c.meetingStep} 次履約協調。`)}
+function acceptContract(id){if(state.ended)return;let a=activityContracts.find(x=>x.id===id),c=getContract(id);if(!a||c.stage!==2||c.meetingStep<3)return;let avg=c.meetings.reduce((sum,m)=>sum+m.points,0)/3;let score=Math.max(0,Math.min(100,Math.round(c.vendorScore*.72+avg*2.8)));let effect={...a.baseEffect};let tier="符合契約要求";if(score>=90){tier="履約優良";Object.assign(effect,{renown:(effect.renown||0)+3,eco:(effect.eco||0)+3,spend:(effect.spend||0)+2,green:(effect.green||0)+2})}else if(score>=80){tier="履約良好";Object.assign(effect,{renown:(effect.renown||0)+2,eco:(effect.eco||0)+2,spend:(effect.spend||0)+2,green:(effect.green||0)+1})}else if(score>=70){tier="達成基本履約";Object.assign(effect,{renown:(effect.renown||0)+1,spend:(effect.spend||0)+1})}else{tier="履約品質待改善";Object.assign(effect,{eco:(effect.eco||0)-3,green:(effect.green||0)-2,renown:(effect.renown||0)-1})}apply(effect);let revenue=score>=90?32:score>=80?24:score>=70?15:6;state.budget+=revenue;state.income+=revenue;state.yearIncome+=revenue;c.deliveryScore=score;c.revenue=revenue;c.result=`本案評定為「${tier}」。經核對活動執行、地方協作及環境管理成果，履約品質 ${score} 分；活動合作、攤位及展售回饋收入 ${revenue} 萬元已回補可用預算。`;c.stage=4;addCodex(a.codex);log("活動委辦案驗收結案",`${a.name}完成履約查驗，${tier}（${score} 分），決標價金 ${c.price} 萬元；合作回饋收入 ${revenue} 萬元。`);play("unlock");renderAll();toast(`活動契約驗收完成：${tier}。`)}
+function overdueContract(nextTurn){return activityContracts.find(a=>a.dueTurn===nextTurn&&getContract(a.id).stage!==4)}
+function renderTab(){let t=document.querySelector(".tab.active").dataset.tab;let titles={month:"每月決策",contracts:"大型活動契約討論",landmarks:"北門五大地標建設",policies:"政策卡牌與年度施政",codex:"鹽鄉典藏圖鑑",journal:"公務日誌／歷史紀錄"};let hints={month:"完成本月事件與政策，推進任期",contracts:"從標書編製、廠商評選到履約協調與驗收",landmarks:"投入預算升級既有景點服務",policies:"每月執行一張政策卡",codex:"典藏文化、生態與產業記憶",journal:"查看任期內所有重要決行"};$("#tabTitle").textContent=titles[t];$("#tabHint").textContent=hints[t];if(t==="month"){$("#tabContent").innerHTML='<div class="notice">本月主線事件顯示於上方。請完成事件與一張政策卡；也可在其他分頁升級地標。大型活動另須在活動契約分頁完成標案及履約程序，才能於活動月份前完成準備。</div><button class="btn primary" id="advanceBtn" '+(!state.eventDone||!state.policyDone||state.ended?"disabled":"")+'>完成本月簽辦，推進下個月 →</button>';
+ $("#advanceBtn").onclick=advance}else if(t==="contracts")renderContracts();else if(t==="landmarks")renderLandmarks();else if(t==="policies")renderPolicies();else if(t==="codex")renderCodex();else renderJournal()}
+function monthlyFluctuation(){let delta={};for(const k of ["renown","eco","spend","green"]){let amount=1+Math.floor(Math.random()*3);delta[k]=Math.random()<.5?-amount:amount;state.stats[k]=clamp(state.stats[k]+delta[k]);}state.monthlyDrift=delta;return delta}
+function triggerGameOver(reason){state.gameOver=true;state.ended=true;state.gameOverReason=reason;log("GAME OVER｜預算赤字",reason);renderAll();showGameOver();try{localStorage.setItem("beimen2027_save",JSON.stringify(state))}catch(e){}}
+function showGameOver(){
+ $("#modalTitle").textContent="任期提前終止";
+ $("#modalBody").innerHTML=`<div class="gameover-wrap"><svg class="gameover-art" viewBox="0 0 200 170" role="img" aria-label="預算赤字動畫"><defs><linearGradient id="coinGold" x1="0" x2="1"><stop offset="0" stop-color="#f8d477"/><stop offset="1" stop-color="#d99a31"/></linearGradient></defs><path d="M22 143H178" stroke="#d8d2c8" stroke-width="5" stroke-linecap="round"/><g class="balance-line"><path d="M35 55L165 55" stroke="#34495e" stroke-width="7" stroke-linecap="round"/><path d="M100 53L100 120" stroke="#34495e" stroke-width="7"/><path d="M74 120H126L114 139H86Z" fill="#34495e"/><path d="M50 55L35 91M50 55L65 91M150 55L135 91M150 55L165 91" stroke="#73818a" stroke-width="3"/><path d="M28 91Q50 111 72 91Z" fill="#e7a23b" stroke="#bd7b24" stroke-width="2"/><path d="M128 91Q150 111 172 91Z" fill="#d95c50" stroke="#ad4038" stroke-width="2"/><circle cx="100" cy="53" r="9" fill="#f3c45f" stroke="#34495e" stroke-width="3"/></g><g class="coin"><circle cx="47" cy="22" r="11" fill="url(#coinGold)" stroke="#b87920" stroke-width="2"/><path d="M47 15V29M43 18H50Q54 18 50 22H44Q40 26 46 27H52" fill="none" stroke="#8d5b19" stroke-width="1.5"/></g><g class="coin"><circle cx="92" cy="12" r="9" fill="url(#coinGold)" stroke="#b87920" stroke-width="2"/><path d="M92 6V18" stroke="#8d5b19" stroke-width="1.5"/></g><g class="coin"><circle cx="153" cy="26" r="10" fill="url(#coinGold)" stroke="#b87920" stroke-width="2"/><path d="M153 19V33" stroke="#8d5b19" stroke-width="1.5"/></g><g class="warning-pulse"><circle cx="174" cy="25" r="13" fill="#fce7e5" stroke="#cf5148" stroke-width="2"/><path d="M174 17V27M174 31V33" stroke="#bd3f38" stroke-width="3" stroke-linecap="round"/></g></svg><div class="gameover-title">GAME OVER</div><h2>預算赤字，代理任期提前終止</h2><p>${state.gameOverReason}</p><div class="two-col"><div class="card"><small>預算餘額</small><h2 style="color:#bd3f38">${fmt(state.budget)} 萬元</h2></div><div class="card"><small>任期進度</small><h2>第 ${state.turn+1} / 24 月</h2></div></div><p class="small-muted">請重新檢視政策支出、活動契約決標金額及地標投資時機。</p></div>`;
+ $("#modalClose").textContent="重新開始任期";$("#modalClose").onclick=restartAfterGameOver;$("#modal").classList.add("show");
+}
+function restartAfterGameOver(){state=initial();localStorage.removeItem("beimen2027_save");$("#modal").classList.remove("show");$("#modalClose").textContent="返回遊戲";$("#modalClose").onclick=()=>$("#modal").classList.remove("show");renderAll();toast("已重新任職，任期從 116 年 1 月開始。")}
+function advance(){if(!state.eventDone||!state.policyDone||state.ended)return;let pending=overdueContract(state.turn+1);if(pending){state.contractFocus=pending.id;document.querySelectorAll(".tab").forEach(x=>x.classList.toggle("active",x.dataset.tab==="contracts"));renderTab();toast(`請先完成「${pending.short}」招標、決標與履約協調，再進入 ${pending.eventDate} 活動月份。`);return}
+ const monthlyAdminCost=10;state.budget-=monthlyAdminCost;state.spent+=monthlyAdminCost;state.yearSpent+=monthlyAdminCost;log("月度基本行政與景點維護費",`依月編列景點基本維護、清潔及行政庶務支出 ${monthlyAdminCost} 萬元。`);
+ if(state.budget<0){triggerGameOver(`支付本月基本行政及景點維護費 ${monthlyAdminCost} 萬元後，可用預算降至 ${state.budget} 萬元，已形成預算赤字。`);return}
+ const drift=monthlyFluctuation();log("月度環境與市場波動",`國際知名度 ${drift.renown>0?"+":""}${drift.renown}、居民滿意度 ${drift.eco>0?"+":""}${drift.eco}、消費意願 ${drift.spend>0?"+":""}${drift.spend}、綠色旅遊 ${drift.green>0?"+":""}${drift.green} 個百分點。`);
+ if(state.turn===11){let rate=state.annual?state.spent/state.annual:0;let perf=(state.stats.renown+state.stats.eco+state.stats.spend+state.stats.green)/4;let bonus=perf>=75&&rate>=.55?400:perf>=65?300:perf>=55?200:100;state.bonus=bonus;let nextAnnual=1600+bonus;state.budget=nextAnnual;state.annual=nextAnnual;state.yearBase=nextAnnual;state.spent=0;state.yearSpent=0;state.yearIncome=0;state.requestUsed=false;log("年度預算核定",`首年成果評估後，第二年度核定額度為 ${nextAnnual} 萬元（含績效加碼 ${bonus} 萬元）。`);toast(`第二年度預算核定：${nextAnnual} 萬元（加碼 ${bonus} 萬）`)}if(state.turn===23){state.ended=true;log("任期屆滿","完成 24 個月代理任期，進入總考核。");renderAll();showEnding();return}state.turn++;state.eventDone=false;state.policyDone=false;let passive={renown:0,eco:0,spend:0,green:0};landmarks.forEach((l,i)=>{for(let n=0;n<state.landmark[i];n++){let ef=l.levels[n][2];for(let k in ef)passive[k]+=ef[k]*.18}});apply(passive);log("月份推進","完成月度簽辦，地標營運產生被動效益。");renderAll();toast("已進入"+months[state.turn]+"；本月指標已依市場與環境條件波動。")}
+function endingMarkup(){return `<div class="end-screen"><div class="medal">🏅</div><h2>代理任期已屆滿</h2><p>請檢視任期總成果，完成最後的績效評估。</p><button class="btn primary" onclick="showEnding()">查看任期結局</button></div>`}
+function getEnding(){let s=state.stats;if(s.eco<25||s.green<25)return ["生態反彈與民怨撤職","大型活動與觀光開發超過地方承載，居民與環境承受沉重代價。處長決定提前結束你的代理任務。","⚠️"];if(s.green>=75&&s.eco>=75&&s.renown>=70)return ["國際永續生態典範處長","你讓北門成為兼顧濕地保育、居民福祉與國際交流的濱海永續旅遊示範。制度、人才與地方夥伴成為最重要的任期資產。","🌏"];if(s.spend>=75&&s.renown>=65)return ["商業繁榮觀光勝地","北門成功吸引旅客與消費，文創商品、活動與景點串聯帶來亮眼收益。下一步是持續強化生態管理與居民參與，讓繁榮走得長久。","💰"];return ["保守平庸公務員","你穩健完成多數交辦事項，沒有造成重大危機，但也未能讓北門形成鮮明的國際品牌與永續治理模式。","📁"]}
+function showEnding(){let [title,desc,icon]=getEnding();$("#modalTitle").textContent="任期總考核｜"+title;$("#modalBody").innerHTML=`<div class="end-screen"><div class="medal">${icon}</div><h2>${title}</h2><p>${desc}</p><div class="two-col">${Object.entries(state.stats).map(([k,v])=>`<div class="card"><small>${({renown:"國際知名度",eco:"生態與居民滿意度",spend:"遊客消費意願",green:"綠色旅遊指數"})[k]}</small><h2>${v}%</h2></div>`).join("")}<div class="card"><small>累計預算支出</small><h2>${fmt(state.logs.reduce((a,l)=>{let m=l.detail.match(/支出 (\\d+) 萬元/);return a+(m?+m[1]:0)},0))} 萬</h2></div><div class="card"><small>文創商品收入</small><h2>${fmt(state.productIncome)} 萬</h2></div></div><p class="small-muted">典藏解鎖 ${state.codex.length}/${codexItems.length} 張｜地標升級 ${state.landmark.reduce((a,b)=>a+b,0)}/15 級</p></div>`;$("#modalClose").textContent="返回遊戲";$("#modalClose").onclick=()=>$("#modal").classList.remove("show");$("#modal").classList.add("show")}
+function renderAll(){renderMetrics();renderHeader();renderEvent();renderBudgetAndNotes();let rb=$("#requestBudget");if(rb){rb.disabled=state.requestUsed||state.ended;rb.textContent=state.requestUsed?"本年度已提出追加申請":"向處長室爭取追加經費";rb.onclick=requestBudget}renderTab();$("#soundBtn").textContent="♫ 音效："+(soundOn?"開":"關")}
+function requestBudget(){if(state.requestUsed||state.ended)return;let grant=state.stats.eco>=60&&state.stats.green>=55?150:state.stats.eco>=45?100:50;state.budget+=grant;state.annual+=grant;state.requestUsed=true;apply({renown:state.stats.eco>=45?1:-2,eco:state.stats.eco>=45?1:-2});log("追加預算簽辦",`向處長室提出追加經費申請，核准 ${grant} 萬元；已納入年度預算額度。`);renderAll();toast(`處長核示追加 ${grant} 萬元。`)}
+function save(){localStorage.setItem("beimen2027_save",JSON.stringify(state));toast("進度已儲存於此瀏覽器。")}
+function load(){try{let x=JSON.parse(localStorage.getItem("beimen2027_save"));if(x&&x.stats&&Array.isArray(x.landmark)){let base=initial();state={...base,...x,stats:{...base.stats,...x.stats},contracts:{...base.contracts,...(x.contracts||{})},gameOver:!!x.gameOver,gameOverReason:x.gameOverReason||"",monthlyDrift:x.monthlyDrift||null};if(!state.contractFocus)state.contractFocus=null;for(const a of activityContracts){const c=state.contracts[a.id];if(c&&c.stage===1&&!(activityTenderOptions[a.id]||[]).some(t=>t.id===c.tender)){c.tender=(activityTenderOptions[a.id]||[])[0]?.id||null;}}toast("已讀取上次儲存進度（活動契約系統已整合）。");}}catch(e){}}
+function reset(){if(!confirm("確定重新開始任期？目前進度將被覆蓋。"))return;state=initial();localStorage.removeItem("beimen2027_save");$("#modal").classList.remove("show");$("#modalClose").textContent="返回遊戲";$("#modalClose").onclick=()=>$("#modal").classList.remove("show");renderAll();toast("已重新任職，任期從 116 年 1 月開始。")}
+document.querySelectorAll(".tab").forEach(b=>b.onclick=()=>{document.querySelectorAll(".tab").forEach(x=>x.classList.toggle("active",x===b));renderTab();play()});
+$("#soundBtn").onclick=()=>{soundOn=!soundOn;$("#soundBtn").textContent="♫ 音效："+(soundOn?"開":"關");play("unlock")};
+$("#saveBtn").onclick=save;$("#resetBtn").onclick=reset;$("#modalClose").onclick=()=>$("#modal").classList.remove("show");
+const storyPages=[
+ {chapter:"CHAPTER 01 · THE COAST",heading:"鹽田的夕陽，正等著下一個故事",copy:"北門，位於臺灣西南沿海。這裡有映照天空的瓦盤鹽田、潮汐流動的潟湖，也有每年遠道而來的候鳥。它有動人的風景，卻還沒被世界好好認識。",quote:"「一個地方真正的魅力，不只在於它有什麼，更在於人們如何與它一起生活。」"},
+ {chapter:"CHAPTER 02 · THE APPOINTMENT",heading:"處長室來電：一紙派令交到你手上",copy:"民國 116 年 1 月 1 日，你被處長特別抽調，擔任遊憩科代理科長，任期兩年。你必須面對年度預算、跨科室協調、地方民代關切，以及每一場活動背後的標案與履約責任。",quote:"「這不是一份只要把活動辦熱鬧的工作。你要讓每一筆資源，都對地方有所交代。」——處長"},
+ {chapter:"CHAPTER 03 · THE MISSION",heading:"24 個月，把北門帶向全世界",copy:"你將從 1,600 萬元年度預算出發，與地方居民、商家、保育團體及活動廠商合作。讓鹽業文化成為故事，讓濕地生態受到尊重，也讓旅客願意留下來，讓收益真正回到北門。",quote:"「讓世界看見北門，也讓北門的居民願意一直生活在這裡。」"}
+];
+let storyIndex=0;
+function hasSavedGame(){try{const x=JSON.parse(localStorage.getItem("beimen2027_save")||"null");return !!(x&&x.stats&&Array.isArray(x.landmark));}catch(e){return false}}
+function updateMenuStatus(){const ready=hasSavedGame();const b=$("#continueGameBtn");b.disabled=!ready;$("#saveStatusDot").classList.toggle("ready",ready);$("#saveStatusText").textContent=ready?"偵測到已儲存的任期進度，可以繼續遊玩。":"尚無儲存紀錄，請開始新任期。";$("#menuSoundBtn").textContent="♫ 音效："+(soundOn?"開":"關")}
+function showMenu(){ $("#gameApp").style.display="none";$("#storyScreen").classList.remove("show");$("#titleScreen").classList.add("show");document.body.classList.add("menu-mode");updateMenuStatus();window.scrollTo(0,0);}
+function openStory(){state=initial();localStorage.removeItem("beimen2027_save");storyIndex=0;renderStoryPage();$("#titleScreen").classList.remove("show");$("#storyScreen").classList.add("show");}
+function renderStoryPage(){const page=storyPages[storyIndex];$("#storyChapter").textContent=page.chapter;$("#storyHeading").textContent=page.heading;$("#storyCopy").textContent=page.copy;$("#storyQuote").textContent=page.quote;document.querySelectorAll(".story-svg").forEach((svg,i)=>svg.classList.toggle("active",i===storyIndex));document.querySelectorAll("#storyProgress i").forEach((dot,i)=>dot.classList.toggle("active",i<=storyIndex));$("#storyBackBtn").disabled=false;$("#storyNextBtn").textContent=storyIndex===storyPages.length-1?"接受任命，開始任期 →":"下一段 →";play("click")}
+function storyNext(){if(storyIndex<storyPages.length-1){storyIndex++;renderStoryPage();}else enterGame();}
+function enterGame(){ $("#titleScreen").classList.remove("show");$("#storyScreen").classList.remove("show");document.body.classList.remove("menu-mode");$("#gameApp").style.display="block";renderAll();window.scrollTo(0,0);if(state.gameOver)showGameOver();}
+function continueGame(){state=initial();load();enterGame();}
+function returnToMenu(){try{localStorage.setItem("beimen2027_save",JSON.stringify(state));}catch(e){}showMenu();toast("進度已暫存，可從主選單繼續任期。");}
+$("#newGameBtn").onclick=()=>{if(hasSavedGame()&&!confirm("開始新任期會覆蓋目前的儲存紀錄，確定繼續嗎？"))return;openStory();};
+$("#continueGameBtn").onclick=()=>{if(!hasSavedGame())return;continueGame();};
+$("#menuSoundBtn").onclick=()=>{soundOn=!soundOn;updateMenuStatus();play("unlock")};
+$("#storyNextBtn").onclick=storyNext;
+$("#storySkipBtn").onclick=()=>enterGame();
+$("#storyBackBtn").onclick=()=>showMenu();
+$("#menuBtn").onclick=returnToMenu;
+state=initial();renderAll();showMenu();
+</script>
+</body>
+</html>
