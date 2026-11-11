@@ -7,6 +7,7 @@
   <meta name="description" content="K-POP 人生模擬器：從練習生到頂級藝人，或打造你的娛樂公司。">
   <title>K-POP 人生模擬器 2.0</title>
   <style>
+/* Inlined from css/base.css */
 
 :root{--bg1:#fff1f7;--bg2:#eef0ff;--card:#fff;--ink:#3a3552;--sub:#8a84a3;--pink:#ec6fa5;--pink2:#ffb6d3;--lav:#8b7cf6;--mint:#4fd1b0;--sky:#6cb8ff;--warn:#ff8a65;--line:#efe9f7;--sh:0 6px 20px rgba(139,124,246,.12)}
 *{box-sizing:border-box}html,body{margin:0;min-height:100%}
@@ -308,6 +309,7 @@ button,.tab,.choice,.btn{touch-action:manipulation}
 
   </style>
   <style>
+/* Inlined from css/remaster.css */
 /* K-POP LIFE SIMULATOR 2.0 — visual shell */
 :root{
   --neo-ink:#30263f;--neo-sub:#887d9b;--neo-pink:#eb7bb8;--neo-rose:#f6a5c9;
@@ -516,6 +518,215 @@ button:focus-visible{outline:3px solid rgba(147,127,224,.45);outline-offset:3px}
 [data-theme="dark"] .neo-nav-group.is-active .neo-group-title{background:#41324d;color:#f0b6d8}
 @media(max-width:1000px){[data-theme="dark"] .neo-nav-group.is-active .neo-group-items{background:#272236;border-color:#463a55}}
 
+/* Responsive hardening: long navigation labels must not widen the content grid. */
+@media(max-width:1000px){
+  #app,.neo-game,.neo-workspace,.neo-sidebar,.neo-stage,.neo-content{min-width:0;max-width:100%;box-sizing:border-box}
+  .neo-workspace{width:100%;grid-template-columns:minmax(0,1fr)}
+  .neo-sidebar{width:100%;overflow:visible}
+  .neo-nav-groups{width:100%;min-width:0;max-width:100%;box-sizing:border-box}
+  .neo-stage,.neo-content{width:100%}
+}
+@media(max-width:640px){
+  .neo-workspace,.neo-stage,.neo-content{min-width:0;width:100%;max-width:100%}
+  .p34-idol-dashboard,.p34-manager-dashboard,.p34-dashboard-grid,.p34-dashboard-main,.p34-dashboard-side,.p34-panel,.cs-feature-suite{min-width:0;max-width:100%;box-sizing:border-box}
+  .p34-dashboard-grid{grid-template-columns:minmax(0,1fr)}
+  .p34-business-kpis,.p34-metric-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
+}
+
+  </style>
+  <style>
+/* Inlined from css/phase34.css */
+/* Phase 3 & 4 — idol life dashboard and agency operation suite */
+.p34-idol-dashboard,.p34-manager-dashboard,.p34-manager-roster,.p34-manager-groups,.p34-company-management{display:flex;flex-direction:column;gap:16px;color:var(--neo-ink,#453451)}
+.p34-idol-hero,.p34-company-hero{position:relative;display:flex;align-items:center;gap:22px;overflow:hidden;padding:22px 25px;border:1px solid rgba(255,255,255,.86);border-radius:24px;background:linear-gradient(115deg,#fff8fc 0%,#f5efff 58%,#ece8ff 100%);box-shadow:0 15px 36px rgba(98,69,124,.09)}
+.p34-idol-hero:after,.p34-company-hero:after{content:"";position:absolute;width:260px;height:260px;right:8%;top:-180px;border:1px solid rgba(183,142,203,.22);border-radius:50%;box-shadow:0 0 0 22px rgba(183,142,203,.045),0 0 0 48px rgba(183,142,203,.035)}
+.p34-idol-avatar{position:relative;z-index:1;flex:none;width:120px;height:120px;display:grid;place-items:center;border-radius:22px;background:linear-gradient(145deg,#fff,#f1e6f6);border:1px solid #fff;box-shadow:0 10px 24px rgba(105,75,125,.12)}
+.p34-idol-avatar svg{width:100%;height:100%;display:block}
+.p34-live-dot{position:absolute;right:10px;top:10px;width:10px;height:10px;border:2px solid #fff;border-radius:50%;background:#82c9aa;box-shadow:0 0 0 4px rgba(130,201,170,.16)}
+.p34-idol-identity{position:relative;z-index:1;min-width:0;flex:1}
+.p34-kicker{font-size:9px;font-weight:900;letter-spacing:.19em;color:#a68ab6}
+.p34-idol-identity h2,.p34-company-hero h2{margin:5px 0 8px;font-size:clamp(25px,3vw,34px);line-height:1.12;color:#473252;letter-spacing:.02em}
+.p34-idol-identity p,.p34-company-hero p{margin:9px 0 0;color:#8e7c9b;font-size:12px}
+.p34-idol-tags{display:flex;gap:6px;flex-wrap:wrap}
+.p34-idol-tags span{padding:5px 9px;border-radius:999px;background:rgba(255,255,255,.74);color:#8e6fa2;font-size:10px;font-weight:750}
+.p34-hero-date{position:relative;z-index:1;min-width:118px;margin-left:auto;text-align:right;padding-left:18px;border-left:1px solid rgba(177,151,193,.25)}
+.p34-hero-date small,.p34-hero-date span{display:block;color:#9d8ba8;font-size:10px}
+.p34-hero-date b{display:block;margin:5px 0;color:#60476e;font-size:17px}
+.p34-metric-grid,.p34-business-kpis{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:9px}
+.p34-stat{min-width:0;padding:12px 13px;border:1px solid rgba(236,226,242,.96);border-radius:15px;background:rgba(255,255,255,.84);box-shadow:0 7px 18px rgba(86,63,108,.045)}
+.p34-stat span,.p34-stat small{display:block;color:#9b8ca5;font-size:10px}
+.p34-stat b{display:block;margin:4px 0 2px;color:#9e669e;font-size:clamp(14px,1.55vw,19px);font-weight:850;overflow-wrap:anywhere}
+.p34-stat small{font-size:9px}
+.p34-dashboard-grid{display:grid;grid-template-columns:minmax(0,1.35fr) minmax(270px,.82fr);gap:15px;align-items:start}
+.p34-dashboard-main,.p34-dashboard-side{display:flex;flex-direction:column;gap:14px;min-width:0}
+.p34-panel{padding:17px 18px;border:1px solid rgba(255,255,255,.95);border-radius:19px;background:rgba(255,255,255,.88);box-shadow:0 10px 27px rgba(81,58,104,.065);min-width:0}
+.p34-panel-title{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:13px;color:#594568;font-size:14px;font-weight:850}
+.p34-title-note{color:#b29dbd;font-size:8px;font-weight:900;letter-spacing:.15em}
+.p34-action-feature{display:flex;align-items:center;justify-content:space-between;gap:13px;padding:14px 15px;border-radius:15px;background:linear-gradient(110deg,#fbecf5,#f2edfb)}
+.p34-action-feature small,.p34-goal-head small{display:block;color:#a68daf;font-size:9px;font-weight:800}
+.p34-action-feature b,.p34-goal-head b{display:block;margin:3px 0;color:#624b70;font-size:15px}
+.p34-action-feature p{margin:3px 0 0;color:#927f9e;font-size:10px;line-height:1.55}
+.p34-btn,.p34-policy,.p34-action-chip{border:1px solid #eadfed;border-radius:11px;padding:9px 12px;background:#fff;color:#826a91;font-size:11px;font-weight:750;cursor:pointer;transition:transform .16s ease,box-shadow .16s ease,background .16s ease}
+.p34-btn:hover,.p34-policy:hover,.p34-action-chip:hover{transform:translateY(-1px);box-shadow:0 5px 14px rgba(131,98,150,.12)}
+.p34-btn:disabled,.p34-action-chip:disabled{opacity:.42;cursor:not-allowed;transform:none;box-shadow:none}
+.p34-btn-primary{border:0;background:linear-gradient(130deg,#e985b9,#b795df);color:#fff;box-shadow:0 6px 15px rgba(196,125,179,.2)}
+.p34-btn-dark{border:0;background:#564362;color:#fff}
+.p34-quick-links,.p34-inline-actions{display:flex;gap:7px;flex-wrap:wrap;margin:11px 0}
+.p34-quick-links .p34-btn{flex:1;text-align:center}
+.p34-timeline{display:flex;flex-direction:column;gap:8px;margin-top:14px}
+.p34-timeline-item{display:flex;align-items:flex-start;gap:10px;padding:7px 1px;border-bottom:1px solid #f2edf4}
+.p34-timeline-item>i{width:7px;height:7px;flex:none;margin:5px 0 0;border-radius:50%;background:#d58fb9;box-shadow:0 0 0 4px #fbf0f7}
+.p34-timeline-item b{display:block;color:#65516f;font-size:11px}
+.p34-timeline-item small{display:block;color:#a092aa;font-size:9px}
+.p34-timeline-item p{margin:4px 0 0;color:#877a90;font-size:10px;white-space:pre-line}
+.p34-empty{padding:17px 15px;border:1px dashed #e6dce9;border-radius:14px;background:#fcf9fd;color:#a093aa;font-size:11px;line-height:1.7;text-align:center}
+.p34-goal-head{display:flex;align-items:center;justify-content:space-between;gap:10px}
+.p34-goal-head strong{color:#ba79a6;font-size:19px}
+.p34-track{height:7px;overflow:hidden;border-radius:99px;background:#f1eaf4}
+.p34-track>i{display:block;height:100%;border-radius:inherit;background:linear-gradient(90deg,#e38dbd,#a98cda)}
+.p34-description{margin:9px 0;color:#96869f;font-size:10px;line-height:1.65}
+.p34-divider{height:1px;margin:13px 0;background:#f0e9f2}
+.p34-path-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:7px;margin-top:12px}
+.p34-path{display:flex;flex-direction:column;gap:4px;text-align:left;border:1px solid #eee4f0;border-radius:12px;padding:11px;background:#fff;color:#755f81;cursor:pointer}
+.p34-path b{font-size:11px}.p34-path small{color:#a293aa;font-size:9px;line-height:1.45}
+.p34-path.is-selected{border-color:#d59ac2;background:#fcf0f7;box-shadow:inset 0 0 0 1px rgba(213,154,194,.24)}
+.p34-text-btn{display:inline-block;margin-top:9px;border:0;background:none;color:#b176a4;font-size:10px;font-weight:800;cursor:pointer;padding:3px 0}
+.p34-alert-list{display:flex;flex-direction:column;gap:7px}
+.p34-alert{display:flex;gap:9px;align-items:flex-start;padding:9px 10px;border-radius:11px;background:#faf7fb;color:#918399;font-size:10px;line-height:1.55}
+.p34-alert>span{font-weight:900;color:#b68fc5}
+.p34-alert.is-warning{background:#fff8f2;color:#a07e65}.p34-alert.is-warning>span{color:#d69866}
+.p34-skill-row{display:grid;grid-template-columns:1fr auto;gap:5px 10px;margin:0 0 11px;align-items:center}
+.p34-skill-row span{color:#907f9b;font-size:10px}.p34-skill-row b{color:#8d6a9b;font-size:11px}.p34-skill-row .p34-track{grid-column:1/3;height:5px}
+.p34-group-card{padding:13px;border-radius:15px;background:linear-gradient(145deg,#fcf6fc,#f5f0fb);border:1px solid #f0e7f3}
+.p34-group-brand{display:flex;align-items:center;gap:10px}.p34-group-brand>span{width:38px;height:38px;display:grid;place-items:center;border-radius:13px;background:linear-gradient(145deg,#eab0d0,#b69ce0);color:#fff;font-size:19px}
+.p34-group-brand>div{min-width:0;flex:1}.p34-group-brand small{display:block;color:#ae98b7;font-size:8px;letter-spacing:.13em}.p34-group-brand b{display:block;color:#624a70;font-size:15px}.p34-group-brand em{font-style:normal;font-size:8px;font-weight:900;color:#a98eae}
+.p34-group-meta{display:flex;gap:9px;flex-wrap:wrap;margin:10px 0;color:#9a8aa1;font-size:9px}
+.p34-member-row{display:flex;gap:5px;flex-wrap:wrap}.p34-member-row span{padding:5px 7px;border-radius:8px;background:#fff;color:#8f7c99;font-size:9px}
+.p34-mini-stats{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:6px}.p34-mini-stats .p34-stat{padding:9px}.p34-mini-stats .p34-stat b{font-size:14px}
+.p34-mini-stats-spacer{display:none}
+.p34-company-hero{justify-content:space-between;min-height:138px;background:linear-gradient(115deg,#f8f2fa 0%,#eeeafb 55%,#e8e6f7 100%)}
+.p34-company-seal{position:relative;z-index:1;flex:none;width:82px;height:82px;display:grid;place-items:center;border:1px solid rgba(167,139,190,.45);border-radius:26px;color:#a27eae;font-size:32px;transform:rotate(45deg)}
+.p34-company-seal small{position:absolute;bottom:13px;font-size:7px;letter-spacing:.12em;transform:rotate(-45deg)}
+.p34-business-kpis{grid-template-columns:repeat(4,minmax(0,1fr))}
+.p34-decision-head{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:13px;border-radius:14px;background:linear-gradient(110deg,#f9edf5,#f3eefb)}
+.p34-decision-head small{display:block;color:#a18cae;font-size:9px}.p34-decision-head b{display:block;margin-top:3px;color:#60486d;font-size:19px}
+.p34-mini-kpis{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:7px}
+.p34-mini-kpis .p34-stat{padding:10px}.p34-mini-kpis .p34-stat b{font-size:15px}
+.p34-finance-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:7px}
+.p34-finance-grid .p34-stat{padding:9px}.p34-finance-grid .p34-stat b{font-size:13px}
+.p34-finance-total{grid-column:1/3;display:flex;justify-content:space-between;align-items:center;padding:12px;border-radius:12px;background:#f9f1f7;color:#8d7595;font-size:10px}
+.p34-finance-total b{color:#b46f9d;font-size:16px}
+.p34-runway{margin-top:11px}.p34-runway span{color:#96859e;font-size:9px}.p34-runway b{float:right;color:#765b85;font-size:11px}.p34-runway .p34-track{clear:both;position:relative;top:6px}
+.p34-milestone{margin:10px 0}.p34-milestone small{display:block;color:#a28ea9;font-size:9px}.p34-milestone b{display:block;margin:3px 0 6px;color:#725b80;font-size:12px}
+.p34-business-group{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:11px 0;border-bottom:1px solid #f1eaf3}
+.p34-business-group>div:first-child{min-width:0}.p34-business-group small,.p34-business-group span{display:block;color:#a18fa8;font-size:9px}.p34-business-group b{display:block;color:#654d72;font-size:13px}.p34-business-group-stats{display:grid;grid-template-columns:auto auto;gap:2px 6px;text-align:right}.p34-business-group-stats b{font-size:11px}
+.p34-roster-summary{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}
+.p34-roster-summary .p34-stat{padding:13px}
+.p34-policy-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:7px}
+.p34-policy.is-selected{border-color:#d49bc2;background:#fcf0f7;color:#ad6c9c;box-shadow:inset 0 0 0 1px rgba(212,155,194,.2)}
+.p34-policy-intensity{display:flex;align-items:center;gap:7px;flex-wrap:wrap;margin:12px 0}.p34-policy-intensity>span{margin-right:auto;color:#94839d;font-size:10px;font-weight:800}
+.p34-footnote{display:block;color:#a393aa;font-size:9px;margin-top:6px}
+.p34-legacy{margin-top:12px;border:1px solid #eee5f1;border-radius:13px;background:#fdfbfe;overflow:hidden}
+.p34-legacy summary{padding:12px 14px;color:#9b83a5;font-size:10px;font-weight:800;cursor:pointer;list-style:none}
+.p34-legacy summary::-webkit-details-marker{display:none}
+.p34-legacy summary:after{content:'＋';float:right;color:#c092bb}
+.p34-legacy[open] summary:after{content:'－'}
+.p34-legacy-body{padding:12px;border-top:1px solid #f0eaf2}
+.p34-legacy-body>.grid2{gap:12px}
+.p34-group-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+.p34-group-portfolio{padding:15px;border:1px solid #eee5f1;border-radius:17px;background:#fff;box-shadow:0 7px 17px rgba(84,62,111,.045);min-width:0}
+.p34-group-portfolio>header{display:flex;align-items:flex-start;justify-content:space-between;gap:8px;margin-bottom:12px}
+.p34-group-portfolio>header small{display:block;color:#a18da9;font-size:9px}.p34-group-portfolio h3{margin:3px 0 0;color:#60496d;font-size:16px}
+.p34-group-kind{padding:5px 7px;border-radius:999px;background:#f8eff8;color:#a37ba6;font-size:7px;font-weight:900;letter-spacing:.09em;white-space:nowrap}
+.p34-roster-members{display:flex;gap:7px;flex-wrap:wrap;margin-bottom:12px}
+.p34-roster-members>span{display:flex;align-items:center;gap:4px;padding:5px 7px;border-radius:9px;background:#faf6fb;color:#8a7894;font-size:9px}
+.p34-roster-members img,.p34-roster-members svg{width:27px;height:27px;border-radius:50%;background:#f0e9f4}
+.p34-group-kpis{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:5px}
+.p34-group-kpis .p34-stat{padding:8px;border-radius:10px;box-shadow:none}.p34-group-kpis .p34-stat b{font-size:12px}.p34-group-kpis .p34-stat span{font-size:8px}
+.p34-action-list{display:flex;flex-wrap:wrap;gap:6px;margin-top:12px}
+.p34-action-chip{padding:7px 9px;font-size:9px}
+.p34-album-strip{display:flex;flex-direction:column;gap:5px;margin-top:11px;padding-top:10px;border-top:1px solid #f1eaf3}.p34-album-strip small{color:#a48eaa;font-size:9px}.p34-album-strip span{color:#8b7a92;font-size:9px}
+.p34-invest-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
+.p34-invest-row{display:flex;align-items:center;justify-content:space-between;gap:8px;padding:11px;border:1px solid #f0e8f2;border-radius:12px;background:#fcf9fd}
+.p34-invest-row>div{min-width:0}.p34-invest-row b,.p34-invest-row small{display:block}.p34-invest-row b{color:#745d80;font-size:10px}.p34-invest-row small{margin-top:3px;color:#a090a8;font-size:8px;line-height:1.4}
+
+[data-theme="dark"] .p34-idol-hero,[data-theme="dark"] .p34-company-hero{background:linear-gradient(115deg,#30273c,#29243d 58%,#29253f);border-color:#463b54}
+[data-theme="dark"] .p34-idol-identity h2,[data-theme="dark"] .p34-company-hero h2{color:#f0e6f5}
+[data-theme="dark"] .p34-idol-identity p,[data-theme="dark"] .p34-company-hero p,[data-theme="dark"] .p34-hero-date small,[data-theme="dark"] .p34-hero-date span{color:#b9a8c3}
+[data-theme="dark"] .p34-hero-date b{color:#f0e6f5}
+[data-theme="dark"] .p34-idol-tags span,[data-theme="dark"] .p34-panel,[data-theme="dark"] .p34-stat,[data-theme="dark"] .p34-group-portfolio{background:#292438;border-color:#44394e}
+[data-theme="dark"] .p34-panel-title,[data-theme="dark"] .p34-timeline-item b,[data-theme="dark"] .p34-group-brand b,[data-theme="dark"] .p34-group-portfolio h3,[data-theme="dark"] .p34-business-group b{color:#e9dff0}
+[data-theme="dark"] .p34-stat b,[data-theme="dark"] .p34-goal-head b,[data-theme="dark"] .p34-goal-head strong,[data-theme="dark"] .p34-decision-head b{color:#e0a5cf}
+[data-theme="dark"] .p34-stat span,[data-theme="dark"] .p34-stat small,[data-theme="dark"] .p34-description,[data-theme="dark"] .p34-skill-row span,[data-theme="dark"] .p34-skill-row b,[data-theme="dark"] .p34-footnote{color:#b3a3bf}
+[data-theme="dark"] .p34-action-feature,[data-theme="dark"] .p34-decision-head,[data-theme="dark"] .p34-group-card,[data-theme="dark"] .p34-finance-total,[data-theme="dark"] .p34-invest-row{background:#342b43;border-color:#493c53}
+[data-theme="dark"] .p34-action-feature b,[data-theme="dark"] .p34-finance-total b{color:#ead8f0}
+[data-theme="dark"] .p34-action-feature p,[data-theme="dark"] .p34-alert,[data-theme="dark"] .p34-mini-stats .p34-stat span{color:#b8a8c3}
+[data-theme="dark"] .p34-alert,[data-theme="dark"] .p34-member-row span,[data-theme="dark"] .p34-roster-members>span,[data-theme="dark"] .p34-business-group-stats{background:#30293d}
+[data-theme="dark"] .p34-path,[data-theme="dark"] .p34-policy,[data-theme="dark"] .p34-action-chip,[data-theme="dark"] .p34-btn{background:#332a41;border-color:#51415c;color:#d8c9e1}
+[data-theme="dark"] .p34-path.is-selected,[data-theme="dark"] .p34-policy.is-selected{background:#493248;border-color:#956389;color:#f0c8df}
+[data-theme="dark"] .p34-btn-primary{background:linear-gradient(130deg,#bf6f9a,#8a70b5);color:#fff}
+[data-theme="dark"] .p34-btn-dark{background:#6b557a;color:#fff}
+[data-theme="dark"] .p34-track{background:#493d53}
+[data-theme="dark"] .p34-empty,[data-theme="dark"] .p34-legacy{background:#292438;border-color:#493d53;color:#b2a3bd}
+[data-theme="dark"] .p34-legacy-body,[data-theme="dark"] .p34-divider,[data-theme="dark"] .p34-timeline-item,[data-theme="dark"] .p34-business-group{border-color:#43384e}
+[data-theme="dark"] .p34-invest-row b{color:#eadff1}
+
+@media(max-width:1100px){.p34-metric-grid{grid-template-columns:repeat(3,minmax(0,1fr))}.p34-business-kpis{grid-template-columns:repeat(2,minmax(0,1fr))}.p34-dashboard-grid{grid-template-columns:minmax(0,1fr) minmax(250px,.75fr)}}
+@media(max-width:780px){.p34-dashboard-grid{grid-template-columns:1fr}.p34-dashboard-side{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));align-items:start}.p34-dashboard-side>.p34-panel:first-child{grid-row:span 2}.p34-group-grid{grid-template-columns:1fr}.p34-policy-grid{grid-template-columns:repeat(4,minmax(0,1fr))}}
+@media(max-width:600px){.p34-idol-hero,.p34-company-hero{padding:15px;gap:12px;border-radius:18px}.p34-idol-avatar{width:82px;height:82px;border-radius:17px}.p34-hero-date{min-width:78px;padding-left:9px}.p34-hero-date b{font-size:12px}.p34-idol-identity h2,.p34-company-hero h2{font-size:22px}.p34-idol-identity p{font-size:9px}.p34-idol-tags span{font-size:8px;padding:4px 6px}.p34-metric-grid{grid-template-columns:repeat(3,minmax(0,1fr));gap:6px}.p34-stat{padding:9px}.p34-stat span,.p34-stat small{font-size:8px}.p34-stat b{font-size:13px}.p34-panel{padding:13px;border-radius:15px}.p34-panel-title{font-size:12px}.p34-dashboard-side{grid-template-columns:1fr}.p34-dashboard-side>.p34-panel:first-child{grid-row:auto}.p34-action-feature{align-items:flex-start;flex-direction:column}.p34-action-feature .p34-btn{width:100%}.p34-quick-links .p34-btn{font-size:9px;padding:8px 7px}.p34-path-grid{grid-template-columns:1fr}.p34-roster-summary{grid-template-columns:repeat(3,minmax(0,1fr));gap:5px}.p34-roster-summary .p34-stat{padding:8px}.p34-policy-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.p34-policy-intensity{gap:5px}.p34-policy-intensity>span{width:100%}.p34-invest-grid{grid-template-columns:1fr}.p34-group-kpis{grid-template-columns:repeat(4,minmax(0,1fr))}.p34-decision-head{align-items:flex-start;flex-direction:column}.p34-decision-head .p34-btn{width:100%}.p34-company-seal{width:55px;height:55px;border-radius:19px;font-size:23px}.p34-company-seal small{bottom:8px;font-size:5px}.p34-group-kind{font-size:6px;padding:4px 5px}}
+@media(prefers-reduced-motion:reduce){.p34-btn,.p34-policy,.p34-action-chip{transition:none}}
+
+  </style>
+  <style>
+/* Inlined from css/home-readability.css */
+/* Readability pass — homepage dashboards only. Keep the existing visual language. */
+.p34-idol-dashboard,.p34-manager-dashboard{font-size:15px}
+.p34-idol-dashboard .p34-kicker,.p34-manager-dashboard .p34-kicker{font-size:12px}
+.p34-idol-dashboard .p34-idol-identity p,.p34-manager-dashboard .p34-company-hero p{font-size:14px;line-height:1.55}
+.p34-idol-dashboard .p34-hero-date small,.p34-idol-dashboard .p34-hero-date span{font-size:12px}
+.p34-idol-dashboard .p34-hero-date b{font-size:19px}
+.p34-idol-dashboard .p34-idol-tags span{font-size:12px}
+.p34-idol-dashboard .p34-stat span,.p34-idol-dashboard .p34-stat small,.p34-manager-dashboard .p34-stat span,.p34-manager-dashboard .p34-stat small{font-size:12px}
+.p34-idol-dashboard .p34-stat b,.p34-manager-dashboard .p34-stat b{font-size:18px}
+.p34-idol-dashboard .p34-stat small,.p34-manager-dashboard .p34-stat small{line-height:1.45}
+.p34-idol-dashboard .p34-panel-title,.p34-manager-dashboard .p34-panel-title{font-size:16px}
+.p34-idol-dashboard .p34-title-note,.p34-manager-dashboard .p34-title-note{font-size:11px}
+.p34-idol-dashboard .p34-action-feature small,.p34-idol-dashboard .p34-goal-head small,.p34-manager-dashboard .p34-action-feature small{font-size:12px}
+.p34-idol-dashboard .p34-action-feature b,.p34-idol-dashboard .p34-goal-head b,.p34-manager-dashboard .p34-action-feature b{font-size:17px}
+.p34-idol-dashboard .p34-action-feature p,.p34-idol-dashboard .p34-description,.p34-manager-dashboard .p34-description{font-size:13px;line-height:1.65}
+.p34-idol-dashboard .p34-btn,.p34-idol-dashboard .p34-policy,.p34-idol-dashboard .p34-action-chip,.p34-manager-dashboard .p34-btn,.p34-manager-dashboard .p34-policy,.p34-manager-dashboard .p34-action-chip{font-size:13px}
+.p34-idol-dashboard .p34-timeline-item b,.p34-manager-dashboard .p34-timeline-item b{font-size:14px}
+.p34-idol-dashboard .p34-timeline-item small,.p34-manager-dashboard .p34-timeline-item small{font-size:12px}
+.p34-idol-dashboard .p34-timeline-item p,.p34-manager-dashboard .p34-timeline-item p{font-size:13px;line-height:1.6}
+.p34-idol-dashboard .p34-empty,.p34-manager-dashboard .p34-empty{font-size:13px}
+.p34-idol-dashboard .p34-goal-head strong{font-size:22px}
+.p34-idol-dashboard .p34-path b,.p34-manager-dashboard .p34-path b{font-size:14px}
+.p34-idol-dashboard .p34-path small,.p34-manager-dashboard .p34-path small{font-size:12px;line-height:1.55}
+.p34-idol-dashboard .p34-alert,.p34-manager-dashboard .p34-alert{font-size:13px;line-height:1.6}
+.p34-idol-dashboard .p34-skill-row span,.p34-manager-dashboard .p34-skill-row span{font-size:13px}
+.p34-idol-dashboard .p34-skill-row b,.p34-manager-dashboard .p34-skill-row b{font-size:14px}
+.p34-manager-dashboard .p34-decision-head small{font-size:12px}
+.p34-manager-dashboard .p34-decision-head b{font-size:21px}
+.p34-manager-dashboard .p34-finance-grid .p34-stat b{font-size:16px}
+.p34-manager-dashboard .p34-finance-total{font-size:13px}
+.p34-manager-dashboard .p34-runway span{font-size:12px}
+.p34-manager-dashboard .p34-runway b{font-size:14px}
+.p34-manager-dashboard .p34-milestone small{font-size:12px}
+.p34-manager-dashboard .p34-milestone b{font-size:14px}
+.p34-manager-dashboard .p34-business-group small,.p34-manager-dashboard .p34-business-group span{font-size:12px}
+.p34-manager-dashboard .p34-business-group b{font-size:15px}
+.p34-manager-dashboard .p34-business-group-stats b{font-size:13px}
+.p34-manager-dashboard .p34-footnote{font-size:12px}
+@media(max-width:600px){
+ .p34-idol-dashboard .p34-stat span,.p34-idol-dashboard .p34-stat small,.p34-manager-dashboard .p34-stat span,.p34-manager-dashboard .p34-stat small{font-size:11px}
+ .p34-idol-dashboard .p34-stat b,.p34-manager-dashboard .p34-stat b{font-size:16px}
+ .p34-idol-dashboard .p34-panel-title,.p34-manager-dashboard .p34-panel-title{font-size:15px}
+ .p34-idol-dashboard .p34-quick-links .p34-btn{font-size:12px}
+ .p34-idol-dashboard .p34-hero-date b{font-size:16px}
+ .p34-idol-dashboard .p34-idol-identity p{font-size:12px}
+ .p34-idol-dashboard .p34-idol-tags span{font-size:11px}
+}
+
   </style>
 </head>
 <body>
@@ -525,6 +736,7 @@ button:focus-visible{outline:3px solid rgba(147,127,224,.45);outline-offset:3px}
     <div id="toast-root"></div>
   </div>
     <script>
+/* Inlined from js/core.js */
 'use strict';
 /* ===== core.js ===== */
 /* =========================================================
@@ -737,8 +949,9 @@ if (typeof document !== 'undefined') Theme.apply();
 
 const Layout = { centerTab() { if (typeof document === 'undefined') return; const n = document.querySelector('.tabs'), t = n && n.querySelector('.tab.on'); if (t) n.scrollLeft = t.offsetLeft - (n.clientWidth - t.clientWidth) / 2; } };
 
-</script>
+  </script>
   <script>
+/* Inlined from js/avatar.js */
 'use strict';
 /* ===== avatar.js ===== */
 /* ============================================================
@@ -937,8 +1150,9 @@ ACT['av.rand'] = () => {
   App.idolForm(); const sc2 = document.querySelector('.cc-modal'); if (sc2) sc2.scrollTop = top;
 };
 
-</script>
+  </script>
   <script>
+/* Inlined from js/data.js */
 'use strict';
 /* ===== data.js ===== */
 /* =========================================================
@@ -1536,8 +1750,9 @@ DATA.randAlias = function (g, used) {
   return U.pick(pool) + U.ri(2, 9);
 };
 
-</script>
+  </script>
   <script>
+/* Inlined from js/data/data-manager.js */
 'use strict';
 /* ===== data_mgr.js ===== */
 /* =========================================================
@@ -1696,8 +1911,9 @@ DATA.M.EVENTS = [
     ] }
 ];
 
-</script>
+  </script>
   <script>
+/* Inlined from js/data/data-manager-2.js */
 'use strict';
 /* ===== data_mgr2.js ===== */
 /* =========================================================
@@ -2119,8 +2335,9 @@ DATA.M.EVENTS = [
   DATA.M.EVENTS.push(...E);
 })();
 
-</script>
+  </script>
   <script>
+/* Inlined from js/data/data-manager-3.js */
 'use strict';
 /* ===== data_mgr3.js ===== */
 /* =========================================================
@@ -2790,8 +3007,9 @@ DATA.M.EVENTS = [
   DATA.M.EVENTS.push(...E);
 })();
 
-</script>
+  </script>
   <script>
+/* Inlined from js/data/data-events-2.js */
 'use strict';
 /* ===== data_ev2.js ===== */
 /* ============================================================
@@ -3148,8 +3366,9 @@ DATA.M.EVENTS = [
   );
 })();
 
-</script>
+  </script>
   <script>
+/* Inlined from js/data/data-nationalities.js */
 'use strict';
 /* ===== data_nat.js ===== */
 /* ============================================================
@@ -3338,8 +3557,9 @@ DATA.NATLINES = {
   );
 })();
 
-</script>
+  </script>
   <script>
+/* Inlined from js/data/data-business.js */
 'use strict';
 /* ===== data_biz.js ===== */
 /* ============================================================
@@ -3424,8 +3644,9 @@ DATA.ALBUM_FORMATS = {
   );
 })();
 
-</script>
+  </script>
   <script>
+/* Inlined from js/data/data-teams.js */
 'use strict';
 /* ===== data_team.js ===== */
 /* ============================================================
@@ -3484,8 +3705,9 @@ Object.assign(DATA.ACTIONS, {
   mate_teach_charm: { n: '教鏡頭表現', i: '✨', ap: 1, stam: 8, stress: 1, mood: 2, minStage: 2, mate: 1, d: '對鏡頭練表情與氣場，提高隊友魅力。' }
 });
 
-</script>
+  </script>
   <script>
+/* Inlined from js/data/data-events-3.js */
 'use strict';
 /* ===== data_ev3.js ===== */
 /* ============================================================
@@ -4068,8 +4290,9 @@ Object.assign(DATA.ACTIONS, {
   DATA.EVENTS.push(...E);
 })();
 
-</script>
+  </script>
   <script>
+/* Inlined from js/data/data-events-4.js */
 'use strict';
 /* ===== data_ev4.js ===== */
 /* ============================================================
@@ -4354,8 +4577,9 @@ Object.assign(DATA.ACTIONS, {
   DATA.EVENTS.push(...E);
 })();
 
-</script>
+  </script>
   <script>
+/* Inlined from js/arcs.js */
 'use strict';
 /* ===== arcs.js ===== */
 /* ============================================================
@@ -4627,8 +4851,9 @@ DATA.ARC_EVENTS = [
     ] })
 ];
 
-</script>
+  </script>
   <script>
+/* Inlined from js/data/data-company.js */
 'use strict';
 /* ===== data_co.js ===== */
 /* ============================================================
@@ -4779,8 +5004,9 @@ DATA.ARC_EVENTS = [
 
 })();
 
-</script>
+  </script>
   <script>
+/* Inlined from js/chains.js */
 'use strict';
 /* ===== chains.js ===== */
 /* ============================================================
@@ -5160,8 +5386,9 @@ DATA.ARC_EVENTS = [
   ];
 })();
 
-</script>
+  </script>
   <script>
+/* Inlined from js/idol-engine.js */
 'use strict';
 /* ===== idol.js ===== */
 /* =========================================================
@@ -6509,8 +6736,9 @@ Idol.autoDays = function (n, plan, untilExam) {
   return done;
 };
 
-</script>
+  </script>
   <script>
+/* Inlined from js/idol-ui.js */
 'use strict';
 /* ===== idol_ui.js ===== */
 /* =========================================================
@@ -7080,8 +7308,9 @@ const ShowFx = (function () {
   return { show };
 })();
 
-</script>
+  </script>
   <script>
+/* Inlined from js/ceremony.js */
 'use strict';
 /* ===== ceremony.js ===== */
 /* =========================================================
@@ -7208,8 +7437,9 @@ const Cere = (() => {
   return { play, active: false, total: n => INTRO + n * PER + OUTRO };
 })();
 
-</script>
+  </script>
   <script>
+/* Inlined from js/spend.js */
 'use strict';
 /* ===== spend.js ===== */
 /* ============================================================
@@ -7384,8 +7614,9 @@ ACT['i.life'] = d => Idol.life(d.id);
 ACT['i.popup'] = d => { UI.close(); ACT['i.act']({ id: 'popup', tier: d.tier }); };
 ACT['i.concert'] = d => { UI.close(); ACT['i.act']({ id: 'concert', tier: d.tier }); };
 
-</script>
+  </script>
   <script>
+/* Inlined from js/tutorial.js */
 'use strict';
 /* ===== tutorial.js ===== */
 /* ============================================================
@@ -7529,8 +7760,9 @@ ACT['tut.replay3'] = () => { MgrUI.tab = 'home'; Mgr.render(); Tut.start3(); };
 ACT['tut.replay2'] = () => { IdolUI.tab = 'home'; Idol.render(); Tut.start2(); };
 ACT['tut.replay'] = () => { IdolUI.tab = 'home'; Idol.render(); Tut.start(); };
 
-</script>
+  </script>
   <script>
+/* Inlined from js/manager-engine.js */
 'use strict';
 /* ===== manager.js ===== */
 /* =========================================================
@@ -8256,8 +8488,9 @@ Mgr.renderEnding = function (root) {
     <div class="btn-row"><button class="btn" data-act="m.restart2">回到主選單</button></div></main></div>`;
 };
 
-</script>
+  </script>
   <script>
+/* Inlined from js/manager-company.js */
 'use strict';
 /* ===== mgr_co.js ===== */
 /* ================= 經紀人模式：公司之間的榜單競爭 + 旗下藝人合約與續約談判 ================= */
@@ -8371,8 +8604,9 @@ ACT['m.renewno'] = () => { const R = MgrUI.rn, T = R && MT(M, R.id); if (!T) ret
 ACT['m.renewno2'] = () => { const R = MgrUI.rn, T = R && MT(M, R.id); if (T) { M.leaving = (M.leaving || []).concat(T.id); Mgr.log(`${Mgr.dn(T)} 的合約到期，雙方和平分手。`); } renewDone(); };
 ACT['m.renewopen'] = d => Mgr.renewModal(+d.id, false);
 
-</script>
+  </script>
   <script>
+/* Inlined from js/achievements.js */
 'use strict';
 /* ===== ach.js ===== */
 /* ================= 成就系統（全域，跨存檔、跨模式） ================= */
@@ -8488,8 +8722,9 @@ ACT['ach.open'] = () => UI.modal(Ach.html(), { cls: 'plan' });
   const sm = Mgr.save; Mgr.save = function () { const r = sm.apply(this, arguments); try { Ach.scan('mgr'); } catch (e) { } return r; };
 })();
 
-</script>
+  </script>
   <script>
+/* Inlined from js/main.js */
 'use strict';
 /* ===== main.js ===== */
 /* =========================================================
@@ -8594,8 +8829,9 @@ document.addEventListener('change', e => {
 });
 if (typeof window !== 'undefined' && document.getElementById('screen')) App.menu();
 
-</script>
+  </script>
   <script>
+/* Inlined from js/remaster-ui.js */
 /* K-POP LIFE SIMULATOR 2.0 — compatibility-first UI shell
  * Keeps the original simulation engines, action IDs and Store v1 schema intact.
  */
@@ -8855,6 +9091,265 @@ if (typeof window !== 'undefined' && document.getElementById('screen')) App.menu
   }
 })();
 
-</script>
+  </script>
+  <script>
+/* Inlined from js/phase34-ui.js */
+/* K-POP Life Simulator 2.0 — Phase 3 & 4 gameplay dashboard layer
+ * Visual/quality-of-life layer only. Core action handlers and game formulas remain intact.
+ * New optional preferences are stored inside the existing game state objects so the original
+ * localStorage keys and save envelope are preserved.
+ */
+(function () {
+  'use strict';
+  const VERSION = '2.0.0-phase-3-4';
+  let installed = false;
+  const esc = value => String(value ?? '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+  const fmt = (n, digits = 0) => Number.isFinite(Number(n)) ? Number(n).toFixed(digits) : '0';
+  const clamp = n => Math.max(0, Math.min(100, Number(n) || 0));
+  const bar = (label, value, tone = '') => `<div class="p34-meter ${tone}"><div class="p34-meter-head"><span>${label}</span><b>${Math.round(value)}%</b></div><div class="p34-track"><i style="width:${clamp(value)}%"></i></div></div>`;
+  const stat = (label, value, hint = '') => `<div class="p34-stat"><span>${label}</span><b>${value}</b>${hint ? `<small>${hint}</small>` : ''}</div>`;
+  const panel = (title, body, extra = '') => `<section class="p34-panel ${extra}"><div class="p34-panel-title">${title}</div>${body}</section>`;
+  const button = (label, action, attrs = '', cls = 'p34-btn') => `<button type="button" class="${cls}" data-act="${action}" ${attrs}>${label}</button>`;
+  const legacyDetails = html => `<details class="p34-legacy"><summary>展開原有完整功能面板</summary><div class="p34-legacy-body">${html}</div></details>`;
+
+  const careerPaths = {
+    vocal: { title: '實力派主唱', desc: '以歌唱實力與現場穩定度建立代表性。', metric: s => s.ab.vocal, label: '歌唱能力' },
+    dance: { title: '舞台核心舞者', desc: '追求舞蹈表現、舞台掌控與團體魅力。', metric: s => s.ab.dance, label: '舞蹈能力' },
+    rap: { title: 'RAP 創作型藝人', desc: '發展饒舌、Flow 與個人音樂風格。', metric: s => s.ab.rap, label: '饒舌能力' },
+    actor: { title: '演員路線', desc: '累積鏡頭表現與角色詮釋能力。', metric: s => (s.ab.acting + s.ab.charm) / 2, label: '表演綜合' },
+    variety: { title: '綜藝明星', desc: '靠反應、談吐與觀眾緣建立個人品牌。', metric: s => (s.ab.variety + s.ab.charm) / 2, label: '綜藝魅力' },
+    global: { title: '國際巨星', desc: '擴大知名度與人氣，挑戰更大的舞台。', metric: s => (s.car.fame + s.car.pop) / 2, label: '知名度／人氣' }
+  };
+
+  function idolDashboard() {
+    if (typeof I === 'undefined' || !I) return '';
+    I.remaster = I.remaster || {};
+    const s = I;
+    const stage = DATA.STAGES[s.stage] || '練習生';
+    const nextExam = Cal.nextExam(s.day);
+    const daysToExam = Math.max(0, nextExam - s.day);
+    const examName = s.stage >= 2 ? '公司評鑑' : '月考';
+    const avatar = Avatar.svg(s.av, 116, s.g);
+    const selectedPath = careerPaths[s.remaster.careerPath] || null;
+    let stageGoal = null;
+    try { if (typeof window.stageGoal === 'function') stageGoal = window.stageGoal(); } catch (_) {}
+    const objective = stageGoal || { t: '持續成長', d: '安排訓練與生活，累積屬於自己的舞台經驗。', p: 0 };
+    const pathProgress = selectedPath ? clamp(selectedPath.metric(s)) : 0;
+    const healthAlerts = [];
+    if (s.st.stam < 35) healthAlerts.push('體力偏低，建議安排休息。');
+    if (s.st.stress > 70) healthAlerts.push('壓力偏高，持續高強度訓練可能影響表現。');
+    if (s.st.mood < 35) healthAlerts.push('心情低落，考慮與朋友或隊友互動。');
+    if (s.injury > 0) healthAlerts.push(`目前受傷中，還需休養 ${s.injury} 天。`);
+    if (daysToExam <= 7) healthAlerts.push(daysToExam === 0 ? `今天是${examName}日，結束今天時將進行結算。` : `${examName}還有 ${daysToExam} 天。`);
+    if (!healthAlerts.length) healthAlerts.push('目前狀態穩定，適合按計畫累積能力。');
+    const weakest = DATA.ABK.slice().sort((a, b) => s.ab[a] - s.ab[b])[0];
+    const quickAction = s.stage < 2 ? weakest : (s.promo && Cal.date(s.day).d ? 'live' : 'social');
+    const quickMeta = DATA.ACTIONS[quickAction] || DATA.ACTIONS.rest;
+    const quickAvailable = !Idol.canAct(quickAction);
+    const todayItems = (s.today || []).slice(-4).reverse();
+    const todayHtml = todayItems.length ? todayItems.map(item => {
+      const data = DATA.ACTIONS[item.id] || { i: '✦', n: item.id };
+      const effects = (item.eff || []).filter(([key]) => !['stam', 'stress'].includes(key)).slice(0, 2).map(([key, value]) => `${DATA.LABEL[key] || key} ${value > 0 ? '+' : ''}${Math.round(value * 10) / 10}`).join(' · ');
+      return `<div class="p34-timeline-item"><i></i><div><b>${esc(data.n)}</b><small>${esc(effects || '已完成')}</small>${item.txt ? `<p>${esc(Idol.fmt(item.txt))}</p>` : ''}</div></div>`;
+    }).join('') : '<div class="p34-empty">今天還沒有安排行動。從一個小目標開始吧。</div>';
+    const pathCards = Object.entries(careerPaths).map(([key, path]) => `<button class="p34-path ${s.remaster.careerPath === key ? 'is-selected' : ''}" data-act="p34.idol.path" data-path="${key}"><b>${path.title}</b><small>${path.desc}</small></button>`).join('');
+    const group = s.grp ? `<div class="p34-group-card"><div class="p34-group-brand"><span>✦</span><div><small>OFFICIAL ARTIST</small><b>${esc(s.grp.name)}</b></div><em>${s.grp.kind === 'solo' ? 'SOLO' : s.grp.kind === 'band' ? 'BAND' : s.grp.kind === 'mixed' ? 'MIXED' : 'GROUP'}</em></div><div class="p34-group-meta"><span>定位：${esc(s.grp.myRole || '成員')}</span><span>一位：${s.grp.wins || 0}</span><span>專輯：${(s.grp.albums || []).length}</span></div><div class="p34-member-row">${(s.grp.members || []).map(name => `<span>${esc(String(name).split('（')[0])}</span>`).join('')}</div><div class="p34-inline-actions">${button('隊友關係', 'i.tab', 'data-t="rel"')}${button('演藝工作', 'i.tab', 'data-t="work"')}</div></div>` : `<div class="p34-empty">目前仍在練習生階段。通過考核、爭取出道後，這裡會成為你的團體與藝人檔案。</div>`;
+
+    return `<div class="p34-idol-dashboard">
+      <section class="p34-idol-hero">
+        <div class="p34-idol-avatar">${avatar}<span class="p34-live-dot"></span></div>
+        <div class="p34-idol-identity"><div class="p34-kicker">MY IDOL JOURNEY · DAY ${s.day + 1}</div><h2>${esc(s.alias || s.name)}</h2><div class="p34-idol-tags"><span>${esc(stage)}</span><span>${s.age} 歲</span><span>${esc(s.familyName || '練習生')}</span></div><p>${s.remaster.careerPath ? `目標：${selectedPath.title}` : '這段人生尚未定義終點，選擇你想成為的樣子。'}</p></div>
+        <div class="p34-hero-date"><small>今日日期</small><b>${esc(Cal.str(s.day))}</b><span>第 ${s.day + 1} 天</span></div>
+      </section>
+      <section class="p34-metric-grid">
+        ${stat('行動點數', `${s.ap}/${s.apMax}`, '今日可用 AP')}
+        ${stat('體力', `${Math.round(s.st.stam)}%`, '身體狀態')}
+        ${stat('心情', `${Math.round(s.st.mood)}%`, '心理狀態')}
+        ${stat('壓力', `${Math.round(s.st.stress)}%`, '壓力管理')}
+        ${stat('粉絲', U.num(s.car.fans), s.fanName || '支持者')}
+        ${stat('可用資金', U.money(s.car.money), '個人資金')}
+      </section>
+      <div class="p34-dashboard-grid">
+        <div class="p34-dashboard-main">
+          ${panel('今日安排 <span class="p34-title-note">TODAY</span>', `<div class="p34-action-feature"><div><small>推薦下一步</small><b>${quickMeta.i} ${esc(quickMeta.n)}</b><p>${esc(quickMeta.d)}</p></div><button class="p34-btn p34-btn-primary" data-act="i.act" data-id="${quickAction}" ${quickAvailable ? '' : 'disabled'}>${quickAvailable ? '立即執行' : esc(Idol.canAct(quickAction))}</button></div><div class="p34-quick-links">${button('安排完整行程', 'i.tab', 'data-t="plan"')}${button('查看能力', 'i.tab', 'data-t="stats"')}${button('結束今天', 'i.end', '', 'p34-btn p34-btn-dark')}</div><div class="p34-timeline">${todayHtml}</div>`, 'p34-today-panel')}
+          ${panel('目前人生目標 <span class="p34-title-note">CAREER MILESTONE</span>', `<div class="p34-goal-head"><div><small>當前階段目標</small><b>${esc(objective.t)}</b></div><strong>${Math.round(clamp(objective.p * 100))}%</strong></div><div class="p34-track"><i style="width:${clamp(objective.p * 100)}%"></i></div><p class="p34-description">${esc(objective.d)}</p><div class="p34-divider"></div><div class="p34-goal-head"><div><small>個人職涯志向</small><b>${selectedPath ? selectedPath.title : '尚未選擇'}</b></div>${selectedPath ? `<strong>${Math.round(pathProgress)}%</strong>` : ''}</div>${selectedPath ? `${bar(selectedPath.label, pathProgress)}<p class="p34-description">${selectedPath.desc}</p>` : `<p class="p34-description">選擇你想走的路線，系統會依照現有能力與事業數值追蹤進度。這是個人目標，不會覆蓋既有出道規則。</p><div class="p34-path-grid">${pathCards}</div>`}${selectedPath ? `<button class="p34-text-btn" data-act="p34.idol.path" data-path="">更改職涯志向</button>` : ''}`, 'p34-goal-panel')}
+          ${panel('今日狀態提醒 <span class="p34-title-note">CHECK IN</span>', `<div class="p34-alert-list">${healthAlerts.map((item, i) => `<div class="p34-alert ${i === 0 && (s.injury || s.st.stress > 70 || s.st.stam < 35) ? 'is-warning' : ''}"><span>${i === 0 ? '✦' : '·'}</span>${esc(item)}</div>`).join('')}</div>`, 'p34-alert-panel')}
+        </div>
+        <div class="p34-dashboard-side">
+          ${panel('能力速覽 <span class="p34-title-note">SKILLS</span>', DATA.ABIL.map(([key, name, icon]) => `<div class="p34-skill-row"><span>${icon} ${name}</span><b>${fmt(s.ab[key], 1)}</b><div class="p34-track"><i style="width:${clamp(s.ab[key])}%"></i></div></div>`).join('') + `<button class="p34-text-btn" data-act="i.tab" data-t="stats">查看完整能力檔案 →</button>`)}
+          ${panel('舞台與團體 <span class="p34-title-note">ARTIST PROFILE</span>', group)}
+          ${panel('演藝數據 <span class="p34-title-note">CAREER STATUS</span>', `<div class="p34-mini-stats">${stat('人氣', fmt(s.car.pop, 1))}${stat('知名度', fmt(s.car.fame, 1))}${stat('公司評價', fmt(s.car.eval, 1))}<div class="p34-mini-stats-spacer"></div></div><button class="p34-text-btn" data-act="i.tab" data-t="work">管理演藝活動 →</button>`)}
+        </div>
+      </div>
+    </div>`;
+  }
+
+  const trainingChoices = [
+    ['balanced', '均衡補弱'], ['vocal', '歌唱優先'], ['dance', '舞蹈優先'], ['rap', '饒舌優先'], ['acting', '表演優先'], ['variety', '綜藝優先'], ['charm', '魅力優先'], ['rest', '休息調養']
+  ];
+  function managerTrainingPanel() {
+    const m = M;
+    m.remaster = m.remaster || { trainingFocus: 'balanced', trainingIntensity: 1 };
+    const pref = m.remaster;
+    return panel('全體訓練策略 <span class="p34-title-note">TRAINING POLICY</span>', `<p class="p34-description">一鍵將訓練方向與強度套用到所有練習生。訓練仍依照原本每四週月底結算的規則執行；個別調整可在下方的原始人才管理面板完成。</p><div class="p34-policy-grid">${trainingChoices.map(([key, label]) => `<button class="p34-policy ${pref.trainingFocus === key ? 'is-selected' : ''}" data-act="p34.mgr.policy" data-focus="${key}">${label}</button>`).join('')}</div><div class="p34-policy-intensity"><span>訓練強度</span>${[['0','輕量'],['1','標準'],['2','高強度']].map(([v, label]) => `<button class="p34-policy ${Number(pref.trainingIntensity) === Number(v) ? 'is-selected' : ''}" data-act="p34.mgr.intensity" data-int="${v}">${label}</button>`).join('')}</div><div class="p34-inline-actions">${button('依每人弱項配置', 'p34.mgr.weak', '', `p34-btn ${pref.trainingStrategy === 'weak' ? 'p34-btn-primary' : ''}`)}${button('套用至全體練習生', 'p34.mgr.apply', '', 'p34-btn p34-btn-primary')}</div><small class="p34-footnote">目前 ${m.roster.length} 名練習生 · 每週自動訓練，第四週進行能力結算。</small>`);
+  }
+
+  function managerDashboard() {
+    if (typeof M === 'undefined' || !M) return '';
+    M.remaster = M.remaster || { trainingFocus: 'balanced', trainingIntensity: 1 };
+    const weekly = Mgr.weeklyCost();
+    const burn = weekly.rent + weekly.train + weekly.staff + weekly.salary;
+    const runway = burn > 0 ? Math.floor(M.co.funds / burn) : 99;
+    const nextTier = DATA.M.TIERS[M.co.tier + 1];
+    const alerts = [];
+    if (M.co.funds < 0) alerts.push({ tone: 'danger', text: `公司資金已經是負數（${U.money(M.co.funds)}），請優先處理現金流。` });
+    else if (runway < 12) alerts.push({ tone: 'warning', text: `以目前支出速度，現金約可支撐 ${Math.max(0, runway)} 週。` });
+    M.roster.filter(t => t.st.mood < 35).slice(0, 3).forEach(t => alerts.push({ tone: 'warning', text: `${Mgr.dn(t)} 心情低落（${Math.round(t.st.mood)}），建議安排面談。` }));
+    M.roster.filter(t => t.injury > 0).slice(0, 3).forEach(t => alerts.push({ tone: 'warning', text: `${Mgr.dn(t)} 正在休養，剩 ${t.injury} 週。` }));
+    M.roster.filter(t => t.cEnd != null && t.cEnd - M.week <= 12 && t.cEnd >= M.week).slice(0, 3).forEach(t => alerts.push({ tone: 'warning', text: `${Mgr.dn(t)} 的合約約 ${t.cEnd - M.week} 週後到期，請檢查續約意願。` }));
+    if (!alerts.length) alerts.push({ tone: 'good', text: '目前沒有緊急營運警示，可以把資源投入人才培育與團體企劃。' });
+    const groupRows = M.groups.length ? M.groups.map(g => {
+      const status = { prep: `準備中 · ${g.prepWeeks} 週`, promo: `宣傳中 · ${g.promoWeeks} 週`, rest: '休養期', hiatus: '暫停活動' }[g.status] || g.status;
+      return `<div class="p34-business-group"><div><small>${esc(status)}</small><b>${esc(g.name)}</b><span>${g.members.length} 名成員 · 默契 ${Math.round(g.team)}%</span></div><div class="p34-business-group-stats"><b>${U.num(g.fans)}</b><small>粉絲</small><b>${Math.round(g.pop)}</b><small>人氣</small></div></div>`;
+    }).join('') : '<div class="p34-empty">尚未成立團體。先培訓人才，再由團體企劃開始出道計畫。</div>';
+    const rosterAlerts = M.roster.filter(t => t.st.mood < 35 || t.injury > 0 || t.hid.loyalty < 30).length;
+    return `<div class="p34-manager-dashboard">
+      <section class="p34-company-hero"><div><div class="p34-kicker">ENTERTAINMENT BUSINESS · WEEK ${M.week + 1}</div><h2>${esc(M.co.name || DATA.CO)}</h2><p>${esc(Mgr.tier().n)} · 經紀人 ${esc(M.name)}</p></div><div class="p34-company-seal">✦<small>AGENCY</small></div></section>
+      <section class="p34-business-kpis">${stat('公司資金', U.money(M.co.funds), '可用現金')}${stat('業界聲望', `${Math.round(M.co.rep)}/100`, nextTier ? `下一級 ${nextTier.rep}` : '最高規模')}${stat('練習生', `${M.roster.length}/${Mgr.tier().cap}`, `${rosterAlerts} 人需關注`)}${stat('團體數', M.groups.length, `${M.hist.debuts} 組已出道`)}</section>
+      <div class="p34-dashboard-grid">
+        <div class="p34-dashboard-main">
+          ${panel('本週營運決策 <span class="p34-title-note">WEEKLY DECISIONS</span>', `<div class="p34-decision-head"><div><small>剩餘行動點數</small><b>${M.ap} / ${M.apMax} AP</b></div><button class="p34-btn p34-btn-primary" data-act="m.end">結束本週 →</button></div><div class="p34-quick-links">${button('管理練習生', 'm.tab', 'data-t="roster"')}${button('招募人才', 'm.tab', 'data-t="scout"')}${button('團體企劃', 'm.tab', 'data-t="groups"')}${button('公司投資', 'm.tab', 'data-t="co"')}</div><div class="p34-alert-list">${alerts.map(a => `<div class="p34-alert ${a.tone === 'warning' || a.tone === 'danger' ? 'is-warning' : ''}"><span>${a.tone === 'good' ? '✦' : '!'}</span>${esc(a.text)}</div>`).join('')}</div>`, 'p34-decision-panel')}
+          ${panel('人才培育概況 <span class="p34-title-note">TALENT DEVELOPMENT</span>', `<div class="p34-mini-kpis">${stat('練習生總數', M.roster.length)}${stat('已出道藝人', M.roster.filter(t => t.stage >= 2).length)}${stat('平均忠誠', M.roster.length ? `${Math.round(M.roster.reduce((a, t) => a + t.hid.loyalty, 0) / M.roster.length)}%` : '—')}</div><div class="p34-inline-actions">${button('開啟人才中心', 'm.tab', 'data-t="roster"', 'p34-btn p34-btn-primary')}</div>`, 'p34-talent-panel')}
+          ${panel('公司現金流 <span class="p34-title-note">CASH FLOW</span>', `<div class="p34-finance-grid">${stat('每週房租', U.money(weekly.rent))}${stat('培訓支出', U.money(weekly.train))}${stat('員工薪資', U.money(weekly.staff))}${stat('藝人薪資', U.money(weekly.salary))}<div class="p34-finance-total"><span>每週固定支出</span><b>${U.money(burn)}</b></div></div><div class="p34-runway"><span>資金續航</span><b>${runway >= 99 ? '充足' : `${Math.max(0, runway)} 週`}</b><div class="p34-track"><i style="width:${clamp(runway / 24 * 100)}%"></i></div></div>`, 'p34-finance-panel')}
+        </div>
+        <div class="p34-dashboard-side">
+          ${panel('旗下團體 <span class="p34-title-note">ARTIST ROSTER</span>', groupRows + `<button class="p34-text-btn" data-act="m.tab" data-t="groups">前往藝人與團體 →</button>`)}
+          ${panel('經紀人能力 <span class="p34-title-note">MANAGEMENT SKILLS</span>', Object.entries({ scout: '星探眼光', coach: '培訓指導', pr: '公關', biz: '經營' }).map(([key, name]) => `<div class="p34-skill-row"><span>${name}</span><b>Lv.${M.me.skill[key]}</b><div class="p34-track"><i style="width:${(M.me.xp[key] || 0) / ([0,12,32,60,100][Math.min(4, M.me.skill[key])] || 100) * 100}%"></i></div></div>`).join(''))}
+          ${panel('公司發展目標 <span class="p34-title-note">AGENCY MILESTONES</span>', `<div class="p34-milestone"><small>任期結束</small><b>第 ${M.week + 1} / 312 週</b><div class="p34-track"><i style="width:${clamp((M.week + 1) / 312 * 100)}%"></i></div></div><div class="p34-milestone"><small>公司聲望</small><b>${Math.round(M.co.rep)} / ${nextTier ? nextTier.rep : 100}</b><div class="p34-track"><i style="width:${clamp(M.co.rep / (nextTier ? nextTier.rep : 100) * 100)}%"></i></div></div><p class="p34-description">${nextTier ? `下一階段：${nextTier.n}。持續提升聲望，並達成升級條件。` : '公司已達最高規模，朝傳奇經紀公司邁進。'}</p>`)}
+        </div>
+      </div>
+    </div>`;
+  }
+
+  function managerRosterEnhancement(oldHtml) {
+    const m = M;
+    const attention = m.roster.filter(t => t.st.mood < 35 || t.injury > 0 || t.hid.loyalty < 30).length;
+    return `<div class="p34-manager-roster"><section class="p34-roster-summary">${stat('練習生', `${m.roster.length}/${Mgr.tier().cap}`, '公司容納名額')}${stat('待關注', attention, '低心情／受傷／低忠誠')}${stat('本週 AP', `${m.ap}/${m.apMax}`, '人才管理資源')}</section>${managerTrainingPanel()}${panel('個別人才管理 <span class="p34-title-note">INDIVIDUAL TRAINEE CONTROL</span>', `<p class="p34-description">逐人查看能力、狀態、合約與訓練課表。原有面談、續約、詳情、解約與課程調整功能完整保留。</p>${legacyDetails(oldHtml)}`)}</div>`;
+  }
+
+  function managerGroupsEnhancement(oldHtml) {
+    const m = M;
+    const eligible = m.roster.filter(t => t.stage < 2 && !t.gid && t.age >= 13).length;
+    const groupCards = m.groups.map(g => {
+      const mem = Mgr.gm(g);
+      const state = { prep: `準備中 · ${g.prepWeeks} 週`, promo: `宣傳期 · ${g.promoWeeks} 週`, rest: '休養期', hiatus: '暫停活動' }[g.status] || g.status;
+      const acts = Object.keys(Mgr.gAct).map(id => {
+        const a = Mgr.gAct[id];
+        const why = Mgr.canG(g, id);
+        return `<button class="p34-action-chip" data-act="m.gact" data-gid="${g.id}" data-id="${id}" ${why ? 'disabled title="' + esc(why) + '"' : ''}>${a.i} ${esc(a.n)}${a.ap ? ` · ${a.ap} AP` : ''}</button>`;
+      }).join('');
+      return `<article class="p34-group-portfolio"><header><div><small>${esc(state)}</small><h3>${esc(g.name)}</h3></div><span class="p34-group-kind">${g.status === 'promo' ? 'ON AIR' : g.status === 'prep' ? 'IN PREPARATION' : 'ARTIST'}</span></header><div class="p34-roster-members">${mem.map(t => `<span>${Avatar.mini(t.name, t.g, 30)}${esc(Mgr.dn(t))}</span>`).join('')}</div><div class="p34-group-kpis">${stat('粉絲', U.num(g.fans))}${stat('人氣', Math.round(g.pop))}${stat('知名度', Math.round(g.fame))}${stat('默契', `${Math.round(g.team)}%`)}</div><div class="p34-action-list">${acts}</div>${(g.albums || []).length ? `<div class="p34-album-strip"><small>近期作品</small>${g.albums.slice(-3).reverse().map(a => `<span>♬ ${esc(a.name)} · ${U.num(a.sales)} 張</span>`).join('')}</div>` : '<p class="p34-description">尚未發行作品。</p>'}</article>`;
+    }).join('');
+    return `<div class="p34-manager-groups"><section class="p34-roster-summary">${stat('已成立團體', m.groups.length)}${stat('可組團練習生', eligible, '需年滿 13 歲且未出道')}${stat('累計出道', m.hist.debuts, '組')}</section>${panel('團體企劃中心 <span class="p34-title-note">GROUP PROJECTS</span>', `<p class="p34-description">挑選 3～6 名同性別、年滿 13 歲且尚未出道的練習生，制定概念、預算與製作人，展開出道企劃。</p><div class="p34-inline-actions">${button(eligible < 3 ? '符合資格人數不足' : m.ap < 2 ? 'AP 不足（需 2 AP）' : '建立新團體企劃', 'm.plan', `${eligible < 3 || m.ap < 2 ? 'disabled' : ''}`, 'p34-btn p34-btn-primary')}${button('前往人才中心', 'm.tab', 'data-t="roster"')}</div><small class="p34-footnote">目前符合出道企劃資格：${eligible} 人 · 企劃需要 2 AP。</small>`)}<div class="p34-group-grid">${groupCards || '<div class="p34-empty">公司尚未成立任何團體。請先培訓練習生並完成團體企劃。</div>'}</div>${panel('進階團體操作 <span class="p34-title-note">ADVANCED CONTROLS</span>', `<p class="p34-description">保留原有團員異動、團體名稱、回歸規格與進階管理操作。</p>${legacyDetails(oldHtml)}`)}</div>`;
+  }
+
+  function managerCompanyEnhancement(oldHtml) {
+    const c = Mgr.weeklyCost();
+    const items = Object.entries(DATA.M.FAC).map(([key, f]) => {
+      const lv = M.co.fac[key], cost = f.cost[lv];
+      return `<div class="p34-invest-row"><div><b>${esc(f.n)} · Lv.${lv}</b><small>${esc(f.d)}</small></div><button class="p34-action-chip" data-act="m.up" data-k="${key}" ${lv >= 4 || M.ap < 1 || M.co.funds < cost ? 'disabled' : ''}>${lv >= 4 ? 'MAX' : U.money(cost) + ' · 1 AP'}</button></div>`;
+    }).join('');
+    return `<div class="p34-company-management">${panel('公司資產與發展 <span class="p34-title-note">FACILITY & INVESTMENT</span>', `<div class="p34-invest-grid">${items}</div><div class="p34-inline-actions">${button('完整公司管理', 'p34.mgr.legacyCompany')}${button('回到營運總覽', 'm.tab', 'data-t="home"')}</div>`)}${panel('原有公司管理功能 <span class="p34-title-note">LEGACY MANAGEMENT</span>', legacyDetails(oldHtml))}</div>`;
+  }
+
+  function enhanceContent(mode) {
+    const content = document.querySelector('.neo-content');
+    if (!content || content.dataset.phase34 === mode) return;
+    const oldHtml = content.innerHTML;
+    let html = null;
+    if (mode === 'idol' && IdolUI.tab === 'home') html = idolDashboard() + legacyDetails(oldHtml);
+    if (mode === 'mgr' && MgrUI.tab === 'home') html = managerDashboard() + legacyDetails(oldHtml);
+    if (mode === 'mgr' && MgrUI.tab === 'roster') html = managerRosterEnhancement(oldHtml);
+    if (mode === 'mgr' && MgrUI.tab === 'groups') html = managerGroupsEnhancement(oldHtml);
+    if (mode === 'mgr' && MgrUI.tab === 'co') html = managerCompanyEnhancement(oldHtml);
+    if (html !== null) {
+      content.innerHTML = html;
+      content.dataset.phase34 = mode;
+    }
+  }
+
+  function applyToAll(focus, intensity) {
+    if (!M) return;
+    M.remaster = M.remaster || {};
+    if (focus) { M.remaster.trainingFocus = focus; M.remaster.trainingStrategy = 'preset'; }
+    if (intensity !== undefined) M.remaster.trainingIntensity = Number(intensity);
+    const selectedFocus = M.remaster.trainingFocus || 'balanced';
+    const strategy = M.remaster.trainingStrategy || 'preset';
+    const selectedIntensity = Number(M.remaster.trainingIntensity ?? 1);
+    M.roster.forEach(t => {
+      t.plan = t.plan || { focus: 'balanced', int: 1 };
+      const weakest = DATA.ABK.slice().sort((a, b) => t.ab[a] - t.ab[b])[0];
+      t.plan.focus = strategy === 'weak' ? weakest : selectedFocus;
+      t.plan.int = selectedIntensity;
+    });
+    Mgr.save('auto');
+    const focusLabel = strategy === 'weak' ? '個人弱項優先' : (trainingChoices.find(x => x[0] === selectedFocus)?.[1] || '均衡');
+    UI.toast(`已將${focusLabel}・${['輕量', '標準', '高強度'][selectedIntensity] || '標準'}套用至 ${M.roster.length} 名練習生。`);
+    Mgr.render();
+  }
+
+  function install() {
+    if (installed || typeof Idol === 'undefined' || typeof Mgr === 'undefined') return;
+    installed = true;
+    const oldIdolRender = Idol.render.bind(Idol);
+    const oldMgrRender = Mgr.render.bind(Mgr);
+    Idol.render = function () { const out = oldIdolRender(); enhanceContent('idol'); return out; };
+    Mgr.render = function () { const out = oldMgrRender(); enhanceContent('mgr'); return out; };
+
+    ACT['p34.idol.path'] = d => {
+      if (!I) return;
+      I.remaster = I.remaster || {};
+      if (!d.path) delete I.remaster.careerPath;
+      else if (careerPaths[d.path]) I.remaster.careerPath = d.path;
+      Idol.save('auto'); Idol.render();
+      UI.toast(d.path ? `職涯志向已設定：${careerPaths[d.path].title}` : '已清除職涯志向');
+    };
+    ACT['p34.mgr.policy'] = d => applyToAll(d.focus || 'balanced');
+    ACT['p34.mgr.intensity'] = d => applyToAll(null, d.int);
+    ACT['p34.mgr.apply'] = () => applyToAll();
+    ACT['p34.mgr.weak'] = () => {
+      if (!M) return;
+      M.remaster = M.remaster || {};
+      M.roster.forEach(t => {
+        const weakest = DATA.ABK.slice().sort((a, b) => t.ab[a] - t.ab[b])[0];
+        t.plan = t.plan || { focus: 'balanced', int: 1 };
+        t.plan.focus = weakest;
+        t.plan.int = 1;
+      });
+      M.remaster.trainingFocus = 'balanced'; M.remaster.trainingStrategy = 'weak'; M.remaster.trainingIntensity = 1;
+      Mgr.save('auto'); UI.toast('已依每位練習生目前最弱的能力分配標準訓練。'); Mgr.render();
+    };
+    ACT['p34.mgr.legacyCompany'] = () => {
+      const details = document.querySelector('.p34-company-management .p34-legacy');
+      if (details) { details.open = true; details.scrollIntoView({ behavior: 'smooth', block: 'start' }); }
+    };
+
+    window.KPOP_PHASE34 = {
+      version: VERSION,
+      verify: () => ({
+        idolState: typeof I !== 'undefined' && !!I,
+        managerState: typeof M !== 'undefined' && !!M,
+        idolActions: !!ACT['i.act'] && !!ACT['i.end'] && !!ACT['i.tab'],
+        managerActions: !!ACT['m.end'] && !!ACT['m.plan'] && !!ACT['m.gact'],
+        saveFormatUnchanged: Store.key('idol', 'auto') === 'kpopsim.v1.idol.auto' && Store.key('mgr', 'auto') === 'kpopsim.v1.mgr.auto'
+      })
+    };
+  }
+
+  document.addEventListener('DOMContentLoaded', install);
+  if (document.readyState === 'interactive' || document.readyState === 'complete') install();
+})();
+
+  </script>
 </body>
 </html>
