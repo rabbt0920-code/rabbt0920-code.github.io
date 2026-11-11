@@ -1,11 +1,13 @@
 <!DOCTYPE html>
 <html lang="zh-Hant">
 <head>
-<meta charset="UTF-8">
-<meta name="theme-color" content="#fff1f7">
-<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>K-POP 人生模擬器 · 偶像／經紀人</title>
-<style>
+  <meta charset="UTF-8">
+  <meta name="theme-color" content="#f8efff">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="description" content="K-POP 人生模擬器：從練習生到頂級藝人，或打造你的娛樂公司。">
+  <title>K-POP 人生模擬器 2.0</title>
+  <style>
+
 :root{--bg1:#fff1f7;--bg2:#eef0ff;--card:#fff;--ink:#3a3552;--sub:#8a84a3;--pink:#ec6fa5;--pink2:#ffb6d3;--lav:#8b7cf6;--mint:#4fd1b0;--sky:#6cb8ff;--warn:#ff8a65;--line:#efe9f7;--sh:0 6px 20px rgba(139,124,246,.12)}
 *{box-sizing:border-box}html,body{margin:0;min-height:100%}
 body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang TC","Noto Sans TC","Microsoft JhengHei",sans-serif;color:var(--ink);background:linear-gradient(135deg,var(--bg1),var(--bg2)) fixed;line-height:1.55;font-size:15px}
@@ -303,11 +305,226 @@ button,.tab,.choice,.btn{touch-action:manipulation}
 .cere-sub{width:100%;max-width:480px;padding:10px 16px;box-sizing:border-box;text-align:center;font-size:16px;font-weight:700;min-height:44px;background:rgba(0,0,0,.35)}
 .cere-bar{width:100%;max-width:480px;height:4px;background:rgba(255,255,255,.15)}.cere-bar i{display:block;height:100%;width:0;background:#ffd54a}
 
-</style>
+
+  </style>
+  <style>
+/* K-POP LIFE SIMULATOR 2.0 — visual shell */
+:root{
+  --neo-ink:#30263f;--neo-sub:#887d9b;--neo-pink:#eb7bb8;--neo-rose:#f6a5c9;
+  --neo-lav:#937fe0;--neo-violet:#6c5ab7;--neo-gold:#c69d61;--neo-line:#eee5f4;
+  --neo-card:rgba(255,255,255,.92);--neo-shadow:0 16px 42px rgba(96,67,130,.10);
+  --neo-bg:#f8f4fb;--neo-bg2:#f2effa;
+}
+html,body{min-height:100%;background:var(--neo-bg)}
+body{color:var(--neo-ink);font-size:15px;line-height:1.58;background:
+  radial-gradient(ellipse at 8% 0%,rgba(255,220,239,.75),transparent 34%),
+  radial-gradient(ellipse at 96% 12%,rgba(220,213,255,.64),transparent 30%),
+  linear-gradient(135deg,#fbf7fc 0%,#f3f0fa 54%,#f8f2f8 100%) fixed}
+#app{width:min(1440px,100%);max-width:none;margin:0 auto;padding:0 26px 38px}
+button{transition:transform .16s ease,box-shadow .16s ease,background .16s ease}
+button:focus-visible{outline:3px solid rgba(147,127,224,.45);outline-offset:3px}
+
+/* New game launcher */
+.remaster-menu{min-height:100vh;padding:28px 0 44px;display:flex;flex-direction:column;gap:24px}
+.rm-header{display:flex;align-items:center;justify-content:space-between;gap:18px;padding:4px 2px}
+.rm-brand{display:flex;align-items:center;gap:12px;letter-spacing:.18em;font-weight:900;color:#4b3b65}
+.rm-brand-mark{width:42px;height:42px;border-radius:15px;display:grid;place-items:center;color:#fff;font-size:20px;background:linear-gradient(145deg,#b78ee4,#ec8dbb);box-shadow:0 8px 20px rgba(171,117,195,.28)}
+.rm-brand small{display:block;font-size:9px;letter-spacing:.23em;color:#9a8baa;font-weight:700;margin-top:-2px}
+.rm-header-actions{display:flex;gap:8px;align-items:center}
+.rm-hero{position:relative;overflow:hidden;isolation:isolate;min-height:300px;border-radius:30px;padding:38px clamp(24px,5vw,64px);display:grid;grid-template-columns:1.1fr .9fr;align-items:center;gap:24px;color:#fff;background:linear-gradient(112deg,#29213d 0%,#59416e 48%,#8b5a8c 100%);box-shadow:0 24px 60px rgba(64,42,86,.2)}
+.rm-hero:before,.rm-hero:after{content:"";position:absolute;border-radius:50%;z-index:-1;pointer-events:none}
+.rm-hero:before{width:440px;height:440px;right:4%;top:-220px;border:1px solid rgba(255,255,255,.14);box-shadow:0 0 0 36px rgba(255,255,255,.035),0 0 0 72px rgba(255,255,255,.025)}
+.rm-hero:after{width:280px;height:280px;right:13%;bottom:-220px;background:radial-gradient(circle,rgba(255,166,211,.32),transparent 68%)}
+.rm-kicker{font-size:11px;letter-spacing:.28em;font-weight:800;color:#f2cce3;margin-bottom:14px}
+.rm-hero h1{font-size:clamp(32px,5vw,58px);line-height:1.12;letter-spacing:.02em;margin:0 0 14px;color:#fff}
+.rm-hero p{max-width:560px;color:rgba(255,255,255,.76);font-size:14px;margin:0;line-height:1.9}
+.rm-hero-art{height:230px;position:relative;display:grid;place-items:center}
+.rm-disc{width:min(218px,70%);aspect-ratio:1;border-radius:50%;border:1px solid rgba(255,255,255,.36);background:radial-gradient(circle at 50% 50%,rgba(255,255,255,.3) 0 2%,transparent 2.5% 12%,rgba(255,255,255,.12) 12.5% 13%,transparent 13.5% 28%,rgba(255,255,255,.1) 28.5% 29%,transparent 29.5%),linear-gradient(145deg,rgba(255,255,255,.2),rgba(255,255,255,.015));box-shadow:0 0 80px rgba(255,181,224,.16),inset 0 0 35px rgba(255,255,255,.12);animation:rm-float 7s ease-in-out infinite}
+.rm-disc:before,.rm-disc:after{content:"✦";position:absolute;color:#f6d7ec;font-size:27px;text-shadow:0 0 22px #fff}
+.rm-disc:before{top:4%;right:8%}.rm-disc:after{bottom:12%;left:4%;font-size:18px}
+.rm-orbit{position:absolute;width:90%;height:55%;border:1px solid rgba(255,255,255,.2);border-radius:50%;transform:rotate(-24deg)}
+.rm-orbit:after{content:"";position:absolute;width:9px;height:9px;background:#ffd2e9;border-radius:50%;top:7%;left:19%;box-shadow:0 0 16px #ffd2e9}
+.rm-section-head{display:flex;align-items:end;justify-content:space-between;gap:10px;margin:2px 2px -8px}
+.rm-section-head h2{font-size:20px;margin:0;color:#49385e}.rm-section-head p{font-size:12px;color:var(--neo-sub);margin:0}
+.rm-modes{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:18px}
+.rm-mode-card{position:relative;overflow:hidden;min-height:260px;border:1px solid rgba(255,255,255,.9);border-radius:24px;padding:25px;background:var(--neo-card);box-shadow:var(--neo-shadow);display:flex;flex-direction:column;gap:12px}
+.rm-mode-card:after{content:"";position:absolute;width:190px;height:190px;border-radius:50%;right:-66px;top:-70px;background:radial-gradient(circle,rgba(224,192,244,.38),transparent 70%);pointer-events:none}
+.rm-mode-card.manager:after{background:radial-gradient(circle,rgba(255,197,222,.42),transparent 70%)}
+.rm-mode-top{display:flex;align-items:center;justify-content:space-between;gap:8px}
+.rm-mode-icon{width:54px;height:54px;display:grid;place-items:center;border-radius:18px;font-size:25px;color:#fff;background:linear-gradient(145deg,#aa8bd9,#e78fbd);box-shadow:0 8px 18px rgba(170,139,217,.24)}
+.rm-mode-card.manager .rm-mode-icon{background:linear-gradient(145deg,#c6a16c,#9c7cba)}
+.rm-mode-tag{font-size:10px;letter-spacing:.15em;font-weight:800;color:#a28eb5;background:#f6f0fa;padding:6px 10px;border-radius:999px}
+.rm-mode-card h3{font-size:23px;margin:0;color:#41324f}
+.rm-mode-card p{margin:0;color:#847991;font-size:13px;line-height:1.8;max-width:540px}
+.rm-feature-list{display:flex;gap:7px;flex-wrap:wrap;margin-top:2px}
+.rm-feature-list span{background:#f7f2fa;color:#8a799f;border-radius:8px;padding:5px 9px;font-size:11px}
+.rm-mode-actions{display:flex;align-items:center;gap:9px;margin-top:auto;flex-wrap:wrap}
+.rm-mode-actions .btn{min-height:42px;padding:9px 20px;border-radius:13px}
+.rm-mode-actions .btn.pink{background:linear-gradient(135deg,#e77fb5,#bc8cdf);box-shadow:0 7px 18px rgba(204,126,180,.22)}
+.rm-mode-actions .btn.ghost{background:#f6f1fa;color:#77658f}
+.rm-lock{padding:10px 12px;border-radius:12px;background:#f5f1f7;color:#92869d;font-size:12px}
+.rm-footer{display:flex;align-items:center;justify-content:space-between;gap:12px;color:#a096aa;font-size:11px;padding:0 4px}
+@keyframes rm-float{0%,100%{transform:translateY(0) rotate(-4deg)}50%{transform:translateY(-10px) rotate(4deg)}}
+
+/* App shell */
+.neo-game{width:100%;min-height:calc(100vh - 38px);display:flex;flex-direction:column;gap:18px}
+.neo-header{position:sticky;top:0;z-index:30;display:grid;grid-template-columns:auto minmax(150px,1fr) auto auto auto;align-items:center;gap:16px;margin:0 -26px;padding:13px 26px;background:rgba(255,255,255,.82);border-bottom:1px solid rgba(231,221,239,.9);backdrop-filter:blur(18px);box-shadow:0 8px 24px rgba(81,58,104,.055)}
+.neo-brand{display:flex;align-items:center;gap:10px;font-size:14px;font-weight:900;letter-spacing:.12em;color:#49365d;white-space:nowrap}
+.neo-brand-mark{width:34px;height:34px;border-radius:12px;background:linear-gradient(145deg,#b58adb,#ea8cbd);display:grid;place-items:center;color:#fff;font-size:16px;box-shadow:0 5px 14px rgba(174,129,201,.24)}
+.neo-brand small{display:block;font-size:8px;letter-spacing:.14em;color:#a091ad}
+.neo-header .who{min-width:0;gap:9px;align-items:center}
+.neo-header .who .avatar{width:43px;height:43px;flex:none;font-size:1.6rem;border-radius:14px;overflow:hidden;background:#f1eafa;display:grid;place-items:center}
+.neo-header .who .avatar svg{width:100%;height:100%;display:block}
+.neo-header .who b{font-size:14px;color:#41314f}
+.neo-header .who small{display:block;font-size:10px;color:#93869f}
+.neo-date{padding:0 15px;border-left:1px solid var(--neo-line);border-right:1px solid var(--neo-line);white-space:nowrap;text-align:center}
+.neo-date b{display:block;color:#4a3a5b;font-size:13px}
+.neo-date small{font-size:10px;color:#988ca3}
+.neo-header .hdr-stats{gap:9px;justify-content:flex-end;font-size:11px;color:#6e5b83;white-space:nowrap}
+.neo-header .hdr-stats>span{padding:7px 9px;border-radius:10px;background:#f8f3fa}
+.neo-header .apdots i{width:7px;height:7px}
+.neo-header .apdots i.on{background:#e77cb5;box-shadow:0 0 7px rgba(231,124,181,.45)}
+.neo-header .neo-actions{display:flex;align-items:center;gap:6px;justify-content:flex-end;flex-wrap:wrap}
+.neo-header .btn{box-shadow:none;border-radius:11px;min-height:34px;padding:6px 11px;font-size:11px}
+.neo-header .btn.ghost{background:#f6f1f9;color:#806b93}
+.neo-workspace{display:grid;grid-template-columns:218px minmax(0,1fr);gap:22px;align-items:start}
+.neo-sidebar{position:sticky;top:88px;background:rgba(255,255,255,.72);border:1px solid rgba(255,255,255,.95);border-radius:22px;padding:15px 12px;box-shadow:var(--neo-shadow);max-height:calc(100vh - 108px);overflow:auto;scrollbar-width:thin}
+.neo-nav-head{padding:2px 10px 12px;font-size:9px;letter-spacing:.22em;font-weight:900;color:#aa9ab6}
+.neo-nav-groups{display:flex;flex-direction:column;gap:12px}
+.neo-nav-group{display:flex;flex-direction:column;gap:4px}
+.neo-group-title{display:flex;align-items:center;gap:8px;padding:7px 10px;color:#9b8aa9;font-size:10px;font-weight:800;letter-spacing:.08em}
+.neo-group-title:before{content:"";width:5px;height:5px;border-radius:50%;background:#d4bfdc}
+.neo-group-items{display:flex;flex-direction:column;gap:3px}
+.neo-tab.tab{width:100%;min-height:38px;display:flex;align-items:center;gap:9px;text-align:left;padding:8px 11px;border:0;border-radius:11px;background:transparent;color:#80728e;font-size:12px;font-weight:650;box-shadow:none}
+.neo-tab.tab span{width:21px;text-align:center;margin:0;font-size:15px}
+.neo-tab.tab:hover{background:#faf5fc;color:#6d5783;transform:translateX(2px)}
+.neo-tab.tab.on{background:linear-gradient(110deg,#fceaf4,#f0ebfb);color:#b85f98;box-shadow:inset 3px 0 #d985ba}
+.neo-stage{min-width:0;min-height:70vh}
+.neo-pagehead{display:flex;align-items:end;justify-content:space-between;gap:12px;margin:3px 2px 14px;padding:0 2px}
+.neo-pagehead .eyebrow{font-size:9px;letter-spacing:.2em;color:#b09cbb;font-weight:900;margin-bottom:2px}
+.neo-pagehead h1{font-size:25px;line-height:1.2;margin:0;color:#40304f;letter-spacing:.01em}
+.neo-pagehead p{font-size:11px;margin:5px 0 0;color:#978ba2}
+.neo-content{padding:0!important;min-width:0}
+.neo-content .card{background:var(--neo-card);border:1px solid rgba(255,255,255,.95);border-radius:19px;box-shadow:0 10px 28px rgba(84,62,111,.075);padding:17px 19px;margin:0 0 14px}
+.neo-content .card h3{color:#564365;font-size:14px;letter-spacing:.01em;margin:0 0 12px}
+.neo-content h4{color:#a66d9a}
+.neo-content .btn{border-radius:11px;padding:9px 15px;font-size:12px;box-shadow:0 5px 14px rgba(142,115,195,.15)}
+.neo-content .btn.ghost{background:#f4eff8;color:#79678c;box-shadow:none}
+.neo-content .btn.pink{background:linear-gradient(135deg,#e77fb5,#bc8cdf)}
+.neo-content .tab{border-radius:10px}
+.neo-content .kpis>div{background:#faf6fb;border:1px solid #f1eaf4;border-radius:13px}
+.neo-content .kpis b{color:#ba71a4}
+.neo-content .act{background:#fbf7fc;border:1px solid #f1eaf4}
+.neo-content .slot{background:#faf6fb;border:1px solid #f1eaf4}
+.neo-content .banner{background:linear-gradient(120deg,#fbeaf3,#f0ecfb);color:#775b86}
+.neo-content input,.neo-content select,.neo-content textarea{border-color:#e8ddec;border-radius:10px;background:#fff}
+.neo-content .chip{background:#f0eafa;color:#9178bd}
+.neo-content .chip.pink{background:#fbe8f2;color:#c36f9f}
+.neo-content .bar-bg{background:#f0eaf4}
+.neo-content .rank li.me{background:#fcecf4}
+.neo-content .today li,.neo-content .notes li{border-bottom-color:#f0e8f3}
+.neo-content .log li{border-bottom-color:#f0e8f3}
+.neo-content .overlay{backdrop-filter:blur(6px)}
+.neo-content .modal{border:1px solid rgba(255,255,255,.8);box-shadow:0 24px 70px rgba(42,29,59,.24)}
+.neo-game .ending{background:transparent}
+
+/* Mobile navigation turns into category + subpage rails */
+@media(max-width:1000px){
+  #app{padding:0 18px 32px}
+  .neo-header{margin:0 -18px;padding:11px 18px;grid-template-columns:auto 1fr auto;gap:10px}
+  .neo-brand{font-size:12px}
+  .neo-date{border:0;padding:0 4px}
+  .neo-header .hdr-stats{grid-column:2/4;grid-row:2;justify-content:flex-start}
+  .neo-header .neo-actions{grid-column:3;grid-row:2}
+  .neo-workspace{grid-template-columns:1fr;gap:12px}
+  .neo-sidebar{position:relative;top:auto;max-height:none;overflow:visible;padding:9px 10px;border-radius:17px}
+  .neo-nav-head{display:none}
+  .neo-nav-groups{display:flex;flex-direction:row;gap:5px;overflow-x:auto;scrollbar-width:none;padding:0 0 7px}
+  .neo-nav-groups::-webkit-scrollbar{display:none}
+  .neo-nav-group{flex:none;display:flex;align-items:center}
+  .neo-group-title{border:0;background:#f6f1f9;border-radius:999px;padding:8px 12px;cursor:pointer;white-space:nowrap;font-size:10px}
+  .neo-group-title:before{display:none}
+  .neo-nav-group.is-active .neo-group-title{background:linear-gradient(110deg,#f9e5f1,#eee9fb);color:#a45f98}
+  .neo-group-items{display:none}
+  .neo-nav-group.is-active .neo-group-items{display:flex;position:absolute;left:0;right:0;top:calc(100% + 5px);background:rgba(255,255,255,.98);border:1px solid #eee5f3;border-radius:14px;padding:6px;flex-direction:row;gap:5px;box-shadow:0 10px 25px rgba(84,62,111,.11);z-index:20;overflow-x:auto}
+  .neo-tab.tab{width:auto;min-height:34px;white-space:nowrap;padding:6px 10px;background:#faf7fb}
+  .neo-tab.tab.on{box-shadow:inset 0 -2px #d985ba}
+  .neo-pagehead{margin:5px 2px 12px}
+  .neo-pagehead h1{font-size:22px}
+}
+@media(max-width:640px){
+  #app{padding:0 12px 26px}
+  .remaster-menu{padding-top:15px;gap:17px}
+  .rm-hero{grid-template-columns:1fr;min-height:0;padding:27px 23px;border-radius:23px}
+  .rm-hero-art{position:absolute;right:-42px;bottom:-52px;width:190px;height:190px;opacity:.42}
+  .rm-hero h1{font-size:34px;max-width:290px}
+  .rm-hero p{font-size:12px;max-width:290px}
+  .rm-modes{grid-template-columns:1fr;gap:12px}
+  .rm-mode-card{min-height:0;padding:19px;border-radius:20px}
+  .rm-mode-card h3{font-size:20px}
+  .rm-footer{align-items:flex-start;flex-direction:column}
+  .neo-header{margin:0 -12px;padding:9px 12px;grid-template-columns:minmax(0,1fr) auto;gap:7px}
+  .neo-brand{display:none}
+  .neo-header .who{grid-column:1;grid-row:1}
+  .neo-header .neo-date{grid-column:1;grid-row:2;text-align:left;padding:0 0 0 52px;margin-top:-3px}
+  .neo-header .hdr-stats{grid-column:1/3;grid-row:3;justify-content:flex-start;gap:5px}
+  .neo-header .hdr-stats>span{padding:5px 7px;font-size:10px}
+  .neo-header .neo-actions{grid-column:2;grid-row:1;display:flex;gap:4px;justify-content:flex-end}
+  .neo-header .neo-actions .btn{min-height:30px;padding:5px 8px;font-size:10px}
+  .neo-workspace{gap:9px}
+  .neo-sidebar{padding:7px;border-radius:14px}
+  .neo-group-title{padding:7px 10px;font-size:9px}
+  .neo-nav-group.is-active .neo-group-items{top:calc(100% + 3px);padding:5px}
+  .neo-tab.tab{font-size:11px;min-height:31px;padding:5px 8px}
+  .neo-pagehead{margin:3px 1px 10px}
+  .neo-pagehead h1{font-size:20px}
+  .neo-pagehead p{font-size:10px}
+  .neo-content .card{padding:14px 14px;border-radius:16px;margin-bottom:10px}
+  .neo-content .cards2,.neo-content .cards3{grid-template-columns:1fr}
+  .neo-content .kpis>div{min-width:66px}
+}
+@media(prefers-reduced-motion:reduce){.rm-disc{animation:none}*{scroll-behavior:auto!important;transition:none!important}}
+
+/* Dark mode compatibility: original Theme toggle remains available. */
+[data-theme="dark"] body{color:#eee8f4;background:radial-gradient(ellipse at 8% 0%,rgba(98,65,116,.28),transparent 34%),linear-gradient(135deg,#171423 0%,#1d1a2c 55%,#21182a 100%) fixed}
+[data-theme="dark"] .rm-header .rm-brand{color:#f0e7f6}
+[data-theme="dark"] .rm-brand small{color:#b2a1bf}
+[data-theme="dark"] .rm-mode-card{background:rgba(39,34,54,.94);border-color:#39324b;box-shadow:0 16px 42px rgba(0,0,0,.2)}
+[data-theme="dark"] .rm-section-head h2,[data-theme="dark"] .rm-mode-card h3{color:#f0e8f5}
+[data-theme="dark"] .rm-section-head p,[data-theme="dark"] .rm-mode-card p,[data-theme="dark"] .rm-footer{color:#a99db5}
+[data-theme="dark"] .rm-mode-tag,[data-theme="dark"] .rm-feature-list span,[data-theme="dark"] .rm-lock{background:#342c43;color:#c1b2d0}
+[data-theme="dark"] .neo-header{background:rgba(29,25,42,.88);border-color:#393149;box-shadow:0 8px 24px rgba(0,0,0,.18)}
+[data-theme="dark"] .neo-brand{color:#eee5f5}
+[data-theme="dark"] .neo-brand small,[data-theme="dark"] .neo-header .who small,[data-theme="dark"] .neo-date small{color:#a99db7}
+[data-theme="dark"] .neo-header .who b,[data-theme="dark"] .neo-date b{color:#f0e8f5}
+[data-theme="dark"] .neo-date{border-color:#393149}
+[data-theme="dark"] .neo-header .hdr-stats>span,[data-theme="dark"] .neo-header .btn.ghost{background:#342c43;color:#d4c5e1}
+[data-theme="dark"] .neo-sidebar{background:rgba(36,31,51,.9);border-color:#393149;box-shadow:0 16px 42px rgba(0,0,0,.2)}
+[data-theme="dark"] .neo-group-title{color:#b7a7c4}
+[data-theme="dark"] .neo-group-title:before{background:#665373}
+[data-theme="dark"] .neo-tab.tab{color:#c0b4cb}
+[data-theme="dark"] .neo-tab.tab:hover{background:#383047;color:#f2eafa}
+[data-theme="dark"] .neo-tab.tab.on{background:linear-gradient(110deg,#473044,#38304f);color:#f0afd2;box-shadow:inset 3px 0 #d985ba}
+[data-theme="dark"] .neo-pagehead h1{color:#f0e8f5}
+[data-theme="dark"] .neo-pagehead p,[data-theme="dark"] .neo-pagehead .eyebrow{color:#ae9eb9}
+[data-theme="dark"] .neo-content .card{background:rgba(39,34,54,.94);border-color:#393149;box-shadow:0 10px 28px rgba(0,0,0,.16)}
+[data-theme="dark"] .neo-content .card h3{color:#e9ddf2}
+[data-theme="dark"] .neo-content .kpis>div,[data-theme="dark"] .neo-content .act,[data-theme="dark"] .neo-content .slot{background:#30293f;border-color:#40364f}
+[data-theme="dark"] .neo-content .banner{background:linear-gradient(120deg,#493047,#38304f);color:#efc5df}
+[data-theme="dark"] .neo-content input,[data-theme="dark"] .neo-content select,[data-theme="dark"] .neo-content textarea{background:#272236;border-color:#51445f;color:#eee8f4}
+[data-theme="dark"] .neo-content .bar-bg{background:#43384f}
+[data-theme="dark"] .neo-nav-group.is-active .neo-group-title{background:#41324d;color:#f0b6d8}
+@media(max-width:1000px){[data-theme="dark"] .neo-nav-group.is-active .neo-group-items{background:#272236;border-color:#463a55}}
+
+  </style>
 </head>
 <body>
-<div id="app"><div id="screen"></div><div id="modal-root"></div><div id="toast-root"></div></div>
-<script>
+  <div id="app">
+    <div id="screen" aria-live="polite"></div>
+    <div id="modal-root"></div>
+    <div id="toast-root"></div>
+  </div>
+    <script>
 'use strict';
 /* ===== core.js ===== */
 /* =========================================================
@@ -520,6 +737,9 @@ if (typeof document !== 'undefined') Theme.apply();
 
 const Layout = { centerTab() { if (typeof document === 'undefined') return; const n = document.querySelector('.tabs'), t = n && n.querySelector('.tab.on'); if (t) n.scrollLeft = t.offsetLeft - (n.clientWidth - t.clientWidth) / 2; } };
 
+</script>
+  <script>
+'use strict';
 /* ===== avatar.js ===== */
 /* ============================================================
    向量韓系紙娃娃（全身 Q 版 2.5 頭身，可裁切成半身頭像）
@@ -717,6 +937,9 @@ ACT['av.rand'] = () => {
   App.idolForm(); const sc2 = document.querySelector('.cc-modal'); if (sc2) sc2.scrollTop = top;
 };
 
+</script>
+  <script>
+'use strict';
 /* ===== data.js ===== */
 /* =========================================================
  * DATA 模組：K-POP 背景的靜態資料
@@ -1313,6 +1536,9 @@ DATA.randAlias = function (g, used) {
   return U.pick(pool) + U.ri(2, 9);
 };
 
+</script>
+  <script>
+'use strict';
 /* ===== data_mgr.js ===== */
 /* =========================================================
  * 經紀人模式資料：事件、名字、設定
@@ -1470,6 +1696,9 @@ DATA.M.EVENTS = [
     ] }
 ];
 
+</script>
+  <script>
+'use strict';
 /* ===== data_mgr2.js ===== */
 /* =========================================================
  * 經紀人模式事件擴充：因果事件組、門檻事件、日常事件
@@ -1890,6 +2119,9 @@ DATA.M.EVENTS = [
   DATA.M.EVENTS.push(...E);
 })();
 
+</script>
+  <script>
+'use strict';
 /* ===== data_mgr3.js ===== */
 /* =========================================================
  * 經紀人模式事件擴充（三）：依「經紀人 100 件日常挑戰」整理
@@ -2558,6 +2790,9 @@ DATA.M.EVENTS = [
   DATA.M.EVENTS.push(...E);
 })();
 
+</script>
+  <script>
+'use strict';
 /* ===== data_ev2.js ===== */
 /* ============================================================
    追加事件池：疾病／受傷（由健康度決定出現機率）、練習生日常、出道後工作與生活。
@@ -2913,6 +3148,9 @@ DATA.M.EVENTS = [
   );
 })();
 
+</script>
+  <script>
+'use strict';
 /* ===== data_nat.js ===== */
 /* ============================================================
    國籍設定：臺灣／香港／日本／韓國
@@ -3100,6 +3338,9 @@ DATA.NATLINES = {
   );
 })();
 
+</script>
+  <script>
+'use strict';
 /* ===== data_biz.js ===== */
 /* ============================================================
    商業：品牌代言（一次簽一年）與專輯規格（單曲／迷你／正規）
@@ -3183,6 +3424,9 @@ DATA.ALBUM_FORMATS = {
   );
 })();
 
+</script>
+  <script>
+'use strict';
 /* ===== data_team.js ===== */
 /* ============================================================
    團體：性別分明的路人名單、團名候選、隊友個性與互動台詞
@@ -3240,6 +3484,9 @@ Object.assign(DATA.ACTIONS, {
   mate_teach_charm: { n: '教鏡頭表現', i: '✨', ap: 1, stam: 8, stress: 1, mood: 2, minStage: 2, mate: 1, d: '對鏡頭練表情與氣場，提高隊友魅力。' }
 });
 
+</script>
+  <script>
+'use strict';
 /* ===== data_ev3.js ===== */
 /* ============================================================
    事件擴充 III：門檻事件（依數值出現／解鎖選項）與有因果關係的事件組。
@@ -3821,6 +4068,9 @@ Object.assign(DATA.ACTIONS, {
   DATA.EVENTS.push(...E);
 })();
 
+</script>
+  <script>
+'use strict';
 /* ===== data_ev4.js ===== */
 /* ============================================================
    事件擴充 IV：入社與初期生活、日常訓練課程、考核與老師指導。
@@ -4104,6 +4354,9 @@ Object.assign(DATA.ACTIONS, {
   DATA.EVENTS.push(...E);
 })();
 
+</script>
+  <script>
+'use strict';
 /* ===== arcs.js ===== */
 /* ============================================================
    出道後的「風波劇情線」：參考韓國偶像產業常見的事件，分階段循序漸進。
@@ -4374,6 +4627,9 @@ DATA.ARC_EVENTS = [
     ] })
 ];
 
+</script>
+  <script>
+'use strict';
 /* ===== data_co.js ===== */
 /* ============================================================
    公司風雲（出道滿三年後）：經營危機、董事會奪權、破產後的出路（被併購／自立工作室）。
@@ -4523,6 +4779,9 @@ DATA.ARC_EVENTS = [
 
 })();
 
+</script>
+  <script>
+'use strict';
 /* ===== chains.js ===== */
 /* ============================================================
    連鎖事件：每滿半年（180 天）觸發一條，由 3 個階段組成。
@@ -4901,6 +5160,9 @@ DATA.ARC_EVENTS = [
   ];
 })();
 
+</script>
+  <script>
+'use strict';
 /* ===== idol.js ===== */
 /* =========================================================
  * IDOL 模組：偶像模式引擎（狀態、每日行動、考核、出道、宣傳、結局）
@@ -6247,6 +6509,9 @@ Idol.autoDays = function (n, plan, untilExam) {
   return done;
 };
 
+</script>
+  <script>
+'use strict';
 /* ===== idol_ui.js ===== */
 /* =========================================================
  * IDOL UI：偶像模式的畫面、事件流程、操作綁定
@@ -6815,7 +7080,9 @@ const ShowFx = (function () {
   return { show };
 })();
 
-
+</script>
+  <script>
+'use strict';
 /* ===== ceremony.js ===== */
 /* =========================================================
  * 年末頒獎典禮動畫（向量 SVG，約 10～20 秒，可跳過／快轉）
@@ -6941,6 +7208,9 @@ const Cere = (() => {
   return { play, active: false, total: n => INTRO + n * PER + OUTRO };
 })();
 
+</script>
+  <script>
+'use strict';
 /* ===== spend.js ===== */
 /* ============================================================
    花錢系統（出道後）：專輯追加預算、演唱會規格、月費制專屬團隊、宣傳預算、
@@ -7114,6 +7384,9 @@ ACT['i.life'] = d => Idol.life(d.id);
 ACT['i.popup'] = d => { UI.close(); ACT['i.act']({ id: 'popup', tier: d.tier }); };
 ACT['i.concert'] = d => { UI.close(); ACT['i.act']({ id: 'concert', tier: d.tier }); };
 
+</script>
+  <script>
+'use strict';
 /* ===== tutorial.js ===== */
 /* ============================================================
    新手引導：聚光燈 + 說明卡，會切換到對應分頁並標出實際的按鈕與區塊。
@@ -7256,6 +7529,9 @@ ACT['tut.replay3'] = () => { MgrUI.tab = 'home'; Mgr.render(); Tut.start3(); };
 ACT['tut.replay2'] = () => { IdolUI.tab = 'home'; Idol.render(); Tut.start2(); };
 ACT['tut.replay'] = () => { IdolUI.tab = 'home'; Idol.render(); Tut.start(); };
 
+</script>
+  <script>
+'use strict';
 /* ===== manager.js ===== */
 /* =========================================================
  * MANAGER 模組：經紀人模式（引擎 + 介面）
@@ -7980,6 +8256,9 @@ Mgr.renderEnding = function (root) {
     <div class="btn-row"><button class="btn" data-act="m.restart2">回到主選單</button></div></main></div>`;
 };
 
+</script>
+  <script>
+'use strict';
 /* ===== mgr_co.js ===== */
 /* ================= 經紀人模式：公司之間的榜單競爭 + 旗下藝人合約與續約談判 ================= */
 const RIVAL_COS = [ // [名稱, 起始實力, 實力上限]
@@ -8092,6 +8371,9 @@ ACT['m.renewno'] = () => { const R = MgrUI.rn, T = R && MT(M, R.id); if (!T) ret
 ACT['m.renewno2'] = () => { const R = MgrUI.rn, T = R && MT(M, R.id); if (T) { M.leaving = (M.leaving || []).concat(T.id); Mgr.log(`${Mgr.dn(T)} 的合約到期，雙方和平分手。`); } renewDone(); };
 ACT['m.renewopen'] = d => Mgr.renewModal(+d.id, false);
 
+</script>
+  <script>
+'use strict';
 /* ===== ach.js ===== */
 /* ================= 成就系統（全域，跨存檔、跨模式） ================= */
 const Ach = (() => {
@@ -8206,6 +8488,9 @@ ACT['ach.open'] = () => UI.modal(Ach.html(), { cls: 'plan' });
   const sm = Mgr.save; Mgr.save = function () { const r = sm.apply(this, arguments); try { Ach.scan('mgr'); } catch (e) { } return r; };
 })();
 
+</script>
+  <script>
+'use strict';
 /* ===== main.js ===== */
 /* =========================================================
  * MAIN：主選單、新遊戲流程、操作說明
@@ -8308,6 +8593,267 @@ document.addEventListener('change', e => {
   } if (el && el.dataset && el.dataset.chg) { const f = ACT[el.dataset.chg]; if (f) f(el.dataset, el); }
 });
 if (typeof window !== 'undefined' && document.getElementById('screen')) App.menu();
+
+</script>
+  <script>
+/* K-POP LIFE SIMULATOR 2.0 — compatibility-first UI shell
+ * Keeps the original simulation engines, action IDs and Store v1 schema intact.
+ */
+(function () {
+  'use strict';
+  const VERSION = '2.0.0-phase-1-2';
+  let installed = false;
+  const pageMeta = {
+    idol: {
+      home: ['今日工作台', '今日狀態、重要提醒與下一步行動'],
+      plan: ['行程管理', '安排訓練、休息、工作與自動排程'],
+      stats: ['能力檔案', '查看能力成長、個人特質與生涯狀態'],
+      cal: ['人生行事曆', '追蹤考核、工作、活動與重要日期'],
+      co: ['所屬公司', '查看公司評價、培訓安排與職涯關係'],
+      rel: ['人際關係', '經營隊友、朋友、前輩與重要人物關係'],
+      work: ['演藝事業', '安排宣傳、舞台、節目與職業發展'],
+      spend: ['生活與開銷', '管理收入、生活支出與事業投資'],
+      sns: ['社群與粉絲', '經營社群、粉絲互動與公眾形象'],
+      log: ['人生紀錄', '回顧重要事件、選擇與成長軌跡'],
+      save: ['存檔中心', '管理自動存檔、手動存檔與備份']
+    },
+    mgr: {
+      home: ['公司總覽', '掌握資金、公司聲望與本週待辦'],
+      roster: ['人才中心', '查看練習生資料、培訓安排與狀態'],
+      scout: ['星探招募', '舉辦試鏡、尋找潛力新人與簽約'],
+      groups: ['藝人與團體', '企劃團體、出道、回歸與宣傳活動'],
+      co: ['公司經營', '管理公司設施、資源、技能與發展'],
+      sched: ['營運行事曆', '查看週期安排、月度結算與重要事件'],
+      log: ['經營紀錄', '追蹤公司決策、人才變化與經營成果'],
+      save: ['存檔中心', '管理自動存檔、手動存檔與備份']
+    }
+  };
+  const groups = {
+    idol: [
+      { id: 'daily', title: '日常生活', tabs: ['home', 'plan', 'cal'] },
+      { id: 'growth', title: '個人成長', tabs: ['stats', 'co', 'rel'] },
+      { id: 'career', title: '演藝事業', tabs: ['work', 'spend', 'sns'] },
+      { id: 'record', title: '資料中心', tabs: ['log', 'save'] }
+    ],
+    mgr: [
+      { id: 'company', title: '公司營運', tabs: ['home', 'co'] },
+      { id: 'talent', title: '人才管理', tabs: ['roster', 'scout'] },
+      { id: 'artist', title: '藝人企劃', tabs: ['groups'] },
+      { id: 'manage', title: '管理中心', tabs: ['sched'] },
+      { id: 'record', title: '資料中心', tabs: ['log', 'save'] }
+    ]
+  };
+  const groupIcons = { daily: '✧', growth: '✦', career: '◈', record: '▤', company: '⌂', talent: '♙', artist: '♫', manage: '▦' };
+  const $ = (root, selector) => root.querySelector(selector);
+  const esc = value => String(value ?? '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+
+  function tabLabel(button) {
+    const span = button.querySelector('span');
+    return (button.textContent || '').replace(span ? span.textContent : '', '').trim();
+  }
+  function findTabName(mode, tabId) {
+    const nav = groups[mode] || [];
+    const old = document.querySelector('.legacy-tabs');
+    if (old) {
+      const btn = old.querySelector(`[data-t="${tabId}"]`);
+      if (btn) return tabLabel(btn);
+    }
+    const fallback = {
+      home: mode === 'idol' ? '首頁' : '辦公室', plan: '行程', stats: '能力', cal: '日曆', co: '公司', rel: '關係',
+      work: '工作', spend: '開銷', sns: '社群', log: '紀錄', save: '存檔', roster: '練習生', scout: '星探', groups: '團體', sched: '行事曆'
+    };
+    return fallback[tabId] || '遊戲頁面';
+  }
+  function currentTab(mode, legacyNav) {
+    const on = legacyNav.querySelector('.tab.on');
+    return on ? on.dataset.t : (mode === 'idol' ? 'home' : 'home');
+  }
+  function buildBrand(extraClass) {
+    const brand = document.createElement('div');
+    brand.className = extraClass || 'neo-brand';
+    brand.innerHTML = '<span class="neo-brand-mark">✦</span><span>STARLIGHT<small> K-POP LIFE SIMULATOR</small></span>';
+    return brand;
+  }
+  function makeNav(mode, originalTabs, activeTab) {
+    const container = document.createElement('aside');
+    container.className = 'neo-sidebar';
+    const label = document.createElement('div');
+    label.className = 'neo-nav-head';
+    label.textContent = mode === 'idol' ? 'MY IDOL LIFE' : 'ENTERTAINMENT BUSINESS';
+    container.appendChild(label);
+    const navGroups = document.createElement('div');
+    navGroups.className = 'neo-nav-groups';
+    const buttonMap = new Map();
+    Array.from(originalTabs.querySelectorAll('.tab')).forEach(button => buttonMap.set(button.dataset.t, button));
+    let selectedGroup = (groups[mode] || []).find(g => g.tabs.includes(activeTab))?.id;
+    (groups[mode] || []).forEach(group => {
+      const wrap = document.createElement('section');
+      wrap.className = 'neo-nav-group' + (group.id === selectedGroup ? ' is-active' : '');
+      wrap.dataset.uiGroup = group.id;
+      const title = document.createElement('button');
+      title.type = 'button';
+      title.className = 'neo-group-title';
+      title.innerHTML = `<span aria-hidden="true">${groupIcons[group.id] || '◦'}</span>${esc(group.title)}`;
+      title.addEventListener('click', () => {
+        navGroups.querySelectorAll('.neo-nav-group').forEach(node => node.classList.toggle('is-active', node === wrap));
+      });
+      wrap.appendChild(title);
+      const items = document.createElement('div');
+      items.className = 'neo-group-items';
+      group.tabs.forEach(id => {
+        const button = buttonMap.get(id);
+        if (!button) return;
+        button.classList.add('neo-tab');
+        button.setAttribute('aria-label', tabLabel(button));
+        items.appendChild(button);
+      });
+      wrap.appendChild(items);
+      navGroups.appendChild(wrap);
+    });
+    container.appendChild(navGroups);
+    return container;
+  }
+  function adaptGame(root, mode) {
+    const game = root.querySelector(`.game.${mode}`);
+    if (!game || game.dataset.remasterMounted === '1') return;
+    const legacyHeader = game.querySelector('.top');
+    const legacyTabs = game.querySelector('.tabs');
+    const content = game.querySelector('.content');
+    if (!legacyHeader || !legacyTabs || !content) return;
+
+    const tab = currentTab(mode, legacyTabs);
+    const meta = (pageMeta[mode] && pageMeta[mode][tab]) || ['遊戲管理', '管理你的偶像人生與演藝事業'];
+    const top = document.createElement('header');
+    top.className = 'neo-header';
+    top.appendChild(buildBrand());
+    const who = legacyHeader.querySelector('.who');
+    const date = legacyHeader.querySelector('.date');
+    const stats = legacyHeader.querySelector('.hdr-stats');
+    const actions = document.createElement('div');
+    actions.className = 'neo-actions';
+    Array.from(legacyHeader.children).forEach(child => {
+      if (child !== who && child !== date && child !== stats) actions.appendChild(child);
+    });
+    if (who) top.appendChild(who);
+    if (date) { date.classList.add('neo-date'); top.appendChild(date); }
+    if (stats) top.appendChild(stats);
+    top.appendChild(actions);
+
+    const sidebar = makeNav(mode, legacyTabs, tab);
+    const workspace = document.createElement('div');
+    workspace.className = 'neo-workspace';
+    const stage = document.createElement('section');
+    stage.className = 'neo-stage';
+    const pageHead = document.createElement('div');
+    pageHead.className = 'neo-pagehead';
+    const left = document.createElement('div');
+    left.innerHTML = `<div class="eyebrow">${mode === 'idol' ? 'MY IDOL JOURNEY' : 'COMPANY MANAGEMENT'}</div><h1>${esc(meta[0])}</h1><p>${esc(meta[1])}</p>`;
+    pageHead.appendChild(left);
+    content.classList.add('neo-content');
+    stage.appendChild(pageHead);
+    stage.appendChild(content);
+    workspace.appendChild(sidebar);
+    workspace.appendChild(stage);
+
+    game.replaceChildren(top, workspace);
+    game.classList.add('neo-game');
+    game.dataset.remasterMounted = '1';
+    game.dataset.remasterMode = mode;
+    game.dataset.currentTab = tab;
+  }
+
+  function renderLauncher() {
+    const root = document.getElementById('screen');
+    if (!root) return;
+    if (typeof UI !== 'undefined' && UI.close) UI.close();
+    const idolSave = Store.latest('idol');
+    const mgrSave = Store.latest('mgr');
+    const mgrUnlocked = App.mgrUnlocked();
+    const continueButton = (save, mode, key) => save
+      ? `<button class="btn ghost" data-act="app.${key}.cont">繼續遊戲<small>${esc(save.p && save.p.label || '已有存檔')}</small></button>`
+      : `<button class="btn ghost" disabled>尚無存檔<small>開始新旅程</small></button>`;
+    root.innerHTML = `
+      <div class="remaster-menu">
+        <header class="rm-header">
+          <div class="rm-brand"><span class="rm-brand-mark">✦</span><span>STARLIGHT<small>K-POP LIFE SIMULATOR</small></span></div>
+          <div class="rm-header-actions">${Ach.btn()}${Theme.btn()}</div>
+        </header>
+        <section class="rm-hero">
+          <div>
+            <div class="rm-kicker">YOUR STORY · YOUR STAGE · YOUR STAR</div>
+            <h1>讓夢想，成為<br>你的主打歌。</h1>
+            <p>從練習生的第一堂課，到站上萬人舞台；或從一間小型娛樂公司開始，打造屬於你的韓流帝國。每個選擇，都會寫進這段人生。</p>
+          </div>
+          <div class="rm-hero-art" aria-hidden="true"><div class="rm-orbit"></div><div class="rm-disc"></div></div>
+        </section>
+        <div class="rm-section-head"><h2>選擇你的故事</h2><p>SELECT YOUR CAREER</p></div>
+        <section class="rm-modes">
+          <article class="rm-mode-card idol">
+            <div class="rm-mode-top"><div class="rm-mode-icon">♫</div><span class="rm-mode-tag">IDOL JOURNEY</span></div>
+            <h3>偶像人生</h3>
+            <p>從練習生開始，親自安排每日生活、訓練與人際關係。通過月考、爭取出道，打造屬於自己的藝人生涯。</p>
+            <div class="rm-feature-list"><span>角色養成</span><span>人生事件</span><span>團體與 Solo</span><span>舞台與人氣</span></div>
+            <div class="rm-mode-actions"><button class="btn pink" data-act="app.idol.new">開始新人生</button>${continueButton(idolSave, 'idol', 'idol')}</div>
+          </article>
+          <article class="rm-mode-card manager">
+            <div class="rm-mode-top"><div class="rm-mode-icon">◇</div><span class="rm-mode-tag">AGENCY MANAGEMENT</span></div>
+            <h3>經紀公司</h3>
+            <p>經營你的娛樂公司，發掘潛力新人、制定培訓策略、企劃團體出道，並在市場競爭中建立公司聲望。</p>
+            <div class="rm-feature-list"><span>人才招募</span><span>練習生培訓</span><span>團體企劃</span><span>公司營運</span></div>
+            ${mgrUnlocked
+              ? `<div class="rm-mode-actions"><button class="btn pink" data-act="app.mgr.new">創立新公司</button>${continueButton(mgrSave, 'mgr', 'mgr')}</div>`
+              : `<div class="rm-lock">🔒 經紀人模式尚未解鎖：在偶像模式取得「一代偶像」或「頂級藝人」結局後開放。</div>`}
+          </article>
+        </section>
+        <footer class="rm-footer"><span>STARLIGHT ENTERTAINMENT SIMULATOR · VERSION ${VERSION}</span><span>進度儲存在目前瀏覽器，可使用遊戲內存檔功能備份。</span></footer>
+      </div>`;
+  }
+
+  function install() {
+    if (installed) return;
+    installed = true;
+    // Leave original functions available for debugging and preserve all data/action contracts.
+    const originalMenu = App.menu.bind(App);
+    App.menu = function () { renderLauncher(); };
+    const originalIdolRender = Idol.render.bind(Idol);
+    Idol.render = function () {
+      const result = originalIdolRender();
+      adaptGame(document.getElementById('screen'), 'idol');
+      return result;
+    };
+    const originalMgrRender = Mgr.render.bind(Mgr);
+    Mgr.render = function () {
+      const result = originalMgrRender();
+      adaptGame(document.getElementById('screen'), 'mgr');
+      return result;
+    };
+    // Expose only a small diagnostic surface; it does not change game state.
+    window.KPOP_REMASTER = {
+      version: VERSION,
+      legacySaveKeyPrefix: 'kpopsim.v1.',
+      originalRenderers: { menu: originalMenu, idol: originalIdolRender, manager: originalMgrRender },
+      verify: function () {
+        return {
+          idolEngine: typeof Idol !== 'undefined' && typeof Idol.newGame === 'function',
+          managerEngine: typeof Mgr !== 'undefined' && typeof Mgr.newGame === 'function',
+          storeV1: typeof Store !== 'undefined' && Store.key('idol', 'auto') === 'kpopsim.v1.idol.auto',
+          eventDatabase: typeof DATA !== 'undefined' && Array.isArray(DATA.EVENTS),
+          saveSlots: ['auto', 'bak', '1', '2', '3'].every(slot => typeof Store.key('idol', slot) === 'string')
+        };
+      }
+    };
+    // Re-render the start screen using the new launcher after all legacy declarations exist.
+    App.menu();
+  }
+
+  document.addEventListener('DOMContentLoaded', function () {
+    if (typeof App !== 'undefined' && typeof Idol !== 'undefined' && typeof Mgr !== 'undefined') install();
+  });
+  // Engine script is loaded immediately before this script at the end of body; DOMContentLoaded may already have fired.
+  if (document.readyState === 'interactive' || document.readyState === 'complete') {
+    if (typeof App !== 'undefined' && typeof Idol !== 'undefined' && typeof Mgr !== 'undefined') install();
+  }
+})();
 
 </script>
 </body>
