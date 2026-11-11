@@ -1,6 +1,68 @@
 {
   "version": "3.0",
-  "taiwan_futures": null,
+  "taiwan_futures": {
+    "symbol": "TX",
+    "name": "臺股期貨近月（官方夜盤）",
+    "price": 42542.0,
+    "last_verified_price": 42542.0,
+    "quote_status": "fresh",
+    "retrieved_at_taipei": "2026-11-11 14:10:16",
+    "weekday_age": 1,
+    "latest_status_note": "官方夜盤資料交易日期 2026-11-10；距台灣今日已過 1 個平日。資料日期通過新鮮度檢查。",
+    "change_pct": 2.57,
+    "day_high": 42657.0,
+    "day_low": 40715.0,
+    "volume": 55081,
+    "rsi": null,
+    "macd": 0.0,
+    "macd_signal": 0.0,
+    "sma20": null,
+    "sma50": null,
+    "sma200": null,
+    "atr14": null,
+    "atr_pct": null,
+    "adx14": null,
+    "volume_ratio": null,
+    "bb_upper": null,
+    "bb_lower": null,
+    "support20": 40715.0,
+    "resistance20": 42657.0,
+    "stop_reference": null,
+    "technical_score": 0,
+    "trend": "中性",
+    "action": "夜盤方向尚未明確，等待價格、均線與 MACD 同向，不宜僅憑單一夜盤漲跌追單。",
+    "reasons": [],
+    "daily": [
+      {
+        "date": "2026-11-10",
+        "open": 41240.0,
+        "high": 42657.0,
+        "low": 40715.0,
+        "close": 42542.0,
+        "volume": 55081,
+        "sma20": null,
+        "sma50": null,
+        "bb_upper": null,
+        "bb_lower": null
+      }
+    ],
+    "extended": [],
+    "extended_note": "官方收盤資料採 TAIFEX OpenAPI；Info Hub 僅作盤中參考交叉檢視，不覆蓋官方收盤值。",
+    "session": "盤後（夜盤）",
+    "session_date": "2026-11-10",
+    "contract_month": "202611",
+    "source": "TAIFEX OpenAPI DailyMarketReportFut",
+    "open_interest": null,
+    "volume_scope": "單一 TX 契約月份；非所有月份合計",
+    "validated": true,
+    "is_stale": false,
+    "validation_note": "已確認 Contract=TX、TradingSession=盤後，並使用官方 Last 作收盤、Volume 作該契約月份成交量。",
+    "contract_count_for_date": 6,
+    "history_count": 1,
+    "history_note": "本次取得期交所最新夜盤資料。歷史夜盤資料由 GitHub Actions 每次執行後累積；首次部署前不會自動補齊完整歷史。",
+    "description": "官方收盤：TAIFEX OpenAPI TX 近月盤後 Last；盤中參考：TAIFEX Info Hub（抽樣資料，不覆蓋官方收盤）",
+    "market": "TAIFEX"
+  },
   "taiwan_us_stocks": [
     {
       "symbol": "CHT",
@@ -4192,6 +4254,18 @@
       "extended_note": "已取得部分延伸交易時段資料；可用性依 Yahoo Finance 回傳為準",
       "news": [
         {
+          "title": "3 AI Chip Stocks Facing Yield Pressure And Demand Strength",
+          "publisher": "Simply Wall St.",
+          "published": "2026-11-11T05:14:34Z",
+          "url": "https://finance.yahoo.com/technology/ai/articles/3-ai-chip-stocks-facing-051434115.html"
+        },
+        {
+          "title": "Asian shares mostly rise on AI chip demand despite Wall Street's retreat on inflation data",
+          "publisher": "Associated Press",
+          "published": "2026-11-11T04:46:20Z",
+          "url": "https://finance.yahoo.com/markets/world-indices/articles/asian-shares-mostly-rise-ai-044620054.html"
+        },
+        {
           "title": "Tech, Media & Telecom Roundup: Market Talk",
           "publisher": "The Wall Street Journal",
           "published": "2026-11-10T21:56:00Z",
@@ -4202,18 +4276,6 @@
           "publisher": "Investor's Business Daily",
           "published": "2026-11-10T21:18:35Z",
           "url": "https://www.investors.com/news/technology/tsm-stock-taiwan-semiconductor-october-2026-sales/?src=A00220&yptr=yahoo"
-        },
-        {
-          "title": "TSMC record sales strengthen Wedbush’s bullish outlook",
-          "publisher": "Proactive",
-          "published": "2026-11-10T20:15:00Z",
-          "url": "https://www.proactiveinvestors.com/companies/news/1101547/tsmc-record-sales-strengthen-wedbush-s-bullish-outlook-1101547.html"
-        },
-        {
-          "title": "TSMC Is at the Center of an AI Boom That Flipped 25 Years of U.S. Trade. Is the Stock a Buy?",
-          "publisher": "Motley Fool",
-          "published": "2026-11-10T19:53:12Z",
-          "url": "https://www.fool.com/investing/2026/11/10/tsmc-is-at-the-center-of-an-ai-boom-that-flipped-25-years-of-u-s-trade-is-the-stock-a-buy/"
         }
       ],
       "name": "台灣積體電路製造（台積電）",
@@ -4229,8 +4291,8 @@
       "price": 8.22,
       "change_pct": -2.72,
       "day_high": 8.35,
-      "day_low": 8.2,
-      "volume": 6286,
+      "day_low": 8.19,
+      "volume": 35400,
       "rsi": 35.49,
       "macd": -0.648,
       "macd_signal": -0.3777,
@@ -4238,9 +4300,9 @@
       "sma50": 10.15,
       "sma200": 7.39,
       "atr14": 0.54,
-      "atr_pct": 6.56,
-      "adx14": 25.34,
-      "volume_ratio": 0.19,
+      "atr_pct": 6.57,
+      "adx14": 25.35,
+      "volume_ratio": 1.03,
       "bb_upper": 12.34,
       "bb_lower": 7.48,
       "support20": 7.63,
@@ -5687,11 +5749,11 @@
         },
         {
           "date": "2026-11-10",
-          "open": 8.32,
+          "open": 8.29,
           "high": 8.35,
-          "low": 8.2,
+          "low": 8.19,
           "close": 8.22,
-          "volume": 6286,
+          "volume": 35400,
           "sma20": 9.91,
           "sma50": 10.15,
           "bb_upper": 12.34,
@@ -5948,6 +6010,11 @@
           "time": "2026-11-10T15:50:00-05:00",
           "close": 8.22,
           "volume": 1000
+        },
+        {
+          "time": "2026-11-10T16:00:00-05:00",
+          "close": 8.22,
+          "volume": 0
         }
       ],
       "extended_note": "已取得部分延伸交易時段資料；可用性依 Yahoo Finance 回傳為準",
@@ -8534,7 +8601,7 @@
           "volume": 530400,
           "sma20": 308.97,
           "sma50": 279.14,
-          "bb_upper": 347.97,
+          "bb_upper": 347.96,
           "bb_lower": 269.97
         },
         {
@@ -16541,8 +16608,8 @@
       "investment_view": "風險優先"
     }
   ],
-  "generated_at": "2026-11-11T10:45:51.698848+08:00",
-  "generated_at_taipei": "2026-11-11 10:45:51",
+  "generated_at": "2026-11-11T14:10:16.809272+08:00",
+  "generated_at_taipei": "2026-11-11 14:10:16",
   "market": {
     "score": -1,
     "regime": "震盪／中性",
@@ -57950,26 +58017,26 @@
     },
     {
       "symbol": "DX-Y.NYB",
-      "price": 102.25,
-      "change_pct": 0.59,
+      "price": 102.29,
+      "change_pct": 0.06,
       "day_high": 102.3,
       "day_low": 102.21,
       "volume": 0,
-      "rsi": 56.38,
-      "macd": 0.1449,
-      "macd_signal": 0.1928,
-      "sma20": 101.93,
-      "sma50": 101.19,
-      "sma200": 99.75,
-      "atr14": 0.54,
-      "atr_pct": 0.53,
-      "adx14": 23.21,
+      "rsi": 56.81,
+      "macd": 0.1627,
+      "macd_signal": 0.1865,
+      "sma20": 101.91,
+      "sma50": 101.24,
+      "sma200": 99.78,
+      "atr14": 0.52,
+      "atr_pct": 0.51,
+      "adx14": 21.35,
       "volume_ratio": null,
-      "bb_upper": 102.49,
-      "bb_lower": 101.37,
+      "bb_upper": 102.42,
+      "bb_lower": 101.41,
       "support20": 101.1,
-      "resistance20": 102.95,
-      "stop_reference": 101.17,
+      "resistance20": 102.49,
+      "stop_reference": 101.25,
       "relative_strength_vs_spy_pct": null,
       "technical_score": 2,
       "trend": "中性",
@@ -57981,18 +58048,6 @@
         "RSI 位於 50–70"
       ],
       "daily": [
-        {
-          "date": "2026-05-21",
-          "open": 99.12,
-          "high": 99.52,
-          "low": 99.06,
-          "close": 99.19,
-          "volume": 0,
-          "sma20": 98.57,
-          "sma50": 98.98,
-          "bb_upper": 99.47,
-          "bb_lower": 97.66
-        },
         {
           "date": "2026-05-22",
           "open": 99.2,
@@ -59411,15 +59466,27 @@
         },
         {
           "date": "2026-11-10",
-          "open": 102.22,
-          "high": 102.3,
-          "low": 102.21,
-          "close": 102.25,
+          "open": 101.72,
+          "high": 102.41,
+          "low": 101.49,
+          "close": 102.23,
           "volume": 0,
           "sma20": 101.93,
           "sma50": 101.19,
           "bb_upper": 102.49,
           "bb_lower": 101.37
+        },
+        {
+          "date": "2026-11-11",
+          "open": 102.22,
+          "high": 102.3,
+          "low": 102.21,
+          "close": 102.29,
+          "volume": 0,
+          "sma20": 101.91,
+          "sma50": 101.24,
+          "bb_upper": 102.42,
+          "bb_lower": 101.41
         }
       ],
       "extended": [],
@@ -61507,6 +61574,12 @@
       "extended_note": "已取得部分延伸交易時段資料；可用性依 Yahoo Finance 回傳為準",
       "news": [
         {
+          "title": "SenesTech Inc (SNES) Q3 2026 Earnings Call Highlights: Record $1 Million Quarterly Revenue and ...",
+          "publisher": "GuruFocus.com",
+          "published": "2026-11-11T05:07:41Z",
+          "url": "https://finance.yahoo.com/markets/stocks/articles/senestech-inc-snes-q3-2026-050741258.html"
+        },
+        {
           "title": "Is Seagate A Better Way Than Apple To Own AI Hardware Demand?",
           "publisher": "Trefis",
           "published": "2026-11-11T01:50:49Z",
@@ -61523,12 +61596,6 @@
           "publisher": "Motley Fool",
           "published": "2026-11-11T00:51:02Z",
           "url": "https://www.fool.com/investing/2026/11/10/amazon-cloud-computing-brings-in-more-revenue-than-476-companies-in-the-sp-500/"
-        },
-        {
-          "title": "What Should Snap Stock Holders Take From Its Third-Quarter Report?",
-          "publisher": "Trefis",
-          "published": "2026-11-11T00:44:18Z",
-          "url": "https://www.trefis.com/stock/snap/articles/623978/what-should-snap-stock-holders-take-from-its-third-quarter-report/2026-11-10"
         }
       ],
       "relative_strength_bonus": 1,
@@ -65723,10 +65790,16 @@
       "extended_note": "已取得部分延伸交易時段資料；可用性依 Yahoo Finance 回傳為準",
       "news": [
         {
-          "title": "Dow Jones Futures Rise As CoreWave Jumps, Lifts AI Stocks After Nvidia, Surging Yields Hit Stocks",
+          "title": "Dow Jones Futures Rise, Techs Jump On CoreWeave Earnings; Look For This Bullish Signal",
           "publisher": "Investor's Business Daily",
-          "published": "2026-11-11T02:32:17Z",
+          "published": "2026-11-11T06:07:19Z",
           "url": "https://www.investors.com/market-trend/stock-market-today/dow-jones-futures-treasury-yields-nvidia-coreweave/?src=A00220&yptr=yahoo"
+        },
+        {
+          "title": "Inside Anthropic’s blockbuster IPO: What we know about the AI giant’s plans",
+          "publisher": "Euronews",
+          "published": "2026-11-11T05:35:07Z",
+          "url": "https://www.euronews.com/2026/11/11/anthropic-targets-valuation-of-up-to-14-trillion-for-blockbuster-ipo"
         },
         {
           "title": "ESGU Trailed IVV by $26,370 on $300,000 Over Five Years. Its ESG Tilts Are Part of the Reason",
@@ -65739,12 +65812,6 @@
           "publisher": "Trefis",
           "published": "2026-11-11T01:50:49Z",
           "url": "https://www.trefis.com/stock/aapl/articles/623932/is-seagate-a-better-way-than-apple-to-own-ai-hardware-demand/2026-11-10"
-        },
-        {
-          "title": "What Would It Take For AMD Stock To Move Higher?",
-          "publisher": "Trefis",
-          "published": "2026-11-11T01:09:44Z",
-          "url": "https://www.trefis.com/stock/amd/articles/623964/what-would-it-take-for-amd-stock-to-move-higher/2026-11-10"
         }
       ],
       "relative_strength_bonus": 1,
@@ -67831,6 +67898,12 @@
       "extended_note": "已取得部分延伸交易時段資料；可用性依 Yahoo Finance 回傳為準",
       "news": [
         {
+          "title": "Elon Musk's Cybertruck decision could change Tesla's next chapter",
+          "publisher": "TheStreet",
+          "published": "2026-11-11T05:03:00Z",
+          "url": "https://www.thestreet.com/investing/stocks/elon-musks-cybertruck-decision-could-change-teslas-next-chapter"
+        },
+        {
           "title": "After Terafab Chips, Tesla’s $10 Billion Crystal Sun Solar Factory Breaks Ground",
           "publisher": "BeInCrypto",
           "published": "2026-11-11T01:36:00Z",
@@ -67847,12 +67920,6 @@
           "publisher": "CryptoProwl",
           "published": "2026-11-10T23:33:00Z",
           "url": "https://www.cryptoprowl.com/releases/bullishs-new-president-backs-issuer-first-model-for-tokenized-stocks-7830"
-        },
-        {
-          "title": "Ethereum ended CoreWeave's mining days. Earnings test its AI bet",
-          "publisher": "TheStreet",
-          "published": "2026-11-10T22:25:25Z",
-          "url": "https://www.thestreet.com/crypto/markets/coreweave-stock-could-swing-15-on-q3-earnings-options-imply"
         }
       ],
       "relative_strength_bonus": 1,
@@ -72047,6 +72114,12 @@
       "extended_note": "已取得部分延伸交易時段資料；可用性依 Yahoo Finance 回傳為準",
       "news": [
         {
+          "title": "NFLX Stock Slips Overnight: Co-CEO Gregory Peters Sells $1.74M Worth Of Company Shares",
+          "publisher": "Stocktwits",
+          "published": "2026-11-11T04:52:59Z",
+          "url": "https://stocktwits.com/news-articles/markets/equity/nflx-stock-slips-overnight-co-ceo-gregory-peters-sells-1-74-m-worth-of-company-shares/cNGDfuUR9Jr"
+        },
+        {
           "title": "What Could Lift Netflix Stock From Here?",
           "publisher": "Trefis",
           "published": "2026-11-10T23:34:29Z",
@@ -72063,12 +72136,6 @@
           "publisher": "24/7 Wall St.",
           "published": "2026-11-10T16:03:51Z",
           "url": "https://247wallst.com/investing/2026/11/10/skydance-sinks-9-as-warner-bros-film-slump-overshadows-earnings-beat-netflix-falls-2-disney-dips/"
-        },
-        {
-          "title": "Take-Two Jumps 8% as GTA VI Preorders Run ‘Far in Excess’ of Expectations; Sony and Roblox Slide 2%",
-          "publisher": "24/7 Wall St.",
-          "published": "2026-11-10T15:51:57Z",
-          "url": "https://247wallst.com/investing/2026/11/10/take-two-jumps-8-as-gta-vi-preorders-run-far-in-excess-of-expectations-sony-and-roblox-slide-2/"
         }
       ],
       "relative_strength_bonus": -1,
@@ -76264,28 +76331,28 @@
       "extended_note": "已取得部分延伸交易時段資料；可用性依 Yahoo Finance 回傳為準",
       "news": [
         {
+          "title": "Inside Anthropic’s blockbuster IPO: What we know about the AI giant’s plans",
+          "publisher": "Euronews",
+          "published": "2026-11-11T05:35:07Z",
+          "url": "https://www.euronews.com/2026/11/11/anthropic-targets-valuation-of-up-to-14-trillion-for-blockbuster-ipo"
+        },
+        {
+          "title": "SpaceX's biggest business this quarter may not be rockets",
+          "publisher": "TheStreet",
+          "published": "2026-11-11T04:07:00Z",
+          "url": "https://www.thestreet.com/investing/spacex-biggest-business-this-quarter-colossus-2-computing-contracts-not-rockets"
+        },
+        {
+          "title": "Citigroup CEO offers bold S&P 500 prediction",
+          "publisher": "TheStreet",
+          "published": "2026-11-11T03:33:00Z",
+          "url": "https://www.thestreet.com/investing/citigroup-ceo-offers-bold-sp-500-prediction"
+        },
+        {
           "title": "Many AI companies will adopt advertising: ad chief Criteo",
           "publisher": "AFP",
           "published": "2026-11-11T02:24:43Z",
           "url": "https://finance.yahoo.com/media-advertising/articles/many-ai-companies-adopt-advertising-022443967.html"
-        },
-        {
-          "title": "Is Seagate A Better Way Than Apple To Own AI Hardware Demand?",
-          "publisher": "Trefis",
-          "published": "2026-11-11T01:50:49Z",
-          "url": "https://www.trefis.com/stock/aapl/articles/623932/is-seagate-a-better-way-than-apple-to-own-ai-hardware-demand/2026-11-10"
-        },
-        {
-          "title": "What Should Snap Stock Holders Take From Its Third-Quarter Report?",
-          "publisher": "Trefis",
-          "published": "2026-11-11T00:44:18Z",
-          "url": "https://www.trefis.com/stock/snap/articles/623978/what-should-snap-stock-holders-take-from-its-third-quarter-report/2026-11-10"
-        },
-        {
-          "title": "OpenAI's Q3 results and Nvidia's scandal impact on the AI ecosystem",
-          "publisher": "Yahoo Finance Video",
-          "published": "2026-11-10T22:23:32Z",
-          "url": "https://finance.yahoo.com/video/openais-q3-results-and-nvidias-scandal-impact-on-the-ai-ecosystem-222332740.html"
         }
       ],
       "relative_strength_bonus": -1,
@@ -78378,6 +78445,12 @@
           "url": "https://finance.yahoo.com/video/metas-ember-is-a-bet-on-cheaper-models-with-competitors-215556435.html"
         },
         {
+          "title": "Mark Zuckerberg Net Worth Tops $225 Billion: Meta Founder’s Shares Won’t Go to Family",
+          "publisher": "Benzinga",
+          "published": "2026-11-11T03:06:57Z",
+          "url": "https://finance.yahoo.com/markets/stocks/articles/mark-zuckerberg-net-worth-tops-030657420.html"
+        },
+        {
           "title": "Many AI companies will adopt advertising: ad chief Criteo",
           "publisher": "AFP",
           "published": "2026-11-11T02:24:43Z",
@@ -78388,12 +78461,6 @@
           "publisher": "Trefis",
           "published": "2026-11-11T01:09:44Z",
           "url": "https://www.trefis.com/stock/amd/articles/623964/what-would-it-take-for-amd-stock-to-move-higher/2026-11-10"
-        },
-        {
-          "title": "What Should Snap Stock Holders Take From Its Third-Quarter Report?",
-          "publisher": "Trefis",
-          "published": "2026-11-11T00:44:18Z",
-          "url": "https://www.trefis.com/stock/snap/articles/623978/what-should-snap-stock-holders-take-from-its-third-quarter-report/2026-11-10"
         }
       ],
       "relative_strength_bonus": -1,
@@ -82595,22 +82662,22 @@
           "url": "https://finance.yahoo.com/markets/article/goldman-sachs-calls-chip-stocks-oversold-here-are-the-names-it-says-to-buy-165654250.html"
         },
         {
-          "title": "What Would It Take For AMD Stock To Move Higher?",
-          "publisher": "Trefis",
-          "published": "2026-11-11T01:09:44Z",
-          "url": "https://www.trefis.com/stock/amd/articles/623964/what-would-it-take-for-amd-stock-to-move-higher/2026-11-10"
+          "title": "Inside Anthropic’s blockbuster IPO: What we know about the AI giant’s plans",
+          "publisher": "Euronews",
+          "published": "2026-11-11T05:35:07Z",
+          "url": "https://www.euronews.com/2026/11/11/anthropic-targets-valuation-of-up-to-14-trillion-for-blockbuster-ipo"
         },
         {
-          "title": "2 Reasons AMD Can Still Outperform by 2030",
+          "title": "Prediction: This Will Be AMD’s Stock Price After 1 Year",
           "publisher": "Motley Fool",
-          "published": "2026-11-10T23:33:02Z",
-          "url": "https://www.fool.com/investing/2026/11/10/2-reasons-amd-can-still-outperform-by-2030/"
+          "published": "2026-11-11T02:34:02Z",
+          "url": "https://www.fool.com/investing/2026/11/10/prediction-this-will-be-amd-s-stock-price-after-1-year/"
         },
         {
-          "title": "5 Stocks Analysts Just Upgraded",
-          "publisher": "Insider Monkey",
-          "published": "2026-11-10T22:21:46Z",
-          "url": "https://finance.yahoo.com/markets/stocks/articles/5-stocks-analysts-just-upgraded-222146322.html"
+          "title": "Jensen Huang Affair Revives Push for Chip Restrictions on Capitol Hill",
+          "publisher": "The Wall Street Journal",
+          "published": "2026-11-11T02:00:00Z",
+          "url": "https://www.wsj.com/politics/policy/jensen-huang-affair-revives-push-for-chip-restrictions-on-capitol-hill-b0500089?siteid=yhoof2&yptr=yahoo"
         }
       ],
       "relative_strength_bonus": -1,
@@ -82619,12 +82686,7 @@
       "rank_action": "降低優先級，先控管風險"
     }
   ],
-  "errors": [
-    {
-      "symbol": "TX-NIGHT",
-      "error": "TAIFEX night session unavailable: 期交所夜盤資料目前無法取得，且沒有 V2.9 已驗證歷史資料；停止發布，避免顯示錯誤報價。"
-    }
-  ],
+  "errors": [],
   "data_notes": [
     "資料由 Yahoo Finance/yfinance 提供，並非交易所保證即時報價。",
     "日線指標使用調整後日線資料；盤前盤後 5 分鐘資料僅作延伸行情參考。",
