@@ -37,6 +37,16 @@
   .fx-out { opacity: 0; transform: translateX(24px); }
   @keyframes slidein { from { opacity: 0; transform: translateX(30px); } to { opacity: 1; transform: none; } }
   ::-webkit-scrollbar { width: 6px; } ::-webkit-scrollbar-thumb { background: #334155; border-radius: 6px; }
+
+/* 4.1 UI polish：資訊層級、數據卡片與雷達圖 */
+.card { box-shadow: 0 10px 28px rgba(0,0,0,.14); }
+.card-title { letter-spacing: .015em; }
+button, select { -webkit-tap-highlight-color: transparent; }
+button:focus-visible, select:focus-visible { outline: 2px solid #c9f36d; outline-offset: 2px; }
+@media (min-width: 1024px) {
+  .card { padding: 18px; }
+}
+
 </style>
 
 <style>
@@ -1836,6 +1846,43 @@ const UI = {
     const C = S.C, own = C.players.find(p => p.id === id), p = own || C.market.find(p => p.id === id) || C.youth.find(p => p.id === id); if (!p) return closeModal();
     const k = UI.known(p), ov = Sim.ovr(p), isSt = Object.values(C.lineup).includes(id);
     const bars = ATTR.map(a => `<div class="stat-row"><span class="w-10 text-slate-400 shrink-0 text-xs">${ATTRN[a]}</span><div class="bar"><div class="${p.attr[a] >= 75 ? 'bg-fuchsia-400' : p.attr[a] >= 60 ? 'bg-cyan-400' : 'bg-slate-400'}" style="width:${k >= 1 ? p.attr[a] : 0}%"></div></div><span class="w-8 text-right font-mono text-xs">${k >= 1 ? Math.floor(p.attr[a]) : '??'}</span>${own ? `<button class="chip chip-n hover:!border-cyan-400" onclick="Sim.act('drill','${id}','${a}')">特訓</button>` : ''}</div>`).join('');
+    // 4.1：選手能力以五軸 SVG 雷達圖呈現，直接使用既有五項能力資料。
+    const radar = (() => {
+      const cx=150, cy=122, radius=78, count=ATTR.length;
+      const point=(value,index,r=radius)=>{
+        const angle=-Math.PI/2+index*Math.PI*2/count;
+        const rr=r*clamp(Number(value)||0,0,100)/100;
+        return `${(cx+Math.cos(angle)*rr).toFixed(1)},${(cy+Math.sin(angle)*rr).toFixed(1)}`;
+      };
+      const ring=(scale)=>ATTR.map((_,i)=>{
+        const angle=-Math.PI/2+i*Math.PI*2/count;
+        return `${(cx+Math.cos(angle)*radius*scale).toFixed(1)},${(cy+Math.sin(angle)*radius*scale).toFixed(1)}`;
+      }).join(' ');
+      const values=ATTR.map(a=>k>=1?Math.floor(p.attr[a]):0);
+      const polygon=values.map((v,i)=>point(v,i)).join(' ');
+      const axes=ATTR.map((a,i)=>{
+        const angle=-Math.PI/2+i*Math.PI*2/count;
+        const x=cx+Math.cos(angle)*radius, y=cy+Math.sin(angle)*radius;
+        const lx=cx+Math.cos(angle)*(radius+23), ly=cy+Math.sin(angle)*(radius+23);
+        const anchor=Math.abs(lx-cx)<8?'middle':lx<cx?'end':'start';
+        return `<line x1="${cx}" y1="${cy}" x2="${x.toFixed(1)}" y2="${y.toFixed(1)}" stroke="rgba(148,163,184,.32)" stroke-width="1"/><text x="${lx.toFixed(1)}" y="${(ly+4).toFixed(1)}" text-anchor="${anchor}" fill="#cbd5e1" font-size="11" font-weight="600">${ATTRN[a]}</text>`;
+      }).join('');
+      const dots=values.map((v,i)=>{const [x,y]=point(v,i).split(',');return `<circle cx="${x}" cy="${y}" r="3.6" fill="#c9f36d" stroke="#172b43" stroke-width="1.5"/>`;}).join('');
+      const valueList=ATTR.map((a,i)=>`<div class="rounded-lg bg-slate-800/70 px-2 py-2 text-center"><div class="text-[11px] text-slate-400">${ATTRN[a]}</div><div class="text-base font-bold font-mono ${k>=1?'text-slate-100':'text-slate-500'}">${k>=1?values[i]:'??'}</div>${own?`<button class="chip chip-n mt-1" onclick="Sim.act('drill','${id}','${a}')">特訓</button>`:''}</div>`).join('');
+      return `<section class="mt-3 rounded-2xl border border-slate-700/80 bg-slate-950/65 p-3">
+        <div class="flex items-center justify-between gap-2 mb-1"><div><div class="text-sm font-bold text-slate-100">選手能力分析</div><div class="text-[11px] text-slate-400">五項核心能力雷達圖</div></div><span class="chip chip-good">OVR ${k>=1?Math.floor(ov):'??'}</span></div>
+        <div class="flex justify-center">
+          <svg viewBox="0 0 300 245" role="img" aria-label="選手五項能力雷達圖" style="width:100%;max-width:360px;height:auto;overflow:visible">
+            <defs><linearGradient id="playerRadarFill-${id}" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="#c9f36d" stop-opacity=".38"/><stop offset="100%" stop-color="#60a5fa" stop-opacity=".18"/></linearGradient></defs>
+            ${[.25,.5,.75,1].map(v=>`<polygon points="${ring(v)}" fill="none" stroke="rgba(148,163,184,${v===1?.48:.2})" stroke-width="${v===1?1.2:1}"/>`).join('')}
+            ${axes}
+            ${k>=1?`<polygon points="${polygon}" fill="url(#playerRadarFill-${id})" stroke="#c9f36d" stroke-width="2.4" stroke-linejoin="round"/>${dots}`:`<text x="${cx}" y="${cy+4}" text-anchor="middle" fill="#94a3b8" font-size="12">考察後顯示能力</text>`}
+          </svg>
+        </div>
+        <div class="grid grid-cols-5 gap-1.5 mt-1">${valueList}</div>
+        ${own?'<div class="text-[11px] text-slate-500 mt-2">點選下方特訓，可直接針對單項能力進行培養。</div>':''}
+      </section>`;
+    })();
     let act = '';
     if (own) {
       const need = p.exp || p.con <= 1, ask = Sim.renewAsk(p, C);
@@ -1869,7 +1916,7 @@ const UI = {
     </div>` : '';
     openModal(`<div class="flex items-center gap-3">${Av.svg(p, 64)}<div class="flex-1"><div class="text-lg font-black">${esc(p.name)}</div><div class="text-xs text-slate-400">${POSE[p.pos]}${p.pos}・${p.age} 歲${own ? '' : '・' + (p.youth ? '青訓營' : p.club)}</div></div>
       <div class="text-center"><div class="text-2xl font-black font-mono ${UI.ovrC(ov)}">${UI.ovrTxt(p)}</div><div class="text-[10px] text-slate-400">潛力 ${UI.potTxt(p)}</div></div></div>
-      <div class="space-y-1.5 mt-3">${bars}</div>
+      <div class="mt-3">${radar}</div>
       ${planPanel}
       ${heroPanel}
       ${relationPanel}
@@ -2352,7 +2399,33 @@ function tabHome(C) {
   C.players.forEach(p => { if (p.exp) al.push(`📄 ${p.name} 合約已到期，開季前要續約`); if (p.inj) al.push(`🩹 ${p.name} ${p.injWhy || '受傷'}，還要 ${p.inj} 週`); if (p.morale < 35) al.push(`😠 ${p.name} 士氣低落（${Math.round(p.morale)}）`); if (p.fat >= 65) al.push(`😮‍💨 ${p.name} 疲勞過高（${Math.round(p.fat)}）`); });
   if (C.sp) al.push(`🎓 有 ${C.sp} 點經理技能點可分配（俱樂部分頁）`); if (f.net < 0) al.push(`💸 每週虧損 ${money(-f.net)}`);
   if (Sim.window(C) && C.phase === 'reg') al.push('🔄 季中轉會窗開啟中（第 7、8 輪）');
+  const missingLineup = POS.filter(pos => !C.lineup[pos]).length;
+  const usedActions = clamp(2 - Number(C.ap || 0), 0, 2);
+  const weeklyFlow = `<div class="card lg:col-span-2 !p-4">
+    <div class="flex flex-wrap items-center justify-between gap-2 mb-3">
+      <div><div class="text-base font-black text-slate-100">本週經營流程</div><div class="text-xs text-slate-400">集中掌握訓練、管理行動與賽前檢查</div></div>
+      <span class="chip chip-good">第 ${C.week} 週・${C.phase==='reg'?'例行賽':C.phase==='off'?'休賽期':'季後賽'}</span>
+    </div>
+    <div class="grid sm:grid-cols-3 gap-2">
+      <button class="text-left rounded-xl border border-slate-700 bg-slate-900/70 hover:bg-slate-800 p-3" onclick="TAB='train';render()">
+        <div class="flex items-center justify-between"><span class="text-xs text-slate-400">01 / 訓練計畫</span><span class="text-emerald-300 text-xs">已設定</span></div>
+        <div class="font-bold text-sm mt-1">${C.train.focus==='rest'?'全隊休息':ATTRN[C.train.focus]||'戰術磨合'}</div>
+        <div class="text-xs text-slate-400 mt-1">強度：${({low:'輕度',mid:'標準',high:'高強度'})[C.train.int]||'標準'}・查看成長預覽 →</div>
+      </button>
+      <button class="text-left rounded-xl border border-slate-700 bg-slate-900/70 hover:bg-slate-800 p-3" onclick="TAB='home';render()">
+        <div class="flex items-center justify-between"><span class="text-xs text-slate-400">02 / 經理行動</span><span class="${C.ap?'text-amber-300':'text-emerald-300'} text-xs">${C.ap} 點剩餘</span></div>
+        <div class="font-bold text-sm mt-1">已使用 ${usedActions} / 2 次</div>
+        <div class="mt-2 h-1.5 rounded-full bg-slate-700 overflow-hidden"><div class="h-full rounded-full bg-lime-300" style="width:${usedActions/2*100}%"></div></div>
+      </button>
+      <button class="text-left rounded-xl border ${missingLineup?'border-rose-500/50':'border-slate-700'} bg-slate-900/70 hover:bg-slate-800 p-3" onclick="TAB='squad';render()">
+        <div class="flex items-center justify-between"><span class="text-xs text-slate-400">03 / 陣容檢查</span><span class="${missingLineup?'text-rose-300':'text-emerald-300'} text-xs">${missingLineup?'需要處理':'陣容完整'}</span></div>
+        <div class="font-bold text-sm mt-1">${missingLineup?`尚缺 ${missingLineup} 個先發位置`:'先發位置已齊全'}</div>
+        <div class="text-xs text-slate-400 mt-1">${C.players.filter(p=>p.fat>=65).length} 名選手疲勞偏高・查看選手狀態 →</div>
+      </button>
+    </div>
+  </div>`;
   return `<div class="grid lg:grid-cols-2 gap-3">
+    ${weeklyFlow}
     <div class="card"><div class="card-title">🎯 本週行動（剩 ${C.ap} 次）</div><div class="grid grid-cols-3 gap-2">
       ${tile('🔍', '研究對手', '看穿情報，戰力 +1', "Sim.act('research')", !C.ap || C.research || C.phase === 'off')}
       ${tile('🍲', '團隊建設', '$5,000・默契與士氣上升', "Sim.act('bond')", !C.ap)}
