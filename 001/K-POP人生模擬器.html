@@ -5873,6 +5873,7 @@ Idol.rollRandomEvent = function () {
 };
 Idol.resolveChoice = function (ev, idx) {
   const ch = (ev._choices || ev.choices)[idx]; if (!ch) return null;
+  const logTitle = Idol.fmt(ev.title), logChoice = Idol.fmt(ch.t).replace(/<[^>]+>/g, ''); // 先在效果生效前格式化（效果可能清除劇情狀態）
   let grade = null, txt = ch.txt, fx = ch.fx;
   if (ch.check) {
     grade = Sim.roll(I, ch.check); const o = ch.out;
@@ -5884,7 +5885,7 @@ Idol.resolveChoice = function (ev, idx) {
   const res = Idol.applyFx(fx || {});
   if (ev.once || ev.id.startsWith('n_')) I.done[ev.id] = true;
   I.cd[ev.id] = I.day;
-  Idol.log(`【${Idol.fmt(ev.title)}】${Idol.fmt(ch.t).replace(/<[^>]+>/g, '')}`, 'event');
+  Idol.log(`【${logTitle}】${logChoice}`, 'event');
   return { ch, grade, txt: Idol.fmt(txt), chips: Idol.chips(res) };
 };
 Idol.personalityEvent = function () {
@@ -6682,7 +6683,7 @@ Idol.goSolo = function () {
   const lost = Math.round(I.car.fans * .35);
   const r = Idol.applyFx({ fans: -lost, pop: -5, eval: -6, team: -20, stress: 8, mood: -3 });
   I.grp.formerName = old; I.grp.name = Idol.dn(); I.grp.members = [Idol.dn()]; I.grp.npcMembers = []; I.grp.kind = 'solo'; I.grp.myRole = null; I.grp.avgAb = null;
-  I.mates = {}; I.promo = null; I.chart = null; I.flags.wentSolo = true; I.flags.soloDay = I.day;
+  I.mates = {}; if (I.grp && I.grp.csDrama) I.grp.csDrama.current = null; I.promo = null; I.chart = null; I.flags.wentSolo = true; I.flags.soloDay = I.day;
   I.grp.contractEnd = I.day + 365 * 3; I.grp.contractNo = (I.grp.contractNo || 1) + 1; I.grp.renewFor = I.grp.contractEnd;
   I.grp.next = I.day + 30;
   Idol.purgeQueue();
@@ -8755,7 +8756,7 @@ ACT['m.fire'] = d => {
 ACT['m.fire2'] = d => {
   const G = M.groups.find(g => g.id === +d.gid), T = MT(M, +d.id); if (!G || !T) return;
   const fee = 20000 + Math.round(T.hid.scandal * 500); if (M.co.funds < fee) return UI.toast('資金不足', 'bad');
-  M.co.funds -= fee; const nm = T.name; M.leaving = (M.leaving || []).concat(T.id); Mgr.processLeaving();
+  M.co.funds -= fee; if (G.csDrama && G.csDrama.current) G.csDrama.current = null; const nm = T.name; M.leaving = (M.leaving || []).concat(T.id); Mgr.processLeaving();
   if (M.groups.includes(G)) { G.team = U.clamp(G.team - 3); G.pop = U.clamp(G.pop + 1.5); G.fame = U.clamp(G.fame + 1); }
   M.co.rep = U.clamp(M.co.rep + 0.5);
   Mgr.log(`${G.name} 與 ${nm} 解約並退團（解約金 ${U.money(fee)}）。`, 'story'); UI.close(); UI.toast(`${nm} 已解約並退團`); Mgr.save('auto'); Mgr.render();
@@ -10703,7 +10704,7 @@ if (typeof window !== 'undefined' && document.getElementById('screen')) App.menu
           { t: s => s.grp.csDrama.current.type === 'conflict' ? '先暫停討論，隔天再談' : '用輕鬆的玩笑帶過這份好意', txt: idolChoiceResult, fx: s => idolStartChoice(s, 1) },
           { t: s => s.grp.csDrama.current.type === 'conflict' ? '為了趕進度，直接要求一方讓步' : '婉拒好意，表示自己可以處理', txt: idolChoiceResult, fx: s => idolStartChoice(s, 2) }
         ] },
-      { id: 'cs_member_story_follow', w: 0, cd: 0, cond: s => !!(s.grp && s.grp.csDrama && s.grp.csDrama.current && s.grp.csDrama.current.status === 'stage2'),
+      { id: 'cs_member_story_follow', w: 0, cd: 0, cond: s => !!(s.grp && s.grp.kind !== 'solo' && s.grp.csDrama && s.grp.csDrama.current && s.grp.csDrama.current.status === 'stage2'),
         title: s => { const c = idolCtx(s); return c && c.c.type === 'conflict' ? '分歧之後，重新合作' : '把關心變成默契'; },
         text: s => idolFollowText(s),
         choices: [
