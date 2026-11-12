@@ -3,7 +3,7 @@
    ★ 每次更新網站（改入口頁或任何遊戲）後，把版本號 +1，
      玩家下次開啟就會自動拿到新版。
    遊戲清單不用寫在這裡：入口頁會自動把 GAMES 裡的遊戲交給它離線快取。 */
-const VERSION = 'v4';
+const VERSION = 'v5';
 const CACHE = 'life-sim-' + VERSION;
 const SHELL = [
   './',
