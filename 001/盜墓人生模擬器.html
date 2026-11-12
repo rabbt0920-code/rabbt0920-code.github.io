@@ -4,6 +4,15 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <title>盜墓人生模擬器</title>
+<meta name="description" content="下墓之前,先投胎。一盞燈、一支隊伍、幾個不能回頭的選擇——原創盜墓題材的人生模擬文字遊戲,27 種結局等你解鎖。">
+<meta name="theme-color" content="#120f0b">
+<meta property="og:type" content="website">
+<meta property="og:title" content="盜墓人生模擬器">
+<meta property="og:description" content="下墓之前,先投胎。一盞燈、一支隊伍、幾個不能回頭的選擇。你會走到哪一個結局?">
+<meta name="twitter:card" content="summary">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="盜墓人生">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%23120f0b'/%3E%3Crect x='26' y='8' width='12' height='6' rx='2' fill='%23b9812a'/%3E%3Cpath d='M18 18h28l-3 30H21z' fill='%23e0a940'/%3E%3Cellipse cx='32' cy='34' rx='7' ry='10' fill='%23fff1c2'/%3E%3Crect x='20' y='48' width='24' height='6' rx='2' fill='%23b9812a'/%3E%3C/svg%3E">
 <style>
 :root{--bg:#120f0b;--bg2:#1d1812;--bg3:#262016;--ink:#eadfc4;--dim:#9c917a;--gold:#e0a940;--red:#c4513a;--jade:#58a08a;--line:#3a3124}
 *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
@@ -125,7 +134,7 @@ body{background:radial-gradient(ellipse at 50% -16%,#493116 0,#1c160e 36%,#0d0b0
 .tablet h3{color:#f1d391}
 .tabs{gap:7px;margin:7px 0 12px}
 .journal-tabs{grid-template-columns:repeat(2,minmax(0,1fr))}
-.codex-tabs{grid-template-columns:repeat(3,minmax(0,1fr))}
+.codex-tabs{grid-template-columns:repeat(4,minmax(0,1fr))}
 .tabs .btn{min-height:42px;padding:9px 4px;font-size:13px;box-shadow:none}
 .tabs .btn.sel,.btn.sel{border-color:#edbe5c;background:#392b15;color:#f5d68c}
 .grid2{gap:8px}
@@ -175,6 +184,19 @@ body{background:radial-gradient(ellipse at 50% -16%,#493116 0,#1c160e 36%,#0d0b0
 @media(prefers-reduced-motion:reduce){*,*::before,*::after{animation-duration:.01ms!important;animation-iteration-count:1!important;scroll-behavior:auto!important;transition:none!important}}
 </style>
 
+
+<style id="v23-sanity">
+body::after{content:"";position:fixed;inset:0;pointer-events:none;z-index:25;opacity:0;transition:opacity 1.2s;background:radial-gradient(ellipse at 50% 40%,transparent 40%,#0009 85%,#000c 100%)}
+body.san-low::after{opacity:.7}
+body.san-crit::after{opacity:1;background:radial-gradient(ellipse at 50% 40%,transparent 30%,#1c0505aa 74%,#000d 100%);animation:sanPulse 1.15s infinite}
+@keyframes sanPulse{0%,100%{opacity:.9}12%{opacity:1}24%{opacity:.82}}
+body.san-low #app{filter:saturate(.72)}
+body.san-crit #app{filter:saturate(.45) contrast(1.06)}
+body.san-crit .card h2{text-shadow:2px 0 #c4513a66,-2px 0 #6c8be066}
+.gl{display:inline-block;color:#e2a9a0;animation:glx 2.6s infinite}
+@keyframes glx{0%,88%,100%{transform:none;opacity:1}91%{transform:translate(1px,-1px);opacity:.35}95%{transform:translate(-1px,1px);opacity:.8}}
+@media(prefers-reduced-motion:reduce){body.san-crit::after{animation:none}.gl{animation:none}}
+</style>
 </head>
 <body>
 <div id="app"></div>
@@ -322,7 +344,7 @@ ev("j6","舊債追上門","你以前欠的一筆錢,有人記著呢。",[
 {l:"拖著",r:{wanted:1,virtue:-1,x:"他們把你的名字傳了出去。"}},
 {l:"動手",c:K("b",8),ok:{virtue:-1,x:"你把人嚇走了,但手也腫了。"},ng:{hp:-2,x:"你被圍著打了一頓。"}}
 ]);
-const JIANGHU=["j1","j2","j3","j4","j5","j6"];
+const JIANGHU=["j1","j2","j3","j4","j5","j6","j7","j8","j9","j10","j11","j12","j13","j14","j15"];
 
 /* --- 荒丘漢墓 --- */
 ev("t1_in","盜洞入口","一個前人留下的舊盜洞,邊緣的土還是濕的。",[
@@ -874,6 +896,81 @@ ev("t6_e","七張椅子","一張石桌,七張椅子。四張椅子上坐著骸�
 {l:"繞過石桌",r:{x:"你們誰都沒有坐下。"}}
 ],{ghost:1});
 
+
+/* ===== v2.3 江湖事件擴充(6 → 15) ===== */
+ev("j7","茶館裡的傳聞","茶館的說書人今天講的,是一個「從古墓裡全身而退的年輕人」。你聽著聽著,發現他講的就是你。",[
+{l:"上前塞錢,請他別再講了",r:{money:-60,wanted:-1,x:"說書人收了錢,下一場改講狐仙。"}},
+{l:"坐著聽完,順便記下他從哪聽來的",c:K("n",7),ok:{sk:{n:1},x:"你順藤摸瓜,找出了在外面替你吹噓的同行。"},ng:{wanted:1,x:"你問得太多,反而讓旁人起了疑心。"}},
+{l:"由他去講",r:{wanted:1,money:80,x:"名聲傳開了,找上門的生意也多了。只是,盯著你的人也多了。"}}
+]);
+ev("j8","門縫裡的包裹",function(S){return "清晨,門縫裡塞著一個油紙包。打開來是一小罐燈油,罐底刻著三道痕。"+(S.st&&S.st.jin>=1?"你想起了燼。":"")},[
+{l:"收下燈油",r:{flag:"extraOil",st:{jin:1},x:"燈油的味道很淡,點起來幾乎沒有煙。"}},
+{l:"把罐子放回門口",r:{virtue:1,x:"第二天,罐子不見了。門口留下一小撮泥土。"}},
+{l:"順著泥腳印找過去",c:K("f",7),ok:{st:{jin:1},clue:"送燈油的人在城外的破廟落腳。牆上同樣刻著三道痕。",x:"腳印在城外的破廟前斷了。廟牆上,刻著三道痕。"},ng:{x:"腳印在大路上就斷了。"}}
+]);
+ev("j9","古董圈的鑑定會","古董圈辦了一場私下的鑑定會,有人拿出一件「漢代玉璧」,現場叫價已經喊到一千。",[
+{l:"上前細看",c:K("a",8),ok:{money:200,sk:{a:1},x:"你當眾指出那是仿品。藏家們記住了你的眼力,私下塞了你一筆謝禮。"},ng:{money:-100,x:"你看走了眼,還跟著喊了價。"}},
+{l:"跟著喊價",r:function(S){return Math.random()<.35?{money:600,x:"你買下後轉手,賺了一筆。"}:{money:-300,x:"你買下的,是一塊染過色的石頭。"}}},
+{l:"只看不說",r:{sk:{n:1},x:"你在角落把每個買家的臉都記了下來。"}}
+]);
+ev("j10","高燒","上一趟下墓回來,你發了三天高燒,夢裡全是墓道。",[
+{l:"好好休養",r:{hp:4,san:2,money:-80,x:"你在床上躺了好幾天。醒來的時候,窗外已經換了季節。"}},
+{l:"硬撐著繼續準備",r:{hp:-2,money:100,x:"你接了一筆小生意。身體在抗議,但錢是真的。"}},
+{l:"找郎中開藥",need:{herb:1},r:{herb:-1,hp:3,san:1,x:"藥很苦,但第二天你就能下床了。"}}
+]);
+ev("j11","拜師的少年","一個十四五歲的少年跪在你門口,說他想學「地底下的本事」。",[
+{l:"收他當跑腿,不教真本事",r:{money:-30,sk:{n:1},x:"少年很勤快,替你打聽了不少消息。"}},
+{l:"勸他去讀書",r:{virtue:2,money:-50,x:"你塞給他一點學費。他走的時候,回頭看了你好幾次。"}},
+{l:"把你會的都教給他",r:{virtue:-1,loyal:{zhou:2},x:"他學得很快。快得讓你有點害怕。"}}
+]);
+ev("j12","文物單位的人","一個戴眼鏡的年輕人上門,自稱是文物單位的研究員。他說,他想找懂行的人幫忙。",[
+{l:"幫他看幾件東西",c:K("a",7),ok:{virtue:1,wanted:-1,money:100,x:"你替他鑑定了幾件文物。臨走前,他說:「有需要,隨時來找我。」"},ng:{x:"你看了半天,說不出所以然。他客氣地道謝離開了。"}},
+{l:"推說不懂",r:{x:"他看了你一眼,沒有拆穿你。"}},
+{l:"跟他說你知道一座墓",r:{virtue:2,wanted:-2,money:-50,x:"你把一座小墓的位置告訴了他。那座墓,後來被好好地保護了起來。"}}
+]);
+ev("j13","隊友家裡出事",function(S){return "你常合作的夥伴託人捎來口信:家裡出了事,急需一筆錢。"},[
+{l:"二話不說,送錢過去",r:{money:-200,virtue:1,loyal:{old:1,lian:1,prof:1,fat:1,mo:1,zhou:1,tie:1,yao:1},x:"消息傳得很快。行裡的人都知道,你是講義氣的。"}},
+{l:"借他,但要他下次少分一點",r:{money:-200,loyal:{fat:-1,tie:-1},x:"他答應了,只是笑得有點勉強。"}},
+{l:"說最近手頭也緊",r:{loyal:{old:-1,lian:-1,prof:-1,fat:-1,mo:-1,zhou:-1,tie:-1,yao:-1},x:"你省下了錢。下次組隊時,有幾個人回訊息回得特別慢。"}}
+]);
+ev("j14","藏寶圖","市集角落,一個老頭兜售一張「祖傳藏寶圖」,開價三百。",[
+{l:"買下",r:function(S){return Math.random()<.25?{money:-300,flag:"intel",x:"圖居然是真的,上面畫的是下一座墓的捷徑。"}:{money:-300,x:"圖上的地形,跟你家巷口一模一樣。"}}},
+{l:"先驗紙張和墨色",c:K("a",7),ok:{x:"紙是新的,墨是今年的。你把圖還給了他。"},ng:{money:-300,x:"你被老頭的說詞打動,買了下來。後來才發現,那是一張舊地圖的影印本。"}},
+{l:"轉身離開",r:{x:"老頭在你背後喊:「後悔別來找我!」"}}
+]);
+ev("j15","雨夜敲門","下大雨的夜裡,有人敲你的門。一下,兩下,三下。停了很久,又是三下。",[
+{l:"開門",r:function(S){return S.st&&S.st.jin>=1?{st:{jin:1},san:-1,clue:"雨夜裡來敲門的是燼。他說:「今年的燈,快燒完了。」",x:"門外站著燼,渾身濕透。他什麼也沒說,只是借了你的屋簷站到天亮。"}:{san:-2,x:"門外沒有人。門檻上,有三道濕淋淋的刻痕。"}}},
+{l:"隔著門問是誰",r:{san:-1,x:"沒有人回答。敲門聲停了,地板上,水從門縫一點一點滲進來。"}},
+{l:"點亮所有的燈,坐到天亮",r:{san:1,money:-20,x:"你一夜沒睡。天亮時,雨停了,門口什麼都沒有。"}}
+]);
+
+/* ===== v2.3 主線後續(每卷多一段) ===== */
+ev("s1b","裴先生的鋪子","幾天後,裴先生請你到他的古董鋪喝茶。內室的牆上,掛滿了刻著燈紋的物件。「這些,都是我花了二十年,一件一件收回來的。」",[
+{l:"答應替他找一件燈紋物件",r:{st:{pei:1},money:200,x:"他預付了一筆錢,笑得很溫和:「不急,下墓的時候留意就好。」"}},
+{l:"問他為什麼收這些",c:K("n",7),ok:{st:{truth:1},clue:"裴先生收藏的燈紋物件,全都出自三十年前那支七人隊。",x:"他沉默了一下:「我父親,也是那七個人之一。」"},ng:{x:"他笑而不答,替你斟滿了茶。"}},
+{l:"藉口有事,先走了",r:{st:{pei:-1},x:"你走出門時,背後的風鈴響了很久。"}}
+],{vol:"卷一 · 三道刻痕(續)"});
+ev("s2b","窗外的人","那天夜裡,你醒來時,看見燼坐在窗台上,望著月亮。「你師父也常這樣睡不著。」他說。",[
+{l:"把剩下的乾糧分給他",r:{st:{jin:1},food:-1,x:"他接過乾糧,咬了一口,說:「三十年沒吃過熱的了。」"}},
+{l:"問他三十年前發生了什麼",c:K("g",7),ok:{st:{truth:1,jin:1},clue:"燼說:七個人進了無名墓,出來三個。他留下了,是因為有人把他的名字寫進了燈簿。",x:"他講得很慢,像是在回想一個很久以前的夢。"},ng:{san:-1,x:"他轉頭看你。月光底下,他的影子是空的。你沒敢再問。"}},
+{l:"悄悄寫信告訴裴先生",need:{st:{pei:1}},r:{st:{pei:1,jin:-1},x:"天亮時,窗台上多了三道刻痕,很深,像是用指甲刻的。"}}
+],{vol:"卷二 · 七人出行圖(續)"});
+ev("s3b","洪三爺的宴","洪三爺派人送來請帖,說要請你吃頓飯,「把誤會說開」。宴席擺在城裡最大的酒樓。",[
+{l:"赴宴,當面把話說清楚",c:K("n",8),ok:{st:{hong:-1},money:150,x:"你們喝了三杯。洪三爺拍著你的肩說:「年輕人,有種。」"},ng:{st:{hong:1},hp:-1,x:"話不投機。你走出酒樓時,後巷有人在等你。"}},
+{l:"託病不去",r:{st:{hong:1},x:"洪三爺的人把請帖原封不動地退了回來,上面多了一個指印。"}},
+{l:"帶裴先生一起去",need:{st:{pei:1}},r:{st:{pei:1,hong:-1},x:"裴先生和洪三爺像是舊識。整頓飯,他們聊的都是三十年前的事。"}}
+],{vol:"卷三 · 先到的人(續)"});
+ev("s4b","燼的請求","燼在城外的破廟等你。他背對著你說:「如果你真的走到無名墓的最深處,替我做一件事。」",[
+{l:"答應他",r:{st:{jin:1},clue:"燼的請求:在無名墓的最深處,念出他的名字。",x:"他沒有回頭,只是點了點頭。肩膀好像輕了一點。"}},
+{l:"問他為什麼不自己去",r:{st:{truth:1},clue:"燼說:「點燈的人,念不出自己的名字。」",x:"「點燈的人,是念不出自己名字的。」他說,「三十年了,我早就忘了它是怎麼念的。」"}},
+{l:"拒絕",r:{st:{jin:-1},x:"他沉默了很久,最後說:「也好。」然後就不見了。"}}
+],{vol:"卷四 · 你的名字(續)"});
+ev("s5b","裴先生的真面目","回到岸上,裴先生已經在等你。他第一次沒有笑:「我父親的名字,也在那本燈簿上。我只想把它劃掉。至於要寫誰上去……那不重要。」",[
+{l:"說你懂他的心情",r:{st:{pei:1},x:"他看著你,眼眶紅了一下:「我就知道,你跟你師父不一樣。」"}},
+{l:"問他:被寫上去的人怎麼辦?",r:{st:{truth:1,pei:-1},clue:"裴先生打算改寫燈簿,讓一個陌生人代替他父親的名字。",x:"他沒有回答。他把金絲眼鏡摘下來,慢慢地擦,擦了很久。"}},
+{l:"什麼都不說,把拓片收好",need:{st:{rub:1}},r:{virtue:1,x:"你把拓片按在胸口。他看見了,但什麼都沒說。"}}
+],{vol:"卷五 · 水底的油布包(續)"});
+
 /* ===== 引擎 ===== */
 const $=id=>document.getElementById(id);
 const rnd=n=>Math.floor(Math.random()*n),d6=()=>1+rnd(6),pick=a=>a[rnd(a.length)];
@@ -884,7 +981,9 @@ try{CODEX=JSON.parse(localStorage.getItem(CODEXKEY))||CODEX}catch(e){}
 function saveCodex(){try{localStorage.setItem(CODEXKEY,JSON.stringify(CODEX))}catch(e){}}
 function A(i){if(ACT[i])ACT[i]()}
 function Bk(acts){return function(l,f,cls,dis){acts.push(f);return '<button class="btn '+(cls||'')+'" '+(dis?'disabled':'')+' onclick="A('+(acts.length-1)+')">'+l+'</button>'}}
-function show(html,acts){$("app").innerHTML=html;ACT=acts||[];try{window.scrollTo(0,0)}catch(e){}}
+function show(html,acts){$("app").innerHTML=html;ACT=acts||[];try{window.scrollTo(0,0)}catch(e){}
+ AUD.sync();sanFx();
+}
 ORIGINS[5].d+="(現代常識:對付毒氣、陷阱、水下的判定 +1)";
 
 function newState(){return{origin:null,talents:[],marked:false,sk:{f:0,m:0,a:0,g:0,b:0,n:0},hp:8,san:8,oil:0,money:0,wanted:0,virtue:0,flags:{},age:6,gi:0,round:1,owned:{},cons:{},team:[],loyal:{},loot:[],rooms:[],ri:0,tomb:null,dark:0,donated:0,rerolls:2,tombsDone:0,luckUsed:false,prep:{gear:{},team:[]},seen:[],best:null,food:2,herb:1,mat:0,camp:{stove:0,herb:0,shop:0},up:{},mode:"",tm:0,visited:[],st:{pei:0,jin:0,hong:0,truth:0,rub:0,book:0},journal:[],history:[],phase:"birth"}}
@@ -892,10 +991,6 @@ function oilName(){return S&&S.tomb&&S.tomb.oxy?"氧氣":"燈油"}
 function TM(){return S.tomb&&S.tomb.meter&&!S.tomb.delve?S.tomb.meter:null}
 const hpMax=()=>8+S.sk.b,sanMax=()=>8+S.sk.g,oilMax=()=>8+(S.owned.lamp?3:0)+(S.up&&S.up.lamp?2:0);
 
-function bar(){
- const m=function(l,v,mx,cls){return '<div class="chip"><small>'+l+'</small><b>'+v+(mx?'<small>/'+mx+'</small>':'')+'</b>'+(cls?'<div class="meter '+cls+'"><i style="width:'+Math.max(0,Math.min(100,v/mx*100))+'%"></i></div>':'')+'</div>'};
- return '<div class="bar">'+m("體力",S.hp,hpMax(),"hp")+m("理智",S.san,sanMax(),"san")+m(oilName(),S.oil,oilMax(),"oil")+m("資金",S.money)+m("通緝",S.wanted,10)+m("陰德",S.virtue)+'</div>';
-}
 
 /* --- 效果 --- */
 function gearSk(k){let v=0;if(S.up){if(k==="f"&&S.up.shovel)v++;if(k==="b"&&S.up.rope)v++}for(const id in GEAR){const g=GEAR[id];if(g.perm&&S.owned[id]&&g.sk&&g.sk[k])v+=g.sk[k]}return v}
@@ -931,6 +1026,7 @@ function applyFx(fx,e){
  if(fx.clue&&S.journal.indexOf(fx.clue)<0){S.journal.push(fx.clue);ch.push('<span class="it">線索已記入筆記</span>')}
  [["food","乾糧"],["herb","藥材"],["mat","材料"]].forEach(function(r){if(fx[r[0]]){S[r[0]]=Math.max(0,S[r[0]]+fx[r[0]]);ch.push('<span class="'+(fx[r[0]]>0?"up":"dn")+'">'+r[1]+" "+(fx[r[0]]>0?"+":"")+fx[r[0]]+'</span>')}});
  if(fx.flag)S.flags[fx.flag]=1;
+ if(fx.loot)addLoot(fx.loot,ch);
  if(fx.lose){if(S.team.length){const id=pick(S.team);S.team.splice(S.team.indexOf(id),1);ch.push('<span class="dn">失去隊友 '+TEAM[id].n+'</span>')}else{S.hp-=3;ch.push('<span class="dn">體力 -3</span>')}}
  return ch;
 }
@@ -940,22 +1036,6 @@ function deathCheck(){
  if(S.wanted>=10)return"L1";
  if(S.money<-500)return"J3";
  return null;
-}
-function doCheck(c){
- const base=S.sk[c.s],gb=gearSk(c.s);
- let cov=c.t&&coverTags().indexOf(c.t)>=0?2:0;
- if(S.flags.cross&&["poison","trap","water"].indexOf(c.t)>=0)cov+=1;
- const mate=S.team.some(id=>TEAM[id].sk===c.s&&S.loyal[id]>0)?1:0;
- const dark=(S.tomb&&S.oil<=0)?-2:0;
- let roll=d6(),re="";
- const al=TM()&&TM().k==="alert"?Math.floor(S.tm/2):0;
- const dc=c.d+(S.tomb&&S.tomb.dc?S.tomb.dc:0)+al;
- let tot=base+gb+cov+mate+dark+roll,ok=tot>=dc;
- if(!ok&&S.flags.lucky&&S.tomb&&!S.luckUsed){S.luckUsed=true;const r2=d6();if(r2>roll){roll=r2;tot=base+gb+cov+mate+dark+roll;ok=tot>=dc;re="(運氣爆棚,重擲)"}}
- let alx="";if(!ok&&TM()&&TM().k==="alert"&&S.tm<TM().max){S.tm++;alx="(警戒 +1)"}
- const parts=[SK[c.s]+" "+(base+gb),"骰 "+roll];
- if(cov)parts.push("護具 +"+cov);if(mate)parts.push("隊友 +1");if(dark)parts.push("摸黑 -2");
- return{ok:ok,txt:"判定【"+parts.join(" + ")+" = "+tot+"】對上難度 "+dc+(ok?" 成功":" 失敗")+re+alx};
 }
 function needOK(n){
  if(n.gear&&!(GEAR[n.gear].perm?S.owned[n.gear]:S.cons[n.gear]))return false;
@@ -973,43 +1053,13 @@ function needOK(n){
 
 /* --- 事件畫面 --- */
 function garble(s,seed){const a=s.split("");for(let i=0;i<a.length;i++){if((i+seed)%3===0&&/[一-龥]/.test(a[i]))a[i]="▇"}return a.join("")}
-function playEvent(e,ctx){
- const acts=[],B=Bk(acts);
- const desc=typeof e.d==="function"?e.d(S):e.d;
- let h=(ctx.head?ctx.head():"")+bar();
- const sh=e.rules&&S.san<=3?" shake":"";
- h+='<div class="card'+sh+'"><div class="sub">'+(ctx.sub||"")+'</div><h2>'+e.t+'</h2><p>'+desc+'</p>';
- if(e.rules){
-  h+='<div class="tablet"><h3>'+e.rt+'</h3>';
-  e.rules.forEach(function(r,i){h+='<div>'+(i+1)+'. '+(S.san<=3&&i===(e.id.length+S.san)%e.rules.length?garble(r,i):r)+'</div>'});
-  h+='</div>';
-  const hint=S.team.indexOf("mo")>=0||S.flags.see||S.virtue>=3||(e.id==="r1"&&S.flags.noturn);
-  if(hint&&e.id!=="r7"){
-   if(e.fake.length)h+='<div class="hint">(直覺)你隱約覺得,第 '+(e.fake[0]+1)+' 條有點不對勁。</div>';
-   else h+='<div class="hint">(直覺)這些規則似乎都是真的,關鍵在於它們怎麼互相牽制。</div>';
-  }
- }
- h+='</div>';
- e.o.forEach(function(o){
-  if(o.need&&!needOK(o.need))return;
-  let tag="";
-  if(o.c){const df=o.c.d<=6?["易","e"]:o.c.d<=8?["中","m"]:["難","h"];tag='<span class="tag '+df[1]+'">'+SK[o.c.s]+"·"+df[0]+'</span>'}
-  h+=B(o.l+tag,function(){choose(e,o,ctx)});
- });
- show(h,acts);
-}
-function choose(e,o,ctx){
- if(o.puz)return startPuzzle(o.puz,e,ctx);
- let out,chk="";
- if(o.c){const r=doCheck(o.c);chk=r.txt;out=r.ok?o.ok:o.ng}
- else out=typeof o.r==="function"?o.r(S):o.r;
- showResult(e,out||{},chk,ctx);
-}
 let RES=null;
 function showResult(e,out,chk,ctx){
+ const snd=AUD.snap();
  const chips=applyFx(out,e);
  RES={e:e,out:out,chk:chk,ctx:ctx,chips:chips,end:out.end||null,death:out.end?null:deathCheck()};
  renderResult();
+ AUD.react(snd,chk);
 }
 function renderResult(){
  const R=RES,e=R.e,ctx=R.ctx,acts=[],B=Bk(acts);
@@ -1028,6 +1078,7 @@ function renderResult(){
 function lastStand(id,cont){
  const hpD=S.hp<=0&&S.food>0,sanD=S.hp>0&&S.san<=0&&S.herb>0;
  if(!hpD&&!sanD)return endGame(id);
+ AUD.heartbeat();
  const acts=[],B=Bk(acts);
  let h=bar()+'<div class="card"><div class="cat">生死關頭</div><h2>'+(hpD?"眼前一黑":"腦子裡全是聲音")+'</h2><p>'+(hpD?"你的腿軟了下去。手指在懷裡摸到了最後一點乾糧。":"你抓著自己的頭,有人在你耳邊一直叫你的名字。你摸到了懷裡的安神藥。")+'</p></div>';
  h+=B(hpD?"硬撐:嚼下乾糧 <small>乾糧 -1,體力回到 2</small>":"硬撐:吞下安神藥 <small>藥材 -1,理智回到 2</small>",function(){
@@ -1044,47 +1095,13 @@ function interlude(text,next,label){
 
 /* --- 標題 / 圖鑑 --- */
 function hasSave(){try{return !!localStorage.getItem(SAVEKEY)}catch(e){return false}}
-function renderTitle(){
- const acts=[],B=Bk(acts);
- let h='<div class="title"><div class="lantern"></div><h1>盜墓人生模擬器</h1><p>下墓之前,先投胎</p></div>';
- h+=B("開始投胎",startNew,"main");
- if(hasSave())h+=B("繼續上次的旅程",loadGame);
- h+=delveUnlocked()?B("魔窟挑戰 <small>最深紀錄:第 "+((CODEX.delve&&CODEX.delve.depth)||0)+" 層</small>",startDelve):'<button class="btn" disabled>魔窟挑戰 <small>解鎖任意 3 個結局後開放</small></button>';
- h+=B("圖鑑 · 結局 "+Object.keys(CODEX.end).length+"/"+Object.keys(ENDINGS).length,renderCodex);
- h+='<p class="dim" style="font-size:12px;text-align:center;margin-top:24px">本作為虛構故事,人物、墓穴與設定皆為原創。<br>盜墓是違法行為,請勿模仿,文物屬於所有人。</p>';
- show(h,acts);
-}
-function renderCodex(){
- const acts=[],B=Bk(acts);
- const cats=["主線","財富線","法律線","詭異線","江湖線"];
- let total=0;ITEMS.forEach(function(t){total+=t.length});
- let h='<div class="card"><h2>圖鑑</h2><div class="sub">結局 '+Object.keys(CODEX.end).length+'/'+Object.keys(ENDINGS).length+' · 明器 '+Object.keys(CODEX.items).length+'/'+total+'</div></div>';
- cats.forEach(function(c){
-  h+='<div class="cat" style="margin:10px 0 4px">'+c+'</div><div class="grid2">';
-  Object.keys(ENDINGS).filter(k=>ENDINGS[k].c===c).forEach(function(k){
-   h+=CODEX.end[k]?'<div class="cell">'+ENDINGS[k].n+'</div>':'<div class="cell lock">？？？</div>';
-  });
-  h+='</div>';
- });
- h+=B("返回",renderTitle,"ghost");
- show(h,acts);
-}
 
 /* --- 投胎 --- */
-function startNew(){S=newState();rollBirth();}
+function startNew(){AUD.mode="";S=newState();rollBirth();}
 function rollBirth(){
  S.origin=pick(ORIGINS);S.talents=shuffle(TALENTS).slice(0,3);
  S.marked=S.origin.flag==="cross"||Math.random()<.5;
  renderBirth();
-}
-function renderBirth(){
- const acts=[],B=Bk(acts),o=S.origin;
- let h='<div class="title" style="padding:20px 0 8px"><h2 class="big">投胎</h2></div>';
- h+='<div class="card"><div class="cat">出身</div><h2>'+o.n+'</h2><p>'+o.d+'</p><div class="fx">'+Object.keys(o.sk).filter(k=>o.sk[k]).map(k=>'<span>'+SK[k]+' '+o.sk[k]+'</span>').join("")+'<span>資金 '+o.money+'</span></div></div>';
- h+='<div class="card"><div class="cat">天賦</div>'+S.talents.map(t=>'<p><b style="color:var(--gold)">'+t.n+'</b><span class="dim"> '+t.d+'</span></p>').join("")+'<p class="dim" style="font-size:13px">據說,有些人的命格裡藏著不乾淨的東西。你看不出來。</p></div>';
- h+=B("接受命運",acceptBirth,"main");
- h+=B("再投一次胎(剩 "+S.rerolls+" 次)",function(){if(S.rerolls>0){S.rerolls--;rollBirth()}},"",S.rerolls<=0);
- show(h,acts);
 }
 function acceptBirth(){applyBirth();S.growth=GROWTH_SLOTS.map(s=>pick(s));S.hp=hpMax();S.san=sanMax();S.gi=0;renderGrowth()}
 function applyBirth(){
@@ -1125,13 +1142,6 @@ function startRound(){
   nav:function(){return[{l:"前往備戰",cls:"main",f:renderPrep}]}
  });
 }
-function loadGame(){
- try{S=JSON.parse(localStorage.getItem(SAVEKEY))}catch(e){return startNew()}
- S.team=[];S.cons={};S.prep={gear:{},team:[]};S.tomb=null;S.loot=[];
- S.st=S.st||{pei:0,jin:0,hong:0,truth:0,rub:0,book:0};S.journal=S.journal||[];S.visited=S.visited||[];S.tm=0;
- if(S.food===undefined){S.food=2;S.herb=1;S.mat=0;S.camp={stove:0,herb:0,shop:0};S.up={}}
- renderPrep();
-}
 function prepCost(){
  let c=0;
  for(const k in S.prep.gear)if(S.prep.gear[k]&&!(GEAR[k].perm&&S.owned[k]))c+=GEAR[k].c;
@@ -1140,69 +1150,13 @@ function prepCost(){
 }
 function hearts(id){const n=Math.max(0,Math.min(5,Math.ceil((S.loyal[id]===undefined?5:S.loyal[id])/2)));return"♥".repeat(n)+"♡".repeat(5-n)}
 let PTAB="gear";
-function renderPrep(){
- const acts=[],B=Bk(acts),t=TOMBS[S.round-1],cost=prepCost(),left=S.money-cost;
- let h=bar()+'<div class="card"><div class="cat">第 '+S.round+' 輪 · 備戰</div><h2>'+t.n+'</h2><p class="dim">'+t.hint+'</p><div class="rule">'+t.rule+'</div></div>';
- const tabs=[["gear","裝備"],["team","隊友 "+S.prep.team.length+"/3"],["camp","大本營"],["more","江湖"]];
- h+='<div class="tabs">'+tabs.map(function(x){return B(x[1],function(){PTAB=x[0];renderPrep()},PTAB===x[0]?"sel":"")}).join("")+'</div>';
- if(PTAB==="gear"){
-  const own=Object.keys(GEAR).filter(k=>GEAR[k].perm&&S.owned[k]);
-  if(own.length)h+='<div class="owned">已擁有:'+own.map(k=>GEAR[k].n+(S.up[k]?"(強化)":"")).join("、")+'</div>';
-  Object.keys(GEAR).forEach(function(k){
-   const g=GEAR[k];if(g.perm&&S.owned[k])return;
-   h+=B(g.n+' <small>'+g.c+' 元'+(g.perm?"(永久)":"(本輪)")+' · '+g.d+'</small>',function(){S.prep.gear[k]=!S.prep.gear[k];renderPrep()},S.prep.gear[k]?"sel":"");
-  });
- }else if(PTAB==="team"){
-  Object.keys(TEAM).forEach(function(k){
-   const m=TEAM[k],on=S.prep.team.indexOf(k)>=0;
-   h+=B('<span class="mate"><span>'+m.n+' <small>'+SK[m.sk]+' · '+m.c+' 元</small></span><span class="dim">'+hearts(k)+'</span></span><small>'+m.d+'</small>',function(){
-    if(on)S.prep.team.splice(S.prep.team.indexOf(k),1);else if(S.prep.team.length<3)S.prep.team.push(k);
-    renderPrep();
-   },on?"sel":"");
-  });
- }else if(PTAB==="camp"){
-  h+='<div class="owned">庫存:乾糧 '+S.food+' · 藥材 '+S.herb+' · 材料 '+S.mat+'</div>';
-  [["stove","營灶","每輪產出乾糧"],["herb","藥圃","每輪產出藥材"],["shop","工坊","每輪產出材料"]].forEach(function(b){
-   const lv=S.camp[b[0]],uc=lv===0?150:300;
-   h+=B(b[1]+" Lv"+lv+" <small>"+b[2]+" +"+lv+(lv<2?" · 升級 "+uc+" 元":" · 已滿級")+"</small>",function(){if(lv<2&&S.money-prepCost()>=uc){S.money-=uc;S.camp[b[0]]++;renderPrep()}},"",lv>=2||left<uc);
-  });
-  [["shovel","強化洛陽鏟",3,"尋龍再 +1"],["lamp","強化油燈",3,"燈油上限再 +2"],["rope","強化繩索",2,"體能再 +1"]].forEach(function(u){
-   if(!S.owned[u[0]]||S.up[u[0]])return;
-   h+=B(u[1]+" <small>材料 "+u[2]+" · "+u[3]+"</small>",function(){if(S.mat>=u[2]){S.mat-=u[2];S.up[u[0]]=1;renderPrep()}},"",S.mat<u[2]);
-  });
-  if(!S.owned.shovel&&!S.owned.lamp&&!S.owned.rope)h+='<p class="dim" style="font-size:13px">買下洛陽鏟、油燈或繩索之後,可以在這裡用材料強化。</p>';
- }else{
-  if(S.journal.length)h+=B("翻看師父的筆記 <small>"+S.journal.length+" 條線索</small>",renderJournal);
-  if(S.round>=2){
-   h+=B("金盆洗手 <small>從此收手,故事在這裡結束</small>",function(){confirmEnd("收手之後,故事就結束了。確定嗎?",retireEnding)},"warn");
-   if(S.wanted>=3)h+=B("去自首 <small>通緝 "+S.wanted+",陰德 3 以上可以減刑</small>",function(){confirmEnd("你要去派出所自首嗎?",function(){return S.virtue>=3?"L2":"L1"})},"warn");
-  }else h+='<p class="dim">第 2 輪起,可以在這裡金盆洗手。</p>';
- }
- h+='<div class="dock"><div class="dim" style="font-size:14px">預算 '+S.money+' − '+cost+' = <b style="color:'+(left<0?"var(--red)":"var(--gold)")+'">'+left+'</b>'+(S.prep.team.length?' · 隊友:'+S.prep.team.map(id=>TEAM[id].n).join("、"):"")+'</div>'+B(left>=0?"出發,下墓":"資金不足",function(){if(S.money-prepCost()>=0)goTomb()},"main",left<0)+'</div>';
- show(h,acts);
-}
-function renderJournal(){
- const acts=[],B=Bk(acts);
- show(bar()+'<div class="card"><div class="cat">主線</div><h2>師父的筆記</h2>'+S.journal.map(function(c,i){return"<p>"+(i+1)+". "+c+"</p>"}).join("")+'</div>'+B("返回",renderPrep,"main"),acts);
-}
 function playStory(id,next){
- playEvent(E[id],{head:function(){return'<div class="cat" style="margin-top:6px">主線 · '+E[id].vol+'</div>'},sub:"",nav:function(){return[{l:"繼續",cls:"main",f:next}]}});
+ AUD.phrase(.1);
+ playEvent(E[id],{head:function(){return'<div class="cat" style="margin-top:6px">主線 · '+E[id].vol+'</div>'},sub:"",nav:function(){return[{l:"繼續",cls:"main",f:function(){if(E[id+"b"])playStory(id+"b",next);else next()}}]}});
 }
 function confirmEnd(msg,fn){
  const acts=[],B=Bk(acts);
  show(bar()+'<div class="card"><p>'+msg+'</p></div>'+B("確定",function(){endGame(fn())},"warn")+B("再想想",renderPrep,"ghost"),acts);
-}
-function retireEnding(){
- const m=S.money,w=S.wanted,v=S.virtue;
- if(S.donated>=2)return"L5";
- if(w>=8)return"L4";
- if(v>=6&&S.sk.a>=4)return"L3";
- if(S.round>=5&&S.loyal&&Object.keys(S.loyal).length>=2&&Object.keys(S.loyal).every(k=>S.loyal[k]>=5))return"J2";
- if(m>=6000)return w>=5?"W6":"W1";
- if(m>=3000&&v<=-3)return"W5";
- if(m>=3000&&w<=6)return"W2";
- if(m>=1500)return"W3";
- return"W4";
 }
 function goTomb(){
  const cost=prepCost();S.money-=cost;
@@ -1219,7 +1173,7 @@ function goTomb(){
   if(S.flags.intel){const i=mids.findIndex(id=>!E[id].rules);if(i>=0)mids.splice(i,1);delete S.flags.intel}
   S.rooms=[t.in].concat(mids,[t.main]);
  }
- S.ri=0;S.dark=0;S.luckUsed=false;S.tm=t.meter?t.meter.start:0;S.visited=[];
+ S.ri=0;S.dark=0;S.luckUsed=false;S.tm=t.meter?t.meter.start:0;S.visited=S.visited||[];
  S.oil=oilMax()+(S.flags.extraOil?1:0);delete S.flags.extraOil;
  if(S.cons.rice)S.san=Math.min(sanMax(),S.san+2);
  if(S.cons.kit)S.hp=Math.min(hpMax(),S.hp+4);
@@ -1230,14 +1184,6 @@ function goTomb(){
 function teamLine(){
  if(!S.team.length)return'<div class="dim" style="font-size:13px">隊伍:只有你一人</div>';
  return'<div class="dim" style="font-size:13px">隊伍:'+S.team.map(function(id){const l=S.loyal[id];return TEAM[id].n+" "+hearts(id)+(l<=1?'<span style="color:var(--red)">(神色不對)</span>':"")}).join("　")+'</div>';
-}
-function showRoom(){
- const e=E[S.rooms[S.ri]];
- playEvent(e,{
-  head:function(){return'<div class="cat" style="margin-top:6px">'+(S.tomb.delve?'魔窟 · 第 '+(S.ri+1)+' 層 · 難度 +'+S.tomb.dc:'第 '+S.round+' 輪 · '+S.tomb.n+' · '+(S.ri+1)+'/'+S.rooms.length)+'</div>'+teamLine()+'<div class="dim" style="font-size:12px">乾糧 '+S.food+' · 藥材 '+S.herb+(TM()?' · <b style="color:var(--jade)">'+TM().n+' '+S.tm+'/'+TM().max+'</b>':'')+'</div>'+(S.ri===0&&S.tomb.rule&&!S.tomb.delve?'<div class="rule">'+S.tomb.rule+'</div>':'')},
-  sub:"",kind:"tomb",
-  nav:tombNav
- });
 }
 function tombNav(){
  if(S.tomb.delve)return[{l:S.oil<=0?"往下一層(燈已滅,摸黑前進)":"往下一層(燈油 -1)",cls:"main",f:nextRoom},{l:"撤離魔窟,帶著戰利品回地面",f:function(){delveEnd("retreat")}}];
@@ -1251,6 +1197,7 @@ function tombNav(){
  return b;
 }
 function nextRoom(){
+ const snd=AUD.snap(),cave=TM()&&TM().k==="cave"&&S.tm>=TM().max;
  S.ri++;
  if(S.tomb.delve)delveNext();
  let note="";
@@ -1267,6 +1214,7 @@ function nextRoom(){
  }
  if(S.team.indexOf("yao")>=0&&S.hp>0&&S.hp<hpMax()){S.hp++;note+=(note?" ":"")+"阿瑤替你包紮了一下。(體力 +1)"}
  if(S.team.indexOf("lian")>=0&&S.san<=3&&S.loyal.lian>0&&Math.random()<.2){S.loyal.lian=Math.max(0,S.loyal.lian-1);note+=(note?" ":"")+"阿蓮被低語刺激得有些失控。(阿蓮好感 -1)"}
+ AUD.room(snd,cave);
  const d=deathCheck();
  if(d)return interlude(note||"……",function(){lastStand(d,showRoom)});
  if(S.ri===S.rooms.length-1&&!S.tomb.fixed&&!S.tomb.delve){
@@ -1290,19 +1238,9 @@ function tombExit(){
  h+=B('文物單位 <small>只拿補助(×0.3),通緝 -1,陰德 +2</small>',function(){chooseChannel("mus",total)});
  show(h,acts);
 }
-function chooseChannel(c,total){
- let gain,fx={},note="";
- if(c==="black"){gain=Math.round(total*1.25);fx={wanted:1,virtue:-1};note="你把東西交給了黑市的人,他們數錢數得很快。";S.loyal.prof=Math.max(0,(S.loyal.prof===undefined?5:S.loyal.prof)-2)}
- else if(c==="ant"){gain=Math.round(total*(1+.05*S.sk.a));note="你把東西送進圈內人的手裡,他們討價還價,但最後還是成交了。"}
- else{gain=Math.round(total*.3);fx={wanted:-1,virtue:2};S.donated++;note="你把東西交給了文物單位。對方認真地登記了每一件,最後遞給你一份補助。"}
- if(!S.team.length){S.money+=gain;return afterSale(note+" 入帳 "+gain+" 元。",fxChips(fx))}
- const acts=[],B=Bk(acts);
- show(bar()+'<div class="card"><p>'+note+'</p><p>這筆錢,<b style="color:var(--gold)">'+gain+'</b> 元,怎麼分?</p></div>'+
- B('平分 <small>你拿 ×0.8,隊友好感 +1</small>',function(){S.money+=Math.round(gain*.8);applyFx({loyal:{all:1}});afterSale(note+" 入帳 "+Math.round(gain*.8)+" 元。",fxChips(fx))})+
- B('獨吞 <small>你拿全部,隊友好感 -2</small>',function(){S.money+=gain;applyFx({loyal:{all:-2}});afterSale(note+" 入帳 "+gain+" 元,隊友們沒說話。",fxChips(fx))}),acts);
-}
 function fxChips(fx){const c=applyFx(fx);return c}
 function afterSale(text,chips){
+ if(String(text).indexOf("空著手")<0)AUD.coin(.1);
  const quit=[];
  S.team.forEach(function(id){
   if(S.loyal[id]<=0){
@@ -1340,6 +1278,7 @@ function epilogue(id){
 }
 function endGame(id){
  if(S&&S.mode==="delve")return delveEnd(id);
+ AUD.mode="end";AUD.ending(id);recordStats(id);
  if(S&&S.visited&&S.visited.length){CODEX.recent=S.visited.slice();saveCodex()}
  CODEX.end[id]=1;saveCodex();
  try{localStorage.removeItem(SAVEKEY)}catch(e){}
@@ -1352,8 +1291,9 @@ function endGame(id){
  '<div class="cell" style="grid-column:span 2">最值錢的戰利品:'+(S.best?S.best.n+"("+S.best.v+")":"無")+'</div></div></div>';
  h+=B("生成分享卡",function(){shareCard(id,ttl)},"main");
  h+=B("再投一次胎",startNew);
+ h+=B("試玩回饋 <small>告訴開發者這一局玩起來怎麼樣</small>",function(){renderFeedback(id)},"ghost");
  h+=B("圖鑑",renderCodex,"ghost");
- show(h,acts);
+ show(h,acts);LAST_END={h:h,acts:acts};
 }
 function shareCard(id,ttl){
  const en=ENDINGS[id],cv=document.createElement("canvas");cv.width=720;cv.height=1000;
@@ -1383,6 +1323,118 @@ function closeModal(){$("modal").classList.remove("on")}
 
 
 
+
+/* ===== v2.3 理智視覺效果:越瘋,畫面越暗、文字越不穩 ===== */
+function sanFx(){
+ const b=document.body;if(!b||!b.classList)return;
+ const lv=(S&&S.tomb&&AUD.mode!=="end"&&AUD.mode!=="title")?(S.san<=2?2:S.san<=4?1:0):0;
+ b.classList.toggle("san-low",lv>=1);b.classList.toggle("san-crit",lv>=2);
+ if(lv<2||!document.querySelectorAll)return;
+ const esc=function(c){return c==="&"?"&amp;":c==="<"?"&lt;":c===">"?"&gt;":c};
+ document.querySelectorAll("#app .card > p").forEach(function(p,i){
+  if(i>1||p.children.length)return;
+  p.innerHTML=Array.from(p.textContent).map(function(ch){return /[一-鿿]/.test(ch)&&Math.random()<.07?'<span class="gl">'+ch+'</span>':esc(ch)}).join("");
+ });
+}
+
+/* ===== v2.3 魔窟戰績卡 ===== */
+function cardModal(cv,file){
+ cv.toBlob(function(bl){
+  const url=URL.createObjectURL(bl);
+  $("mbox").innerHTML='<img src="'+url+'" alt="戰績卡"><a class="btn main" style="display:block;text-align:center;text-decoration:none" download="'+file+'" href="'+url+'">下載圖片</a><button class="btn ghost" onclick="closeModal()">關閉</button>';
+  $("modal").classList.add("on");
+ });
+}
+function delveCard(depth,score,val,rec,id){
+ const cv=document.createElement("canvas");cv.width=720;cv.height=1000;
+ const g=cv.getContext("2d"),F='"Noto Serif TC","PingFang TC","Microsoft JhengHei",serif';
+ const gr=g.createLinearGradient(0,0,0,1000);gr.addColorStop(0,"#1a1410");gr.addColorStop(.55,"#0d0a07");gr.addColorStop(1,"#20090a");
+ g.fillStyle=gr;g.fillRect(0,0,720,1000);
+ for(let i=0;i<14;i++){g.strokeStyle="rgba(224,169,64,"+(0.05+i*0.012)+")";g.lineWidth=1;g.strokeRect(80+i*20,330+i*14,560-i*40,180-i*14+60)}
+ g.strokeStyle="#c4513a";g.lineWidth=3;g.strokeRect(24,24,672,952);g.lineWidth=1;g.strokeRect(34,34,652,932);
+ g.textAlign="center";
+ g.fillStyle="#9c917a";g.font="22px "+F;g.fillText("魔窟戰績卡",360,100);
+ g.fillStyle="#eadfc4";g.font="30px "+F;g.fillText(id==="retreat"?"活著爬回了地面":"倒在了魔窟深處",360,170);
+ g.fillStyle="#efbd5b";g.font="bold 150px "+F;g.fillText(depth,360,420);
+ g.fillStyle="#d8ccb0";g.font="bold 40px "+F;g.fillText("第 "+depth+" 層",360,490);
+ g.fillStyle="#c4513a";g.font="26px "+F;g.fillText("得分 "+score+(rec?" · 新紀錄":""),360,550);
+ const cause=id==="retreat"?"全身而退":(ENDINGS[id]?"死因:"+ENDINGS[id].n:"死因不明");
+ const lines=[cause,"出身:"+(S.origin?S.origin.n:"?"),"同行:"+((S.team&&S.team.length)?S.team.map(function(t){return TEAM[t].n}).join("、"):"獨自一人"),"戰利品估價 "+val,"個人最深紀錄:第 "+((CODEX.delve&&CODEX.delve.depth)||depth)+" 層"];
+ g.fillStyle="#9c917a";g.font="24px "+F;lines.forEach(function(l,i){g.fillText(l,360,640+i*42)});
+ g.fillStyle="#efbd5b";g.font="24px "+F;g.fillText("你能下到第幾層?",360,900);
+ g.fillStyle="#6a6150";g.font="18px "+F;g.fillText("盜墓人生模擬器 · 魔窟挑戰",360,940);
+ cardModal(cv,"tomb-delve-"+depth+".png");
+}
+
+
+/* ===== v2.3 試玩回饋與遊玩統計 =====
+   FEEDBACK_URL:若之後做了 Google 表單,把表單網址貼在這裡,
+   玩家按「送出回饋」時會開啟表單;留空則改為複製回饋文字。 */
+const FEEDBACK_URL="";
+const VERSION="v2.3";
+let LAST_END=null;
+function recordStats(id){
+ const st=CODEX.stats=CODEX.stats||{runs:0,rounds:0,ends:{},deathAt:{}};
+ st.runs++;st.rounds+=(S.round||1);st.ends[id]=(st.ends[id]||0)+1;
+ const dead=["J4","G1","G7","G8","G9","J1"].indexOf(id)>=0;
+ if(dead&&S.tomb){const k=S.tomb.n;st.deathAt[k]=(st.deathAt[k]||0)+1}
+ saveCodex();
+}
+function statsHtml(){
+ const st=CODEX.stats;
+ if(!st||!st.runs)return'<p class="dim">完成第一局之後,這裡會統計你的遊玩紀錄。</p>';
+ const ends=Object.keys(st.ends).sort(function(a,b){return st.ends[b]-st.ends[a]});
+ const dk=Object.keys(st.deathAt).sort(function(a,b){return st.deathAt[b]-st.deathAt[a]});
+ const maxD=dk.length?st.deathAt[dk[0]]:1;
+ let h='<div class="dashboard"><div class="cell"><strong>'+st.runs+'</strong><small>總局數</small></div><div class="cell"><strong>'+(st.rounds/st.runs).toFixed(1)+'</strong><small>平均輪數</small></div><div class="cell"><strong>'+dk.reduce(function(a,k){return a+st.deathAt[k]},0)+'</strong><small>死在墓裡</small></div></div>';
+ h+='<div class="section-title"><span>最常走到的結局</span><span>次數</span></div>';
+ h+=ends.slice(0,6).map(function(k){return'<div class="log-item"><b>'+(ENDINGS[k]?ENDINGS[k].n:k)+'</b><p class="dim">'+st.ends[k]+' 次</p></div>'}).join("");
+ h+='<div class="section-title"><span>最常喪命的墓</span><span>次數</span></div>';
+ h+=dk.length?dk.map(function(k){return'<div class="skill-card" style="margin:6px 0"><div class="skill-head"><span>'+k+'</span><b>'+st.deathAt[k]+'</b></div><div class="skill-track"><i style="width:'+(st.deathAt[k]/maxD*100)+'%"></i></div></div>'}).join(""):'<p class="dim">還沒有死在墓裡過。</p>';
+ return h;
+}
+function feedbackText(id,fb){
+ const st=CODEX.stats||{runs:0,ends:{},deathAt:{}};
+ const L=["【盜墓人生模擬器 "+VERSION+" 試玩回饋】",
+  "結局:"+(ENDINGS[id]?ENDINGS[id].n+"("+ENDINGS[id].c+")":id),
+  "出身:"+(S.origin?S.origin.n:"?")+" · 走到第 "+S.round+" 輪 · 完成 "+S.tombsDone+" 座墓",
+  "最後所在:"+(S.tomb?S.tomb.n+" 第 "+(S.ri+1)+" 間房":"地面"),
+  "難度感受:"+(fb.diff||"未填")+" · 好玩程度:"+(fb.fun?fb.fun+" / 5":"未填"),
+  "最喜歡的部分:"+(fb.like||"未填"),
+  "卡關或不清楚的地方:"+(fb.stuck||"未填"),
+  "累計:"+st.runs+" 局 · 已解鎖結局 "+Object.keys(CODEX.end).length+"/"+Object.keys(ENDINGS).length];
+ return L.join("\n");
+}
+function copyText(t,done){
+ const fall=function(){const ta=document.createElement("textarea");ta.value=t;ta.style.position="fixed";ta.style.left="-9999px";document.body.appendChild(ta);ta.select();try{document.execCommand("copy");done(true)}catch(e){done(false)}ta.remove()};
+ if(navigator.clipboard&&navigator.clipboard.writeText)navigator.clipboard.writeText(t).then(function(){done(true)},fall);else fall();
+}
+function renderFeedback(id){
+ const fb={diff:"",fun:0,like:"",stuck:""};
+ function draw(msg){
+  const acts=[],B=Bk(acts);
+  let h='<div class="card"><div class="cat">試玩回饋</div><h2>這一局玩起來怎麼樣?</h2><p class="dim">選一選、寫幾句就好。送出後,開發者會知道哪裡需要調整。</p></div>';
+  h+='<div class="card"><div class="section-title"><span>難度感受</span><span>'+(fb.diff||"未選")+'</span></div><div class="tabs codex-tabs">'+["太簡單","剛剛好","太難"].map(function(x){return B(x,function(){fb.diff=x;keep();draw()},fb.diff===x?"sel":"")}).join("")+'</div>';
+  h+='<div class="section-title"><span>好玩程度</span><span>'+(fb.fun?fb.fun+" / 5":"未選")+'</span></div><div class="tabs" style="grid-template-columns:repeat(5,1fr)">'+[1,2,3,4,5].map(function(n){return B("★".repeat(n),function(){fb.fun=n;keep();draw()},fb.fun===n?"sel":"")}).join("")+'</div>';
+  h+='<div class="section-title"><span>最喜歡的部分</span><span>選填</span></div><textarea id="fbLike" rows="2" style="width:100%;font:inherit;font-size:14px;background:#120f0b;color:var(--ink);border:1px solid var(--line);border-radius:8px;padding:8px">'+esc(fb.like)+'</textarea>';
+  h+='<div class="section-title"><span>卡關或看不懂的地方</span><span>選填</span></div><textarea id="fbStuck" rows="3" style="width:100%;font:inherit;font-size:14px;background:#120f0b;color:var(--ink);border:1px solid var(--line);border-radius:8px;padding:8px">'+esc(fb.stuck)+'</textarea>';
+  if(msg)h+='<div class="save-strip">'+msg+'</div>';
+  h+='</div>';
+  h+=B(FEEDBACK_URL?"送出回饋 <small>會開啟回饋表單,並先複製內容</small>":"複製回饋內容 <small>貼到 LINE、Messenger 或 Threads 傳給開發者</small>",function(){
+   keep();const t=feedbackText(id,fb);
+   copyText(t,function(ok){
+    if(FEEDBACK_URL){try{window.open(FEEDBACK_URL,"_blank")}catch(e){}}
+    draw(ok?"回饋內容已複製,謝謝你!":"無法自動複製,請長按下方文字手動複製:<br><span style='white-space:pre-wrap'>"+esc(t)+"</span>");
+   });
+  },"main");
+  h+=B("返回結局",function(){keep();if(LAST_END)show(LAST_END.h,LAST_END.acts);else renderTitle()},"ghost");
+  show(h,acts);
+ }
+ function keep(){const a=document.getElementById("fbLike"),b=document.getElementById("fbStuck");if(a)fb.like=a.value;if(b)fb.stuck=b.value}
+ function esc(s){return String(s||"").replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;")}
+ draw();
+}
+
 /* ===== 機關解謎 ===== */
 const PZ={};
 const BEAST_V=[
@@ -1390,9 +1442,8 @@ const BEAST_V=[
 {t:"墓誌:「冬盡春來,春盡夏生,夏盡秋至。」",s:"(北方主冬,東方主春,南方主夏,西方主秋。)",a:["玄武","青龍","朱雀","白虎"]},
 {t:"壁畫:「日出之方在先,正午之方次之,日落之方又次之,子夜之方居末。」",s:"(日出東方,日落西方。)",a:["青龍","朱雀","白虎","玄武"]}
 ];
-function startPuzzle(kind,e,ctx){PZ[kind](e,ctx)}
+function startPuzzle(kind,e,ctx){AUD.stone();PZ[kind](e,ctx)}
 function pzHead(e,ctx,intro){return(ctx.head?ctx.head():"")+bar()+'<div class="card"><div class="sub">機關</div><h2>'+e.t+'</h2><p>'+intro+'</p>'}
-function pzEnd(e,ctx,ok){showResult(e,ok?e.win:e.lose,ok?"機關破解成功":"機關破解失敗",ctx)}
 function pzKit(acts){return function(l,f,c){acts.push(f);return'<button class="pzc '+(c||"")+'" onclick="A('+(acts.length-1)+')">'+l+'</button>'}}
 
 PZ.magic=function(e,ctx){
@@ -1533,7 +1584,7 @@ function delvePool(){
 }
 function delveUnlocked(){return Object.keys(CODEX.end).length>=3}
 function startDelve(){
- S=newState();S.mode="delve";
+ AUD.mode="";S=newState();S.mode="delve";
  S.origin=pick(ORIGINS);S.talents=shuffle(TALENTS).slice(0,3);S.marked=S.origin.flag==="cross"||Math.random()<.5;
  applyBirth();
  S.sk.f++;S.sk.m++;S.sk.g++;
@@ -1550,13 +1601,14 @@ function delveNext(){
  else{const pool=delvePool().filter(id=>id!==S.rooms[S.ri-1]);S.rooms[S.ri]=pick(pool)}
 }
 function delveEnd(id){
+ AUD.mode="end";if(id==="retreat"){AUD.resolve();AUD.coin(.9)}else AUD.doom();
  const depth=S.ri+1,val=S.loot.reduce((a,b)=>a+b.v,0),score=depth*100+Math.round(val/10);
  CODEX.delve=CODEX.delve||{depth:0,score:0};
  const rec=depth>CODEX.delve.depth||score>CODEX.delve.score;
  CODEX.delve.depth=Math.max(CODEX.delve.depth,depth);CODEX.delve.score=Math.max(CODEX.delve.score,score);saveCodex();
  const acts=[],B=Bk(acts);
  const how=id==="retreat"?"你帶著戰利品爬回了地面。":"你倒在魔窟第 "+depth+" 層。"+(ENDINGS[id]?"(死因:"+ENDINGS[id].n+")":"");
- show('<div class="title" style="padding:26px 0 10px"><div class="cat">魔窟挑戰</div><h1 style="font-size:30px">第 '+depth+' 層</h1><p style="letter-spacing:.2em">得分 '+score+(rec?" · 新紀錄":"")+'</p></div><div class="card"><p>'+how+'</p><p class="dim">戰利品估價 '+val+' · 最深紀錄第 '+CODEX.delve.depth+' 層 · 最高分 '+CODEX.delve.score+'</p></div>'+B("再下一次魔窟",startDelve,"main")+B("回到標題",renderTitle,"ghost"),acts);
+ show('<div class="title" style="padding:26px 0 10px"><div class="cat">魔窟挑戰</div><h1 style="font-size:30px">第 '+depth+' 層</h1><p style="letter-spacing:.2em">得分 '+score+(rec?" · 新紀錄":"")+'</p></div><div class="card"><p>'+how+'</p><p class="dim">戰利品估價 '+val+' · 最深紀錄第 '+CODEX.delve.depth+' 層 · 最高分 '+CODEX.delve.score+'</p></div>'+B("生成魔窟戰績卡",function(){delveCard(depth,score,val,rec,id)},"main")+B("再下一次魔窟",startDelve)+B("回到標題",renderTitle,"ghost"),acts);
 }
 
 /* ==========================================================
@@ -1705,16 +1757,17 @@ function skillPanel(sk){
  return '<div class="skill-panel">'+keys.map(function(k){const v=Math.max(0,Math.min(5,Number(sk[k]||0)));return '<div class="skill-card"><div class="skill-head"><span>'+SK[k]+'</span><b>'+v+' / 5</b></div><div class="skill-track"><i style="width:'+(v*20)+'%"></i></div></div>'}).join("")+'</div>';
 }
 function renderTitle(){
+ AUD.mode="title";
  const acts=[],B=Bk(acts),ends=Object.keys(CODEX.end).length,total=Object.keys(ENDINGS).length,items=Object.keys(CODEX.items).filter(n=>ITEMS.some(row=>row.some(x=>x.n===n))).length;
  let h='<div class="title"><div class="hero-kicker">民國怪談 · 人生抉擇 · 地底求生</div><div class="lantern"></div><h1>盜墓人生模擬器</h1><p>下墓之前，先投胎</p><div class="hero-subtitle">一盞燈、一支隊伍、幾個不能回頭的選擇。<br>你帶得走寶物，帶不走每一次的代價。</div></div>';
- h+='<div class="dashboard"><div class="cell"><strong>'+ends+'/'+total+'</strong><small>已解鎖結局</small></div><div class="cell"><strong>'+items+'/20</strong><small>明器圖鑑</small></div><div class="cell"><strong>'+((CODEX.delve&&CODEX.delve.depth)||0)+'</strong><small>魔窟最深層</small></div></div>';
+ h+='<div class="dashboard"><div class="cell"><strong>'+ends+'/'+total+'</strong><small>已解鎖結局</small></div><div class="cell"><strong>'+items+'/'+ITEMS.reduce((a,r)=>a+r.length,0)+'</strong><small>明器圖鑑</small></div><div class="cell"><strong>'+((CODEX.delve&&CODEX.delve.depth)||0)+'</strong><small>魔窟最深層</small></div></div>';
  h+=B("開始新的命運",startNew,"main");
  if(hasSave())h+=B("繼續上次的旅程 <small>第 "+((function(){try{return JSON.parse(localStorage.getItem(SAVEKEY)).round||1}catch(e){return 1}})())+" 輪 · 自動存檔</small>",loadGame);
  h+=delveUnlocked()?B("魔窟挑戰 <small>最深紀錄：第 "+((CODEX.delve&&CODEX.delve.depth)||0)+" 層</small>",startDelve):'<button class="btn" disabled>魔窟挑戰 <small>解鎖任意 3 個結局後開放</small></button>';
  h+=B("圖鑑與結局",renderCodex);
  h+=B("玩法指南與生存提示",renderGuide,"ghost");
  h+=B("匯入存檔備份（JSON）",importSaveFile,"ghost");
- h+='<div class="footer-note">v2.1 關係互動版 · 本作為虛構故事，文物屬於所有人，請勿模仿現實盜墓行為。</div>';
+ h+='<div class="footer-note">v2.3 · 本作為虛構故事，文物屬於所有人，請勿模仿現實盜墓行為。</div>';
  show(h,acts);
 }
 function renderGuide(){
@@ -1749,6 +1802,7 @@ function renderBirth(){
  show(h,acts);
 }
 function loadGame(){
+ AUD.mode="";
  try{S=JSON.parse(localStorage.getItem(SAVEKEY))}catch(e){return startNew()}
  if(!S||!S.origin)return startNew();
  S.flags=S.flags||{};S.sk=S.sk||{f:0,m:0,a:0,g:0,b:0,n:0};
@@ -1767,6 +1821,7 @@ function renderPrep(){
  let h=bar()+'<div class="card"><div class="cat">第 '+S.round+' 輪 · 備戰階段</div><h2>'+t.n+'</h2><p class="dim">'+t.hint+'</p>'+(t.rule?'<div class="rule">'+t.rule+'</div>':'')+'</div>';
  h+='<div class="card"><div class="section-title"><span>角色能力</span><span>能力越高，判定越穩</span></div>'+skillPanel(S.sk)+'<div class="grid2"><div class="cell">信任關係：'+Object.keys(S.loyal).filter(k=>S.loyal[k]>=5).length+' 人</div><div class="cell">已完成墓穴：'+S.tombsDone+' 座</div></div></div>';
  h+='<div class="tabs">'+[["gear","裝備"],["team","隊友 "+S.prep.team.length+"/3"],["camp","大本營"],["more","江湖"]].map(function(x){return B(x[1],function(){PTAB=x[0];renderPrep()},PTAB===x[0]?"sel":"")}).join("")+'</div>';
+ h+=B('人物關係 <small>查看夥伴信任與互動</small>',renderRelationships,"relationship-link");
  if(PTAB==="gear"){
   const own=Object.keys(GEAR).filter(k=>GEAR[k].perm&&S.owned[k]);
   if(own.length)h+='<div class="owned">永久裝備：'+own.map(k=>GEAR[k].n+(S.up[k]?"（已強化）":"")).join("、")+'</div>';
@@ -1828,6 +1883,8 @@ function showRoom(){
  const id=S.rooms[S.ri],e=E[id];
  if(!e){return interlude("這一段墓道似乎發生了錯誤。你先退回備戰處，避免丟失進度。",renderPrep,"返回備戰")}
  S.visited=S.visited||[];if(S.visited.indexOf(id)<0)S.visited.push(id);
+ if(S.ri===0&&!S.tomb.delve)AUD.door();
+ if(e.rules)AUD.whisper(.3);
  playEvent(e,{
   head:function(){return '<div class="cat" style="margin-top:6px">'+(S.tomb.delve?'魔窟 · 第 '+(S.ri+1)+' 層 · 難度 +'+S.tomb.dc:'第 '+S.round+' 輪 · '+S.tomb.n+' · '+(S.ri+1)+'/'+S.rooms.length)+'</div>'+teamLine()+'<div class="dim" style="font-size:12px">乾糧 '+S.food+' · 藥材 '+S.herb+(TM()?' · <b style="color:var(--jade)">'+TM().n+' '+S.tm+'/'+TM().max+'</b>':'')+'</div>'+(S.ri===0&&S.tomb.rule&&!S.tomb.delve?'<div class="rule">'+S.tomb.rule+'</div>':'')},
   sub:"",kind:"tomb",nav:tombNav
@@ -1855,8 +1912,8 @@ function chooseChannel(c,total){
   else note="你把東西送進圈內人的手裡，他們討價還價，但最後還是成交了。";
  }else{gain=Math.round(total*.3);fx={wanted:-1,virtue:2};S.donated++;note="你把東西交給了文物單位。對方認真地登記了每一件，最後遞給你一份補助。"}
  if(!S.team.length){S.money+=gain;return afterSale(note+" 入帳 "+gain+" 元。",fxChips(fx))}
- const acts=[],B=Bk(acts),fat=S.team.indexOf("fat")>=0&&S.loyal.fat>0,share=fat?0.7:0.8,shareLoyal=fat?2:1,soloPenalty=fat?3:2;
- show(bar()+'<div class="card"><p>'+note+'</p><p>這筆錢，<b style="color:var(--gold)">'+gain+'</b> 元，怎麼分？</p>'+(fat?'<div class="hint">胖叔替你談了分帳比例，你可以保留 85% 的收入。</div>':'')+'</div>'+B('平分 <small>你拿 ×'+share.toFixed(2)+'，隊友好感 +1</small>',function(){S.money+=Math.round(gain*share);applyFx({loyal:{all:1}});afterSale(note+" 入帳 "+Math.round(gain*share)+" 元。",fxChips(fx))})+B('獨吞 <small>你拿全部，隊友好感 -2</small>',function(){S.money+=gain;applyFx({loyal:{all:-2}});afterSale(note+" 入帳 "+gain+" 元，隊友們沒說話。",fxChips(fx))}),acts);
+ const acts=[],B=Bk(acts),fat=S.team.indexOf("fat")>=0&&S.loyal.fat>0,share=fat?0.85:0.8,shareLoyal=fat?2:1,soloPenalty=fat?3:2;
+ show(bar()+'<div class="card"><p>'+note+'</p><p>這筆錢，<b style="color:var(--gold)">'+gain+'</b> 元，怎麼分？</p>'+(fat?'<div class="hint">胖叔替你談了分帳比例，你可以保留 85% 的收入。</div>':'')+'</div>'+B('平分 <small>你拿 ×'+share.toFixed(2)+'，隊友好感 +'+shareLoyal+'</small>',function(){S.money+=Math.round(gain*share);applyFx({loyal:{all:shareLoyal}});afterSale(note+" 入帳 "+Math.round(gain*share)+" 元。",fxChips(fx))})+B('獨吞 <small>你拿全部，隊友好感 -'+soloPenalty+'</small>',function(){S.money+=gain;applyFx({loyal:{all:-soloPenalty}});afterSale(note+" 入帳 "+gain+" 元，隊友們沒說話。",fxChips(fx))}),acts);
 }
 
 
@@ -1885,7 +1942,7 @@ function importSaveFile(){
 let CODEX_TAB="ends";
 function renderCodex(){
  const acts=[],B=Bk(acts),endCount=Object.keys(CODEX.end).length,itemCount=Object.keys(CODEX.items).filter(n=>ITEMS.some(row=>row.some(x=>x.n===n))).length;
- let h=bar()+'<div class="card"><div class="cat">收藏與紀錄</div><h2>圖鑑</h2><div class="dashboard"><div class="cell"><strong>'+endCount+'/'+Object.keys(ENDINGS).length+'</strong><small>已解鎖結局</small></div><div class="cell"><strong>'+itemCount+'/20</strong><small>已發現明器</small></div><div class="cell"><strong>'+((CODEX.delve&&CODEX.delve.depth)||0)+'</strong><small>魔窟最深層</small></div></div><div class="tabs codex-tabs">'+B("結局",function(){CODEX_TAB="ends";renderCodex()},CODEX_TAB==="ends"?"sel":"")+B("明器",function(){CODEX_TAB="items";renderCodex()},CODEX_TAB==="items"?"sel":"")+B("探索紀錄",function(){CODEX_TAB="recent";renderCodex()},CODEX_TAB==="recent"?"sel":"")+'</div>';
+ let h=bar()+'<div class="card"><div class="cat">收藏與紀錄</div><h2>圖鑑</h2><div class="dashboard"><div class="cell"><strong>'+endCount+'/'+Object.keys(ENDINGS).length+'</strong><small>已解鎖結局</small></div><div class="cell"><strong>'+itemCount+'/'+ITEMS.reduce((a,r)=>a+r.length,0)+'</strong><small>已發現明器</small></div><div class="cell"><strong>'+((CODEX.delve&&CODEX.delve.depth)||0)+'</strong><small>魔窟最深層</small></div></div><div class="tabs codex-tabs">'+B("結局",function(){CODEX_TAB="ends";renderCodex()},CODEX_TAB==="ends"?"sel":"")+B("明器",function(){CODEX_TAB="items";renderCodex()},CODEX_TAB==="items"?"sel":"")+B("探索紀錄",function(){CODEX_TAB="recent";renderCodex()},CODEX_TAB==="recent"?"sel":"")+B("遊玩統計",function(){CODEX_TAB="stats";renderCodex()},CODEX_TAB==="stats"?"sel":"")+'</div>';
  if(CODEX_TAB==="ends"){
   ["主線","財富線","法律線","詭異線","江湖線"].forEach(function(c){
    const ids=Object.keys(ENDINGS).filter(k=>ENDINGS[k].c===c);
@@ -1894,9 +1951,11 @@ function renderCodex(){
   });
  }else if(CODEX_TAB==="items"){
   ITEMS.forEach(function(row,i){h+='<div class="section-title"><span>第 '+(i+1)+' 類明器</span><span>'+row.filter(x=>CODEX.items[x.n]).length+'/'+row.length+'</span></div><div class="grid2">';row.forEach(function(it){h+=CODEX.items[it.n]?'<div class="cell"><b>'+it.n+'</b><br><small class="dim">圖鑑估價 '+it.v+'</small></div>':'<div class="cell lock">？？？<br><small>尚未發現</small></div>'});h+='</div>'});
+ }else if(CODEX_TAB==="stats"){
+  h+=statsHtml();
  }else{
   const recent=(CODEX.recent||[]).map(id=>E[id]).filter(Boolean);
-  h+='<p class="dim">最近一次深入墓穴所遇到的房間（只記錄實際進入的區域）。</p>';
+  h+='<p class="dim">上一局走過的所有房間。下一局會優先安排你還沒見過的房間。</p>';
   h+=recent.length?recent.map((e,i)=>'<div class="log-item"><b>'+(i+1)+'. '+e.t+'</b><p class="dim">'+(typeof e.d==="function"?"這是一段特殊記憶。":e.d)+'</p></div>').join(""):'<p class="dim">尚無探索紀錄，完成第一次下墓後便會出現在這裡。</p>';
  }
  h+='</div>'+B("返回標題",renderTitle,"main");show(h,acts);
@@ -1968,17 +2027,257 @@ function renderRelationships(){
  document.querySelectorAll('[data-rel-talk]').forEach(function(el){el.addEventListener('click',function(){const id=this.getAttribute('data-rel-talk');if(S.relationActions[id]===S.round)return;S.loyal[id]=Math.min(9,(S.loyal[id]===undefined?5:S.loyal[id])+1);S.relationActions[id]=S.round;saveProgress();renderRelationships()})});
  document.querySelectorAll('[data-rel-gift]').forEach(function(el){el.addEventListener('click',function(){const id=this.getAttribute('data-rel-gift');if(S.relationActions[id]===S.round||S.money<80)return;S.money-=80;S.loyal[id]=Math.min(9,(S.loyal[id]===undefined?5:S.loyal[id])+2);S.relationActions[id]=S.round;saveProgress();renderRelationships()})});
 }
-const __renderPrepRelations=renderPrep;
-renderPrep=function(){
- __renderPrepRelations();
- const tabs=document.querySelector('#app .tabs');
- if(tabs&&!document.getElementById('relationship-entry')){
-  const b=document.createElement('button');b.id='relationship-entry';b.className='btn relationship-link';b.textContent='人物關係 · 查看夥伴信任與互動';b.addEventListener('click',renderRelationships);tabs.insertAdjacentElement('afterend',b);
- }
-};
 
 /* 版本標記與小型狀態修正 */
 if(S){S.history=S.history||[]}
+
+
+/* ==========================================================
+   v2.2 氛圍音樂與音效層(Web Audio 即時合成,不需任何音檔)
+   - 每個場景有自己的背景音:標題、江湖、六座墓各一種、結局
+   - 判定、骰子、戰利品、受傷、理智下降、燈滅、塌方、規則房低語等音效
+   - 理智 3 以下在墓中會出現心跳與耳鳴
+   - 右下角喇叭按鈕可開關、調整音樂與音效音量(會記住設定)
+   ========================================================== */
+const AUD=(function(){
+ const KEY="tomb_sim_audio_v1";
+ const cfg={on:true,music:.55,sfx:.8};
+ try{Object.assign(cfg,JSON.parse(localStorage.getItem(KEY))||{})}catch(e){}
+ let ctx=null,master,musicBus,sfxBus,verb,analyser,NB=null,cur=null,sceneName="",pending="title",dread=null;
+ const api={mode:""};
+ function save(){try{localStorage.setItem(KEY,JSON.stringify(cfg))}catch(e){}}
+ function now(){return ctx.currentTime}
+ function ready(){return ctx&&cfg.on&&ctx.state==="running"}
+
+ /* ---------- 基礎 ---------- */
+ function init(){
+  if(ctx){if(cfg.on&&ctx.state==="suspended")ctx.resume();return true}
+  const AC=window.AudioContext||window.webkitAudioContext;if(!AC)return false;
+  try{ctx=new AC()}catch(e){return false}
+  master=ctx.createGain();master.gain.value=1;
+  const comp=ctx.createDynamicsCompressor();comp.threshold.value=-20;comp.ratio.value=4;
+  comp.connect(master);master.connect(ctx.destination);
+  analyser=ctx.createAnalyser();analyser.fftSize=512;master.connect(analyser);
+  musicBus=ctx.createGain();musicBus.gain.value=cfg.music;musicBus.connect(comp);
+  sfxBus=ctx.createGain();sfxBus.gain.value=cfg.sfx;sfxBus.connect(comp);
+  verb=ctx.createConvolver();verb.buffer=impulse(3.2,2.6);
+  const vg=ctx.createGain();vg.gain.value=.4;verb.connect(vg);vg.connect(comp);
+  if(!cfg.on)ctx.suspend();else if(ctx.state==="suspended")ctx.resume();
+  setScene(pending);updateDread();
+  return true;
+ }
+ function nbuf(){
+  if(NB)return NB;
+  const len=ctx.sampleRate*2;NB=ctx.createBuffer(1,len,ctx.sampleRate);
+  const d=NB.getChannelData(0);for(let i=0;i<len;i++)d[i]=Math.random()*2-1;
+  return NB;
+ }
+ function impulse(sec,dec){
+  const r=ctx.sampleRate,len=Math.floor(r*sec),b=ctx.createBuffer(2,len,r);
+  for(let c=0;c<2;c++){const d=b.getChannelData(c);for(let i=0;i<len;i++)d[i]=(Math.random()*2-1)*Math.pow(1-i/len,dec)}
+  return b;
+ }
+ function send(v){const g=ctx.createGain();g.gain.value=v;g.connect(verb);return g}
+ function env(g,t,a,peak,dur){g.gain.setValueAtTime(.0001,t);g.gain.exponentialRampToValueAtTime(Math.max(.0002,peak),t+a);g.gain.exponentialRampToValueAtTime(.0001,t+dur)}
+ function osc(type,f,t,dur,peak,dest,o){
+  o=o||{};const s=ctx.createOscillator(),g=ctx.createGain();
+  s.type=type;s.frequency.setValueAtTime(f,t);
+  if(o.to)s.frequency.exponentialRampToValueAtTime(o.to,t+(o.glide||dur));
+  if(o.detune)s.detune.value=o.detune;
+  env(g,t,o.a||.005,peak,dur);s.connect(g);let out=g;
+  if(o.lp){const fl=ctx.createBiquadFilter();fl.type="lowpass";fl.frequency.value=o.lp;g.connect(fl);out=fl}
+  out.connect(dest||sfxBus);if(o.verb)out.connect(send(o.verb));
+  s.start(t);s.stop(t+dur+.1);
+ }
+ function nz(t,dur,peak,type,freq,q,dest,o){
+  o=o||{};const s=ctx.createBufferSource();s.buffer=nbuf();s.loop=true;
+  const f=ctx.createBiquadFilter();f.type=type;f.frequency.setValueAtTime(freq,t);
+  if(o.to)f.frequency.exponentialRampToValueAtTime(o.to,t+dur);f.Q.value=q||1;
+  const g=ctx.createGain();env(g,t,o.a||.005,peak,dur);
+  s.connect(f);f.connect(g);g.connect(dest||sfxBus);if(o.verb)g.connect(send(o.verb));
+  s.start(t,Math.random()*1.5);s.stop(t+dur+.1);
+ }
+
+ /* ---------- 樂器與環境聲 ---------- */
+ const PENTA=[146.83,174.61,196,220,261.63,293.66,349.23,392];
+ function pluck(f,t,v,dest){
+  osc("triangle",f,t,2.4,v,dest||musicBus,{a:.004,lp:1500,verb:.6,to:f*.996});
+  osc("sine",f*2,t,1.1,v*.3,dest||musicBus,{a:.004,verb:.4});
+ }
+ function bell(t,base,v,dest){[1,2.76,5.4,8.93].forEach(function(p,i){osc("sine",base*p,t,3.2/(1+i*.6),v/(1+i*1.4),dest,{a:.003,verb:.7})})}
+ function drip(t,dest){const f=1300+Math.random()*1000;osc("sine",f,t,.14,.07,dest,{to:f*.45,glide:.1,verb:.9})}
+ function bubbles(t,dest){const n=2+Math.floor(Math.random()*4);for(let i=0;i<n;i++){const f=250+Math.random()*350;osc("sine",f,t+i*.07,.09,.05,dest,{to:f*3.5,glide:.08})}}
+ function whisperAt(t,dest,v){nz(t,1.8,v||.05,"bandpass",1300+Math.random()*1200,4,dest,{a:.7,verb:.6,to:900+Math.random()*900})}
+ function metal(t,dest){const n=1+Math.floor(Math.random()*3);for(let i=0;i<n;i++)nz(t+i*.11,.05,.05,"bandpass",3500+Math.random()*2500,8,dest,{verb:.7})}
+ function crumble(t,dest){nz(t,.8,.08,"lowpass",420,1,dest,{a:.05,verb:.5})}
+
+ function drone(c,freqs,type,vol,lp,rate){
+  freqs.forEach(function(f,i){
+   const s=ctx.createOscillator();s.type=type||"sine";s.frequency.value=f;s.detune.value=i%2?7:-7;
+   const fl=ctx.createBiquadFilter();fl.type="lowpass";fl.frequency.value=lp||600;
+   const g=ctx.createGain();g.gain.value=vol;
+   const l=ctx.createOscillator(),lg=ctx.createGain();l.frequency.value=(rate||.07)*(1+i*.31);lg.gain.value=vol*.6;
+   l.connect(lg);lg.connect(g.gain);s.connect(fl);fl.connect(g);g.connect(c.g);
+   s.start();l.start();c.srcs.push(s,l);
+  });
+ }
+ function wind(c,vol,center,q){
+  const s=ctx.createBufferSource();s.buffer=nbuf();s.loop=true;
+  const f=ctx.createBiquadFilter();f.type="bandpass";f.frequency.value=center;f.Q.value=q||.7;
+  const g=ctx.createGain();g.gain.value=vol;
+  const l=ctx.createOscillator(),lg=ctx.createGain();l.frequency.value=.04+Math.random()*.05;lg.gain.value=center*.45;l.connect(lg);lg.connect(f.frequency);
+  const l2=ctx.createOscillator(),lg2=ctx.createGain();l2.frequency.value=.09+Math.random()*.05;lg2.gain.value=vol*.7;l2.connect(lg2);lg2.connect(g.gain);
+  s.connect(f);f.connect(g);g.connect(c.g);s.start();l.start();l2.start();c.srcs.push(s,l,l2);
+ }
+ function every(c,min,max,fn){
+  const tick=function(){if(c.dead)return;if(ready())fn(now()+.05);c.timers.push(setTimeout(tick,(min+Math.random()*(max-min))*1000))};
+  c.timers.push(setTimeout(tick,(min*.4+Math.random()*min)*1000));
+ }
+
+ /* ---------- 場景配樂 ---------- */
+ const SCENES={
+  title:function(c){drone(c,[73.42,110],"triangle",.05,480,.05);every(c,3,6.5,function(t){const n=1+Math.floor(Math.random()*3);for(let i=0;i<n;i++)pluck(PENTA[Math.floor(Math.random()*PENTA.length)],t+i*.42,.09,c.g)})},
+  surface:function(c){drone(c,[98,146.83],"sine",.04,420,.06);every(c,4.5,9,function(t){pluck(PENTA[2+Math.floor(Math.random()*6)],t,.07,c.g)})},
+  story:function(c){drone(c,[73.42,110,146.83],"triangle",.035,520,.04);every(c,2.5,5,function(t){pluck(PENTA[Math.floor(Math.random()*5)],t,.08,c.g)})},
+  end:function(c){drone(c,[55,82.4],"triangle",.045,380,.04);every(c,6,11,function(t){pluck(PENTA[Math.floor(Math.random()*4)],t,.06,c.g)})},
+  /* 荒丘漢墓:土、水滴、偶爾落土 */
+  tomb0:function(c){drone(c,[41.2,61.7],"sawtooth",.024,210);wind(c,.05,380);every(c,2.5,6,function(t){drip(t,c.g)});every(c,8,16,function(t){crumble(t,c.g)})},
+  /* 唐墓:壁畫與鐘磬 */
+  tomb1:function(c){drone(c,[46.25,69.3],"sawtooth",.02,240);wind(c,.035,340);every(c,3,7,function(t){drip(t,c.g)});every(c,7,14,function(t){bell(t,330+Math.random()*190,.035,c.g)});every(c,9,18,function(t){pluck(PENTA[Math.floor(Math.random()*4)],t,.05,c.g)})},
+  /* 明墓:機關的金屬聲 */
+  tomb2:function(c){drone(c,[43.65,65.4,92.5],"sawtooth",.018,220);wind(c,.03,300);every(c,2,5,function(t){drip(t,c.g)});every(c,4,9,function(t){metal(t,c.g)})},
+  /* 沙漠:風沙與駝鈴 */
+  tomb3:function(c){drone(c,[49,73.4],"triangle",.032,300);wind(c,.09,650,.5);wind(c,.035,1800,1.2);every(c,10,20,function(t){for(let i=0;i<3;i++)bell(t+i*.55,520,.025,c.g)})},
+  /* 水下:悶住的低頻與氣泡 */
+  tomb4:function(c){const lp=ctx.createBiquadFilter();lp.type="lowpass";lp.frequency.value=700;c.g.disconnect();c.g.connect(lp);lp.connect(musicBus);
+   drone(c,[36.7,55],"sine",.07,200,.05);wind(c,.045,240);every(c,.8,3,function(t){bubbles(t,c.g)});every(c,7,13,function(t){osc("sine",190,t,4,.03,c.g,{to:120,a:1.2,verb:.8})})},
+  /* 無名墓:不和諧的低鳴與低語 */
+  tomb5:function(c){drone(c,[41.2,43.65,58.27],"sawtooth",.02,260,.05);wind(c,.03,480);every(c,4,9,function(t){whisperAt(t,c.g,.045)});every(c,5,10,function(t){drip(t,c.g)});every(c,12,22,function(t){bell(t,196,.03,c.g)})}
+ };
+ function setScene(name){
+  if(!ctx){pending=name;return}
+  if(name===sceneName)return;
+  sceneName=name;
+  const old=cur;
+  if(old){old.dead=true;old.timers.forEach(clearTimeout);old.g.gain.setTargetAtTime(0,now(),.7);setTimeout(function(){old.srcs.forEach(function(s){try{s.stop()}catch(e){}});try{old.g.disconnect()}catch(e){}},4000)}
+  const g=ctx.createGain();g.gain.value=.0001;g.gain.setTargetAtTime(name.indexOf("tomb")===0?2.4:1,now()+.1,1.2);g.connect(musicBus);
+  cur={g:g,srcs:[],timers:[],dead:false,name:name};
+  (SCENES[name]||SCENES.surface)(cur);
+ }
+ function sceneFor(){
+  if(api.mode)return api.mode;
+  if(typeof S==="undefined"||!S)return"title";
+  if(S.tomb){
+   if(S.tomb.delve)return"tomb"+(Math.floor((S.ri||0)/4)%6);
+   const i=TOMBS.indexOf(S.tomb);return"tomb"+(i<0?0:i);
+  }
+  return"surface";
+ }
+
+ /* ---------- 理智過低:心跳與耳鳴 ---------- */
+ function beat(t,v){osc("sine",58,t,.16,v||.3,sfxBus,{to:38});osc("sine",52,t+.24,.14,(v||.3)*.7,sfxBus,{to:36})}
+ function updateDread(){
+  const want=!!(ctx&&!api.mode&&typeof S!=="undefined"&&S&&S.tomb&&S.san>0&&S.san<=3);
+  if(want&&!dread){
+   const s=ctx.createOscillator(),g=ctx.createGain();s.frequency.value=5200;g.gain.value=.0001;g.gain.setTargetAtTime(.006,now(),1.5);
+   const l=ctx.createOscillator(),lg=ctx.createGain();l.frequency.value=.3;lg.gain.value=.004;l.connect(lg);lg.connect(g.gain);
+   s.connect(g);g.connect(sfxBus);s.start();l.start();
+   const iv=setInterval(function(){if(ready())beat(now()+.02,.22)},1150);
+   dread={s:s,l:l,g:g,iv:iv};
+  }else if(!want&&dread){
+   const d=dread;dread=null;clearInterval(d.iv);d.g.gain.setTargetAtTime(0,now(),.4);
+   setTimeout(function(){try{d.s.stop();d.l.stop()}catch(e){}},2000);
+  }
+ }
+
+ /* ---------- 音效 ---------- */
+ const fx={
+  click:function(t){nz(t,.035,.05,"bandpass",2600,2)},
+  stone:function(t){osc("sine",170,t,.14,.18,sfxBus,{to:85});nz(t,.06,.08,"lowpass",900)},
+  dice:function(t){for(let i=0;i<5;i++)nz(t+i*.055+Math.random()*.025,.03,.12,"bandpass",2600+Math.random()*2200,3)},
+  ok:function(t){[293.66,349.23,440].forEach(function(f,i){pluck(f,t+i*.11,.13,sfxBus)})},
+  fail:function(t){osc("triangle",220,t,.6,.13,sfxBus,{to:104,lp:900});nz(t,.12,.08,"lowpass",300)},
+  coin:function(t){osc("sine",1568,t,.5,.06,sfxBus,{verb:.4});osc("sine",2093,t+.07,.55,.05,sfxBus,{verb:.4});osc("sine",2637,t+.13,.4,.03,sfxBus,{verb:.4})},
+  hurt:function(t){osc("sine",95,t,.35,.32,sfxBus,{to:42});nz(t,.18,.12,"lowpass",520)},
+  sanity:function(t){[440,466.16,622.25].forEach(function(f){osc("sine",f,t,1.4,.04,sfxBus,{to:f*.7,a:.25,verb:.7})})},
+  lampOut:function(t){nz(t,.5,.11,"highpass",3200,1,sfxBus,{to:700});osc("sine",80,t+.05,.45,.14,sfxBus,{to:50})},
+  step:function(t){nz(t,.09,.11,"lowpass",230);nz(t+.33,.09,.09,"lowpass",210)},
+  rumble:function(t){nz(t,1.9,.24,"lowpass",170,1,sfxBus,{a:.15,verb:.5});osc("sine",42,t,1.9,.18,sfxBus,{a:.15})},
+  door:function(t){nz(t,1.1,.16,"lowpass",260,1,sfxBus,{a:.2,verb:.6});osc("sine",62,t,1.1,.12,sfxBus,{a:.2,to:48})},
+  whisper:function(t){whisperAt(t,sfxBus,.08);whisperAt(t+.5,sfxBus,.06)},
+  gong:function(t){[1,1.5,2.1,2.9,3.7].forEach(function(p,i){osc("sine",98*p,t,5/(1+i*.4),.12/(1+i),sfxBus,{a:.004,verb:.7})})},
+  doom:function(t){osc("sine",58,t,3,.32,sfxBus,{to:28,a:.02});nz(t,2.2,.18,"lowpass",130,1,sfxBus,{verb:.8});[233.08,246.94].forEach(function(f){osc("sawtooth",f,t+.2,2.6,.03,sfxBus,{lp:700,a:.4,verb:.7})})},
+  resolve:function(t){[220,261.63,293.66,392].forEach(function(f,i){pluck(f,t+i*.28,.12,sfxBus)})},
+  phrase:function(t){[293.66,261.63,220,196].forEach(function(f,i){pluck(f,t+i*.38,.11,musicBus)})},
+  heartbeat:function(t){for(let i=0;i<3;i++)beat(t+i*.9,.34)}
+ };
+ Object.keys(fx).forEach(function(k){api[k]=function(delay){if(!ready())return;try{fx[k](now()+.02+(delay||0))}catch(e){}}});
+
+ /* ---------- 狀態變化 → 音效 ---------- */
+ api.snap=function(){return(typeof S==="undefined"||!S)?null:{hp:S.hp,san:S.san,oil:S.oil,tm:S.tm,loot:(S.loot||[]).length,inTomb:!!S.tomb}};
+ api.react=function(b,chk){
+  if(!b||!ready())return;let d=0;chk=chk||"";
+  if(chk.indexOf("判定")>=0){api.dice();d=.38;if(chk.indexOf("成功")>=0)api.ok(d);else api.fail(d);d+=.2}
+  else if(chk.indexOf("機關破解成功")>=0){api.gong();d=.3}
+  else if(chk.indexOf("機關破解失敗")>=0){api.fail();d=.2}
+  if((S.loot||[]).length>b.loot)api.coin(d);
+  if(S.hp<b.hp)api.hurt(d+.05);
+  if(S.san<b.san)api.sanity(d+.1);
+  if(b.inTomb&&b.oil>0&&S.oil<=0)api.lampOut(d);
+ };
+ api.sync=function(){const n=sceneFor();if(!ctx){pending=n;return}setScene(n);updateDread()};
+ api.unlock=function(){if(!cfg.on)return;init()};
+ api.level=function(){if(!analyser)return 0;const a=new Float32Array(analyser.fftSize);analyser.getFloatTimeDomainData(a);let s=0;for(const x of a)s+=x*x;return Math.sqrt(s/a.length)};
+ api.state=function(){return{ctx:ctx?ctx.state:"none",scene:sceneName,dread:!!dread,cfg:Object.assign({},cfg)}};
+ api.cfg=cfg;
+ api.ending=function(id){if(["M1","M2","M3","G5"].indexOf(id)>=0)api.gong();else if(["W1","W2","W3","W4","L2","L3","L4","L5","J2"].indexOf(id)>=0)api.resolve();else api.doom()};
+ api.room=function(b,cave){api.step();if(!b)return;if(cave)api.rumble(.2);else if(S.hp<b.hp)api.hurt(.35);if(S.san<b.san)api.sanity(.4);if(b.oil>0&&S.oil<=0)api.lampOut(.3)};
+ api.setOn=function(v){cfg.on=!!v;save();if(cfg.on){init();if(ctx)ctx.resume()}else if(ctx)ctx.suspend();paintBtn()};
+ api.setVol=function(k,v){cfg[k]=v;save();if(ctx){(k==="music"?musicBus:sfxBus).gain.setTargetAtTime(v,now(),.05)}};
+
+ /* ---------- 喇叭按鈕與設定面板 ---------- */
+ const ICON_ON='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M11 5 6 9H3v6h3l5 4z"/><path d="M15.5 8.5a5 5 0 0 1 0 7"/><path d="M18.5 5.5a9 9 0 0 1 0 13"/></svg>';
+ const ICON_OFF='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M11 5 6 9H3v6h3l5 4z"/><path d="m22 9-6 6"/><path d="m16 9 6 6"/></svg>';
+ function paintBtn(){
+  const b=document.getElementById("sndBtn"),t=document.getElementById("sndToggle");
+  if(b){b.innerHTML=cfg.on?ICON_ON:ICON_OFF;b.classList.toggle("off",!cfg.on);b.setAttribute("aria-label",cfg.on?"聲音:開啟":"聲音:關閉")}
+  if(t)t.textContent=cfg.on?"關閉聲音":"開啟聲音";
+ }
+ function buildUI(){
+  const st=document.createElement("style");
+  st.textContent="#sndBtn{position:fixed;right:12px;bottom:calc(104px + env(safe-area-inset-bottom));z-index:30;width:42px;height:42px;border-radius:50%;border:1px solid #6b5533;background:#19140dd9;color:#efbd5b;display:grid;place-items:center;cursor:pointer;backdrop-filter:blur(6px);box-shadow:0 4px 14px #0008;padding:0}#sndBtn svg{width:20px;height:20px}#sndBtn.off{color:#7d725f}#sndBtn:focus-visible{outline:3px solid #f0c56a;outline-offset:2px}"+
+  "#sndPanel{position:fixed;right:12px;bottom:calc(154px + env(safe-area-inset-bottom));z-index:30;width:230px;background:#19140df5;border:1px solid #6b5533;border-radius:12px;padding:12px 14px;display:none;box-shadow:0 10px 30px #000b;font-size:13px;color:#e8dcc0}#sndPanel.on{display:block}#sndPanel b{color:#f0c56a;font-size:14px}#sndPanel label{display:flex;justify-content:space-between;margin:10px 0 2px;color:#c7b896}#sndPanel input[type=range]{width:100%;accent-color:#efbd5b}#sndPanel .sp-row{display:flex;justify-content:space-between;align-items:center}#sndPanel button{font:inherit;font-size:12px;border-radius:8px;border:1px solid #6b5533;background:#2a2116;color:#efd08a;padding:4px 10px;cursor:pointer}#sndPanel p{margin:8px 0 0;font-size:11px;color:#9f937b;line-height:1.5}";
+  document.head.appendChild(st);
+  const btn=document.createElement("button");btn.id="sndBtn";btn.type="button";
+  const pn=document.createElement("div");pn.id="sndPanel";pn.setAttribute("role","dialog");pn.setAttribute("aria-label","聲音設定");
+  pn.innerHTML='<div class="sp-row"><b>聲音</b><button type="button" id="sndToggle"></button></div>'+
+   '<label for="sndMusic"><span>背景音樂</span><span id="sndMusicV"></span></label><input id="sndMusic" type="range" min="0" max="1" step="0.05">'+
+   '<label for="sndSfx"><span>音效</span><span id="sndSfxV"></span></label><input id="sndSfx" type="range" min="0" max="1" step="0.05">'+
+   '<p>聲音由瀏覽器即時合成。手機若沒有聲音,請確認沒有開啟靜音模式。</p>';
+  document.body.appendChild(pn);document.body.appendChild(btn);
+  const m=pn.querySelector("#sndMusic"),s=pn.querySelector("#sndSfx"),mv=pn.querySelector("#sndMusicV"),sv=pn.querySelector("#sndSfxV");
+  const pct=function(v){return Math.round(v*100)+"%"};
+  m.value=cfg.music;s.value=cfg.sfx;mv.textContent=pct(cfg.music);sv.textContent=pct(cfg.sfx);
+  m.addEventListener("input",function(){api.setVol("music",+m.value);mv.textContent=pct(+m.value)});
+  s.addEventListener("input",function(){api.setVol("sfx",+s.value);sv.textContent=pct(+s.value)});
+  s.addEventListener("change",function(){api.coin()});
+  pn.querySelector("#sndToggle").addEventListener("click",function(){api.setOn(!cfg.on)});
+  btn.addEventListener("click",function(){pn.classList.toggle("on")});
+  document.addEventListener("click",function(ev){if(!pn.contains(ev.target)&&ev.target!==btn&&!btn.contains(ev.target))pn.classList.remove("on")});
+  paintBtn();
+  const unlock=function(){api.unlock()};
+  ["pointerdown","touchend","click","keydown"].forEach(function(n){document.addEventListener(n,unlock,true)});
+  document.addEventListener("pointerdown",function(ev){
+   const el=ev.target&&ev.target.closest?ev.target.closest(".pzc,.btn"):null;
+   if(!el||el.disabled)return;
+   if(el.classList.contains("pzc"))api.stone();else api.click();
+  },true);
+  document.addEventListener("visibilitychange",function(){if(!ctx)return;if(document.hidden)ctx.suspend();else if(cfg.on)ctx.resume()});
+ }
+ if(typeof document!=="undefined"&&document.body&&document.head&&typeof window!=="undefined"&&!window.__TEST__)buildUI();
+ return api;
+})();
+
 
 if(typeof document!=="undefined"&&document.getElementById("app")&&!window.__TEST__)renderTitle();
 </script>
