@@ -5,8 +5,9 @@
   <meta name="theme-color" content="#f8efff">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <meta name="description" content="K-POP 人生模擬器：從練習生到頂級藝人，或打造你的娛樂公司。">
-  <title>K-POP 人生模擬器 2.0</title>
-  <style>/* css/base.css */
+  <title>K-POP 人生模擬器 2.0.5</title>
+  <style>
+/* Embedded: css/base.css */
 
 :root{--bg1:#fff1f7;--bg2:#eef0ff;--card:#fff;--ink:#3a3552;--sub:#8a84a3;--pink:#ec6fa5;--pink2:#ffb6d3;--lav:#8b7cf6;--mint:#4fd1b0;--sky:#6cb8ff;--warn:#ff8a65;--line:#efe9f7;--sh:0 6px 20px rgba(139,124,246,.12)}
 *{box-sizing:border-box}html,body{margin:0;min-height:100%}
@@ -307,7 +308,8 @@ button,.tab,.choice,.btn{touch-action:manipulation}
 
 
 </style>
-  <style>/* css/remaster.css */
+  <style>
+/* Embedded: css/remaster.css */
 /* K-POP LIFE SIMULATOR 2.0 — visual shell */
 :root{
   --neo-ink:#30263f;--neo-sub:#887d9b;--neo-pink:#eb7bb8;--neo-rose:#f6a5c9;
@@ -531,8 +533,21 @@ button:focus-visible{outline:3px solid rgba(147,127,224,.45);outline-offset:3px}
   .p34-business-kpis,.p34-metric-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
 }
 
+
+/* 2.0.5 — Refreshed onboarding card: readable on desktop and mobile. */
+#tut .tut-block{z-index:0;pointer-events:none}
+#tut .tut-spot{z-index:1}
+#tut .tut-tip{z-index:2;width:min(calc(100vw - 20px),420px);max-height:min(78vh,680px);overflow:auto;padding:18px 19px 15px;border:1px solid rgba(229,210,239,.9);background:var(--card);box-shadow:0 18px 52px rgba(18,10,35,.32)}
+#tut .tut-n{font-size:12px;letter-spacing:.04em}
+#tut .tut-tip h4{font-size:18px;line-height:1.4;margin:5px 0 9px}
+#tut .tut-tip p{font-size:15px;line-height:1.75;margin:0 0 15px}
+#tut .tut-btns{gap:8px;flex-wrap:wrap}
+#tut .tut-btns .btn{min-height:40px;font-size:14px}
+@media(max-width:600px){#tut .tut-tip{width:calc(100vw - 20px);padding:15px 15px 13px;border-radius:16px}#tut .tut-tip h4{font-size:17px}#tut .tut-tip p{font-size:14px;line-height:1.7}#tut .tut-btns .btn{min-height:42px}}
+
 </style>
-  <style>/* css/phase34.css */
+  <style>
+/* Embedded: css/phase34.css */
 /* Phase 3 & 4 — idol life dashboard and agency operation suite */
 .p34-idol-dashboard,.p34-manager-dashboard,.p34-manager-roster,.p34-manager-groups,.p34-company-management{display:flex;flex-direction:column;gap:16px;color:var(--neo-ink,#453451)}
 .p34-idol-hero,.p34-company-hero{position:relative;display:flex;align-items:center;gap:22px;overflow:hidden;padding:22px 25px;border:1px solid rgba(255,255,255,.86);border-radius:24px;background:linear-gradient(115deg,#fff8fc 0%,#f5efff 58%,#ece8ff 100%);box-shadow:0 15px 36px rgba(98,69,124,.09)}
@@ -674,7 +689,8 @@ button:focus-visible{outline:3px solid rgba(147,127,224,.45);outline-offset:3px}
 @media(prefers-reduced-motion:reduce){.p34-btn,.p34-policy,.p34-action-chip{transition:none}}
 
 </style>
-  <style>/* css/home-readability.css */
+  <style>
+/* Embedded: css/home-readability.css */
 /* Readability pass — homepage dashboards only. Keep the existing visual language. */
 .p34-idol-dashboard,.p34-manager-dashboard{font-size:15px}
 .p34-idol-dashboard .p34-kicker,.p34-manager-dashboard .p34-kicker{font-size:12px}
@@ -724,7 +740,8 @@ button:focus-visible{outline:3px solid rgba(147,127,224,.45);outline-offset:3px}
 }
 
 </style>
-  <style>/* css/career-resume.css */
+  <style>
+/* Embedded: css/career-resume.css */
 /* 2.0.2 — Character career biography */
 .cr-feature-card{display:flex;align-items:center;justify-content:space-between;gap:18px;margin:18px 0 4px;padding:20px 22px;border:1px solid #eadced;border-radius:18px;background:linear-gradient(112deg,#fff8fc 0%,#f7f2ff 100%);box-shadow:0 8px 24px rgba(112,78,132,.07)}
 .cr-feature-copy{min-width:0}.cr-feature-copy small,.cr-kicker{font-size:11px;font-weight:900;letter-spacing:.15em;color:#a47fb1}.cr-feature-copy h3{margin:5px 0;color:#5c456b;font-size:19px}.cr-feature-copy p{margin:0 0 8px;color:#85768f;font-size:14px;line-height:1.65}.cr-feature-copy span{color:#a184ad;font-size:13px;font-weight:700}.cr-btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;min-height:42px;padding:10px 16px;border:1px solid #e8d9ed;border-radius:12px;background:#fff;color:#765d83;font-size:14px;font-weight:800;cursor:pointer;white-space:nowrap}.cr-btn-primary{border:0;background:linear-gradient(130deg,#df87b6,#a68bd4);color:white;box-shadow:0 6px 14px rgba(186,126,177,.18)}
@@ -737,7 +754,8 @@ button:focus-visible{outline:3px solid rgba(147,127,224,.45);outline-offset:3px}
 @media(max-width:480px){.cr-profile{align-items:flex-start;gap:11px;padding:12px}.cr-avatar{width:70px;height:70px}.cr-profile-info h3{font-size:18px}.cr-profile-info small{font-size:11px}.cr-modal{gap:12px}.cr-panel{padding:12px}.cr-facts b{font-size:13px}.cr-title-row p{font-size:13px}}
 
 </style>
-  <style>/* css/career-suite.css */
+  <style>
+/* Embedded: css/career-suite.css */
 /* Homepage readability pass: raise information hierarchy while keeping decorative micro-labels quiet. */
 .p34-idol-dashboard,.p34-manager-dashboard{font-size:16px;line-height:1.62}
 .p34-idol-dashboard .p34-kicker,.p34-manager-dashboard .p34-kicker{font-size:12px;letter-spacing:.12em}
@@ -829,6 +847,47 @@ button:focus-visible{outline:3px solid rgba(147,127,224,.45);outline-offset:3px}
 .cs-role-save{margin-top:10px}
 @media(max-width:600px){.cs-group-identity{padding:12px}.cs-role-row{align-items:flex-start}.cs-role-row select{max-width:112px;min-width:94px}.cs-role-row small{max-width:180px;line-height:1.4}}
 
+/* 2.0.5 — Group member relationships */
+.cs-group-bonds{margin:14px 0 5px;padding:16px;border:1px solid #eadff0;border-radius:16px;background:linear-gradient(140deg,#fffafd,#f8f5ff);color:#584766}
+.cs-bonds-heading{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;margin-bottom:12px}
+.cs-bonds-heading>div{min-width:0}
+.cs-bonds-heading small{display:block;color:#a07baa;font-size:10px;letter-spacing:.13em;font-weight:800}
+.cs-bonds-heading h3{margin:4px 0;color:#584369;font-size:17px}
+.cs-bonds-heading p{margin:0;color:#97899e;font-size:12px;line-height:1.55}
+.cs-bonds-heading>b{flex:none;padding:7px 10px;border-radius:999px;background:#f1e9f6;color:#80648e;font-size:11px}
+.cs-bonds-summary{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:7px;margin:10px 0 12px}
+.cs-bonds-summary>span{padding:8px 9px;border:1px solid #efe7f2;border-radius:10px;background:#fff;color:#918398;font-size:11px}
+.cs-bonds-summary b{display:block;margin-top:3px;color:#6b5279;font-size:13px}
+.cs-bond-list{display:grid;gap:8px}
+.cs-bond-row{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:11px;border:1px solid #eee7f1;border-radius:12px;background:rgba(255,255,255,.9)}
+.cs-bond-main{min-width:0;flex:1}
+.cs-bond-main>b,.cs-bond-main>span{display:inline-block;vertical-align:middle}
+.cs-bond-main>b{color:#5e4a6b;font-size:13px}
+.cs-bond-main>b i{padding:0 4px;color:#ba9ac3;font-style:normal}
+.cs-bond-main>span{margin-left:7px;color:#9a79a5;font-size:10px;font-weight:800}
+.cs-bond-main small{display:block;margin-top:5px;color:#a195a8;font-size:10px}
+.cs-bond-track{height:6px;margin-top:7px;overflow:hidden;border-radius:99px;background:#f0eaf2}
+.cs-bond-track i{display:block;height:100%;border-radius:99px;background:linear-gradient(90deg,#c99bc1,#8d82c2)}
+.cs-bond-actions{display:flex;flex-wrap:wrap;justify-content:flex-end;gap:5px;max-width:250px}
+.cs-bond-actions .cs-btn{min-height:31px;padding:6px 9px;font-size:11px}
+.cs-bond-team-action{display:flex;align-items:center;gap:10px;margin-top:12px;flex-wrap:wrap}
+.cs-bond-team-action small,.cs-bond-note{color:#998ca2;font-size:11px;line-height:1.55}
+.cs-bond-note{margin:10px 0 0}
+[data-theme="dark"] .cs-group-bonds{background:#2d2638;border-color:#4a3e55;color:#e9dff0}
+[data-theme="dark"] .cs-bonds-heading h3,[data-theme="dark"] .cs-bond-main>b{color:#eadff1}
+[data-theme="dark"] .cs-bonds-heading p,[data-theme="dark"] .cs-bond-main small,[data-theme="dark"] .cs-bond-note,[data-theme="dark"] .cs-bond-team-action small{color:#b7a8c1}
+[data-theme="dark"] .cs-bonds-heading>b,[data-theme="dark"] .cs-bonds-summary>span{background:#393047;border-color:#51445d;color:#c2b3ca}
+[data-theme="dark"] .cs-bonds-summary b{color:#f0e2f5}
+[data-theme="dark"] .cs-bond-row{background:#352d42;border-color:#4d405a}
+[data-theme="dark"] .cs-bond-track{background:#4a4054}
+@media(max-width:700px){.cs-bonds-summary{grid-template-columns:repeat(2,minmax(0,1fr))}.cs-bond-row{align-items:flex-start;flex-direction:column}.cs-bond-actions{justify-content:flex-start;max-width:none;width:100%}.cs-bond-actions .cs-btn{flex:1;min-width:90px}.cs-bonds-heading h3{font-size:16px}}
+
+
+/* 2.0.5 — Relationship story snippets and responsive interaction rows. */
+.cs-bond-main small{font-size:11px;line-height:1.55}
+.cs-bond-main small br{content:"";display:block;margin-top:3px}
+@media(max-width:680px){.cs-bond-row{align-items:stretch;flex-direction:column}.cs-bond-actions{max-width:none;justify-content:flex-start}.cs-bond-actions .cs-btn{font-size:12px;min-height:36px}.cs-bonds-summary{grid-template-columns:repeat(2,minmax(0,1fr))}}
+
 </style>
 </head>
 <body>
@@ -837,7 +896,8 @@ button:focus-visible{outline:3px solid rgba(147,127,224,.45);outline-offset:3px}
     <div id="modal-root"></div>
     <div id="toast-root"></div>
   </div>
-    <script>/* js/core.js */
+    <script>
+/* Embedded: js/core.js */
 'use strict';
 /* ===== core.js ===== */
 /* =========================================================
@@ -1051,7 +1111,8 @@ if (typeof document !== 'undefined') Theme.apply();
 const Layout = { centerTab() { if (typeof document === 'undefined') return; const n = document.querySelector('.tabs'), t = n && n.querySelector('.tab.on'); if (t) n.scrollLeft = t.offsetLeft - (n.clientWidth - t.clientWidth) / 2; } };
 
 </script>
-  <script>/* js/avatar.js */
+  <script>
+/* Embedded: js/avatar.js */
 'use strict';
 /* ===== avatar.js ===== */
 /* ============================================================
@@ -1251,7 +1312,8 @@ ACT['av.rand'] = () => {
 };
 
 </script>
-  <script>/* js/data.js */
+  <script>
+/* Embedded: js/data.js */
 'use strict';
 /* ===== data.js ===== */
 /* =========================================================
@@ -1850,7 +1912,8 @@ DATA.randAlias = function (g, used) {
 };
 
 </script>
-  <script>/* js/data/data-manager.js */
+  <script>
+/* Embedded: js/data/data-manager.js */
 'use strict';
 /* ===== data_mgr.js ===== */
 /* =========================================================
@@ -2010,7 +2073,8 @@ DATA.M.EVENTS = [
 ];
 
 </script>
-  <script>/* js/data/data-manager-2.js */
+  <script>
+/* Embedded: js/data/data-manager-2.js */
 'use strict';
 /* ===== data_mgr2.js ===== */
 /* =========================================================
@@ -2433,7 +2497,8 @@ DATA.M.EVENTS = [
 })();
 
 </script>
-  <script>/* js/data/data-manager-3.js */
+  <script>
+/* Embedded: js/data/data-manager-3.js */
 'use strict';
 /* ===== data_mgr3.js ===== */
 /* =========================================================
@@ -3104,7 +3169,8 @@ DATA.M.EVENTS = [
 })();
 
 </script>
-  <script>/* js/data/data-events-2.js */
+  <script>
+/* Embedded: js/data/data-events-2.js */
 'use strict';
 /* ===== data_ev2.js ===== */
 /* ============================================================
@@ -3462,7 +3528,8 @@ DATA.M.EVENTS = [
 })();
 
 </script>
-  <script>/* js/data/data-nationalities.js */
+  <script>
+/* Embedded: js/data/data-nationalities.js */
 'use strict';
 /* ===== data_nat.js ===== */
 /* ============================================================
@@ -3652,7 +3719,8 @@ DATA.NATLINES = {
 })();
 
 </script>
-  <script>/* js/data/data-business.js */
+  <script>
+/* Embedded: js/data/data-business.js */
 'use strict';
 /* ===== data_biz.js ===== */
 /* ============================================================
@@ -3738,7 +3806,8 @@ DATA.ALBUM_FORMATS = {
 })();
 
 </script>
-  <script>/* js/data/data-teams.js */
+  <script>
+/* Embedded: js/data/data-teams.js */
 'use strict';
 /* ===== data_team.js ===== */
 /* ============================================================
@@ -3798,7 +3867,8 @@ Object.assign(DATA.ACTIONS, {
 });
 
 </script>
-  <script>/* js/data/data-events-3.js */
+  <script>
+/* Embedded: js/data/data-events-3.js */
 'use strict';
 /* ===== data_ev3.js ===== */
 /* ============================================================
@@ -4382,7 +4452,8 @@ Object.assign(DATA.ACTIONS, {
 })();
 
 </script>
-  <script>/* js/data/data-events-4.js */
+  <script>
+/* Embedded: js/data/data-events-4.js */
 'use strict';
 /* ===== data_ev4.js ===== */
 /* ============================================================
@@ -4668,7 +4739,8 @@ Object.assign(DATA.ACTIONS, {
 })();
 
 </script>
-  <script>/* js/arcs.js */
+  <script>
+/* Embedded: js/arcs.js */
 'use strict';
 /* ===== arcs.js ===== */
 /* ============================================================
@@ -4941,7 +5013,8 @@ DATA.ARC_EVENTS = [
 ];
 
 </script>
-  <script>/* js/data/data-company.js */
+  <script>
+/* Embedded: js/data/data-company.js */
 'use strict';
 /* ===== data_co.js ===== */
 /* ============================================================
@@ -5093,7 +5166,8 @@ DATA.ARC_EVENTS = [
 })();
 
 </script>
-  <script>/* js/chains.js */
+  <script>
+/* Embedded: js/chains.js */
 'use strict';
 /* ===== chains.js ===== */
 /* ============================================================
@@ -5474,7 +5548,8 @@ DATA.ARC_EVENTS = [
 })();
 
 </script>
-  <script>/* js/idol-engine.js */
+  <script>
+/* Embedded: js/idol-engine.js */
 'use strict';
 /* ===== idol.js ===== */
 /* =========================================================
@@ -6823,7 +6898,8 @@ Idol.autoDays = function (n, plan, untilExam) {
 };
 
 </script>
-  <script>/* js/idol-ui.js */
+  <script>
+/* Embedded: js/idol-ui.js */
 'use strict';
 /* ===== idol_ui.js ===== */
 /* =========================================================
@@ -7051,7 +7127,7 @@ function tSave() {
   const au = Store.info('idol', 'auto'), bk = Store.info('idol', 'bak');
   return `<div class="grid2"><div class="col">${card('自動存檔', `<p>每天結束時自動存檔，關閉瀏覽器後重新開啟可從主選單「繼續遊戲」。<br><small>自動檔：${au ? new Date(au.t).toLocaleString() : '無'}　備份檔：${bk ? new Date(bk.t).toLocaleString() : '無'}</small></p><div class="btn-row"><button class="btn sm" data-act="i.save" data-s="auto">立即自動存檔</button><button class="btn sm ghost" data-act="i.load" data-s="bak" ${bk ? '' : 'disabled'}>讀取備份檔</button></div>`)}${card('手動存檔', slots)}</div>
   <div class="col">${card('匯出／匯入', `<p class="sub">複製下方文字可備份存檔；貼上別處的存檔文字後按匯入。</p><textarea id="exp" rows="5" placeholder="存檔文字">${''}</textarea><div class="btn-row wrap"><button class="btn sm" data-act="i.export">匯出到文字框</button><button class="btn sm ghost" data-act="i.import">匯入</button></div>`)}
-  ${card('新手引導', `<p class="sub">重看一次畫面介紹：行動點數、月考、事件與因果。</p><button class="btn" data-act="tut.replay">🎓 重看新手引導</button> <button class="btn" data-act="tut.replay2">🎤 重看出道後引導</button>`)}
+  ${card('新手引導', `<p class="sub">依新版工作台與導覽重新編排，介紹每日行動、職涯志向、作品企劃、隊友關係與存檔。</p><button class="btn" data-act="tut.replay">🎓 重看偶像模式新手教學</button> <button class="btn" data-act="tut.replay2">🎤 重看出道後進階教學</button>`)}
   ${card('重新開始', `<p class="sub">放棄目前的偶像人生，回到主選單重新開始（會要求確認）。</p><button class="btn danger" data-act="i.restart">重新開始</button>`)}</div></div>`;
 }
 
@@ -7394,7 +7470,8 @@ const ShowFx = (function () {
 })();
 
 </script>
-  <script>/* js/ceremony.js */
+  <script>
+/* Embedded: js/ceremony.js */
 'use strict';
 /* ===== ceremony.js ===== */
 /* =========================================================
@@ -7522,7 +7599,8 @@ const Cere = (() => {
 })();
 
 </script>
-  <script>/* js/spend.js */
+  <script>
+/* Embedded: js/spend.js */
 'use strict';
 /* ===== spend.js ===== */
 /* ============================================================
@@ -7698,65 +7776,85 @@ ACT['i.popup'] = d => { UI.close(); ACT['i.act']({ id: 'popup', tier: d.tier });
 ACT['i.concert'] = d => { UI.close(); ACT['i.act']({ id: 'concert', tier: d.tier }); };
 
 </script>
-  <script>/* js/tutorial.js */
+  <script>
+/* Embedded: js/tutorial.js */
 'use strict';
-/* ===== tutorial.js ===== */
-/* ============================================================
-   新手引導：聚光燈 + 說明卡，會切換到對應分頁並標出實際的按鈕與區塊。
-   第一次開新遊戲、簽約流程結束後自動詢問；之後可在「存檔」分頁重看。
-   ============================================================ */
+/* K-POP Life Simulator 2.0.5 — redesigned onboarding for the remastered UI.
+ * Keeps the original tutorial action IDs and localStorage completion keys.
+ */
 const Tut = (function () {
-  const KEY = 'kpop_sim_tut_done', KEY2 = 'kpop_sim_tut2_done', KEY3 = 'kpop_sim_tut3_done';
-  const done = () => { try { return !!localStorage.getItem(KEY); } catch (e) { return !!Tut._m; } };
-  const done2 = () => { try { return !!localStorage.getItem(KEY2); } catch (e) { return !!Tut._m2; } };
-  const done3 = () => { try { return !!localStorage.getItem(KEY3); } catch (e) { return !!Tut._m3; } };
-  const mark = () => { if (set === 3) { try { localStorage.setItem(KEY3, '1'); } catch (e) { Tut._m3 = true; } if (typeof M !== 'undefined' && M && M.flags) M.flags.tut3 = 1; return; } if (set === 2) { try { localStorage.setItem(KEY2, '1'); } catch (e) { Tut._m2 = true; } if (typeof I !== 'undefined' && I && I.flags) I.flags.tut2 = 1; return; } try { localStorage.setItem(KEY, '1'); } catch (e) { Tut._m = true; } if (typeof I !== 'undefined' && I && I.flags) I.flags.tut = 1; };
-  const STEPS = [
-    { title: '歡迎來到 K-POP 人生模擬器', text: '你是 13 歲的練習生。<b>目標</b>：在 <b>15～16 歲</b>通過出道評估、站上舞台；17 歲生日前還沒出道，就會被淘汰。<br>接下來用 1 分鐘帶你認識畫面。' },
-    { sel: '.hdr-stats', tab: 'home', title: '金錢、粉絲、行動點數', text: '💰 金錢用來買課程、道具與發片；💗 粉絲是出道後的核心；<b>三個圓點是今天的行動點數（AP）</b>，每天 3 點，安排行程會消耗。' },
-    { sel: '.bars4', tab: 'home', title: '四項身心狀態', text: '<b>體力</b>不足訓練效果會變差；<b>壓力</b>過高會影響心情與表現；<b>健康</b>低於 50 會有機率生病或受傷。記得適時休息。' },
-    { sel: '[data-act="i.month"]', tab: 'home', title: '最輕鬆的玩法：自動過一個月', text: '選好訓練方針後按「開始本月」，系統會依體力與壓力自動安排訓練與休息；<b>遇到事件、月考就會停下來讓你處理</b>。' },
-    { sel: '[data-act="i.act"]', tab: 'plan', title: '想自己安排：行程', text: '每個行動要花 AP 與體力，可鍛鍊六項能力：歌唱、舞蹈、饒舌、表演、魅力、綜藝。AP 用完或想跳過，就按「結束今天」。' },
-    { sel: '.tabs .tab[data-t="cal"]', tab: 'cal', title: '日曆', text: '看得到<b>月考日</b>（每月最後一個週六）、生日與節日。月考名次決定能不能升上預備組、出道。' },
-    { sel: '.rank', tab: 'co', title: '公司與排名', text: '這裡有<b>公司評價</b>（低於 8 會被解約）和同期練習生的排名。<b>連續 3 次月考墊底也會被淘汰</b>。15 歲起，名次前段能累積出道積分。' },
-    { sel: '.npc', tab: 'rel', title: '關係與互動', text: '和同期、老師、經紀人互動能提升好感，解鎖專屬劇情，也影響事件的走向。團體出道後這裡還會多一個「隊友」分頁。' },
-    { title: '事件與因果', text: '日常會遇到各種事件。你的選擇會改變數值與關係，<b>有些會在幾天到幾個月後引來後續事件</b>，並顯示 <b>🔗 因果</b> 小字告訴你原因。<br>部分選項需要<b>數值門檻</b>，條件不足會鎖住並顯示需要什麼。' },
-    { sel: '.tabs .tab[data-t="save"]', tab: 'save', title: '存檔與設定', text: '遊戲每天自動存檔；「存檔」分頁有 3 個手動欄位與匯出。頂部的 🌙 可切換深色模式，☰ 回主選單。<br>之後想重看這份引導，也在「存檔」分頁。' },
-    { title: '出發吧！', text: '出道後會有<b>公司評鑑、發行專輯、打歌、廣告代言、演唱會</b>，還有粉絲與風波事件在等你。祝你一路站上頂點！' }
-  ];
-  const STEPS2 = [
-    { title: '恭喜出道！第二段引導', text: '出道只是起點。接下來要經營的是<b>人氣、粉絲、作品與口碑</b>。這段引導帶你認識出道後的賺錢與成長方式。' },
-    { sel: '.rank', tab: 'co', title: '公司評鑑與 KPOP 榜單', text: '出道後有兩種排名：<b>公司內部評鑑</b>（和公司其他藝人比，影響公司評價）與 <b>KPOP 榜單</b>（第一年新人榜，之後依女團／男團／個人分榜）。<b>同類對手太強，會讓你人氣與粉絲流失、收入與代言減少。</b>' },
-    { sel: '.acts', tab: 'work', title: '工作：打歌、綜藝、見面會、廣告', text: '每項工作消耗 AP 與體力，帶來<b>收入、人氣與粉絲</b>。打歌只在宣傳期的週四～日；綜藝與見面會適合補粉絲；廣告賺錢但看形象。' },
-    { sel: '.grid2 .col .card', tab: 'work', title: '發片與宣傳期', text: '在「公司」分頁或工作頁製作並<b>發行專輯</b>：品質看你的能力與製作投資，發行後進入宣傳期，首週銷量決定榜單與獎項。' },
-    { sel: '.tabs .tab[data-t="spend"]', tab: 'spend', title: '開銷：把錢花在刀口上', text: '「開銷」分頁可投資<b>專屬造型／舞蹈／錄音團隊與住宿（月費）</b>、宣傳預算、粉絲回饋與健康。<b>發片時能追加製作預算</b>，演唱會也有小型／體育館／巨蛋三種規格：規格越大賺越多，但賣不滿會虧。' },
-    { title: '品牌代言', text: '人氣達標後會有廣告商找上門，<b>代言一次簽一年</b>，每月有固定收入，但<b>形象受損或風波</b>可能被解約。同類別品牌不能重複簽。' },
-    { sel: '.tabs .tab[data-t="rel"]', tab: 'rel', title: '隊友與團體', text: '團體出道後「關係」分頁多了<b>🎤 隊友</b>。隊友默契影響舞台表現與風波，經常互動、化解矛盾很重要。' },
-    { sel: '.hdr-stats', tab: 'home', title: '收支與人氣流失', text: '每月有<b>薪水與專輯分潤收入</b>，也有固定支出（宿舍、造型、經紀）。人氣偶像之後，<b>人氣與粉絲會逐月自然流失</b>，要靠作品和曝光維持。' },
-    { title: '風波與因果', text: '出道後的事件更有分量：緋聞、網路輿論、粉絲糾紛、合約問題。<b>你過去的選擇會回頭找你</b>，事件裡的 <b>🔗 因果</b> 小字會告訴你前因。處理好反而能漲粉。' },
-    { title: '最終目標：頂級藝人', text: '條件大致為：<b>人氣 ≥ 85、粉絲 ≥ 200 萬、獲獎 ≥ 6 座（含 ≥ 2 座年度大賞）</b>。也可以在人氣偶像後隨時功成身退，迎接結局。祝你站上頂點！' }
-  ];
-  const STEPS3 = [
-    { title: '歡迎，經紀人！', text: '你接手了一間小公司，手上有四名練習生。<b>目標</b>：培育藝人、讓公司成長，最終打造出頂級企劃公司。接下來 1 分鐘帶你認識怎麼經營。' },
-    { sel: '.hdr-stats', tab: 'home', title: '資金、聲望、行動點數', text: '💰 資金每週都會被房租、課程、薪水扣掉，<b>歸零就會破產</b>；⭐ 聲望決定公司等級與能接到的機會；圓點是<b>本週的行動點數（AP）</b>。' },
-    { sel: '.apbig', tab: 'home', title: '每週的行動點數', text: '面談、試鏡、安排行程都要花 AP。用完或想跳過就按「結束本週」，系統會結算訓練、收支，並可能觸發事件。' },
-    { sel: '.skills', tab: 'home', title: '你的四項經紀能力', text: '<b>星探眼光、培訓指導、公關、經營</b>四項技能會隨使用成長。事件的選項常需要檢定，等級越高越容易成功；<b>壓力過高</b>則會拖累表現。' },
-    { sel: '.cards2', tab: 'roster', title: '練習生', text: '點開可查看能力、心情與潛力。<b>面談、安排課程</b>能提升能力與忠誠；忠誠過低可能被挖角或離開。注意受傷與心情。' },
-    { sel: '.acts', tab: 'scout', title: '星探與試鏡', text: '舉辦試鏡可以找到新人，簽約需要費用。同時<b>潛力</b>是看不到全貌的，星探技能越高，看得越準。宿舍有人數上限。' },
-    { sel: '.content .card', tab: 'groups', title: '企劃出道團體', text: '練習生年滿 14 歲就能組團。出道前有準備期；出道後進入宣傳期，<b>發行專輯、上節目</b>決定人氣與粉絲，也帶來收入。' },
-    { sel: '.col', tab: 'co', title: '公司升級與員工', text: '花錢升級練習室、錄音室、宿舍，或聘請老師、造型師、公關。<b>聲望夠了才能升級公司等級</b>，解鎖更大的宿舍與更多機會。' },
-    { title: '事件與因果', text: '每週都可能遇到事件。你的選擇會留下後果，<b>有些會在幾週後引來後續事件</b>，並顯示 <b>🔗 因果</b> 小字說明原因。<br>部分選項需要<b>資金、聲望或團隊默契</b>達標才能選，不夠時會顯示需要的條件。' },
-    { sel: '.tabs .tab[data-t="save"]', tab: 'save', title: '存檔與設定', text: '遊戲每週自動存檔，也有 3 個手動欄位與匯出。🌙 可切換深色模式。之後想重看，可在「存檔」分頁點「重看經紀人引導」。' },
-    { title: '開始經營吧！', text: '建議第一步：看看練習生狀態，舉辦試鏡補人，再為年滿 14 歲的練習生企劃出道。小心資金，祝你打造出傳奇公司！' }
-  ];
-  let i = 0, root = null, timer = null, set = 1;
-  const list = () => set === 3 ? STEPS3 : set === 2 ? STEPS2 : STEPS;
-  const goTab = tab => { if (set === 3) { if (MgrUI.tab !== tab) { MgrUI.tab = tab; Mgr.render(); window.scrollTo(0, 0); } } else if (IdolUI.tab !== tab) { IdolUI.tab = tab; Idol.render(); window.scrollTo(0, 0); } };
+  const KEY_IDOL = 'kpop_sim_tut_done';
+  const KEY_POST = 'kpop_sim_tut2_done';
+  const KEY_MANAGER = 'kpop_sim_tut3_done';
+  const safeGet = key => { try { return !!localStorage.getItem(key); } catch (_) { return false; } };
+  const safeSet = key => { try { localStorage.setItem(key, '1'); } catch (_) { /* the save flag below remains available */ } };
 
+  const IDOL_STEPS = [
+    { title: '歡迎來到你的偶像人生', text: '你將從練習生開始，安排訓練、生活與人際關係，通過考核後爭取出道。這份教學已依照 2.0 新版介面重寫，會帶你認識工作台、分頁導覽與職涯功能。' },
+    { tab: 'home', sel: '.p34-idol-hero', title: '你的個人工作台', text: '這裡是每天登入後最重要的總覽：角色階段、日期、年齡與當前狀態都會集中顯示。先確認自己在哪個階段，再決定今天要優先處理什麼。' },
+    { tab: 'home', sel: '.p34-metric-grid', title: '每日資源與身心狀態', text: '行動點數（AP）限制你一天能做多少事；體力不足會影響訓練安排，壓力過高也不利於長期發展。資金可用於課程、生活及演藝事業。不要只顧能力，記得留意身心狀態。' },
+    { tab: 'home', sel: '.p34-today-panel', title: '今日安排與快速行動', text: '工作台會提供推薦行動，也能直接前往完整行程或結束今天。想自由規劃，請從左側「日常生活 → 行程管理」安排訓練、休息與其他活動。每項行動的 AP 與體力成本以按鈕標示為準。' },
+    { tab: 'plan', sel: '.neo-tab[data-t="plan"]', title: '行程管理：自己安排每一天', text: '訓練可提升歌唱、舞蹈、饒舌、表演、魅力與綜藝等能力。休息能幫助恢復狀態。AP 用完後可結束今天；也可以使用遊戲提供的自動安排方式，讓時間繼續推進。' },
+    { tab: 'stats', sel: '.neo-tab[data-t="stats"]', title: '能力檔案與成長方向', text: '在「個人成長 → 能力檔案」查看各項能力、個人特質與生涯狀態。工作台中的「職涯志向」可追蹤你想走的方向，例如主唱、舞者、演員或綜藝路線；它是目標追蹤，不會取代原本的出道門檻。' },
+    { tab: 'cal', sel: '.neo-tab[data-t="cal"]', title: '人生行事曆', text: '行事曆能幫你掌握生日、月考與重要日期。月考結果會影響練習生階段的評價與後續機會，重要節日及工作安排也可能帶來事件。' },
+    { tab: 'rel', sel: '.neo-tab[data-t="rel"]', title: '人際關係：隊友與重要人物', text: '這裡整理你與同期、老師、經紀人及隊友的關係。團體出道後，請切換上方的「🎤 隊友」子分頁查看隊友互動；新版也會記錄隊友彼此的關係組合，可安排聊天、合作練習或在關係緊張時溝通和解。' },
+    { tab: 'co', sel: '.neo-tab[data-t="co"]', title: '所屬公司與職涯環境', text: '公司頁能查看公司評價、同儕排名與培訓相關資訊。留意考核與公司評價，不要只追求單一能力；穩定表現、狀態管理與適當互動都很重要。' },
+    { tab: 'work', sel: '.neo-tab[data-t="work"]', title: '演藝事業與作品企劃', text: '出道後，演藝事業會逐步開放作品發行、宣傳、打歌、節目、見面會與演唱會等內容。工作台的「作品企劃」可先設定回歸概念、作品規格、投資及目標，再依實際宣傳成果追蹤企劃。' },
+    { tab: 'spend', sel: '.neo-tab[data-t="spend"]', title: '生活開銷與事業投資', text: '出道後要留意固定支出與宣傳投資，別讓現金流失衡。投資團隊、宣傳或粉絲回饋前，先確認目前資金與長期收益；大型活動也要評估成本及風險。' },
+    { tab: 'sns', sel: '.neo-tab[data-t="sns"]', title: '社群與粉絲經營', text: '社群互動能維持粉絲關係與公眾形象。不同貼文、活動與工作會消耗資源，請搭配作品宣傳安排，不必每天勉強執行所有項目。' },
+    { tab: 'save', sel: '.neo-tab[data-t="save"]', title: '存檔中心：保護你的旅程', text: '遊戲會自動存檔，也提供手動欄位、備份與文字匯出／匯入。換瀏覽器或部署網域前，建議先匯出存檔備份。這裡也能重看練習生教學與出道後教學。' },
+    { title: '開始你的練習生旅程', text: '建議先看工作台提醒，再安排一到兩項最需要的訓練，並保留體力與 AP。每次選擇都會逐步累積成你的偶像人生。祝你順利出道！' }
+  ];
+
+  const POST_STEPS = [
+    { title: '正式出道，新的生活開始了', text: '出道後，遊戲重心會從練習生考核轉向作品、宣傳、人氣、粉絲與職涯管理。以下介紹新版中最重要的藝人經營功能。' },
+    { tab: 'home', sel: '.cs-feature-suite', title: '職涯工具與作品企劃', text: '新版工作台提供作品企劃、年度榮耀、里程碑與人生履歷等入口。作品企劃可設定概念、規格、投資與目標；宣傳結束後會依實際作品結果結案。' },
+    { tab: 'work', sel: '.neo-tab[data-t="work"]', title: '發行作品與宣傳工作', text: '作品發行後會進入宣傳期。依照宣傳時程安排打歌、節目與活動，並觀察銷量、榜單與音樂節目一位。工作會消耗 AP 或體力，請留意每項工作的限制。' },
+    { tab: 'rel', sel: '.neo-tab[data-t="rel"]', title: '團體成員關係', text: '除了你與隊友的個別關係，團體關係面板也會追蹤成員彼此的熟悉程度。每組成員每天可安排一次聊天或合作練習；關係緊張時可選擇溝通和解。日常磨合事件可能讓關係小幅上升或下降。' },
+    { tab: 'home', sel: '.cs-feature-suite', title: '年度榮耀與生涯里程碑', text: '年度頒獎沿用遊戲原本的評選時點與判定方式；履歷與里程碑只整理本局真正發生的出道、作品、獲獎及重要紀錄，不會憑空補上成就。' },
+    { tab: 'spend', sel: '.neo-tab[data-t="spend"]', title: '資金、固定支出與風險', text: '出道後收入來源增加，但宿舍、造型、團隊與宣傳也會產生固定成本。規模較大的演唱會或回歸投資，請先衡量資金是否足夠。' },
+    { tab: 'sns', sel: '.neo-tab[data-t="sns"]', title: '維持粉絲與公眾形象', text: '人氣與粉絲不會永遠停在高點。作品、打歌、社群與活動可延續曝光；處理爭議時要考慮形象與長期關係。' },
+    { tab: 'save', sel: '.neo-tab[data-t="save"]', title: '存檔與人生履歷', text: '在存檔中心備份這段職涯，也可以重看完整新手引導。建議定期匯出存檔文字，避免清除瀏覽器資料時失去進度。' },
+    { title: '讓職涯繼續向前', text: '接下來可以規劃下一張作品、挑戰榜單與年度獎項，或在適合的時候舉辦演唱會。請依照現有資源逐步擴大規模，打造長久的藝人生涯。' }
+  ];
+
+  const MANAGER_STEPS = [
+    { title: '歡迎來到經紀公司經營模式', text: '你將經營一間娛樂公司，負責招募與培訓練習生、成立出道團體、安排藝人活動並管理公司資金。這個模式有自己的時間、資源與存檔，與偶像模式分開運作。' },
+    { tab: 'home', sel: '.p34-company-hero', title: '公司總覽與營運目標', text: '首頁是公司的管理儀表板：可查看公司規模、經紀人資訊與本週狀況。先確認資金與公司聲望，再決定本週最重要的任務。' },
+    { tab: 'home', sel: '.p34-business-kpis', title: '資金、聲望、人才與團體', text: '資金用來支付房租、培訓與薪資；聲望影響公司發展等級及可用資源；練習生數量與團體數反映公司規模。請特別留意每週固定支出與資金續航。' },
+    { tab: 'home', sel: '.p34-decision-panel', title: '本週營運決策與 AP', text: '每週有一定行動點數（AP），面談、星探、組團企劃、團體活動與公司投資都會消耗 AP。所有行動完成或想推進時間時，按「結束本週」進行週結算。' },
+    { tab: 'roster', sel: '.p34-manager-roster', title: '人才中心與全體訓練策略', text: '人才中心可檢視每位練習生的能力、體力、心情、壓力與忠誠。新版提供全體訓練策略，可選擇均衡補弱或指定能力方向，再套用到全體；個別面談與課程仍保留在下方的進階管理面板。' },
+    { tab: 'scout', sel: '.neo-tab[data-t="scout"]', title: '星探招募與試鏡', text: '公開試鏡與街頭星探可尋找新人，但會消耗 AP 及公司資金。簽約前請確認名額與財務狀況；星探能力越高，對候選人潛力的判斷也越可靠。' },
+    { tab: 'groups', sel: '.p34-manager-groups', title: '藝人與團體：從企劃到出道', text: '挑選符合條件的練習生建立團體企劃。新版團體頁集中管理出道企劃、旗下團體與團體活動；每組團體也保留原有進階團員異動與管理功能。' },
+    { tab: 'groups', sel: '.p34-manager-groups .p34-group-portfolio', title: '團體定位、成員分工與關係', text: '團體成立後，可為成員安排隊長、主唱、領唱、主舞、Rapper、門面、中心與忙內等定位。每組成員的關係會獨立追蹤，可安排談心、合作練習、協調和解或團體聚餐；這些關係數值不會改動原本銷量與能力公式。若目前尚無團體，先完成出道企劃後再回來使用。' },
+    { tab: 'co', sel: '.p34-company-management', title: '公司經營、設施與員工', text: '公司經營頁可以升級練習室、錄音室、宿舍等設施，並管理員工與完整公司資料。升級前先確認成本、每週 AP 和資金餘額；設施也可能提高後續固定成本。' },
+    { tab: 'sched', sel: '.neo-tab[data-t="sched"]', title: '營運行事曆與週期結算', text: '行事曆可掌握團體準備期、宣傳期、月度報告與年度頒獎等節點。練習生訓練以四週為一個月進行結算，建議在每次月底前檢查培訓策略。' },
+    { tab: 'log', sel: '.neo-tab[data-t="log"]', title: '經營紀錄與事件後果', text: '公司紀錄會保存重要決策與經營結果。部分事件會留下後續影響，選擇時請同時考慮短期收益、練習生狀態、忠誠及公司財務。' },
+    { tab: 'save', sel: '.neo-tab[data-t="save"]', title: '存檔中心與備份', text: '經紀人模式會自動存檔，也有三個手動存檔欄位及文字匯出／匯入。建立重要團體或進行重大投資前，建議先保留一份備份；之後也可在這裡重看經紀人教學。' },
+    { title: '開始打造你的娛樂公司', text: '建議先檢查現有練習生狀態，選擇合適的訓練策略，再利用星探補充人才。等團體條件成熟後再投資出道，並持續關注公司現金流。祝你打造出能培育頂級藝人的經紀公司！' }
+  ];
+
+  let index = 0, root = null, timer = null, mode = 'idol';
+  const getSteps = () => mode === 'manager' ? MANAGER_STEPS : mode === 'post' ? POST_STEPS : IDOL_STEPS;
+  const isManager = () => mode === 'manager';
+  const goTab = tab => {
+    if (!tab) return;
+    if (isManager()) {
+      if (typeof MgrUI !== 'undefined' && MgrUI.tab !== tab) { MgrUI.tab = tab; Mgr.render(); window.scrollTo(0, 0); }
+    } else if (typeof IdolUI !== 'undefined' && IdolUI.tab !== tab) {
+      IdolUI.tab = tab; Idol.render(); window.scrollTo(0, 0);
+    }
+  };
+  const currentKey = () => mode === 'manager' ? KEY_MANAGER : mode === 'post' ? KEY_POST : KEY_IDOL;
+  const mark = () => {
+    safeSet(currentKey());
+    if (mode === 'manager' && typeof M !== 'undefined' && M) { M.flags = M.flags || {}; M.flags.tut3 = 1; }
+    if (!isManager() && typeof I !== 'undefined' && I) { I.flags = I.flags || {}; I.flags[mode === 'post' ? 'tut2' : 'tut'] = 1; }
+  };
   function ensure() {
     if (root) return root;
     root = document.createElement('div'); root.id = 'tut';
-    root.innerHTML = '<div class="tut-block"></div><div class="tut-spot"></div><div class="tut-tip"></div>';
+    root.innerHTML = '<div class="tut-block"></div><div class="tut-spot"></div><section class="tut-tip" role="dialog" aria-live="polite" aria-label="新手教學"></section>';
     document.body.appendChild(root);
     window.addEventListener('resize', place); window.addEventListener('scroll', place, true);
     return root;
@@ -7764,86 +7862,92 @@ const Tut = (function () {
   function close(finished) {
     if (root) { root.remove(); root = null; }
     window.removeEventListener('resize', place); window.removeEventListener('scroll', place, true);
-    mark();
-    if (finished && typeof UI !== 'undefined') UI.toast('新手引導完成！可在「存檔」分頁重看', 'ok');
+    clearTimeout(timer); mark();
+    if (finished && typeof UI !== 'undefined') UI.toast('新手教學完成！可在「存檔中心」重新觀看。', 'ok');
   }
   function show(n) {
-    const L = list(); i = Math.max(0, Math.min(L.length - 1, n)); const s = L[i];
-    ensure();
-    if (s.tab) goTab(s.tab);
-    const tip = root.querySelector('.tut-tip');
-    const last = i === L.length - 1;
-    tip.innerHTML = `<div class="tut-n">${i + 1} / ${L.length}</div><h4>${s.title}</h4><p>${s.text}</p>
-      <div class="tut-btns"><button type="button" class="btn ghost sm" data-tut="skip">${last ? '' : '跳過'}</button>${i > 0 ? '<button type="button" class="btn ghost sm" data-tut="prev">上一步</button>' : ''}<button type="button" class="btn pink sm" data-tut="${last ? 'done' : 'next'}">${last ? '開始遊戲' : '下一步'}</button></div>`;
-    if (last) tip.querySelector('[data-tut=skip]').remove();
+    const steps = getSteps(); index = Math.max(0, Math.min(steps.length - 1, n)); const step = steps[index];
+    ensure(); if (step.tab) goTab(step.tab);
+    const tip = root.querySelector('.tut-tip'), last = index === steps.length - 1;
+    tip.innerHTML = `<div class="tut-n">${index + 1} / ${steps.length} · ${mode === 'manager' ? '經紀人模式' : mode === 'post' ? '出道後教學' : '偶像模式'}</div><h4>${step.title}</h4><p>${step.text}</p><div class="tut-btns">${last ? '' : '<button type="button" class="btn ghost sm" data-tut="skip">略過教學</button>'}${index > 0 ? '<button type="button" class="btn ghost sm" data-tut="prev">上一步</button>' : ''}<button type="button" class="btn pink sm" data-tut="${last ? 'done' : 'next'}">${last ? '完成教學' : '下一步'}</button></div>`;
     clearTimeout(timer);
-    const el = s.sel && document.querySelector(s.sel);
-    if (el && el.scrollIntoView) { try { el.scrollIntoView({ block: 'center' }); } catch (e) { el.scrollIntoView(); } }
-    timer = setTimeout(place, 60);
+    const target = step.sel && document.querySelector(step.sel);
+    if (target && target.scrollIntoView) { try { target.scrollIntoView({ block: 'center', inline: 'nearest' }); } catch (_) { target.scrollIntoView(); } }
+    timer = setTimeout(place, 80);
   }
   function place() {
-    if (!root) return; const s = list()[i], spot = root.querySelector('.tut-spot'), tip = root.querySelector('.tut-tip');
-    const el = s.sel && document.querySelector(s.sel);
+    if (!root) return;
+    const step = getSteps()[index], spot = root.querySelector('.tut-spot'), tip = root.querySelector('.tut-tip');
+    let target = step.sel && document.querySelector(step.sel);
+    if (!target || !target.getBoundingClientRect || target.getBoundingClientRect().width <= 0) target = null;
     const W = window.innerWidth, H = window.innerHeight;
-    let r = null; if (el) { const b = el.getBoundingClientRect(); if (b.width > 0 && b.height > 0) r = b; }
-    if (!r) { spot.style.cssText = 'display:none'; tip.style.cssText = `left:${Math.max(10, (W - Math.min(W - 20, 360)) / 2)}px;top:${Math.max(20, (H - tip.offsetHeight) / 2)}px`; return; }
-    const pad = 6, top = Math.max(2, r.top - pad), left = Math.max(2, r.left - pad);
-    const sh = Math.min(r.height + pad * 2, H - 4), sw = Math.min(r.width + pad * 2, W - 4);
+    if (!target) {
+      spot.style.cssText = 'display:none';
+      root.querySelector('.tut-block').style.background = 'rgba(15,12,35,.68)';
+      const tw = Math.min(W - 20, 420), th = tip.offsetHeight;
+      tip.style.cssText = `left:${Math.max(10, (W - tw) / 2)}px;top:${Math.max(12, (H - th) / 2)}px;width:${tw}px`;
+      return;
+    }
+    root.querySelector('.tut-block').style.background = 'transparent';
+    const r = target.getBoundingClientRect(), pad = 6;
+    const top = Math.max(2, r.top - pad), left = Math.max(2, r.left - pad);
+    const sh = Math.min(Math.max(24, r.height + pad * 2), H - 4), sw = Math.min(Math.max(24, r.width + pad * 2), W - 4);
     spot.style.cssText = `display:block;top:${top}px;left:${left}px;width:${sw}px;height:${sh}px`;
-    const th = tip.offsetHeight, tw = Math.min(W - 20, 360), gap = 12;
+    const th = tip.offsetHeight, tw = Math.min(W - 20, 420), gap = 12;
     const below = H - (top + sh) - gap, above = top - gap;
-    let ty; if (below >= th) ty = top + sh + gap; else if (above >= th) ty = top - th - gap; else ty = below > above ? H - th - 10 : 10;
+    let ty = below >= th ? top + sh + gap : above >= th ? top - th - gap : below > above ? H - th - 10 : 10;
     const lx = Math.min(Math.max(10, left + sw / 2 - tw / 2), W - tw - 10);
-    tip.style.cssText = `left:${lx}px;top:${Math.max(8, ty)}px`;
+    tip.style.cssText = `left:${lx}px;top:${Math.max(8, ty)}px;width:${tw}px`;
   }
-  function start() { UI.close(); set = 1; show(0); }
-  function start3() { UI.close(); set = 3; show(0); }
-  function offer3() {
-    UI.modal(`<div class="ev-tag">🎓 經紀人引導</div><h3>要看一下經紀人的玩法嗎？</h3><p>約 1 分鐘，介紹資金、練習生、星探、團體出道、公司升級與事件因果。之後可在「存檔」分頁重看。</p>
-      <div class="btn-row"><button class="btn ghost" data-act="tut.skip3">跳過</button><button class="btn pink" data-act="tut.start3">開始引導</button></div>`, { cls: 'small' });
+  function start() { UI.close(); mode = 'idol'; show(0); }
+  function start2() { UI.close(); mode = 'post'; show(0); }
+  function start3() { UI.close(); mode = 'manager'; show(0); }
+  function offerIdol() {
+    UI.modal(`<div class="ev-tag">✦ 偶像模式新手教學</div><h3>認識新版偶像人生</h3><p>約 2 分鐘，帶你認識今日工作台、行程管理、能力成長、職涯志向、演藝事業與存檔中心。之後也能在存檔中心重看。</p><div class="btn-row"><button class="btn ghost" data-act="tut.skip">暫時不用</button><button class="btn pink" data-act="tut.start">開始教學</button></div>`, { cls: 'small' });
   }
-  function start2() { UI.close(); set = 2; show(0); }
-  function offer() {
-    UI.modal(`<div class="ev-tag">🎓 新手引導</div><h3>要看一下新手引導嗎？</h3><p>約 1 分鐘，帶你認識行動點數、月考、事件與因果。之後也能在「存檔」分頁重看。</p>
-      <div class="btn-row"><button class="btn ghost" data-act="tut.skip">我會了，跳過</button><button class="btn pink" data-act="tut.start">開始引導</button></div>`, { cls: 'small' });
+  function offerManager() {
+    UI.modal(`<div class="ev-tag">◇ 經紀人模式新手教學</div><h3>認識新版公司管理</h3><p>約 2 分鐘，帶你認識公司 KPI、人才培訓、星探招募、團體定位與關係、公司財務及存檔中心。</p><div class="btn-row"><button class="btn ghost" data-act="tut.skip3">暫時不用</button><button class="btn pink" data-act="tut.start3">開始教學</button></div>`, { cls: 'small' });
   }
-  function offer2() {
-    UI.modal(`<div class="ev-tag">🎓 出道後引導</div><h3>要看一下出道後的玩法嗎？</h3><p>約 1 分鐘，介紹評鑑、發片、打歌、廣告代言、粉絲與風波因果，以及頂級藝人的條件。之後可在「存檔」分頁重看。</p>
-      <div class="btn-row"><button class="btn ghost" data-act="tut.skip2">跳過</button><button class="btn pink" data-act="tut.start2">開始引導</button></div>`, { cls: 'small' });
+  function offerPost() {
+    UI.modal(`<div class="ev-tag">🎤 出道後進階教學</div><h3>認識藝人職涯管理</h3><p>約 1 分鐘，介紹作品企劃、宣傳、隊友關係、年度榮耀與職涯紀錄。</p><div class="btn-row"><button class="btn ghost" data-act="tut.skip2">暫時不用</button><button class="btn pink" data-act="tut.start2">開始教學</button></div>`, { cls: 'small' });
   }
   function check() {
     if (window.__mode === 'mgr' && typeof M !== 'undefined' && M && !M.over && !root) {
-      if (M.week > 1 || (M.flags && M.flags.tut3) || done3() || M.queue.length || UI.isOpen()) return;
-      M.flags = M.flags || {}; M.flags.tut3 = 1; offer3(); return;
+      if (M.week > 1 || (M.flags && M.flags.tut3) || safeGet(KEY_MANAGER) || M.queue.length || UI.isOpen()) return;
+      M.flags = M.flags || {}; M.flags.tut3 = 1; offerManager(); return;
     }
     if (window.__mode !== 'idol' || typeof I === 'undefined' || !I || I.over || root) return;
     if (I.stage >= 2 && I.day > 1) {
-      if ((I.flags && I.flags.tut2) || done2() || I.queue.length || UI.isOpen()) return;
-      I.flags.tut2 = 1; offer2(); return;
+      if ((I.flags && I.flags.tut2) || safeGet(KEY_POST) || I.queue.length || UI.isOpen()) return;
+      I.flags.tut2 = 1; offerPost(); return;
     }
-    if (I.day > 1 || (I.flags && I.flags.tut) || done()) return;
-    if (I.queue.length || UI.isOpen()) return;
-    I.flags.tut = 1; offer();
+    if (I.day > 1 || (I.flags && I.flags.tut) || safeGet(KEY_IDOL) || I.queue.length || UI.isOpen()) return;
+    I.flags = I.flags || {}; I.flags.tut = 1; offerIdol();
   }
   document.addEventListener('click', e => {
-    const b = e.target.closest && e.target.closest('[data-tut]'); if (!b || !root) return;
-    const k = b.dataset.tut;
-    if (k === 'next') show(i + 1); else if (k === 'prev') show(i - 1); else if (k === 'skip') close(false); else if (k === 'done') close(true);
+    const button = e.target.closest && e.target.closest('[data-tut]'); if (!button || !root) return;
+    const action = button.dataset.tut;
+    if (action === 'next') show(index + 1);
+    else if (action === 'prev') show(index - 1);
+    else if (action === 'skip') close(false);
+    else if (action === 'done') close(true);
   });
-  return { start, start2, start3, offer3, show, check, offer, offer2, close, done };
+  return { start, start2, start3, offer3: offerManager, show, check, offer: offerIdol, offer2: offerPost, close };
 })();
+
 ACT['tut.start'] = () => Tut.start();
-ACT['tut.skip'] = () => { UI.close(); try { localStorage.setItem('kpop_sim_tut_done', '1'); } catch (e) { } };
+ACT['tut.skip'] = () => { UI.close(); try { localStorage.setItem('kpop_sim_tut_done', '1'); } catch (_) {} };
 ACT['tut.start2'] = () => Tut.start2();
-ACT['tut.skip2'] = () => { UI.close(); try { localStorage.setItem('kpop_sim_tut2_done', '1'); } catch (e) { } };
+ACT['tut.skip2'] = () => { UI.close(); try { localStorage.setItem('kpop_sim_tut2_done', '1'); } catch (_) {} };
 ACT['tut.start3'] = () => Tut.start3();
-ACT['tut.skip3'] = () => { UI.close(); try { localStorage.setItem('kpop_sim_tut3_done', '1'); } catch (e) { } };
+ACT['tut.skip3'] = () => { UI.close(); try { localStorage.setItem('kpop_sim_tut3_done', '1'); } catch (_) {} };
 ACT['tut.replay3'] = () => { MgrUI.tab = 'home'; Mgr.render(); Tut.start3(); };
 ACT['tut.replay2'] = () => { IdolUI.tab = 'home'; Idol.render(); Tut.start2(); };
 ACT['tut.replay'] = () => { IdolUI.tab = 'home'; Idol.render(); Tut.start(); };
 
 </script>
-  <script>/* js/manager-engine.js */
+  <script>
+/* Embedded: js/manager-engine.js */
 'use strict';
 /* ===== manager.js ===== */
 /* =========================================================
@@ -8328,7 +8432,7 @@ function mSave() {
   const slots = ['1', '2', '3'].map(sl => { const inf = Store.info('mgr', sl); return `<div class="slot"><b>手動存檔 ${sl}</b><small>${inf ? new Date(inf.t).toLocaleString() + '<br>' + U.esc(inf.label) : '（空）'}</small><div class="btn-row"><button class="btn sm" data-act="m.save" data-s="${sl}">儲存</button><button class="btn sm ghost" data-act="m.load" data-s="${sl}" ${inf ? '' : 'disabled'}>讀取</button><button class="btn sm ghost" data-act="m.delslot" data-s="${sl}" ${inf ? '' : 'disabled'}>刪除</button></div></div>`; }).join('');
   const au = Store.info('mgr', 'auto'), bk = Store.info('mgr', 'bak');
   return `<div class="grid2"><div class="col">${card('自動存檔', `<p>每週結束時自動存檔。<br><small>自動檔：${au ? new Date(au.t).toLocaleString() : '無'}　備份檔：${bk ? new Date(bk.t).toLocaleString() : '無'}</small></p><div class="btn-row"><button class="btn sm" data-act="m.save" data-s="auto">立即自動存檔</button><button class="btn sm ghost" data-act="m.load" data-s="bak" ${bk ? '' : 'disabled'}>讀取備份檔</button></div>`)}${card('手動存檔', slots)}</div>
-  <div class="col">${card('新手引導', `<p class="sub">重看經紀人玩法介紹。</p><button class="btn" data-act="tut.replay3">🎓 重看經紀人引導</button>`)+card('匯出／匯入', `<textarea id="exp" rows="5" placeholder="存檔文字"></textarea><div class="btn-row wrap"><button class="btn sm" data-act="m.export">匯出到文字框</button><button class="btn sm ghost" data-act="m.import">匯入</button></div>`)}${card('重新開始', `<button class="btn danger" data-act="m.restart">重新開始</button>`)}</div></div>`;
+  <div class="col">${card('新手引導', `<p class="sub">依新版公司總覽、人才中心、團體企劃、成員分工與財務管理重新編排。</p><button class="btn" data-act="tut.replay3">🎓 重看經紀人模式新手教學</button>`)+card('匯出／匯入', `<textarea id="exp" rows="5" placeholder="存檔文字"></textarea><div class="btn-row wrap"><button class="btn sm" data-act="m.export">匯出到文字框</button><button class="btn sm ghost" data-act="m.import">匯入</button></div>`)}${card('重新開始', `<button class="btn danger" data-act="m.restart">重新開始</button>`)}</div></div>`;
 }
 
 /* ---------- 彈窗與流程 ---------- */
@@ -8570,7 +8674,8 @@ Mgr.renderEnding = function (root) {
 };
 
 </script>
-  <script>/* js/manager-company.js */
+  <script>
+/* Embedded: js/manager-company.js */
 'use strict';
 /* ===== mgr_co.js ===== */
 /* ================= 經紀人模式：公司之間的榜單競爭 + 旗下藝人合約與續約談判 ================= */
@@ -8685,7 +8790,8 @@ ACT['m.renewno2'] = () => { const R = MgrUI.rn, T = R && MT(M, R.id); if (T) { M
 ACT['m.renewopen'] = d => Mgr.renewModal(+d.id, false);
 
 </script>
-  <script>/* js/achievements.js */
+  <script>
+/* Embedded: js/achievements.js */
 'use strict';
 /* ===== ach.js ===== */
 /* ================= 成就系統（全域，跨存檔、跨模式） ================= */
@@ -8802,7 +8908,8 @@ ACT['ach.open'] = () => UI.modal(Ach.html(), { cls: 'plan' });
 })();
 
 </script>
-  <script>/* js/main.js */
+  <script>
+/* Embedded: js/main.js */
 'use strict';
 /* ===== main.js ===== */
 /* =========================================================
@@ -8908,13 +9015,14 @@ document.addEventListener('change', e => {
 if (typeof window !== 'undefined' && document.getElementById('screen')) App.menu();
 
 </script>
-  <script>/* js/remaster-ui.js */
+  <script>
+/* Embedded: js/remaster-ui.js */
 /* K-POP LIFE SIMULATOR 2.0 — compatibility-first UI shell
  * Keeps the original simulation engines, action IDs and Store v1 schema intact.
  */
 (function () {
   'use strict';
-  const VERSION = '2.0.0-phase-1-2';
+  const VERSION = '2.0.5';
   let installed = false;
   const pageMeta = {
     idol: {
@@ -9169,7 +9277,8 @@ if (typeof window !== 'undefined' && document.getElementById('screen')) App.menu
 })();
 
 </script>
-  <script>/* js/phase34-ui.js */
+  <script>
+/* Embedded: js/phase34-ui.js */
 /* K-POP Life Simulator 2.0 — Phase 3 & 4 gameplay dashboard layer
  * Visual/quality-of-life layer only. Core action handlers and game formulas remain intact.
  * New optional preferences are stored inside the existing game state objects so the original
@@ -9427,7 +9536,8 @@ if (typeof window !== 'undefined' && document.getElementById('screen')) App.menu
 })();
 
 </script>
-  <script>/* js/career-resume.js */
+  <script>
+/* Embedded: js/career-resume.js */
 /* K-POP Life Simulator 2.0.2 — Personal career biography
  * Additive UI only. Timeline entries are derived from the idol save data.
  */
@@ -9525,13 +9635,14 @@ if (typeof window !== 'undefined' && document.getElementById('screen')) App.menu
 })();
 
 </script>
-  <script>/* js/career-suite.js */
+  <script>
+/* Embedded: js/career-suite.js */
 /* K-POP Life Simulator 2.0 — Career records, group projects & annual milestones
  * Additive layer: keeps Idol and Manager independent; uses existing simulation formulas.
  */
 (function () {
   'use strict';
-  const VERSION = '2.0.0-career-suite';
+  const VERSION = '2.0.5-group-relationships-tutorials';
   let installed = false;
   let reducedMotionDone = null;
   const esc = v => String(v ?? '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
@@ -9552,6 +9663,64 @@ if (typeof window !== 'undefined' && document.getElementById('screen')) App.menu
   const roleStat = { 主唱:'voc', 領唱:'voc', 主舞:'dan', 領舞:'dan', 主Rapper:'rap', 副Rapper:'rap', 門面:'vis' };
   const roleOptions = current => ['隊長','主唱','領唱','主舞','領舞','主Rapper','副Rapper','門面','中心','忙內'].map(x => `<option value="${x}" ${current===x?'selected':''}>${x}</option>`).join('');
   function suggestedRole(T) { const a=T.ab||{}, pairs=[['主唱','voc'],['主舞','dan'],['主Rapper','rap'],['門面','vis']]; return pairs.sort((x,y)=>(Number(a[y[1]])||0)-(Number(a[x[1]])||0))[0][0]; }
+
+  const clamp100 = n => Math.max(0, Math.min(100, Number(n) || 0));
+  const bondLabel = score => score >= 85 ? '摯友搭檔' : score >= 70 ? '關係親近' : score >= 45 ? '關係普通' : score >= 25 ? '仍在磨合' : '氣氛緊張';
+  const bondPairKey = names => names.map(x => String(x)).sort((a,b)=>a.localeCompare(b,'zh-Hant')).map(encodeURIComponent).join('~');
+
+  // Pair bonds are additive narrative data. They intentionally do not feed the legacy
+  // ability, sales, debut, chart, award, loyalty or group-chemistry formulas.
+  function ensureIdolBonds() {
+    if (!I || !I.grp || I.grp.kind === 'solo') return [];
+    I.grp.csBonds = I.grp.csBonds || {};
+    const names = safeArray(I.grp.members).map(x => String(x).split('（')[0]).filter(Boolean);
+    const pairs = [];
+    for (let a=0; a<names.length; a++) for (let b=a+1; b<names.length; b++) {
+      if (names[a] === names[b]) continue;
+      const key = bondPairKey([names[a], names[b]]);
+      if (!I.grp.csBonds[key]) I.grp.csBonds[key] = { score: 42, lastDay: -1, events: 0, storyEvents: 0, lastStory: '' };
+      const bond = I.grp.csBonds[key]; bond.score = clamp100(bond.score ?? 42); bond.storyEvents = Number(bond.storyEvents) || 0; bond.lastStory = String(bond.lastStory || '');
+      pairs.push({ key, a: names[a], b: names[b], bond });
+    }
+    return pairs;
+  }
+  function ensureManagerBonds(G) {
+    if (!G) return [];
+    G.csBonds = G.csBonds || {};
+    const members = safeArray(G.members).map(id => M && M.roster.find(t => t.id === id)).filter(Boolean);
+    const pairs = [];
+    for (let a=0; a<members.length; a++) for (let b=a+1; b<members.length; b++) {
+      const x=members[a], y=members[b], key=[x.id,y.id].sort((m,n)=>m-n).join('-');
+      if (!G.csBonds[key]) G.csBonds[key] = { score: 42, lastWeek: -1, events: 0, storyEvents: 0, lastStory: '' };
+      const bond=G.csBonds[key]; bond.score=clamp100(bond.score ?? 42); bond.storyEvents=Number(bond.storyEvents)||0; bond.lastStory=String(bond.lastStory||'');
+      pairs.push({key,a:x,b:y,bond});
+    }
+    return pairs;
+  }
+  function idolBondPanel() {
+    const pairs=ensureIdolBonds();
+    if (!pairs.length) return '';
+    const rows=pairs.map(({key,a,b,bond})=>{
+      const v=Math.round(bond.score), done=bond.lastDay===I.day;
+      const controls=`${btn('聊天 +4','cs.idol.bond',`data-pair="${esc(key)}" data-kind="chat" ${done||I.ap<1?'disabled':''}`)}${btn('合作練習 +5','cs.idol.bond',`data-pair="${esc(key)}" data-kind="practice" ${done||I.ap<1?'disabled':''}`)}${v<45?btn('溝通和解 +9','cs.idol.bond',`data-pair="${esc(key)}" data-kind="resolve" ${done||I.ap<1?'disabled':''}`):''}`;
+      return `<article class="cs-bond-row"><div class="cs-bond-main"><b>${esc(a)} <i>＆</i> ${esc(b)}</b><span>${bondLabel(v)}</span><div class="cs-bond-track"><i style="width:${v}%"></i></div><small>關係 ${v}/100 · 主動互動 ${Number(bond.events)||0} 次 · 日常事件 ${Number(bond.storyEvents)||0} 次${done?' · 今日已互動':''}${bond.lastStory?`<br>近期：${esc(bond.lastStory)}`:''}</small></div><div class="cs-bond-actions">${controls}</div></article>`;
+    }).join('');
+    const avg=Math.round(pairs.reduce((n,x)=>n+x.bond.score,0)/pairs.length);
+    const tense=pairs.filter(x=>x.bond.score<35).length;
+    return `<section class="cs-group-bonds cs-idol-bonds"><div class="cs-bonds-heading"><div><small>MEMBER RELATIONSHIPS</small><h3>團體成員關係</h3><p>記錄成員彼此的熟悉程度。每組成員每天可安排一次互動。</p></div><b>${bondLabel(avg)}</b></div><div class="cs-bonds-summary"><span>平均關係 <b>${avg}/100</b></span><span>成員組合 <b>${pairs.length}</b></span><span>待磨合 <b>${tense} 組</b></span><span>今日 AP <b>${I.ap}/${I.apMax}</b></span></div><div class="cs-bond-list">${rows}</div><p class="cs-bond-note">關係值是獨立的劇情紀錄，不會改變既有隊友好感、能力成長、團體默契、銷量或榜單公式。</p></section>`;
+  }
+  function managerBondPanel(G) {
+    const pairs=ensureManagerBonds(G);
+    if (!pairs.length) return '<section class="cs-group-bonds"><p class="cs-empty">至少需要兩位有效成員，才能建立成員關係。</p></section>';
+    const avg=Math.round(pairs.reduce((n,x)=>n+x.bond.score,0)/pairs.length);
+    const tense=pairs.filter(x=>x.bond.score<35).length;
+    const rows=pairs.map(({key,a,b,bond})=>{
+      const v=Math.round(bond.score), done=bond.lastWeek===M.week;
+      return `<article class="cs-bond-row"><div class="cs-bond-main"><b>${esc(Mgr.dn(a))} <i>＆</i> ${esc(Mgr.dn(b))}</b><span>${bondLabel(v)}</span><div class="cs-bond-track"><i style="width:${v}%"></i></div><small>關係 ${v}/100 · 主動互動 ${Number(bond.events)||0} 次 · 日常事件 ${Number(bond.storyEvents)||0} 次${done?' · 本週已互動':''}${bond.lastStory?`<br>近期：${esc(bond.lastStory)}`:''}</small></div><div class="cs-bond-actions">${btn('談心 +5','cs.manager.bond',`data-gid="${G.id}" data-pair="${key}" data-kind="chat" ${done||M.ap<1?'disabled':''}`)}${btn('合作練習 +4','cs.manager.bond',`data-gid="${G.id}" data-pair="${key}" data-kind="practice" ${done||M.ap<1?'disabled':''}`)}${v<45?btn('協調和解 +9','cs.manager.bond',`data-gid="${G.id}" data-pair="${key}" data-kind="resolve" ${done||M.ap<1?'disabled':''}`):''}</div></article>`;
+    }).join('');
+    const dinnerDone=G.csDinnerWeek===M.week;
+    return `<section class="cs-group-bonds"><div class="cs-bonds-heading"><div><small>MEMBER RELATIONSHIPS</small><h3>成員關係與團體氣氛</h3><p>經紀人可安排談心、合作練習或協調摩擦；每組成員每週一次。</p></div><b>${bondLabel(avg)}</b></div><div class="cs-bonds-summary"><span>平均關係 <b>${avg}/100</b></span><span>成員組合 <b>${pairs.length}</b></span><span>待磨合 <b>${tense} 組</b></span><span>本週 AP <b>${M.ap}/${M.apMax}</b></span></div><div class="cs-bond-list">${rows}</div><div class="cs-bond-team-action">${btn('安排團體聚餐（+3 全組）','cs.manager.bond.dinner',`data-gid="${G.id}" ${dinnerDone||M.ap<1||M.co.funds<30000?'disabled':''}`,'cs-btn cs-btn-primary')}<small>1 AP · 公司支出 ₩30,000 · 每週一次${dinnerDone?'（本週已安排）':''}</small></div><p class="cs-bond-note">關係值用於呈現成員互動與事件紀錄，不會直接改動團體默契、練習生忠誠度、能力、作品銷量或榜單公式。</p></section>`;
+  }
 
   function ensureIdolMeta() { if (I) I.remaster = I.remaster || {}; return I && I.remaster; }
   function ensureManagerMeta() { if (M) M.remaster = M.remaster || {}; return M && M.remaster; }
@@ -9742,6 +9911,10 @@ if (typeof window !== 'undefined' && document.getElementById('screen')) App.menu
       const dash = content.querySelector('.p34-manager-dashboard');
       if (dash && !dash.querySelector('.cs-feature-suite')) dash.insertAdjacentHTML('beforeend', managerFeatureSuite());
     }
+    if (mode === 'idol' && IdolUI.tab === 'rel' && IdolUI.relTab === 'mate' && Idol.hasMates()) {
+      const target = content.querySelector('.content') || content;
+      if (!target.querySelector('.cs-idol-bonds')) target.insertAdjacentHTML('beforeend', idolBondPanel());
+    }
     if (mode === 'mgr' && MgrUI.tab === 'groups') {
       const nodes = [...content.querySelectorAll('.p34-manager-groups .p34-group-portfolio')];
       nodes.forEach((node, idx) => {
@@ -9757,7 +9930,7 @@ if (typeof window !== 'undefined' && document.getElementById('screen')) App.menu
         node.insertAdjacentHTML('beforeend', `<div class="cs-manager-project-slot"><div><small>GROUP SIGNATURE PROJECT</small><b>${esc(label)}</b></div>${btn(p ? '編輯企劃' : '建立專屬企劃','cs.manager.project.open',`data-gid="${G.id}"`)}</div>
           <section class="cs-group-identity"><div class="cs-group-identity-head"><div><small>TEAM IDENTITY & POSITION</small><b>團體定位與成員分工</b></div><span>${chemistry}</span></div>
           <div class="cs-team-metrics"><span>團體默契 <b>${teamScore}/100</b></span><span>平均忠誠 <b>${avgLoyalty}/100</b></span></div><div class="cs-role-list">${roleRows||'<p class="cs-empty">目前沒有正式成員。</p>'}</div>
-          ${btn('儲存成員定位','cs.manager.roles.save',`data-gid="${G.id}"`,'cs-btn cs-btn-primary cs-role-save')}</section>`);
+          ${btn('儲存成員定位','cs.manager.roles.save',`data-gid="${G.id}"`,'cs-btn cs-btn-primary cs-role-save')}</section>${managerBondPanel(G)}`);
       });
     }
   }
@@ -9795,13 +9968,54 @@ if (typeof window !== 'undefined' && document.getElementById('screen')) App.menu
     recordIdolMilestone(`企劃《${rec.title || rec.albumName}》宣傳結束：${rec.goalAchieved ? '達成' : '未達成'}目標。`, rec.goalAchieved ? 'win' : 'story');
   }
 
+  function rollIdolBondStory() {
+    if (!I || !I.grp || I.grp.kind === 'solo' || I.day % 14 !== 0) return false;
+    I.grp.csBondStoryDay = Number(I.grp.csBondStoryDay ?? -999);
+    if (I.day - I.grp.csBondStoryDay < 28) return false;
+    const pairs = ensureIdolBonds(); if (!pairs.length || Math.random() > .18) return false;
+    const pair = pairs[Math.floor(Math.random() * pairs.length)], bond = pair.bond;
+    const positive = Math.random() < .56;
+    const delta = positive ? 4 : -4;
+    const story = positive
+      ? `${pair.a} 默默替 ${pair.b} 準備了練習用品，兩人的距離更近了一點。`
+      : `${pair.a} 與 ${pair.b} 對舞台分工有不同想法，排練氣氛一度有些僵。`;
+    bond.score = clamp100(bond.score + delta); bond.storyEvents = (Number(bond.storyEvents) || 0) + 1; bond.lastStory = story;
+    I.grp.csBondStoryDay = I.day;
+    Idol.log(`團體日常：${story}（關係 ${delta > 0 ? '+' : ''}${delta}）。`, positive ? 'story' : 'bad');
+    return true;
+  }
+  function rollManagerBondStory() {
+    if (!M || !Array.isArray(M.groups) || M.week % 4 !== 0) return false;
+    let changed = false;
+    M.groups.forEach(G => {
+      if (!G || G.status === 'hiatus') return;
+      G.csBondStoryWeek = Number(G.csBondStoryWeek ?? -999);
+      if (M.week - G.csBondStoryWeek < 4) return;
+      const pairs = ensureManagerBonds(G); if (!pairs.length || Math.random() > .16) return;
+      const pair = pairs[Math.floor(Math.random() * pairs.length)], bond = pair.bond;
+      const positive = Math.random() < .56, delta = positive ? 3 : -4;
+      const a = Mgr.dn(pair.a), b = Mgr.dn(pair.b);
+      const story = positive
+        ? `${a} 主動陪 ${b} 加練，兩人逐漸建立合作默契。`
+        : `${a} 與 ${b} 對團體練習安排有些分歧，需要經紀人留意。`;
+      bond.score = clamp100(bond.score + delta); bond.storyEvents = (Number(bond.storyEvents) || 0) + 1; bond.lastStory = story;
+      G.csBondStoryWeek = M.week;
+      Mgr.log(`${G.name} 團體日常：${story}（關係 ${delta > 0 ? '+' : ''}${delta}）。`, positive ? 'story' : 'bad');
+      changed = true;
+    });
+    return changed;
+  }
+
   function install() {
     if (installed || typeof Idol === 'undefined' || typeof Mgr === 'undefined' || typeof ACT === 'undefined') return;
     installed = true;
 
     const oldIdolRender = Idol.render.bind(Idol), oldMgrRender = Mgr.render.bind(Mgr);
+    const oldIdolEndDay = Idol.endDay.bind(Idol), oldManagerEndWeek = Mgr.endWeek.bind(Mgr);
     Idol.render = function () { const out = oldIdolRender(); decorate('idol'); return out; };
     Mgr.render = function () { const out = oldMgrRender(); decorate('mgr'); return out; };
+    Idol.endDay = function () { const out = oldIdolEndDay(); if (rollIdolBondStory()) Idol.save('auto'); return out; };
+    Mgr.endWeek = function () { const out = oldManagerEndWeek(); if (rollManagerBondStory()) Mgr.save('auto'); return out; };
 
     const oldIdolLog = Idol.log;
     Idol.log = function (txt, kind) { const out = oldIdolLog.call(Idol, txt, kind); recordIdolMilestone(txt, kind); return out; };
@@ -9932,6 +10146,40 @@ if (typeof window !== 'undefined' && document.getElementById('screen')) App.menu
       recordIdolMilestone(`啟動團體專屬企劃《${album.name}》，目標：${goalNames[goal]}。`, 'story');
       Idol.save('auto'); UI.close(); UI.toast(`《${album.name}》已發行，企劃開始追蹤。`, 'ok'); Idol.render(); Idol.flush();
     };
+    ACT['cs.idol.bond'] = d => {
+      if (!I || !I.grp || !Idol.hasMates()) return UI.toast('目前沒有可互動的團體成員。','bad');
+      const pair=ensureIdolBonds().find(x=>x.key===d.pair); if(!pair) return UI.toast('找不到這組成員關係。','bad');
+      const bond=pair.bond; if(bond.lastDay===I.day) return UI.toast('這組成員今天已經互動過了。','bad');
+      if(I.ap<1) return UI.toast('行動點數不足。','bad');
+      const kind=d.kind, effect={chat:4,practice:5,resolve:9}[kind]; if(!effect) return;
+      if(kind==='resolve' && bond.score>=45) return UI.toast('這組成員目前沒有明顯摩擦，不需要特別調解。','bad');
+      const before=bond.score; I.ap-=1; bond.score=clamp100(bond.score+effect); bond.lastDay=I.day; bond.events=(Number(bond.events)||0)+1;
+      const story=kind==='chat'?`${pair.a} 與 ${pair.b} 在行程空檔聊了聊，彼此更了解對方。`:kind==='practice'?`${pair.a} 與 ${pair.b} 一起練習舞台走位，逐漸找到合作節奏。`:`在你的溝通下，${pair.a} 與 ${pair.b} 把之前的誤會說開了。`;
+      if(before<70 && bond.score>=70) Idol.log(`${pair.a} 與 ${pair.b} 成為親近的搭檔。`,'story'); else Idol.log(story,'story');
+      Idol.save('auto'); UI.toast(`${story}（關係 ${Math.round(before)} → ${Math.round(bond.score)}）`,'ok'); Idol.render();
+    };
+    ACT['cs.manager.bond'] = d => {
+      const G=M&&M.groups.find(x=>x.id===Number(d.gid)); if(!G) return UI.toast('找不到這個團體。','bad');
+      const pair=ensureManagerBonds(G).find(x=>x.key===String(d.pair)); if(!pair) return UI.toast('找不到這組成員關係。','bad');
+      const bond=pair.bond; if(bond.lastWeek===M.week) return UI.toast('這組成員本週已安排過互動。','bad');
+      if(M.ap<1) return UI.toast('行動點數不足。','bad');
+      const kind=d.kind, effect={chat:5,practice:4,resolve:9}[kind]; if(!effect) return;
+      if(kind==='resolve' && bond.score>=45) return UI.toast('這組成員目前沒有明顯摩擦，不需要特別調解。','bad');
+      const before=bond.score; Mgr.spend(1); bond.score=clamp100(bond.score+effect); bond.lastWeek=M.week; bond.events=(Number(bond.events)||0)+1;
+      const story=kind==='chat'?`${Mgr.dn(pair.a)} 與 ${Mgr.dn(pair.b)} 在經紀人安排下進行談心。`:kind==='practice'?`${Mgr.dn(pair.a)} 與 ${Mgr.dn(pair.b)} 進行合作練習，逐漸建立默契。`:`經紀人協調了 ${Mgr.dn(pair.a)} 與 ${Mgr.dn(pair.b)} 的摩擦，雙方願意重新溝通。`;
+      Mgr.log(`${G.name}：${story}（關係 ${Math.round(before)} → ${Math.round(bond.score)}）。`,'story');
+      Mgr.save('auto'); UI.toast(story,'ok'); Mgr.render();
+    };
+    ACT['cs.manager.bond.dinner'] = d => {
+      const G=M&&M.groups.find(x=>x.id===Number(d.gid)); if(!G) return UI.toast('找不到這個團體。','bad');
+      const pairs=ensureManagerBonds(G); if(!pairs.length) return UI.toast('目前成員不足，無法舉辦團體聚餐。','bad');
+      if(G.csDinnerWeek===M.week) return UI.toast('這個團體本週已經聚餐過了。','bad');
+      if(M.ap<1) return UI.toast('行動點數不足。','bad'); if(M.co.funds<30000) return UI.toast('公司資金不足（需要 ₩30,000）。','bad');
+      Mgr.spend(1); M.co.funds-=30000; G.csDinnerWeek=M.week;
+      pairs.forEach(x=>{x.bond.score=clamp100(x.bond.score+3);x.bond.events=(Number(x.bond.events)||0)+1;x.bond.lastWeek=M.week;});
+      Mgr.log(`${G.name} 舉辦團體聚餐，成員們在非工作場合交流，整體關係有所提升。`,'story');
+      Mgr.save('auto'); UI.toast(`${G.name} 的團體聚餐順利完成。公司支出 ₩30,000。`,'ok'); Mgr.render();
+    };
     ACT['cs.manager.project.open'] = d => renderManagerProject(d.gid);
     ACT['cs.manager.roles.save'] = d => {
       const G=M&&M.groups.find(x=>x.id===Number(d.gid)); if(!G) return UI.toast('找不到這個團體。','bad');
@@ -9961,6 +10209,8 @@ if (typeof window !== 'undefined' && document.getElementById('screen')) App.menu
         idolResume: typeof ACT['cs.idol.resume.open'] === 'function',
         groupProject: typeof ACT['cs.idol.project.release'] === 'function' && typeof ACT['cs.manager.project.save'] === 'function',
         annualAwards: typeof ACT['cs.idol.awards.open'] === 'function' && typeof ACT['cs.manager.awards.open'] === 'function',
+        memberRelationships: typeof ACT['cs.idol.bond'] === 'function' && typeof ACT['cs.manager.bond'] === 'function' && typeof ACT['cs.manager.bond.dinner'] === 'function',
+        relationshipStories: typeof rollIdolBondStory === 'function' && typeof rollManagerBondStory === 'function',
         saveKeysUnchanged: Store.key('idol','auto') === 'kpopsim.v1.idol.auto' && Store.key('mgr','auto') === 'kpopsim.v1.mgr.auto'
       })
     };
