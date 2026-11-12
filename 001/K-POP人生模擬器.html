@@ -6,7 +6,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <meta name="description" content="K-POP 人生模擬器：從練習生到頂級藝人，或打造你的娛樂公司。">
   <title>K-POP 人生模擬器 2.0</title>
-  <style>/* Inlined from css/base.css */
+  <style>/* css/base.css */
 
 :root{--bg1:#fff1f7;--bg2:#eef0ff;--card:#fff;--ink:#3a3552;--sub:#8a84a3;--pink:#ec6fa5;--pink2:#ffb6d3;--lav:#8b7cf6;--mint:#4fd1b0;--sky:#6cb8ff;--warn:#ff8a65;--line:#efe9f7;--sh:0 6px 20px rgba(139,124,246,.12)}
 *{box-sizing:border-box}html,body{margin:0;min-height:100%}
@@ -307,7 +307,7 @@ button,.tab,.choice,.btn{touch-action:manipulation}
 
 
 </style>
-  <style>/* Inlined from css/remaster.css */
+  <style>/* css/remaster.css */
 /* K-POP LIFE SIMULATOR 2.0 — visual shell */
 :root{
   --neo-ink:#30263f;--neo-sub:#887d9b;--neo-pink:#eb7bb8;--neo-rose:#f6a5c9;
@@ -532,7 +532,7 @@ button:focus-visible{outline:3px solid rgba(147,127,224,.45);outline-offset:3px}
 }
 
 </style>
-  <style>/* Inlined from css/phase34.css */
+  <style>/* css/phase34.css */
 /* Phase 3 & 4 — idol life dashboard and agency operation suite */
 .p34-idol-dashboard,.p34-manager-dashboard,.p34-manager-roster,.p34-manager-groups,.p34-company-management{display:flex;flex-direction:column;gap:16px;color:var(--neo-ink,#453451)}
 .p34-idol-hero,.p34-company-hero{position:relative;display:flex;align-items:center;gap:22px;overflow:hidden;padding:22px 25px;border:1px solid rgba(255,255,255,.86);border-radius:24px;background:linear-gradient(115deg,#fff8fc 0%,#f5efff 58%,#ece8ff 100%);box-shadow:0 15px 36px rgba(98,69,124,.09)}
@@ -674,7 +674,7 @@ button:focus-visible{outline:3px solid rgba(147,127,224,.45);outline-offset:3px}
 @media(prefers-reduced-motion:reduce){.p34-btn,.p34-policy,.p34-action-chip{transition:none}}
 
 </style>
-  <style>/* Inlined from css/home-readability.css */
+  <style>/* css/home-readability.css */
 /* Readability pass — homepage dashboards only. Keep the existing visual language. */
 .p34-idol-dashboard,.p34-manager-dashboard{font-size:15px}
 .p34-idol-dashboard .p34-kicker,.p34-manager-dashboard .p34-kicker{font-size:12px}
@@ -724,7 +724,7 @@ button:focus-visible{outline:3px solid rgba(147,127,224,.45);outline-offset:3px}
 }
 
 </style>
-  <style>/* Inlined from css/career-resume.css */
+  <style>/* css/career-resume.css */
 /* 2.0.2 — Character career biography */
 .cr-feature-card{display:flex;align-items:center;justify-content:space-between;gap:18px;margin:18px 0 4px;padding:20px 22px;border:1px solid #eadced;border-radius:18px;background:linear-gradient(112deg,#fff8fc 0%,#f7f2ff 100%);box-shadow:0 8px 24px rgba(112,78,132,.07)}
 .cr-feature-copy{min-width:0}.cr-feature-copy small,.cr-kicker{font-size:11px;font-weight:900;letter-spacing:.15em;color:#a47fb1}.cr-feature-copy h3{margin:5px 0;color:#5c456b;font-size:19px}.cr-feature-copy p{margin:0 0 8px;color:#85768f;font-size:14px;line-height:1.65}.cr-feature-copy span{color:#a184ad;font-size:13px;font-weight:700}.cr-btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;min-height:42px;padding:10px 16px;border:1px solid #e8d9ed;border-radius:12px;background:#fff;color:#765d83;font-size:14px;font-weight:800;cursor:pointer;white-space:nowrap}.cr-btn-primary{border:0;background:linear-gradient(130deg,#df87b6,#a68bd4);color:white;box-shadow:0 6px 14px rgba(186,126,177,.18)}
@@ -737,7 +737,7 @@ button:focus-visible{outline:3px solid rgba(147,127,224,.45);outline-offset:3px}
 @media(max-width:480px){.cr-profile{align-items:flex-start;gap:11px;padding:12px}.cr-avatar{width:70px;height:70px}.cr-profile-info h3{font-size:18px}.cr-profile-info small{font-size:11px}.cr-modal{gap:12px}.cr-panel{padding:12px}.cr-facts b{font-size:13px}.cr-title-row p{font-size:13px}}
 
 </style>
-  <style>/* Inlined from css/career-suite.css */
+  <style>/* css/career-suite.css */
 /* Homepage readability pass: raise information hierarchy while keeping decorative micro-labels quiet. */
 .p34-idol-dashboard,.p34-manager-dashboard{font-size:16px;line-height:1.62}
 .p34-idol-dashboard .p34-kicker,.p34-manager-dashboard .p34-kicker{font-size:12px;letter-spacing:.12em}
@@ -809,6 +809,26 @@ button:focus-visible{outline:3px solid rgba(147,127,224,.45);outline-offset:3px}
 /* Idol homepage now has two career cards: project studio and annual honours. */
 .cs-feature-suite:not(.cs-manager-suite) .cs-feature-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
 
+
+/* 2.0.4 — Group identity and member positions */
+.cs-group-identity{margin:14px 0 4px;padding:16px;border:1px solid rgba(178,151,210,.24);border-radius:16px;background:linear-gradient(135deg,rgba(247,241,255,.92),rgba(255,250,246,.96));}
+.cs-group-identity-head{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:12px}
+.cs-group-identity-head>div{display:grid;gap:3px}
+.cs-group-identity-head small{font-size:10px;letter-spacing:.12em;color:#9277a8}
+.cs-group-identity-head b{font-size:15px;color:#453650}
+.cs-group-identity-head>span{font-size:11px;color:#795f8b;background:#eee5f5;padding:5px 9px;border-radius:20px;white-space:nowrap}
+.cs-team-metrics{display:flex;gap:10px;flex-wrap:wrap;margin:8px 0 12px}
+.cs-team-metrics span{font-size:12px;color:#75687b;background:#fff;padding:7px 10px;border-radius:9px}
+.cs-team-metrics b{color:#4d3b5c;margin-left:4px}
+.cs-role-list{display:grid;gap:7px}
+.cs-role-row{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:9px 10px;background:rgba(255,255,255,.82);border:1px solid #eee6f1;border-radius:10px}
+.cs-role-row>span{display:grid;gap:3px;min-width:0}
+.cs-role-row>span b{font-size:13px;color:#493c50}
+.cs-role-row small{font-size:10px;color:#8d8191}
+.cs-role-row select{max-width:126px;min-width:100px;padding:7px 8px;border:1px solid #dfd2e7;border-radius:8px;background:#fff;color:#594568;font-size:12px}
+.cs-role-save{margin-top:10px}
+@media(max-width:600px){.cs-group-identity{padding:12px}.cs-role-row{align-items:flex-start}.cs-role-row select{max-width:112px;min-width:94px}.cs-role-row small{max-width:180px;line-height:1.4}}
+
 </style>
 </head>
 <body>
@@ -817,7 +837,7 @@ button:focus-visible{outline:3px solid rgba(147,127,224,.45);outline-offset:3px}
     <div id="modal-root"></div>
     <div id="toast-root"></div>
   </div>
-    <script>/* Inlined from js/core.js */
+    <script>/* js/core.js */
 'use strict';
 /* ===== core.js ===== */
 /* =========================================================
@@ -1031,7 +1051,7 @@ if (typeof document !== 'undefined') Theme.apply();
 const Layout = { centerTab() { if (typeof document === 'undefined') return; const n = document.querySelector('.tabs'), t = n && n.querySelector('.tab.on'); if (t) n.scrollLeft = t.offsetLeft - (n.clientWidth - t.clientWidth) / 2; } };
 
 </script>
-  <script>/* Inlined from js/avatar.js */
+  <script>/* js/avatar.js */
 'use strict';
 /* ===== avatar.js ===== */
 /* ============================================================
@@ -1231,7 +1251,7 @@ ACT['av.rand'] = () => {
 };
 
 </script>
-  <script>/* Inlined from js/data.js */
+  <script>/* js/data.js */
 'use strict';
 /* ===== data.js ===== */
 /* =========================================================
@@ -1830,7 +1850,7 @@ DATA.randAlias = function (g, used) {
 };
 
 </script>
-  <script>/* Inlined from js/data/data-manager.js */
+  <script>/* js/data/data-manager.js */
 'use strict';
 /* ===== data_mgr.js ===== */
 /* =========================================================
@@ -1990,7 +2010,7 @@ DATA.M.EVENTS = [
 ];
 
 </script>
-  <script>/* Inlined from js/data/data-manager-2.js */
+  <script>/* js/data/data-manager-2.js */
 'use strict';
 /* ===== data_mgr2.js ===== */
 /* =========================================================
@@ -2413,7 +2433,7 @@ DATA.M.EVENTS = [
 })();
 
 </script>
-  <script>/* Inlined from js/data/data-manager-3.js */
+  <script>/* js/data/data-manager-3.js */
 'use strict';
 /* ===== data_mgr3.js ===== */
 /* =========================================================
@@ -3084,7 +3104,7 @@ DATA.M.EVENTS = [
 })();
 
 </script>
-  <script>/* Inlined from js/data/data-events-2.js */
+  <script>/* js/data/data-events-2.js */
 'use strict';
 /* ===== data_ev2.js ===== */
 /* ============================================================
@@ -3442,7 +3462,7 @@ DATA.M.EVENTS = [
 })();
 
 </script>
-  <script>/* Inlined from js/data/data-nationalities.js */
+  <script>/* js/data/data-nationalities.js */
 'use strict';
 /* ===== data_nat.js ===== */
 /* ============================================================
@@ -3632,7 +3652,7 @@ DATA.NATLINES = {
 })();
 
 </script>
-  <script>/* Inlined from js/data/data-business.js */
+  <script>/* js/data/data-business.js */
 'use strict';
 /* ===== data_biz.js ===== */
 /* ============================================================
@@ -3718,7 +3738,7 @@ DATA.ALBUM_FORMATS = {
 })();
 
 </script>
-  <script>/* Inlined from js/data/data-teams.js */
+  <script>/* js/data/data-teams.js */
 'use strict';
 /* ===== data_team.js ===== */
 /* ============================================================
@@ -3778,7 +3798,7 @@ Object.assign(DATA.ACTIONS, {
 });
 
 </script>
-  <script>/* Inlined from js/data/data-events-3.js */
+  <script>/* js/data/data-events-3.js */
 'use strict';
 /* ===== data_ev3.js ===== */
 /* ============================================================
@@ -4362,7 +4382,7 @@ Object.assign(DATA.ACTIONS, {
 })();
 
 </script>
-  <script>/* Inlined from js/data/data-events-4.js */
+  <script>/* js/data/data-events-4.js */
 'use strict';
 /* ===== data_ev4.js ===== */
 /* ============================================================
@@ -4648,7 +4668,7 @@ Object.assign(DATA.ACTIONS, {
 })();
 
 </script>
-  <script>/* Inlined from js/arcs.js */
+  <script>/* js/arcs.js */
 'use strict';
 /* ===== arcs.js ===== */
 /* ============================================================
@@ -4921,7 +4941,7 @@ DATA.ARC_EVENTS = [
 ];
 
 </script>
-  <script>/* Inlined from js/data/data-company.js */
+  <script>/* js/data/data-company.js */
 'use strict';
 /* ===== data_co.js ===== */
 /* ============================================================
@@ -5073,7 +5093,7 @@ DATA.ARC_EVENTS = [
 })();
 
 </script>
-  <script>/* Inlined from js/chains.js */
+  <script>/* js/chains.js */
 'use strict';
 /* ===== chains.js ===== */
 /* ============================================================
@@ -5454,7 +5474,7 @@ DATA.ARC_EVENTS = [
 })();
 
 </script>
-  <script>/* Inlined from js/idol-engine.js */
+  <script>/* js/idol-engine.js */
 'use strict';
 /* ===== idol.js ===== */
 /* =========================================================
@@ -6803,7 +6823,7 @@ Idol.autoDays = function (n, plan, untilExam) {
 };
 
 </script>
-  <script>/* Inlined from js/idol-ui.js */
+  <script>/* js/idol-ui.js */
 'use strict';
 /* ===== idol_ui.js ===== */
 /* =========================================================
@@ -7374,7 +7394,7 @@ const ShowFx = (function () {
 })();
 
 </script>
-  <script>/* Inlined from js/ceremony.js */
+  <script>/* js/ceremony.js */
 'use strict';
 /* ===== ceremony.js ===== */
 /* =========================================================
@@ -7502,7 +7522,7 @@ const Cere = (() => {
 })();
 
 </script>
-  <script>/* Inlined from js/spend.js */
+  <script>/* js/spend.js */
 'use strict';
 /* ===== spend.js ===== */
 /* ============================================================
@@ -7678,7 +7698,7 @@ ACT['i.popup'] = d => { UI.close(); ACT['i.act']({ id: 'popup', tier: d.tier });
 ACT['i.concert'] = d => { UI.close(); ACT['i.act']({ id: 'concert', tier: d.tier }); };
 
 </script>
-  <script>/* Inlined from js/tutorial.js */
+  <script>/* js/tutorial.js */
 'use strict';
 /* ===== tutorial.js ===== */
 /* ============================================================
@@ -7823,7 +7843,7 @@ ACT['tut.replay2'] = () => { IdolUI.tab = 'home'; Idol.render(); Tut.start2(); }
 ACT['tut.replay'] = () => { IdolUI.tab = 'home'; Idol.render(); Tut.start(); };
 
 </script>
-  <script>/* Inlined from js/manager-engine.js */
+  <script>/* js/manager-engine.js */
 'use strict';
 /* ===== manager.js ===== */
 /* =========================================================
@@ -8550,7 +8570,7 @@ Mgr.renderEnding = function (root) {
 };
 
 </script>
-  <script>/* Inlined from js/manager-company.js */
+  <script>/* js/manager-company.js */
 'use strict';
 /* ===== mgr_co.js ===== */
 /* ================= 經紀人模式：公司之間的榜單競爭 + 旗下藝人合約與續約談判 ================= */
@@ -8665,7 +8685,7 @@ ACT['m.renewno2'] = () => { const R = MgrUI.rn, T = R && MT(M, R.id); if (T) { M
 ACT['m.renewopen'] = d => Mgr.renewModal(+d.id, false);
 
 </script>
-  <script>/* Inlined from js/achievements.js */
+  <script>/* js/achievements.js */
 'use strict';
 /* ===== ach.js ===== */
 /* ================= 成就系統（全域，跨存檔、跨模式） ================= */
@@ -8782,7 +8802,7 @@ ACT['ach.open'] = () => UI.modal(Ach.html(), { cls: 'plan' });
 })();
 
 </script>
-  <script>/* Inlined from js/main.js */
+  <script>/* js/main.js */
 'use strict';
 /* ===== main.js ===== */
 /* =========================================================
@@ -8888,7 +8908,7 @@ document.addEventListener('change', e => {
 if (typeof window !== 'undefined' && document.getElementById('screen')) App.menu();
 
 </script>
-  <script>/* Inlined from js/remaster-ui.js */
+  <script>/* js/remaster-ui.js */
 /* K-POP LIFE SIMULATOR 2.0 — compatibility-first UI shell
  * Keeps the original simulation engines, action IDs and Store v1 schema intact.
  */
@@ -9149,7 +9169,7 @@ if (typeof window !== 'undefined' && document.getElementById('screen')) App.menu
 })();
 
 </script>
-  <script>/* Inlined from js/phase34-ui.js */
+  <script>/* js/phase34-ui.js */
 /* K-POP Life Simulator 2.0 — Phase 3 & 4 gameplay dashboard layer
  * Visual/quality-of-life layer only. Core action handlers and game formulas remain intact.
  * New optional preferences are stored inside the existing game state objects so the original
@@ -9407,7 +9427,7 @@ if (typeof window !== 'undefined' && document.getElementById('screen')) App.menu
 })();
 
 </script>
-  <script>/* Inlined from js/career-resume.js */
+  <script>/* js/career-resume.js */
 /* K-POP Life Simulator 2.0.2 — Personal career biography
  * Additive UI only. Timeline entries are derived from the idol save data.
  */
@@ -9505,7 +9525,7 @@ if (typeof window !== 'undefined' && document.getElementById('screen')) App.menu
 })();
 
 </script>
-  <script>/* Inlined from js/career-suite.js */
+  <script>/* js/career-suite.js */
 /* K-POP Life Simulator 2.0 — Career records, group projects & annual milestones
  * Additive layer: keeps Idol and Manager independent; uses existing simulation formulas.
  */
@@ -9529,6 +9549,9 @@ if (typeof window !== 'undefined' && document.getElementById('screen')) App.menu
   };
   const managerFocus = { korea: '韓國大眾市場', global: '海外市場拓展', core: '核心粉絲經營' };
   const majorPattern = /簽約|出道|晉升|發行|回歸|一位|大賞|年度頒獎|獲獎|續約|解散|單飛|合約|演唱會|代言|冠軍|榜單前十|企劃|紀念|里程碑|完成|中止/;
+  const roleStat = { 主唱:'voc', 領唱:'voc', 主舞:'dan', 領舞:'dan', 主Rapper:'rap', 副Rapper:'rap', 門面:'vis' };
+  const roleOptions = current => ['隊長','主唱','領唱','主舞','領舞','主Rapper','副Rapper','門面','中心','忙內'].map(x => `<option value="${x}" ${current===x?'selected':''}>${x}</option>`).join('');
+  function suggestedRole(T) { const a=T.ab||{}, pairs=[['主唱','voc'],['主舞','dan'],['主Rapper','rap'],['門面','vis']]; return pairs.sort((x,y)=>(Number(a[y[1]])||0)-(Number(a[x[1]])||0))[0][0]; }
 
   function ensureIdolMeta() { if (I) I.remaster = I.remaster || {}; return I && I.remaster; }
   function ensureManagerMeta() { if (M) M.remaster = M.remaster || {}; return M && M.remaster; }
@@ -9725,7 +9748,16 @@ if (typeof window !== 'undefined' && document.getElementById('screen')) App.menu
         const G = M.groups[idx]; if (!G || node.querySelector('.cs-manager-project-slot')) return;
         const p = G.csProjectPlan;
         const label = p ? `${p.theme || '團體企劃'} · ${managerGoals[p.goal] || '自訂企劃'} · ${p.status === 'promotion' ? '宣傳中' : p.status === 'complete' ? '已完成' : '待發行'}` : '尚未建立這個團體的專屬企劃。';
-        node.insertAdjacentHTML('beforeend', `<div class="cs-manager-project-slot"><div><small>GROUP SIGNATURE PROJECT</small><b>${esc(label)}</b></div>${btn(p ? '編輯企劃' : '建立專屬企劃','cs.manager.project.open',`data-gid="${G.id}"`)}</div>`);
+        const members = safeArray(G.members).map(id => M.roster.find(t => t.id === id)).filter(Boolean);
+        G.csRoles = G.csRoles || {};
+        const roleRows = members.map(T => { const role=G.csRoles[T.id]||''; const k=roleStat[role]; const score=k?(Number(T.ab?.[k])||0):0;
+          return `<label class="cs-role-row"><span><b>${esc(T.name)}</b><small>${esc(T.rating||'—')} 級 · 能力建議：${esc(suggestedRole(T))}${score?` · 能力 ${Math.round(score)}`:''}</small></span><select data-role-member="${T.id}" data-role-group="${G.id}"><option value="">未安排</option>${roleOptions(role)}</select></label>`; }).join('');
+        const avgLoyalty=members.length?Math.round(members.reduce((a,t)=>a+(Number(t.hid?.loyalty)||50),0)/members.length):0;
+        const teamScore=Math.round(Number(G.team)||0), chemistry=teamScore>=75?'默契良好':teamScore>=45?'仍在磨合':'需要團隊培養';
+        node.insertAdjacentHTML('beforeend', `<div class="cs-manager-project-slot"><div><small>GROUP SIGNATURE PROJECT</small><b>${esc(label)}</b></div>${btn(p ? '編輯企劃' : '建立專屬企劃','cs.manager.project.open',`data-gid="${G.id}"`)}</div>
+          <section class="cs-group-identity"><div class="cs-group-identity-head"><div><small>TEAM IDENTITY & POSITION</small><b>團體定位與成員分工</b></div><span>${chemistry}</span></div>
+          <div class="cs-team-metrics"><span>團體默契 <b>${teamScore}/100</b></span><span>平均忠誠 <b>${avgLoyalty}/100</b></span></div><div class="cs-role-list">${roleRows||'<p class="cs-empty">目前沒有正式成員。</p>'}</div>
+          ${btn('儲存成員定位','cs.manager.roles.save',`data-gid="${G.id}"`,'cs-btn cs-btn-primary cs-role-save')}</section>`);
       });
     }
   }
@@ -9901,6 +9933,13 @@ if (typeof window !== 'undefined' && document.getElementById('screen')) App.menu
       Idol.save('auto'); UI.close(); UI.toast(`《${album.name}》已發行，企劃開始追蹤。`, 'ok'); Idol.render(); Idol.flush();
     };
     ACT['cs.manager.project.open'] = d => renderManagerProject(d.gid);
+    ACT['cs.manager.roles.save'] = d => {
+      const G=M&&M.groups.find(x=>x.id===Number(d.gid)); if(!G) return UI.toast('找不到這個團體。','bad');
+      G.csRoles=G.csRoles||{};
+      document.querySelectorAll(`[data-role-group="${G.id}"]`).forEach(el=>{const id=Number(el.getAttribute('data-role-member'));if(el.value)G.csRoles[id]=el.value;else delete G.csRoles[id];});
+      Mgr.log(`${G.name} 更新成員定位：已安排 ${Object.keys(G.csRoles).length} 個位置。`,'story');
+      Mgr.save('auto'); UI.toast('團體成員定位已儲存。','ok'); Mgr.render();
+    };
     ACT['cs.manager.project.save'] = d => {
       const G = M && M.groups.find(x => x.id === Number(d.gid)); if (!G) return UI.toast('找不到這個團體。', 'bad');
       const theme = document.getElementById('cs_mgr_theme')?.value.trim() || `${G.name} 專屬企劃`;
