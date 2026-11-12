@@ -542,11 +542,12 @@ function migrateSave(data) {
     p.morale = clamp(Number.isFinite(Number(p.morale)) ? Number(p.morale) : 60, 0, 100);
     p.form = clamp(Number.isFinite(Number(p.form)) ? Number(p.form) : 0, -5, 5);
     p.pot = clamp(Number.isFinite(Number(p.pot)) ? Number(p.pot) : avg(ATTR.map(a => p.attr[a])), 15, 99);
+    p.pot = Math.max(p.pot, Math.min(99, Math.round(avg(ATTR.map(a => p.attr[a])))));
     p.developmentPath = DEV_PATHS[p.developmentPath] ? p.developmentPath : 'balanced';
     p.trainFocus = ['auto', ...ATTR].includes(p.trainFocus) ? p.trainFocus : 'auto';
     if (typeof HeroManager !== 'undefined') HeroManager.ensure(p);
     p.career = p.career && typeof p.career === 'object' ? p.career : CareerManager.emptyCareer();
-    p.careerHistory = Array.isArray(p.careerHistory) ? p.careerHistory.slice(-40) : [];
+    p.careerHistory = Array.isArray(p.careerHistory) ? p.careerHistory.slice(0,40) : [];
     if (!Number.isFinite(Number(p.inj))) p.inj = 0;
     if (!Number.isFinite(Number(p.con))) p.con = 1;
   };
@@ -1754,13 +1755,23 @@ const Match = {
     const heroAdv = HeroManager.teamScore(my.st,s.sel.picks,s.sel.strat,s.sel.oppPicks)-HeroManager.teamScore(o.ps,s.sel.oppPicks,o.style,s.sel.picks);
     openModal(`<div class="text-center text-xs text-slate-400 tracking-widest">🧠 BP 室・${esc(s.title)}・BO${s.bo}</div>
       <div class="flex items-center justify-center gap-3 my-2"><div class="flex-1 text-right font-black text-cyan-300">${esc(C.name)}</div><div class="text-3xl font-black font-mono">${s.x} : ${s.y}</div><div class="flex-1 font-black text-rose-300">${esc(o.name)}</div></div>
-      ${last ? `<div class="text-center text-xs mb-2 ${last.win ? 'text-emerald-300' : 'text-rose-300'}">上一局${last.win ? '獲勝' : '落敗'}：對手使用 ${STRAT[last.os].e}${STRAT[last.os].n}，針對了 ${esc(last.bn)}</div>` : ''}
+      ${last ? `<div class="text-center text-xs mb-2 ${last.win ? 'text-emerald-300' : 'text-rose-300'}">上一局${last.win ? '獲勝' : '落敗'}：對手使用 ${STRAT[last.os].e}${STRAT[last.os].n}，針對了 ${esc(last.bn)}${last.pog ? `・最佳 ${esc(last.pog.name)}` : ''}</div>` : ''}
       <div class="bg-slate-950/60 rounded-xl p-2 border border-slate-800">${rows}<div class="text-[11px] text-slate-400 mt-1.5">對手戰力 ${exact ? (s.oppPw + 2).toFixed(1) : '約 ' + Math.round((s.oppPw + 2) / 5) * 5}（含老牌隊伍默契 +2）・我方默契／戰術加成 ${my.bonus >= 0 ? '+' : ''}${my.bonus.toFixed(1)} 已算入</div></div>
       <div class="text-xs text-slate-400 mt-3 mb-1">對手戰術傾向</div><div class="flex flex-wrap gap-1">${tend}</div>
       <div class="text-xs text-slate-400 mt-3 mb-1">① 選擇本局戰術（剋制對手 +2.5、被剋 -2.5）</div><div class="grid grid-cols-3 gap-2">${sb}</div>
       <div class="text-xs text-slate-400 mt-3 mb-1">② 英雄選擇（熟練度會影響本局表現）</div><div class="rounded-xl border border-slate-800 bg-slate-950/50 px-2">${heroRows}</div><div class="text-xs text-slate-400 mt-3 mb-1">對手英雄與 Ban 位（本系列賽一次）</div><div class="rounded-xl border border-slate-800 bg-slate-950/50 px-2 py-1">${enemyHeroRows}${s.sel.banHero?`<div class="text-[10px] text-rose-300 border-t border-slate-800 mt-1 pt-1">已 Ban：${HeroManager.label(s.sel.banHero)}</div>`:''}</div><div class="text-[11px] text-slate-400 mt-1">目前英雄陣容差：<b class="${heroAdv>=0?'text-emerald-300':'text-rose-300'}">${heroAdv>=0?'+':''}${heroAdv.toFixed(1)}</b> 戰力</div>
       <div class="text-xs text-slate-400 mt-3 mb-1">③ 選手針對（限制對手單一選手的發揮）</div><div class="grid grid-cols-3 sm:grid-cols-5 gap-1.5">${bb}</div>
       <div class="grid grid-cols-2 gap-2 mt-4"><button class="btn btn-ghost" onclick="Match.auto()">⏩ 用此設定打完</button><button class="btn btn-amber" onclick="Match.play()">▶ 開始第 ${s.games.length + 1} 局</button></div>`, true);
+  },
+  why(s, p, i, r, win, my, op, hero, ctr, big) {
+    const a = [], q = s.opp.ps[i], diff = Sim.ovr(p) * my.ef[i] - op.rts[i], m = HeroManager.mastery(p, hero.id);
+    if (diff >= 4) a.push(`對線壓制 ${q.name}（能力 +${Math.round(diff)}）`); else if (diff <= -4 && win) a.push(`以弱勝強，扛住 ${q.name}`);
+    if (m >= 70) a.push(`${hero.name} 熟練度 ${Math.round(m)}`);
+    if (big && p.traits.includes('clutch')) a.push('關鍵時刻特質發威');
+    if (p.form >= 3) a.push('近期狀態火熱');
+    if (ctr > 0) a.push('戰術剋制奏效');
+    if (!a.length) a.push(`穩定發揮（評分 ${r.toFixed(1)}）`);
+    return a.slice(0, 3).join('・');
   },
   pick(k) { S.C.series.sel.strat = k; Match.open(); },
   pickHero(pos,id) { const s=S.C.series; if(!s || !HEROES.some(h=>h.id===id&&h.role===pos))return; s.sel.picks[pos]=id; Store.save(); Match.open(); },
@@ -1775,24 +1786,35 @@ const Match = {
     const myHero = HeroManager.teamScore(st,s.sel.picks,ms,s.sel.oppPicks), opHero = HeroManager.teamScore(o.ps,s.sel.oppPicks,os,s.sel.picks);
     const a = Match.pw(my, ms) + my.bonus + myHero + (STRAT[ms].beats === os ? 2.5 : 0), b = Match.pw(op, os) + opHero + (STRAT[os].beats === ms ? 2.5 : 0);
     const win = chance(1 / (1 + Math.exp(-(a - b) / 5)));
-    const lines = [{ hdr: `— 第 ${s.games.length + 1} 局・${STRAT[ms].e}${STRAT[ms].n} vs ${STRAT[os].e}${STRAT[os].n} —` }]; let gold = 0;
+    const gr = {}; st.forEach((p, i) => { const r = clamp(6.3 + (Sim.ovr(p) * my.ef[i] - op.rts[i]) / 7 + (win ? 0.8 : -0.6) + rand(-0.9, 0.9), 3, 9.9); gr[p.id] = r; s.rat[p.id] = (s.rat[p.id] || 0) + r; });
+    const bi = st.reduce((b, p, i) => gr[p.id] > gr[st[b].id] ? i : b, 0), star = st[bi], starHero = HeroManager.get(s.sel.picks[star.pos]), ctr = STRAT[ms].beats === os ? 1 : STRAT[os].beats === ms ? -1 : 0;
+    const big = s.kind !== 'reg' || (s.x === s.y && s.x === Match.need(s) - 1);
+    const why = Match.why(s, star, bi, gr[star.id], win, my, op, starHero, ctr, big);
+    const hn = pos => HeroManager.get(s.sel.picks[pos]).name, ohn = pos => HeroManager.get(s.sel.oppPicks[pos]).name;
+    const bpMy = POS.map(pos => hn(pos)).join('／'), bpOp = POS.map(pos => ohn(pos)).join('／'), banName = s.sel.banHero ? HeroManager.get(s.sel.banHero).name : null;
+    const lines = [{ hdr: `— 第 ${s.games.length + 1} 局・${STRAT[ms].e}${STRAT[ms].n} vs ${STRAT[os].e}${STRAT[os].n} —` },
+      { hdr: `<span class="text-slate-400">🧠 BP｜我方 ${esc(bpMy)}</span><br><span class="text-slate-500">對手 ${esc(bpOp)}${banName ? `｜已 Ban ${esc(banName)}` : ''}｜我方針對 ${esc(s.opp.ps[s.sel.ban].name)}｜對手針對 ${esc(st[ob].name)}</span>` }]; let gold = 0;
     const add = (t, key, d, i) => { const fav = chance(clamp(0.5 + d / 20 + (win ? 0.15 : -0.15), 0.1, 0.9)), k = i == null ? randi(0, 4) : i; gold += fav ? randi(600, 1800) : -randi(600, 1800);
       lines.push({ t, good: fav, gold, txt: pick(LT[key + (fav ? 'g' : 'b')]).replace(/\{A\}/g, C.name).replace(/\{B\}/g, o.name).replace(/\{m\}/g, st[k].name).replace(/\{o\}/g, o.ps[k].name).replace(/\{j\}/g, st[1].name).replace(/\{oj\}/g, o.ps[1].name) }); };
     add(4, 'l', my.L - op.L, 0); add(8, 'l', my.L - op.L, 2); add(12, 'l', my.L - op.L, 3); add(18, 'm', my.M - op.M); add(24, 'm', my.M - op.M); add(30, 't', my.T - op.T); add(35, 't', my.T - op.T);
+    const oi = bi, oStar = o.ps[oi], oHero = HeroManager.get(s.sel.oppPicks[oStar.pos]), kw = randi(3, 5), kl = randi(0, 2);
+    const kf = win ? `${star.name} 的 ${starHero.name} 切入後排，團戰 ${kw} 換 ${kl}，${C.name} 奠定勝勢` : `${oStar.name} 的 ${oHero.name} 抓住陣型空檔，團戰 ${kl} 換 ${kw}，${o.name} 扭轉局勢`;
+    lines.push({ t: 36, good: win, gold, big: true, txt: `⚔️ 關鍵團戰：${kf}` });
     if (win && gold < 1000) { gold = randi(1500, 3000); lines.push({ t: 38, good: true, gold, big: true, txt: `${C.name} 決勝團打出團滅，逆轉推平主堡！` }); }
     else if (!win && gold > -1000) { gold = -randi(1500, 3000); lines.push({ t: 38, good: false, gold, big: true, txt: `${o.name} 決勝團一波翻盤，推平主堡` }); }
     else lines.push({ t: 38, good: win, gold, big: true, txt: `${win ? C.name : o.name} 推平主堡，拿下這一局${win ? '！' : ''}` });
-    st.forEach((p, i) => { const r = clamp(6.3 + (Sim.ovr(p) * my.ef[i] - op.rts[i]) / 7 + (win ? 0.8 : -0.6) + rand(-0.9, 0.9), 3, 9.9); s.rat[p.id] = (s.rat[p.id] || 0) + r; p.fat += 5 * (p.traits.includes('iron') ? 0.7 : 1); });
-    s.games.push({ win, ms, os, bn: st[ob].name, ctr: STRAT[ms].beats === os ? 1 : STRAT[os].beats === ms ? -1 : 0, myHero:+myHero.toFixed(2), opHero:+opHero.toFixed(2), picks:{...s.sel.picks}, oppPicks:{...s.sel.oppPicks} });
+    st.forEach(p => { p.fat += 5 * (p.traits.includes('iron') ? 0.7 : 1); });
+    s.games.push({ win, ms, os, bn: st[ob].name, ctr, kf, gr: { ...gr }, pog: { id: star.id, name: star.name, pos: star.pos, hero: starHero.name, r: +gr[star.id].toFixed(1), why }, bp: { my: bpMy, op: bpOp, ban: banName }, myHero:+myHero.toFixed(2), opHero:+opHero.toFixed(2), picks:{...s.sel.picks}, oppPicks:{...s.sel.oppPicks} });
     HeroManager.learn(st, s.sel.picks); win ? s.x++ : s.y++;
     Sim.fix(C); Store.save();
-    return { win, lines, os, ms, bn: st[ob].name };
+    return { win, lines, os, ms, bn: st[ob].name, pog: s.games[s.games.length - 1].pog, kf };
   },
   play() {
     const C = S.C, s = C.series, x0 = s.x, y0 = s.y, g = Match.core(), gm = s.games[s.games.length - 1];
     broadcast({ title: `${s.title}・第 ${s.games.length} 局`, A: C.name, B: s.opp.name, x: x0, y: y0, lines: g.lines,
       endHtml: `<div class="text-center mt-1"><div class="text-xl font-black ${g.win ? 'text-emerald-300' : 'text-rose-300'} pop-in">${g.win ? '🏆 拿下這一局' : '💔 輸掉這一局'}（${s.x} : ${s.y}）</div>
-        <div class="text-xs text-slate-400 mt-1">${gm.ctr > 0 ? '✅ 你的戰術剋制了對手' : gm.ctr < 0 ? '⚠️ 你的戰術被對手剋制' : '戰術互不剋制'}・對手針對了 ${esc(g.bn)}</div></div>` });
+        <div class="text-xs text-slate-400 mt-1">${gm.ctr > 0 ? '✅ 你的戰術剋制了對手' : gm.ctr < 0 ? '⚠️ 你的戰術被對手剋制' : '戰術互不剋制'}・對手針對了 ${esc(g.bn)}</div>
+        <div class="mt-2 rounded-xl border border-amber-500/30 bg-amber-500/10 p-2 text-xs text-left"><div class="font-bold text-amber-300">⭐ 本局最佳：${esc(gm.pog.name)}（${gm.pog.pos}・${esc(gm.pog.hero)}）評分 ${Number(gm.pog.r).toFixed(1)}</div><div class="text-slate-300 mt-0.5">${esc(gm.pog.why)}</div><div class="text-slate-400 mt-1">⚔️ ${esc(gm.kf)}</div></div></div>` });
   },
   cont() { const s = S.C.series; if (!s) return G.next(); Match.over(s) ? Match.finish() : Match.open(); },
   auto() { const s = S.C.series; while (!Match.over(s)) Match.core(); Match.finish(); },
@@ -1804,10 +1826,17 @@ const Match = {
     if (C.flags.trash) { C.pop += win ? 2 : -3; if (!win) Sim.teamMor(C, -3); delete C.flags.trash; }
     win ? C.stats.w++ : C.stats.l++; C.lastRes = win; C.buff = 0;
     let mvp = null; st.forEach(p => { const r = (s.rat[p.id] || 0) / n; p.gp += s.games.length; p.rs += r; if (s.games.length && (!mvp || r > mvp.r)) mvp = { id: p.id, r }; });
+    if (mvp) { s.best = mvp.id; s.bestAvg = +mvp.r.toFixed(1); const pg = s.games.filter(g => g.pog && g.pog.id === mvp.id); s.bestWhy = pg.length ? `${pg.length}/${s.games.length} 局拿下單局最佳；${pg[pg.length - 1].pog.why}` : '各局穩定輸出，平均評分全隊最高'; }
     if (mvp && win) { const p = C.players.find(x => x.id === mvp.id); p.mvp++; p.form = clamp(p.form + 1, -5, 5); s.mvp = mvp.id; }
     CareerManager.recordSeries(C, st, s, win); if (s.games.length) RelationshipManager.afterMatch(C, st, win);
     if (win && s.oppPw - s.myPw >= 8) { Ach.unlock('under'); C.records=C.records||{}; C.records.upsetWins=(C.records.upsetWins||0)+1; }
     Sim.fix(C); s.done = true; s.d = diffC(b0); s.bonus = bonus; Store.save(); Match.result();
+  },
+  report(s, C) {
+    const b = s.best && C.players.find(p => p.id === s.best);
+    const head = b ? `<div class="rounded-xl border border-amber-500/30 bg-amber-500/10 p-2 text-xs mt-3"><div class="font-bold text-amber-300">${s.mvp === s.best ? '🏅 系列賽 MVP' : '⭐ 系列賽最佳選手'}：${esc(b.name)}（平均評分 ${s.bestAvg}）</div><div class="text-slate-300 mt-0.5">${esc(s.bestWhy || '')}</div></div>` : '';
+    const gs = (s.games || []).filter(g => g.pog).map((g, i) => `<div class="rounded-lg border border-slate-800 bg-slate-950/50 p-2 text-[11px]"><div class="flex justify-between"><b class="${g.win ? 'text-emerald-300' : 'text-rose-300'}">G${i + 1} ${g.win ? '勝' : '敗'}</b><span class="text-slate-400">${STRAT[g.ms].e}${STRAT[g.ms].n} vs ${STRAT[g.os].e}${STRAT[g.os].n}${g.ctr > 0 ? '（剋制）' : g.ctr < 0 ? '（被剋）' : ''}</span></div>${g.bp ? `<div class="text-slate-500 mt-0.5 truncate">我方：${esc(g.bp.my)}</div><div class="text-slate-500 truncate">對手：${esc(g.bp.op)}${g.bp.ban ? `（Ban ${esc(g.bp.ban)}）` : ''}</div>` : ''}<div class="text-amber-200 mt-1">⭐ ${esc(g.pog.name)}・${esc(g.pog.hero)}・${Number(g.pog.r).toFixed(1)}</div><div class="text-slate-400">${esc(g.pog.why)}</div><div class="text-slate-400 mt-0.5">⚔️ ${esc(g.kf)}</div></div>`).join('');
+    return head + (gs ? `<div class="text-xs text-slate-400 mt-3 mb-1">📋 逐局戰報</div><div class="space-y-1.5 max-h-64 overflow-y-auto">${gs}</div>` : '');
   },
   result() {
     const C = S.C, s = C.series, win = s.x > s.y, n = s.games.length || 1;
@@ -1816,7 +1845,7 @@ const Match = {
       <div class="text-4xl mt-2">${win ? '🏆' : '💔'}</div><div class="text-2xl font-black mt-1 ${win ? 'text-emerald-300' : 'text-rose-300'}">${s.forfeit ? '人數不足，棄賽判負' : win ? '系列賽獲勝' : '系列賽落敗'}</div>
       <div class="text-3xl font-black font-mono my-2">${esc(C.name)} ${s.x} : ${s.y} ${esc(s.opp.name)}</div>
       <div class="text-xs text-slate-400">${s.games.map((g, i) => `G${i + 1} ${g.win ? '勝' : '敗'}`).join('・')}</div></div>
-      <div class="mt-3">${rows}</div><div class="flex flex-wrap gap-1 mt-3">${s.d && s.d.length ? chips(s.d) : ''}</div>
+      <div class="mt-3">${rows}</div>${Match.report(s, C)}<div class="flex flex-wrap gap-1 mt-3">${s.d && s.d.length ? chips(s.d) : ''}</div>
       <button class="btn btn-cyan w-full mt-4" onclick="Sim.afterSeries('${s.kind}', ${win}, ${s.x}, ${s.y})">繼續</button>`);
   },
 };
@@ -2142,7 +2171,7 @@ const AIWorldManager = {
         const target = clamp(old.rt + rand(a.funds>900000?2.5:1, a.funds>900000?6:3.5) + (t.pw>78?1:0), 45, 94);
         const fee = Math.round((Math.max(0,target-old.rt)*42000 + target*1500)/1000)*1000;
         if (target > old.rt + 1 && a.funds >= fee) {
-          const replacement = { name: pick(NICKS)+randi(1,99), pos: old.pos, rt: target, pool: randi(2,5), age: randi(18,25) };
+          const replacement = { name: Sim.nameFor(old.pos, target, C.lg && C.lg.teams.includes(t) ? C.div === 1 : C.div !== 1, Sim.usedNames()), pos: old.pos, rt: target, pool: randi(2,5), age: randi(18,25) };
           t.ps[weakest] = replacement; a.funds -= fee; a.transactions++; a.lastMoveTick=C.tick; this.recalc(t);
           this.push(C, `${t.name} 補強 ${old.pos}`, `${t.name} 以約 ${money(fee)} 的預算簽入新選手 ${replacement.name}，該位置戰力 ${old.rt.toFixed(1)} → ${target.toFixed(1)}。`);
           return;
@@ -2150,7 +2179,7 @@ const AIWorldManager = {
       }
       if (a.funds < 140000 && chance(0.25)) {
         const strongest=t.ps.reduce((best,p,i,arr)=>p.rt>arr[best].rt?i:best,0), veteran=t.ps[strongest];
-        if (veteran.rt>t.pw+2) { a.funds += Math.round(veteran.rt*9000); t.ps[strongest]={...veteran,name:pick(NICKS)+randi(1,99),rt:Math.max(42,veteran.rt-rand(5,9)),age:randi(17,20)}; a.lastMoveTick=C.tick; this.recalc(t); this.push(C,`${t.name} 啟動重建`,`${t.name} 出售高薪核心並改用年輕選手，短期戰力下降，開始重建。`); }
+        if (veteran.rt>t.pw+2) { a.funds += Math.round(veteran.rt*9000); t.ps[strongest]={...veteran,name:Sim.nameFor(veteran.pos,Math.max(42,veteran.rt-7),C.lg&&C.lg.teams.includes(t)?C.div===1:C.div!==1,Sim.usedNames()),rt:Math.max(42,veteran.rt-rand(5,9)),age:randi(17,20)}; a.lastMoveTick=C.tick; this.recalc(t); this.push(C,`${t.name} 啟動重建`,`${t.name} 出售高薪核心並改用年輕選手，短期戰力下降，開始重建。`); }
       }
       if (chance(0.07)) { const oldStyle=t.style; t.style=pick(STRK); if(oldStyle!==t.style){a.coachLevel=clamp(a.coachLevel+randi(-1,1),0,5);this.push(C,`${t.name} 更換戰術教練`,`戰隊風格由「${STRAT[oldStyle].n}」調整為「${STRAT[t.style].n}」。`);} }
     });
@@ -2195,7 +2224,9 @@ const CareerModeManager = {
     C.careerMode = mode; C.modeGoal = CAREER_MODES[mode].goal;
     const bump = (p, delta) => {
       ATTR.forEach(a => p.attr[a] = clamp(p.attr[a] + delta, 15, 99));
-      p.sal = Math.round(salOf(Sim.ovr(p)) / 50) * 50;
+      const o = Sim.ovr(p);
+      p.pot = Math.max(Math.round(p.pot || 0), Math.min(99, Math.round(o + (p.age <= 21 ? rand(6, 11) : p.age <= 24 ? rand(3, 6) : rand(1, 3)))));
+      p.sal = Math.round(salOf(o) / 50) * 50;
     };
     const setDivision = div => {
       C.div = div;
@@ -2209,7 +2240,7 @@ const CareerModeManager = {
     };
     if (mode === 'dynasty') {
       C.funds += 520000; C.pop = 32; C.fans = 42000; C.brand = 'champion';
-      C.players.forEach(p=>bump(p, p.age <= 21 ? 14 : 11));
+      C.players.forEach(p=>bump(p, p.age <= 21 ? 18 : 15));
       setDivision(1); C.modeGoal = '連續兩季打進頂級聯賽前三，至少拿下一座冠軍。';
     } else if (mode === 'academy') {
       C.funds = Math.round(C.funds * 0.82); C.pop = 10; C.fans = 3200; C.brand = 'academy'; C.fac.academy = 3;
@@ -2356,6 +2387,7 @@ function startGame() { crKeep(); Sim.newClub({ mgr: (CR.mgr || '').trim() || '�
 function tile(e, n, d, fn, dis) { return `<button class="tile" ${dis ? 'disabled' : ''} onclick="${fn}"><div class="text-xl">${e}</div><div class="text-xs font-bold mt-0.5">${n}</div><div class="text-[10px] text-slate-400 leading-tight">${d}</div></button>`; }
 function renderMain(el) {
   document.body.classList.add('is-playing');
+  Tut.visit(TAB);
   const C = S.C, f = Sim.income(C), pw = Sim.myPw(C), me = Sim.team(C, 'me'), opp = Sim.nextOpp(C), inS = C.phase !== 'off';
   const stat = (l, v, s, icon, cls='') => `<div class="metric-card"><div class="metric-top"><span>${l}</span><i>${icon}</i></div><div class="metric-value ${cls}">${v}</div><div class="metric-foot">${s || ''}</div></div>`;
   const tabs = [
@@ -2368,7 +2400,7 @@ function renderMain(el) {
   else { const info = C.research || C.staff.analyst >= 2; nextBtn = '進入比賽日';
     nextInfo = `${C.phase === 'reg' ? `例行賽第 ${C.round + 1} 輪（BO3）` : C.phase === 'po' ? (C.po.stage === 'semi' ? '季後賽四強（BO5）' : '總決賽（BO5）') : C.phase === 'pr' ? '升降賽（BO5）' : '世界賽' + ['八強', '四強', '冠軍戰'][C.wd.stage] + '（BO5）'} · 對手 ${esc(opp.name)} · 戰力 ${info ? avg(opp.ps.map(p => p.rt)).toFixed(1) : '約 ' + Math.round(avg(opp.ps.map(p => p.rt)) / 5) * 5}${opp.w != null && C.phase === 'reg' ? ` · ${opp.w}勝${opp.l}敗` : ''}${C.research ? ' · 已研究' : ''}`; }
   const current = tabs.find(t=>t[0]===TAB) || tabs[0];
-  const alertCount = C.players.filter(p=>p.exp||p.inj||p.morale<35||p.fat>=65).length + (f.net<0?1:0) + (C.aiWorld?.offers?.length||0);
+  const alertCount = C.players.filter(p=>p.exp||p.inj||p.morale<35||p.fat>=65).length + (f.net<0?1:0) + ((C.aiWorld?.offers||[]).filter(o=>o.expiresTick>=C.tick).length);
   el.innerHTML = `<div class="app-layout fade-in">
     <aside class="app-sidebar">
       <div class="sidebar-brand"><div class="brand-symbol">E<span>×</span></div><div><b>ARENA MANAGER</b><small>ESPORTS CLUB OS</small></div></div>
@@ -2385,13 +2417,67 @@ function renderMain(el) {
         ${stat('粉絲社群',fmt(C.fans||0),`${BRAND_PROFILES[C.brand]?.name||'實力戰隊'}`,'◎')}
       </section>
       <section class="next-action"><div class="next-action-symbol">${C.series?'◉':C.phase==='off'?'↗':'⚔'}</div><div class="next-action-copy"><small>${C.series?'MATCH IN PROGRESS':C.phase==='off'?'NEXT MANAGEMENT CYCLE':'UPCOMING MATCH'}</small><b>${nextInfo}</b></div><button class="btn btn-launch" onclick="Sim.nextStep()">${nextBtn}<span>→</span></button></section>
-      <section class="workspace-content"><div class="content-heading"><div><span class="eyebrow">${current[3]}</span><h2>${current[1]}</h2></div>${TAB==='home'?`<span class="live-indicator"><i></i> LIVE SEASON</span>`:''}</div>
-      <div class="tab-content">${({ home: tabHome, squad: tabSquad, train: tabTrain, market: tabMarket, club: tabClub, league: tabLeague, news: tabNews, hall: tabHall, log: tabLog }[TAB]||tabHome)(C)}</div></section>
+      <section class="workspace-content"><div class="content-heading"><div><span class="eyebrow">${current[3]}</span><h2>${current[1]}</h2></div>${TAB==='home'?`<span class="live-indicator"><i></i> LIVE SEASON</span>`:''}${Tut.introBtn(TAB,C)}</div>
+      ${TAB==='home'?Tut.missions(C):''}${Tut.intro(TAB,C)}<div class="tab-content">${({ home: tabHome, squad: tabSquad, train: tabTrain, market: tabMarket, club: tabClub, league: tabLeague, news: tabNews, hall: tabHall, log: tabLog }[TAB]||tabHome)(C)}</div></section>
       <footer class="workspace-footer"><span>ARENA MANAGER 4.0</span><span>BUILD YOUR TEAM · DEFINE YOUR LEGACY</span></footer>
     </main>
   </div>`;
 }
 function setTab(t){TAB=t;render();}
+
+/* ===== 新手引導：首週任務與分頁說明 ===== */
+const TAB_INTRO = {
+  home: ['總覽是每週的指揮台', '上方按鈕推進時間；下方會列出警示（缺先發、合約到期、傷病、士氣）。', '建議：每週先清掉警示，再按「進入比賽日」。'],
+  squad: ['管理 5 個先發位置與替補', '點選手可談話、特訓、續約、設定隊長，也能看英雄熟練度與生涯紀錄。', '位置不符會扣 15% 戰力、疲勞超過 55 表現會下滑，賽前記得檢查。'],
+  train: ['決定每位選手怎麼成長', '每人有發展路線與專項；疲勞越高，訓練效率越低。', '新手先用「自動」專項，疲勞偏高的選手讓他休息。'],
+  market: ['簽新人、賣選手、看自由市場', '沒探索過的選手能力有迷霧，球探能看清潛力。轉會窗只在休賽季與例行賽第 7、8 輪開放。', '建議：先補齊 5 個位置再考慮明星選手，薪水會吃掉週收入。'],
+  club: ['贊助、設施、員工與商業活動', '升級設施與員工是長期投資；直播、粉絲見面會、周邊與公關能增加收入與粉絲。', '資金低於 -150,000 或連續 8 週虧損會破產，請隨時看每週淨收入。'],
+  league: ['看排名、賽程與對手戰力', '例行賽排名靠前可進季後賽（BO5），墊底有降級風險；頂級聯賽的好成績可通往世界賽。', '賽前看對手戰力與風格，再到 BP 室選戰術與英雄。'],
+  news: ['聯盟與 AI 俱樂部的動態', '這裡會出現其他俱樂部的轉會、重建消息，以及對你選手的報價。', '報價有期限，過期會自動失效。'],
+  hall: ['長線經營的成果展示', '歷年冠軍、傳奇選手與賽季檔案都會累積在這裡。', '不影響當下比賽，純粹是你的俱樂部歷史。'],
+  log: ['紀錄與成就', '經營日誌、成就解鎖進度與歷史紀錄。', '想回顧某場比賽或某筆交易，來這裡找。']
+};
+const TUT_MISSIONS = [
+  { k: 'squad', t: '檢視選手陣容', d: '確認 5 個先發位置都有人，留意傷病與合約', tab: 'squad' },
+  { k: 'train', t: '看看訓練中心', d: '了解專項與疲勞效率', tab: 'train' },
+  { k: 'market', t: '逛逛轉會市場', d: '知道哪裡可以補強、球探怎麼用', tab: 'market' },
+  { k: 'club', t: '打開俱樂部經營', d: '贊助、設施與商業活動都在這', tab: 'club' },
+  { k: 'league', t: '查看聯賽中心', d: '對手與賽程決定你的備戰重點', tab: 'league' },
+  { k: 'match', t: '打完第一場比賽', d: '進入比賽日，在 BP 室選戰術與英雄', act: 'Sim.nextStep()', done: C => (C.stats.w + C.stats.l) >= 1 }
+];
+const Tut = {
+  ensure(C) {
+    if (!C.tut || typeof C.tut !== 'object') {
+      const vet = (C.tick || 0) > 12 || (C.season || 1) > 1;
+      C.tut = { v: {}, hide: {}, listHide: vet, rewarded: vet };
+      if (vet) Object.keys(TAB_INTRO).forEach(k => C.tut.hide[k] = true);
+    }
+    return C.tut;
+  },
+  isDone(C, m) { const T = this.ensure(C); return m.done ? !!m.done(C) : !!T.v[m.k]; },
+  visit(tab) {
+    const C = S.C, T = this.ensure(C); let dirty = false;
+    if (!T.v[tab]) { T.v[tab] = 1; dirty = true; }
+    if (!T.rewarded && TUT_MISSIONS.every(m => this.isDone(C, m))) { T.rewarded = true; C.funds += 20000; dirty = true; setTimeout(() => toast('🎓 新手任務全部完成！獎勵 $20,000', 'good'), 200); log('🎓 完成新手任務，獲得 $20,000', 'good'); }
+    if (dirty) Store.save();
+  },
+  hideIntro(tab) { this.ensure(S.C).hide[tab] = true; Store.save(); render(); },
+  showIntro(tab) { this.ensure(S.C).hide[tab] = false; Store.save(); render(); },
+  hideList() { this.ensure(S.C).listHide = true; Store.save(); render(); },
+  showList() { this.ensure(S.C).listHide = false; Store.save(); render(); },
+  intro(tab, C) {
+    const T = this.ensure(C), d = TAB_INTRO[tab]; if (!d || T.hide[tab]) return '';
+    return `<div class="card !p-3 mb-3 border-cyan-500/30"><div class="flex items-start gap-2"><div class="text-xl">💡</div><div class="flex-1 min-w-0"><div class="text-sm font-black text-cyan-200">${d[0]}</div><div class="text-xs text-slate-300 mt-1">${d[1]}</div><div class="text-xs text-amber-200 mt-1">👉 ${d[2]}</div></div><button class="chip chip-n shrink-0" onclick="Tut.hideIntro('${tab}')">知道了</button></div></div>`;
+  },
+  introBtn(tab, C) { const T = this.ensure(C); return T.hide[tab] ? `<button class="chip chip-n" onclick="Tut.showIntro('${tab}')">ⓘ 這頁做什麼</button>` : ''; },
+  missions(C) {
+    const T = this.ensure(C), n = TUT_MISSIONS.filter(m => this.isDone(C, m)).length, all = n === TUT_MISSIONS.length;
+    if (T.listHide) return all ? '' : `<div class="mb-3"><button class="chip chip-n" onclick="Tut.showList()">🎓 顯示新手任務（${n}/${TUT_MISSIONS.length}）</button></div>`;
+    const rows = TUT_MISSIONS.map(m => { const ok = this.isDone(C, m); return `<div class="flex items-center gap-2 py-1.5 border-b border-slate-800"><span class="${ok ? 'text-emerald-300' : 'text-slate-500'}">${ok ? '✔' : '○'}</span><div class="flex-1 min-w-0"><div class="text-sm font-bold ${ok ? 'text-slate-400 line-through' : 'text-slate-100'}">${m.t}</div><div class="text-[11px] text-slate-500">${m.d}</div></div>${ok ? '' : `<button class="chip chip-n shrink-0" onclick="${m.act || `setTab('${m.tab}')`}">前往</button>`}</div>`; }).join('');
+    return `<div class="card !p-4 mb-3 border-amber-500/30"><div class="flex items-center justify-between gap-2"><div><div class="text-base font-black text-amber-200">🎓 新手第一週任務</div><div class="text-xs text-slate-400">${all ? '全部完成，獎勵已發放！' : `完成全部可獲得 $20,000（${n}/${TUT_MISSIONS.length}）`}</div></div><button class="chip chip-n" onclick="Tut.hideList()">收起</button></div><div class="h-1.5 rounded-full bg-slate-800 overflow-hidden my-2"><div class="h-full bg-amber-400" style="width:${Math.round(n / TUT_MISSIONS.length * 100)}%"></div></div>${rows}</div>`;
+  }
+};
+
 
 function tabHome(C) {
   const r = C.report, f = Sim.income(C), al = [];
@@ -2404,7 +2490,7 @@ function tabHome(C) {
   const weeklyFlow = `<div class="card lg:col-span-2 !p-4">
     <div class="flex flex-wrap items-center justify-between gap-2 mb-3">
       <div><div class="text-base font-black text-slate-100">本週經營流程</div><div class="text-xs text-slate-400">集中掌握訓練、管理行動與賽前檢查</div></div>
-      <span class="chip chip-good">第 ${C.week} 週・${C.phase==='reg'?'例行賽':C.phase==='off'?'休賽期':'季後賽'}</span>
+      <span class="chip chip-good">${C.phase==='reg'?`第 ${C.round+1} 輪`:C.phase==='off'?`休賽季 ${C.offW+1}/4`:'季後賽'}・${C.phase==='reg'?'例行賽':C.phase==='off'?'休賽期':'季後賽'}</span>
     </div>
     <div class="grid sm:grid-cols-3 gap-2">
       <button class="text-left rounded-xl border border-slate-700 bg-slate-900/70 hover:bg-slate-800 p-3" onclick="TAB='train';render()">

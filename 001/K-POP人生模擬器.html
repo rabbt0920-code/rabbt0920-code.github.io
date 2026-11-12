@@ -3275,6 +3275,179 @@ DATA.M.EVENTS = [
 })();
 
 </script>
+  <script data-source="js/data/data-manager-4.js">
+'use strict';
+/* ===== data_mgr4.js ===== */
+/* 經紀人模式長線劇情（四）：依「偶像公司 40 項業務」發想的多階段因果劇情。語法同 data_mgr3.js，後續章節 w:0 只由 follow 觸發 */
+(function () {
+  const dg = m => m.groups.filter(g => g.status !== 'prep');
+  const E = [];
+  const F = (id, d, cause) => ({ id, delay: d, cause });
+  E.push(
+  /* ───── 長線一：街頭星探 ───── */
+  { id: 'ma_scout', w: 3, cd: 80, cond: m => m.co.funds >= 20000 && m.roster.length < 14, pick: null, title: '舞蹈教室的天才',
+    text: '你在朋友經營的舞蹈教室看到一個少年，動作很粗糙，卻有種讓人移不開眼的舞台感。教室老師說：「很多公司都來問過，他爸媽還在猶豫。」',
+    choices: [
+      { t: '登門拜訪，誠懇說明培訓計畫', check: { st: 'pr', diff: 30 }, out: {
+        g: ['父母被你的誠意打動，答應讓孩子來試訓。', { me: { stress: 2 }, follow: F('ma_scout_deal', [3, 5], '你之前拜訪了舞蹈教室那位少年的家人。') }],
+        k: ['父母願意再考慮，但要你補充更多資料。', { follow: F('ma_scout_deal', [6, 9], '你留下了培訓計畫給少年的父母。') }],
+        f: ['父母覺得你太急躁，婉拒了。', { me: { stress: 3 } }] } },
+      { t: '先送一年課程費當作心意', req: m => m.co.funds >= 30000, need: '資金 ≥ 3 萬', txt: '教室老師很欣賞你的作法，主動替你向家長說好話。', fx: { funds: -30000, follow: F('ma_scout_deal', [3, 6], '你資助了那位少年的舞蹈課程。') } },
+      { t: '不去，公司名額有限', txt: '你把名字記在筆記本最後一頁。一個月後，聽說他簽進了別家公司。', fx: {} }
+    ] },
+  { id: 'ma_scout_deal', w: 0, cd: 60, pick: null, title: '少年的合約',
+    text: '少年通過試訓，家長帶著律師來談合約：分潤比例、學業保障、未成年工時上限，每一條都問得很細。他們說：「我們不反對，只想孩子被好好對待。」',
+    choices: [
+      { t: '接受全部條件，簽下保障條款', txt: '家長終於露出笑容。你多了一位忠誠的新練習生，也多了一份必須遵守的承諾。', fx: { recruit: { q: 2 }, rep: 1, follow: F('ma_scout_grow', [10, 16], '你與少年簽下了附保障條款的合約。') } },
+      { t: '協商：保障照給，但分潤略低', check: { st: 'biz', diff: 34 }, out: {
+        g: ['雙方達成雙贏的條件，家長說你是「講道理的人」。', { recruit: { q: 2 }, funds: 10000, follow: F('ma_scout_grow', [10, 16], '你協商出了雙贏的合約。') }],
+        k: ['折衷後簽約，家長仍有些保留。', { recruit: { q: 1 }, follow: F('ma_scout_grow', [12, 18], '你與少年簽下折衷合約。') }],
+        f: ['協商破裂，家長決定另謀他處。', { rep: -1 }] } }
+    ] },
+  { id: 'ma_scout_grow', w: 0, cd: 60, pick: null, title: '那個少年長高了',
+    text: '半年過去，當初的少年已高了一個頭，舞台魅力也綻放開來。他在年末測驗中拿到全場最高分，其他公司的星探又開始在大樓外徘徊。',
+    choices: [
+      { t: '公開表揚，給他舞台機會', txt: '他在內部公演上驚豔全場，也給了其他練習生很好的榜樣。', fx: { all: { mood: 3, loyalty: 2 }, rep: 1 } },
+      { t: '私下談談長期規劃，加簽合約', check: { st: 'biz', diff: 30 }, out: {
+        g: ['他感動地簽下長約：「我想一直待在這裡。」', { all: { loyalty: 2 }, rep: 2 }],
+        k: ['他說會認真考慮。', {}],
+        f: ['他覺得被過度施壓，心情有些低落。', { all: { mood: -2 } }] } }
+    ] },
+
+  /* ───── 長線二：創投募資 ───── */
+  { id: 'ma_vc', w: 3, cd: 120, cond: m => m.co.rep >= 25 && m.co.funds < 900000, pick: null, title: '創投的邀約',
+    because: m => `公司聲望 ${Math.round(m.co.rep)}、資金仍偏緊`,
+    text: '一家文化產業創投寄來邀請：願意評估對公司的 A 輪投資。對方要你準備營運報告、藝人藍圖與三年財務預測。',
+    choices: [
+      { t: '全力準備簡報，爭取募資', check: { st: 'biz', diff: 34 }, out: {
+        g: ['簡報很成功，創投決定進入盡職調查。', { me: { stress: 8, energy: -10 }, follow: F('ma_vc_dd', [4, 6], '你向創投提出了完整的募資簡報。') }],
+        k: ['創投興趣普通，但同意先進行初步調查。', { me: { stress: 6, energy: -8 }, follow: F('ma_vc_dd', [5, 8], '創投對你的簡報有些保留。') }],
+        f: ['簡報漏洞百出，創投婉拒了。', { me: { stress: 8 }, rep: -1 }] } },
+      { t: '婉拒，維持自給自足', txt: '你不想讓外部資本介入創作決定。社長點頭：「穩健也是一種選擇。」', fx: { trust: 2 } }
+    ] },
+  { id: 'ma_vc_dd', w: 0, cd: 80, pick: null, title: '盡職調查',
+    text: '創投派人進駐三天，翻遍了帳本、合約與藝人名單。他們問到幾個棘手問題：某些舊合約分潤不明確，部分藝人未成年工時紀錄也不完整。',
+    choices: [
+      { t: '坦白說明，主動提出補救計畫', txt: '對方記錄了你的誠實：「有問題不可怕，隱瞞才可怕。」', fx: { rep: 1, trust: 1, follow: F('ma_vc_close', [3, 5], '你在盡調中坦白了公司的缺陷。') } },
+      { t: '請律師出面把問題包裝一下', check: { st: 'pr', diff: 36 }, out: {
+        g: ['包裝得很漂亮，對方沒追問下去。', { follow: F('ma_vc_close', [3, 5], '你順利通過了盡職調查。') }],
+        k: ['對方起了疑心，要求補件。', { me: { stress: 5 }, follow: F('ma_vc_close', [5, 7], '創投要求補交文件。') }],
+        f: ['對方發現你避重就輕，投資案暫緩。', { rep: -2, trust: -3 }] } }
+    ] },
+  { id: 'ma_vc_close', w: 0, cd: 80, pick: null, title: '投資條款',
+    text: '創投開出條件：注資 90 萬，換取公司 15% 股權，並要求董事席位與「重大決策否決權」。社長問你：「你覺得呢？」',
+    choices: [
+      { t: '接受，換取擴張資金', txt: '資金到位，公司聲勢大漲，但之後每個大決定都要先過董事會。', fx: { funds: 900000, rep: 2, flag: 'vc_in', me: { stress: 3 } } },
+      { t: '爭取拿掉否決權', check: { st: 'biz', diff: 38 }, out: {
+        g: ['對方讓步，改為一般董事席位。注資金額不變。', { funds: 900000, rep: 3, trust: 2 }],
+        k: ['折衷：否決權僅限預算超標時。', { funds: 700000, rep: 2 }],
+        f: ['談判破裂，創投撤回了意向書。', { rep: -1, me: { stress: 5 } }] } },
+      { t: '拒絕，繼續靠自己', txt: '社長鬆了一口氣。資金仍然吃緊，但方向盤依舊握在你們手上。', fx: { trust: 3, rep: 1 } }
+    ] },
+
+  /* ───── 長線三：商標與名稱 ───── */
+  { id: 'ma_tm', w: 3, cd: 140, cond: m => dg(m).length > 0 && m.co.rep >= 15, pick: null, title: '團名被搶註',
+    text: '律師來電：有人搶先註冊了你們旗下藝人的團名商標，並且已經開始販售仿冒周邊。',
+    choices: [
+      { t: '委託律師發出存證信函', req: m => m.co.funds >= 15000, need: '資金 ≥ 1.5 萬', txt: '對方回函，語氣強硬。看來這不會輕易結束。', fx: { funds: -15000, follow: F('ma_tm_court', [4, 7], '你對搶註商標者發出了存證信函。') } },
+      { t: '私下找對方談判，買回商標', check: { st: 'biz', diff: 34 }, out: {
+        g: ['對方獅子大開口，但你壓到合理價錢買回商標。', { funds: -40000, rep: 1 }],
+        k: ['對方堅持不讓，談判陷入僵局。', { follow: F('ma_tm_court', [4, 7], '商標談判陷入僵局。') }],
+        f: ['對方趁機加價，並把消息洩漏給媒體。', { rep: -1, funds: -20000 }] } },
+      { t: '放著不管，先專注活動', txt: '仿冒周邊越來越多，粉絲開始困惑哪個才是正品。', fx: { rep: -1, all: { stress: 1 } } }
+    ] },
+  { id: 'ma_tm_court', w: 0, cd: 80, pick: null, title: '商標爭議開庭',
+    text: '商標案進入訴訟程序。法官要求提出使用證據：首次公演日期、過往專輯與官方周邊銷售紀錄。你整個晚上都在整理資料。',
+    choices: [
+      { t: '提交完整證據，堅持到底', check: { st: 'biz', diff: 32 }, out: {
+        g: ['法院判決你方勝訴，商標回到公司名下。', { rep: 3, trust: 2, funds: 30000 }],
+        k: ['雙方和解，你方支付小額和解金。', { funds: -20000, rep: 1 }],
+        f: ['證據不夠完整，法院暫判對方擁有商標，必須上訴。', { funds: -40000, rep: -1, me: { stress: 6 } }] } },
+      { t: '同意和解，支付一筆和解金', req: m => m.co.funds >= 50000, need: '資金 ≥ 5 萬', txt: '事情不甘願，但至少結束了。你把教訓寫進了公司流程：任何新團名先註冊。', fx: { funds: -50000, me: { stress: -3 }, flag: 'tm_settled' } }
+    ] },
+
+  /* ───── 長線四：首場演唱會 ───── */
+  { id: 'ma_concert', w: 3, cd: 140, cond: m => dg(m).some(g => g.pop >= 35 && g.fans >= 30000), pick: null, title: '首場個人演唱會',
+    because: m => `旗下有團體人氣與粉絲達標`,
+    text: '粉絲社群喊了很久：「什麼時候開演唱會？」企劃部提案在中型場館舉辦首場個人演唱會，預算要 40 萬。',
+    choices: [
+      { t: '批准計畫，全公司啟動', req: m => m.co.funds >= 400000, need: '資金 ≥ 40 萬', txt: '企劃、舞監、燈光、音響陸續開會，整間公司都為此亢奮。', fx: { funds: -400000, me: { stress: 6 }, all: { stress: 2 }, follow: F('ma_concert_ticket', [4, 6], '你批准了首場演唱會的預算。') } },
+      { t: '縮小規模，改辦小型見面演唱會', req: m => m.co.funds >= 150000, need: '資金 ≥ 15 萬', txt: '雖然規模縮小，但氣氛更親密，粉絲很喜歡。', fx: { funds: -150000, rep: 1, follow: F('ma_concert_ticket', [3, 5], '你決定先辦小型演唱會。') } },
+      { t: '再等等，先累積作品', txt: '粉絲留言有些失落，但期待感也在發酵。', fx: { me: { stress: -1 } } }
+    ] },
+  { id: 'ma_concert_ticket', w: 0, cd: 80, pick: null, title: '搶票大戰',
+    text: '開賣當天，購票網站在三分鐘內被擠爆，黃牛開始炒票，粉絲群組一片混亂。有人在社群貼出票價被炒到五倍的截圖。',
+    choices: [
+      { t: '實名制＋官方轉讓平台', check: { st: 'pr', diff: 32 }, out: {
+        g: ['黃牛被擋在外，粉絲稱讚公司有擔當。', { rep: 2, funds: 60000 }],
+        k: ['系統有些卡頓，但整體順利。', { funds: 40000 }],
+        f: ['實名制系統當機，粉絲怨聲載道。', { rep: -2, funds: 20000 }] } },
+      { t: '加開一場，緩解需求', req: m => m.co.funds >= 100000, need: '資金 ≥ 10 萬', txt: '加場賣完了，粉絲非常感動，但現場人員更累了。', fx: { funds: -50000, rep: 1, all: { stress: 3 }, follow: F('ma_concert_day', [3, 4], '你因搶票大戰而加開了一場。') } },
+      { t: '放任市場，不介入', txt: '黃牛票價飆高，部分粉絲買不到票而失望離開。', fx: { rep: -1 } }
+    ] },
+  { id: 'ma_concert_day', w: 0, cd: 80, pick: null, title: '演唱會當天',
+    text: '開演前一小時，燈光突然出現故障，舞監一頭冷汗地跑來：「可能要延後開場二十分鐘。」場外已有一萬名粉絲在排隊。',
+    choices: [
+      { t: '延後開場，向粉絲誠實說明', txt: '你親自到場外向粉絲致歉。大家鼓掌：「平安最重要！」', fx: { rep: 2, trust: 1, me: { stress: 5 } } },
+      { t: '請工作人員全力搶修，準時開演', check: { st: 'coach', diff: 34 }, out: {
+        g: ['故障在最後一刻排除，演出完美落幕。', { rep: 3, trust: 3, funds: 100000, flag: 'first_concert' }],
+        k: ['部分燈光受影響，但不影響整體。', { rep: 1, funds: 50000 }],
+        f: ['演出中途再度故障，場面一度尷尬。', { rep: -2, me: { stress: 10 } }] } }
+    ] },
+
+  /* ───── 長線五：海外市場 ───── */
+  { id: 'ma_overseas', w: 3, cd: 160, cond: m => dg(m).some(g => g.fame >= 40) && m.co.rep >= 30, pick: null, title: '海外代理商的來信',
+    text: '一家海外代理商來信：願意協助旗下團體進軍當地市場，包含簽證、行程與在地宣傳，但要求獨家代理三年。',
+    choices: [
+      { t: '簽約獨家代理，快速打開市場', txt: '代理商安排了試水溫的小型簽唱會，反應不錯。', fx: { rep: 1, follow: F('ma_overseas_local', [5, 8], '你簽下了海外獨家代理合約。') } },
+      { t: '要求縮短年限、自留部分權利', check: { st: 'biz', diff: 36 }, out: {
+        g: ['雙方折衷：兩年、非獨家，你保留了關鍵權利。', { rep: 2, follow: F('ma_overseas_local', [5, 8], '你談下了彈性的海外代理條件。') }],
+        k: ['代理商略有讓步，但對方保留意見。', { follow: F('ma_overseas_local', [6, 9], '你與代理商達成了小幅調整。') }],
+        f: ['代理商覺得你不夠有誠意，轉而聯絡別家。', { me: { stress: 3 } }] } },
+      { t: '先專注國內，暫不考慮', txt: '你相信把基礎打穩，再走遠一點也不遲。', fx: { me: { stress: -2 } } }
+    ] },
+  { id: 'ma_overseas_local', w: 0, cd: 80, pick: null, title: '水土不服',
+    text: '海外首次宣傳行程中，藝人們吃不慣當地食物、時差也還沒調過來。當地媒體問了幾個文化背景的敏感問題，現場氣氛有些緊張。',
+    choices: [
+      { t: '事前預演問答，加派翻譯陪同', req: m => m.co.funds >= 30000, need: '資金 ≥ 3 萬', txt: '翻譯與預演發揮功用，藝人應對得體，贏得好評。', fx: { funds: -30000, rep: 2, all: { loyalty: 1 }, follow: F('ma_overseas_fans', [6, 10], '你為海外行程準備了周全的翻譯與預演。') } },
+      { t: '放手讓藝人自然發揮', check: { st: 'pr', diff: 32 }, out: {
+        g: ['藝人誠實又親切的回答圈了不少粉。', { rep: 2, follow: F('ma_overseas_fans', [6, 10], '藝人在海外行程表現亮眼。') }],
+        k: ['普普通通，沒有太大波瀾。', {}],
+        f: ['一句話被當地媒體斷章取義，引來爭議。', { rep: -2, all: { stress: 4 } }] } }
+    ] },
+  { id: 'ma_overseas_fans', w: 0, cd: 80, pick: null, title: '海外粉絲接機',
+    text: '再次抵達海外機場，接機的粉絲比預期多了三倍，許多人拿著手寫的應援卡片。安全人員提醒：「人太多，可能需要調整動線。」',
+    choices: [
+      { t: '臨時調整動線，確保安全', txt: '平安離場，粉絲們揮手送別，沒有人受傷。', fx: { rep: 2, trust: 1, all: { mood: 3 } } },
+      { t: '停下來簽名合影，回饋粉絲', check: { st: 'coach', diff: 34 }, out: {
+        g: ['現場秩序良好，成為當地最溫馨的新聞。', { rep: 3, all: { mood: 4, loyalty: 2 } }],
+        k: ['稍微混亂，但沒有出事。', { rep: 1, all: { stress: 2 } }],
+        f: ['人潮失控，有粉絲擠傷。公司必須賠償並道歉。', { rep: -3, funds: -30000, all: { stress: 6 } }] } }
+    ] },
+
+  /* ───── 長線六：成員離隊談判與轉職 ───── */
+  { id: 'ma_exit', w: 3, cd: 120, cond: m => m.roster.some(t => t.stage >= 2 && t.hid.loyalty < 40), pick: null, title: '成員的離隊請求',
+    because: m => `有已出道藝人的忠誠度偏低`,
+    text: '一位出道成員約你單獨談話：「我想知道，如果我想離開，公司會怎麼處理？」他語氣平靜，但看得出已經想了很久。',
+    choices: [
+      { t: '先聽他說完想法與擔憂', txt: '他說了很多：未來的方向、對舞台的疲倦、想嘗試的事。你沒有打斷。', fx: { all: { loyalty: 1 }, me: { stress: 3 }, follow: F('ma_exit_talk', [3, 5], '你傾聽了成員的離隊想法。') } },
+      { t: '明確告訴他合約內容與違約責任', txt: '氣氛有些僵，但你把規則說清楚了。', fx: { me: { stress: 2 }, follow: F('ma_exit_talk', [3, 5], '你向成員說明了合約責任。') } },
+      { t: '拖延處理：「下次再聊」', txt: '他點頭離開，眼神失望。', fx: { all: { loyalty: -2 } } }
+    ] },
+  { id: 'ma_exit_talk', w: 0, cd: 80, pick: null, title: '離隊談判',
+    text: '正式談判桌上，成員的經紀人與公司律師都在場。他希望「轉型為幕後或個人活動」，條件是公司同意解約並放行。',
+    choices: [
+      { t: '祝福他，簽署和平解約協議', txt: '你們握手道別。他說：「這幾年，謝謝你。」成員之間也送上擁抱。', fx: { rep: 1, all: { loyalty: 2, mood: -1 }, flag: 'peace_exit' } },
+      { t: '要求他完成現有合約與活動才能離開', check: { st: 'biz', diff: 32 }, out: {
+        g: ['他同意再待半年，並提出完整的交接計畫。', { rep: 1, all: { loyalty: 1 } }],
+        k: ['雙方各退一步，改為縮減活動量。', {}],
+        f: ['他覺得不被尊重，公開表達不滿。', { rep: -2, all: { loyalty: -2 } }] } },
+      { t: '提供轉職方案：幕後製作人培訓', req: m => m.co.funds >= 20000, need: '資金 ≥ 2 萬', txt: '他驚訝地抬起頭：「真的可以嗎？」之後他成為公司內部最認真的新製作人。', fx: { funds: -20000, rep: 2, all: { loyalty: 3 } } }
+    ] }
+  );
+  DATA.M.EVENTS.push(...E);
+})();
+</script>
   <script data-source="js/data/data-events-2.js">
 'use strict';
 /* ===== data_ev2.js ===== */
@@ -6443,6 +6616,16 @@ Idol.pickGroupName = function (cands, idx) {
   Idol.log(`全員投票決定團名「${I.grp.name}」${mine ? '' : '（不是你投的那一個）'}。`, 'win');
   I.queue.unshift({ t: 'msg', title: `🗳️ 團名投票結果：${I.grp.name}`, text: `${DATA.CO}讓全員從三個候選團名中投票：\n${cands.join('、')}\n\n${lines.join('\n')}\n\n${tally}\n\n${mine ? `你的選擇「${I.grp.name}」獲得最多票，成為正式團名！` : `最後獲選的是「${I.grp.name}」。雖然不是你投的那一個，但這是大家一起決定的名字，也會跟著你們走很久。`}`, chips: Idol.chips(r) });
 };
+Idol.changeAlias = function (nm) { // 單飛後的更名（只有一次機會）
+  nm = String(nm || '').replace(/[<>&"'`]/g, '').trim().slice(0, 10);
+  I.flags.aliasChanged = true;
+  if (!nm || nm === Idol.dn()) return false;
+  const old = Idol.dn(); I.alias = nm === I.name ? null : nm;
+  if (I.grp) { I.grp.name = Idol.dn(); I.grp.members = [Idol.dn()]; }
+  Idol.log(`單飛後改名：「${old}」→「${Idol.dn()}」。`, 'win');
+  I.queue.unshift({ t: 'msg', title: `🎤 新的名字：${Idol.dn()}`, text: `單飛的第一步，是換上屬於自己的名字。\n從今天起，舞台上的你叫做「${Idol.dn()}」。${I.alias ? `\n本名「${I.name}」依然只留給家人與合約。` : ''}` });
+  return true;
+};
 Idol.setAlias = function (nm) {
   nm = String(nm || '').replace(/[<>&"'`]/g, '').trim().slice(0, 10);
   if (!nm || nm === I.name) { I.alias = null; return false; }
@@ -6689,6 +6872,7 @@ Idol.goSolo = function () {
   Idol.purgeQueue();
   Idol.log(`💸 支付違約金 ${U.money(fee)}，脫離 ${old} 單飛。`, 'story');
   I.queue.push({ t: 'msg', title: '🕊️ 單飛', text: `你向公司遞出單飛申請，並支付了 ${U.money(fee)} 的違約金。\n${old} 的隊友們各有各的心情，有人祝福，有人沉默。粉絲也分成了兩派，約 ${U.num(lost)} 位粉絲選擇留在團體。\n\n從今天起，你以「${I.name}」之名個人活動：沒有隊友分擔舞台，但也不必再配合團體的行程。簽下了新的三年合約。\n\n⚠ 團體專屬對手不會再與你交鋒，榜單也會改為個人榜。`, chips: Idol.chips(r) });
+  I.queue.push({ t: 'sname2' }); // 單飛後可改一次藝名（也可不改）
   return true;
 };
 
@@ -7264,6 +7448,17 @@ IdolUI.chartHtml = function (r) {
       <div class="kpis"><div><b>#${r.peak}</b><small>最高名次</small></div><div><b>${r.top10}</b><small>前 10 名天數</small></div><div><b>${r.no1}</b><small>第 1 名天數</small></div><div><b>#${r.last}</b><small>第 30 天名次</small></div></div>
       <p class="sub">${verdict}${r.wins.length ? ' 🏆 為音樂節目一位當天。' : ''}</p>`;
 };
+IdolUI.aliasModal2 = function () {
+  UI.modal(`<div class="ev-tag">🎤 單飛・更名機會</div><h3>要換一個新名字嗎？</h3><p>脫離團體後，你可以為個人活動修改藝名——<b>這是唯一的一次機會</b>。目前的名字是「${U.esc(Idol.dn())}」。最多 10 個字，也可以選擇不修改。</p>
+    <div class="cc-sec" style="padding:4px 0"><input type="text" id="aliasName2" maxlength="10" value="${U.esc(Idol.dn())}" placeholder="新的藝名"></div>
+    <div class="btn-row"><button class="btn ghost" data-act="i.aliasrand2">🎲 隨機</button><button class="btn ghost" data-act="i.aliaskeep2">不修改</button><button class="btn pink" data-act="i.aliasgo2">確定更名</button></div>`, { cls: 'event' });
+};
+ACT['i.aliasrand2'] = () => { const el = document.getElementById('aliasName2'); if (el) el.value = DATA.randAlias(I.g, new Set([I.name, Idol.dn()])); };
+ACT['i.aliaskeep2'] = () => { const q = I.queue[0]; if (q && q.t === 'sname2') I.queue.shift(); I.flags.aliasChanged = true; UI.close(); Idol.save('auto'); Idol.render(); Idol.flush(); };
+ACT['i.aliasgo2'] = () => {
+  const el = document.getElementById('aliasName2'), q = I.queue[0]; if (q && q.t === 'sname2') I.queue.shift();
+  UI.close(); Idol.changeAlias(el ? el.value : ''); Idol.save('auto'); Idol.render(); Idol.flush();
+};
 IdolUI.aliasModal = function () {
   UI.modal(`<div class="ev-tag">🎤 藝名</div><h3>為自己取一個藝名</h3><p>出道了，舞台上需要一個響亮的名字。本名是「${U.esc(I.name)}」，最多 10 個字，留空則沿用本名。</p>
     <div class="cc-sec" style="padding:4px 0"><input type="text" id="aliasName" maxlength="10" value="${U.esc(I.alias || '')}" placeholder="例如：Luna、Kai"></div>
@@ -7360,6 +7555,7 @@ Idol.flush = function () {
     return;
   }
   if (q.t === 'sname') { IdolUI.aliasModal(); return; }
+  if (q.t === 'sname2') { IdolUI.aliasModal2(); return; }
   if (q.t === 'fname') { IdolUI.fanModal(false); return; }
   if (q.t === 'end') { done(); Idol.ending(q.key); return Idol.render(); }
   // msg
@@ -7655,7 +7851,7 @@ const Cere = (() => {
       else if (p.k === 'outro') { head = '★ THANK YOU ★'; main = '明年再見！'; subm = ''; line = '感謝各位收看，我們明年再見！'; }
       else if (p.k === 'ann') { head = `第 ${p.i + 1} 個獎項`; main = c.n; subm = '提名中……'; line = `接下來要公布的是——${c.n}！`; ms = c.n.length > 6 ? 22 : 28; }
       else if (p.k === 'drum') { head = c.n; main = '？ ？ ？'; subm = ''; line = '本年度的得主是……'; ms = 34; }
-      else { const nm = c.win ? d.pname : c.winner; head = c.n; main = nm; subm = c.win ? '🎉 恭喜得獎！' : '台下的你，為得主鼓掌'; line = `恭喜 ${nm}！`; ms = nm.length <= 6 ? 30 : nm.length <= 10 ? 22 : 16; }
+      else { const nm = c.win ? (c.pname || d.pname) : c.winner; head = c.n; main = nm; subm = c.win ? '🎉 恭喜得獎！' : '台下的你，為得主鼓掌'; line = `恭喜 ${nm}！`; ms = nm.length <= 6 ? 30 : nm.length <= 10 ? 22 : 16; }
       setT('chead', head); setT('cmain', main); setT('csubm', subm); $('cmain').setAttribute('font-size', ms); setT('csub', line);
       const pulse = p.k === 'drum' ? 1 + .08 * Math.sin(t * 20) : p.k === 'rev' ? 1 + Math.max(0, .25 - p.u) * 1.2 : 1;
       $('cmain').setAttribute('transform', `translate(${180 * (1 - pulse)},${152 * (1 - pulse)}) scale(${pulse})`);
@@ -8759,7 +8955,23 @@ ACT['m.fire2'] = d => {
   M.co.funds -= fee; if (G.csDrama && G.csDrama.current) G.csDrama.current = null; const nm = T.name; M.leaving = (M.leaving || []).concat(T.id); Mgr.processLeaving();
   if (M.groups.includes(G)) { G.team = U.clamp(G.team - 3); G.pop = U.clamp(G.pop + 1.5); G.fame = U.clamp(G.fame + 1); }
   M.co.rep = U.clamp(M.co.rep + 0.5);
-  Mgr.log(`${G.name} 與 ${nm} 解約並退團（解約金 ${U.money(fee)}）。`, 'story'); UI.close(); UI.toast(`${nm} 已解約並退團`); Mgr.save('auto'); Mgr.render();
+  Mgr.log(`${G.name} 與 ${nm} 解約並退團（解約金 ${U.money(fee)}）。`, 'story'); UI.close(); UI.toast(`${nm} 已解約並退團`);
+  const dest = Mgr.exitDest(nm, T.g); Mgr.log(dest.log, 'story'); Mgr.save('auto'); Mgr.render();
+  UI.modal(`<div class="ev-tag">📰 後續動向</div><h3>${U.esc(nm)} 離開了</h3><p class="pre">${U.esc(dest.text)}</p><div class="btn-row"><button class="btn" data-act="u.close">知道了</button></div>`, { cls: 'small' });
+};
+// 離開公司的藝人：自己創業或轉投其他公司
+Mgr.exitDest = function (nm, g) {
+  const he = g === 'm' ? '他' : '她', rc = M.rivalCos = M.rivalCos || [];
+  if (U.chance(.45) && rc.length < 14) {
+    const co = nm + ' Entertainment';
+    rc.push({ name: co, score: U.rf(8, 14), cap: U.rf(22, 40), bump: 0 });
+    M.coRank && (M.coRank.total = rc.length + 1);
+    return { log: `🏢 ${nm} 離開後自立門戶，創立了「${co}」，成為業界新對手。`, text: `${nm} 離開公司後沒有消沉，反而自己成立了「${co}」。${he}帶著經驗重新出發，未來可能在榜單上與你的公司相遇。` };
+  }
+  const rv = U.pick(rc);
+  if (!rv) return { log: `${nm} 離開後淡出了業界。`, text: `${nm} 離開後選擇暫別演藝圈。` };
+  rv.bump += 2;
+  return { log: `🚪 ${nm} 離開後加入了 ${rv.name}。`, text: `${nm} 離開後簽進了 ${rv.name}，${he}的加入讓對方聲勢小幅上升。` };
 };
 ACT['m.audition'] = () => Mgr.audition();
 ACT['m.scout1'] = () => Mgr.scoutOne();
@@ -10222,20 +10434,21 @@ if (typeof window !== 'undefined' && document.getElementById('screen')) App.menu
       const before = new Map(M.groups.map(g => [g.id, safeArray(g.awards).length]));
       const out = oldMgrAwards.apply(Mgr, arguments);
       M.remaster = M.remaster || {}; M.remaster.awardsHistory = safeArray(M.remaster.awardsHistory);
-      const winners = [];
+      const won = [], lost = [], rivalPool = ['NOVA 9', 'LUNARIA', 'PRISM', 'ECLIPSE', 'MOONLIT', 'AURORA 7'].concat((M.rivalCos || []).map(r => r.name + ' 旗下新團'));
       M.groups.forEach(g => {
-        const earned = safeArray(g.awards).slice(before.get(g.id) || 0);
-        if (!earned.length) return;
-        const cats = earned.map(a => {
-          const row = { year: a.y || y, groupId: g.id, groupName: g.name, award: a.n };
-          M.remaster.awardsHistory.push(row);
-          return { n: a.n, win: true };
-        });
-        winners.push({ y, pname: g.name, cats });
+        const earned = safeArray(g.awards).slice(before.get(g.id) || 0), names = earned.map(a => a.n);
+        earned.forEach(a => { M.remaster.awardsHistory.push({ year: a.y || y, groupId: g.id, groupName: g.name, award: a.n }); won.push({ n: a.n, win: true, pname: g.name }); });
+        // 參賽但落選的獎項也在典禮上揭曉（條件與 Mgr.awards 一致）
+        if (g.status === 'prep' || !safeArray(g.albums).length) return;
+        const pts = Mgr.power(g) - Mgr.era() + (g.wins || 0) * 1.5, rookie = g.debutWeek != null && M.week - g.debutWeek < 52;
+        const contest = [];
+        if (rookie) contest.push('最佳新人獎'); if (pts > 8) contest.push('本賞'); if (pts > 24) contest.push('年度大賞');
+        contest.filter(n => !names.includes(n)).forEach(n => lost.push({ n, win: false, pname: g.name, winner: U.pick(rivalPool) }));
       });
-      if (winners.length) {
+      const order = { '最佳新人獎': 0, '本賞': 1, '年度大賞': 2 }, cats = won.concat(lost).slice(0, 4).sort((a, b) => (order[a.n] ?? 9) - (order[b.n] ?? 9));
+      if (cats.length) {
         const idx = M.queue.findIndex(q => q.t === 'msg' && String(q.title || '').includes('年終頒獎典禮'));
-        M.queue.splice(idx < 0 ? M.queue.length : idx, 0, ...winners.map(x => ({ t: 'cs-award-ceremony', ...x })));
+        M.queue.splice(idx < 0 ? M.queue.length : idx, 0, { t: 'cs-award-ceremony', y, pname: cats[0].pname, cats });
       }
       if (M.remaster.awardsHistory.length > 200) M.remaster.awardsHistory.splice(0, M.remaster.awardsHistory.length - 200);
       return out;
