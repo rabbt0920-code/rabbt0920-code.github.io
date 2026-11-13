@@ -1503,6 +1503,7 @@ function titleOf(id){
 }
 function endText(id){
  if(id==="J4"){return(S.tomb?S.tomb.n+"深處":"某條無人的巷子")+",又多了一具沒人收的屍骨。"}
+ if(id==="M2"&&S&&S.flags&&S.flags.moCall)return"阿默喊出那一聲「哥」,黑暗裡有人應了。燈焰一分為二,一盞留給燼,一盞落進阿默手裡。三十年前在門外等了三天的弟弟,終於等到哥哥回頭。天亮前,燼化成了灰,臉上是第一次出現的笑。阿默握著那盞燈,哭得像個孩子。你們把燈帶回家,每年今天,他都會點一次。";
  return ENDINGS[id].t;
 }
 function epilogue(id){
@@ -1617,7 +1618,7 @@ function delveCard(depth,score,val,rec,id){
    FEEDBACK_URL:若之後做了 Google 表單,把表單網址貼在這裡,
    玩家按「送出回饋」時會開啟表單;留空則改為複製回饋文字。 */
 const FEEDBACK_URL="";
-const VERSION="v3.0";
+const VERSION="v3.0.1";
 let LAST_END=null;
 function recordStats(id){
  const st=CODEX.stats=CODEX.stats||{runs:0,rounds:0,ends:{},deathAt:{}};
@@ -2395,7 +2396,7 @@ function cpFates(){
 }
 
 /* 無名墓最後一間:阿默的選項 */
-E.r7.o.push({l:"讓阿默開口,喊出哥哥的名字",need:{flag:"moSecret",mate:"mo"},r:{end:"M2",cp:{mo:{fate:"阿默在無名墓的最深處,第一次開口,喊的是哥哥的名字。從那以後他會說話了,只是話很少,而且每一句都很溫柔。"}},x:"阿默張開嘴,發出了三十年來的第一個聲音。他喊的是:「哥。」黑暗裡,有人回答了他。"}});
+E.r7.o.push({l:"讓阿默開口,喊出哥哥的名字",need:{flag:"moSecret",mate:"mo"},r:{end:"M2",flag:"moCall",cp:{mo:{fate:"阿默在無名墓的最深處,第一次開口,喊的是哥哥的名字。從那以後他會說話了,只是話很少,而且每一句都很溫柔。"}},x:"阿默張開嘴,發出了三十年來的第一個聲音。他喊的是:「哥。」黑暗裡,有人回答了他。"}});
 
 
 /* ==========================================================
