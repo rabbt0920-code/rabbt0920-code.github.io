@@ -171,6 +171,49 @@ input.txt{width:100%;font:inherit;padding:6px 8px;background:#0e0b08;border:1px 
 #toast-root{position:fixed;top:14px;left:50%;transform:translateX(-50%);z-index:90;display:flex;flex-direction:column;gap:6px;align-items:center;pointer-events:none}
 .toast{background:#2a1f10;border:1px solid var(--gold);color:var(--gold2);padding:6px 16px;border-radius:20px;font-size:13px;animation:toast 2.6s forwards}
 @keyframes toast{0%{opacity:0;transform:translateY(-10px)}10%,80%{opacity:1;transform:none}100%{opacity:0}}
+/* v3 */
+.guide{display:flex;align-items:center;justify-content:space-between;gap:8px;padding:7px 10px;margin-bottom:8px;border:1px solid var(--gold);border-radius:5px;background:rgba(212,175,55,.12);color:var(--gold2);font-size:13px;animation:glow 2.4s ease-in-out infinite}
+.guide-hl{outline:2px solid var(--gold2);outline-offset:2px;animation:hl 1.2s ease-in-out infinite;position:relative;z-index:2}
+@keyframes hl{0%,100%{box-shadow:0 0 0 rgba(242,220,148,0)}50%{box-shadow:0 0 18px rgba(242,220,148,.9)}}
+.qbox{font-size:12px;cursor:pointer;background:rgba(0,0,0,.25);border:1px solid rgba(110,90,43,.5);border-radius:5px;padding:5px 8px}
+.qmini{display:flex;justify-content:space-between;gap:6px;padding:1px 0}.qmini.done{color:var(--mute);text-decoration:line-through}.qmini.ready{color:var(--green);font-weight:700;text-decoration:none}
+.buffs{display:flex;flex-wrap:wrap;gap:4px;margin:6px 0}.buff{font-size:11px;padding:1px 7px;border-radius:10px;background:rgba(111,191,115,.18);color:#b6e8b9;border:1px solid rgba(111,191,115,.4)}.buff.bad{background:rgba(192,69,58,.2);color:#f1b3ac;border-color:rgba(192,69,58,.5)}
+.warnbox{color:#f1b3ac;font-size:12px;margin:4px 0}.warnbox:empty{display:none}
+.warn{color:#f1b3ac}
+.stat .rate.neg{color:#e08c84}
+.row.lock{opacity:.5}
+.row small{display:block;color:var(--mute);font-size:11px}
+.row .bar{height:4px;margin-top:3px;width:160px;max-width:100%}
+.tag.on{border-color:var(--green);color:#b6e8b9;background:rgba(111,191,115,.12)}.tag.off{opacity:.55}.tag.foe{border-color:var(--red);color:#f1b3ac;background:rgba(192,69,58,.15)}
+.combos{display:flex;flex-wrap:wrap;gap:4px;margin:6px 0}
+.lnk{color:var(--gold2);cursor:pointer;text-decoration:underline dotted}
+.charts{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.chart{background:rgba(0,0,0,.3);border:1px solid rgba(110,90,43,.5);border-radius:5px;padding:6px 8px}
+.chart .ct{display:flex;justify-content:space-between;font-size:12px;color:var(--mute)}.chart .ct b{color:var(--gold2)}
+.chart svg{width:100%;height:80px;display:block}.chart .cr{display:flex;justify-content:space-between;font-size:10px;color:var(--mute)}
+textarea.io{width:100%;height:70px;font-size:11px;word-break:break-all;resize:vertical}
+.spark{position:fixed;width:6px;height:6px;border-radius:50%;pointer-events:none;z-index:85;box-shadow:0 0 8px currentColor;animation:spark .8s ease-out forwards}
+@keyframes spark{from{transform:translate(0,0) scale(1);opacity:1}to{transform:translate(var(--dx),var(--dy)) scale(.2);opacity:0}}
+.achpop{position:fixed;top:60px;left:50%;transform:translateX(-50%);z-index:95;background:linear-gradient(#3b2e19,#1d1610);border:2px solid var(--gold2);border-radius:8px;padding:10px 26px;text-align:center;
+  box-shadow:0 0 30px rgba(242,220,148,.6);animation:achpop 3.5s forwards;pointer-events:none}
+.achpop small{display:block;color:var(--gold);letter-spacing:.3em;font-size:11px}.achpop b{display:block;font-size:20px;color:#fff3c4;letter-spacing:.15em}.achpop span{font-size:12px;color:var(--mute)}
+@keyframes achpop{0%{opacity:0;transform:translate(-50%,-30px) scale(.8)}10%,85%{opacity:1;transform:translate(-50%,0) scale(1)}100%{opacity:0;transform:translate(-50%,-20px)}}
+body.shake #app{animation:shake .5s}
+@keyframes shake{0%,100%{transform:none}20%{transform:translate(-4px,2px)}40%{transform:translate(4px,-2px)}60%{transform:translate(-3px,1px)}80%{transform:translate(3px,0)}}
+.mtabs{display:none}
+input[type=range]{accent-color:var(--gold)}
+@media(max-width:760px){
+  header{flex-wrap:wrap}.hdr-r{flex-wrap:wrap;gap:6px}
+  .layout{display:block;height:auto;padding-bottom:56px}
+  .layout>.panel{display:none;min-height:70vh}
+  body[data-tab="left"] #panel-left, body[data-tab="center"] #panel-center, body[data-tab="right"] #panel-right{display:block}
+  .mtabs{display:flex;position:fixed;bottom:0;left:0;right:0;z-index:60;background:#14100b;border-top:1px solid var(--gold)}
+  .mtabs button{flex:1;font:inherit;color:var(--mute);background:none;border:none;padding:12px 0;letter-spacing:.2em}
+  .mtabs button.on{color:var(--gold2);background:rgba(212,175,55,.12)}
+  .cards3{grid-template-columns:1fr !important}
+  .charts{grid-template-columns:1fr}
+  .grid2{grid-template-columns:1fr}
+}
 @media(max-width:1020px){
   .layout{grid-template-columns:1fr;height:auto}
   .panel{max-height:none}
@@ -183,7 +226,7 @@ input.txt{width:100%;font:inherit;padding:6px 8px;background:#0e0b08;border:1px 
   <header>
     <div>
       <h1>穿越成為武俠門派二把手，我該怎麼辦？</h1>
-      <div class="sub">單機經營 · 自動存檔 · 離線可收益</div>
+      <div class="sub">單機經營 · 自動存檔 · 離線可收益 · <span id="genText"></span></div>
     </div>
     <div class="hdr-r">
       <div class="speedbox" title="加速只影響線上遊玩；離線收益依實際離開時間計算，不受倍速影響">
@@ -192,6 +235,7 @@ input.txt{width:100%;font:inherit;padding:6px 8px;background:#0e0b08;border:1px 
         <button class="btn small" data-act="speed" data-v="2">2×</button>
         <button class="btn small" data-act="speed" data-v="5">5×</button>
       </div>
+      <button class="btn small" data-act="settings">設定</button>
       <button class="btn small" data-act="help">玩法說明</button>
     </div>
   </header>
@@ -209,6 +253,8 @@ input.txt{width:100%;font:inherit;padding:6px 8px;background:#0e0b08;border:1px 
       <div class="stat"><span class="badge">徒</span><div><div class="k">弟子 / 人數上限</div><div class="v" id="v-disc">0</div></div><div class="rate" id="r-sp" style="color:var(--gold2)"></div></div>
 
       <div class="meter"><div class="mrow"><span>掌門信任</span><span id="v-trust"></span></div><div class="bar trust" id="barTrustWrap"><i id="b-trust"></i></div></div>
+      <div id="warnBox" class="warnbox"></div>
+      <div id="buffBox" class="buffs"></div>
       <div class="meter"><div class="mrow"><span>你的野心</span><span id="v-amb"></span></div><div class="bar amb"><i id="b-amb"></i></div></div>
 
       <h3>天機榜</h3>
@@ -221,6 +267,9 @@ input.txt{width:100%;font:inherit;padding:6px 8px;background:#0e0b08;border:1px 
         <div class="ln"><span>下次放榜</span><span id="v-season"></span></div>
       </div>
 
+      <h3>今日目標 <button class="mini" data-act="quest">查看</button></h3>
+      <div id="questMini" class="qbox" data-act="quest"></div>
+
       <h3>已掌握功法</h3>
       <div class="techs" id="techList"></div>
 
@@ -229,6 +278,7 @@ input.txt{width:100%;font:inherit;padding:6px 8px;background:#0e0b08;border:1px 
 
       <div class="foot-btns">
         <button class="btn small" data-act="save">立即存檔</button>
+        <button class="btn small" data-act="saveio">匯出／匯入</button>
         <button class="btn small danger" data-act="reset">重置遊戲</button>
       </div>
     </aside>
@@ -236,6 +286,7 @@ input.txt{width:100%;font:inherit;padding:6px 8px;background:#0e0b08;border:1px 
     <!-- 中：核心操作區 -->
     <section class="panel" id="panel-center">
       <h2 class="ptitle">核心操作</h2>
+      <div class="guide" id="guide" style="display:none"><span id="guideText"></span><button class="mini" data-act="tutskip">跳過指引</button></div>
 
       <h3>建築升級</h3>
       <div class="cards3" id="buildings"></div>
@@ -250,6 +301,25 @@ input.txt{width:100%;font:inherit;padding:6px 8px;background:#0e0b08;border:1px 
         <button class="btn" id="btnTribute" data-act="tribute"></button>
         <button class="btn" id="btnScheme" data-act="scheme"></button>
         <button class="btn danger" id="btnCoup" data-act="coup">發動政變</button>
+      </div>
+
+      <h3>門派擴張</h3>
+      <div class="actions">
+        <button class="btn" id="btnBranch" data-act="branch"></button>
+        <button class="btn" id="btnAura" data-act="aura"></button>
+        <button class="btn" id="btnFest" data-act="fest"></button>
+        <button class="btn" id="btnGod" data-act="god"></button>
+        <button class="btn" id="btnSteward" data-act="steward"></button>
+        <button class="btn" data-act="dip">江湖外交<span class="cost">通商・結盟・挑釁</span></button>
+      </div>
+
+      <h3>江湖總覽</h3>
+      <div class="actions">
+        <button class="btn" id="btnQuest" data-act="quest">每日目標<span class="cost" id="questCost"></span></button>
+        <button class="btn" data-act="ach">成就<span class="cost" id="achCost"></span></button>
+        <button class="btn" data-act="stats">門派統計<span class="cost">收入・戰力・名次曲線</span></button>
+        <button class="btn" data-act="reborn">道統傳承<span class="cost" id="daoCost"></span></button>
+        <button class="btn" data-act="idle">掛機準備<span class="cost">下線前檢查</span></button>
       </div>
 
       <h3>江湖探索</h3>
@@ -276,6 +346,7 @@ input.txt{width:100%;font:inherit;padding:6px 8px;background:#0e0b08;border:1px 
 </div>
 <div id="modal-root"></div>
 <div id="toast-root"></div>
+<nav class="mtabs"><button data-act="mtab" data-tab="left">門派</button><button data-act="mtab" data-tab="center">操作</button><button data-act="mtab" data-tab="right">弟子</button></nav>
 <noscript>請啟用 JavaScript 以遊玩本遊戲。</noscript>
 
 <script>
@@ -297,7 +368,7 @@ input.txt{width:100%;font:inherit;padding:6px 8px;background:#0e0b08;border:1px 
 const CONFIG = {
   saveKey: 'wuxia_second_in_command_v1',      // 存檔 key（沿用舊 key，舊存檔可直接升級）
   endKey: 'wuxia_second_endings_v1',          // 已解鎖結局（重置遊戲時保留）
-  version: 2,
+  version: 3,
   autosaveSec: 5,                              // 自動存檔間隔（秒）
   offlineCapSec: 8 * 3600,                     // 離線收益上限：8 小時
   offlineEfficiency: 0.5,                      // 離線資源效率
@@ -307,7 +378,7 @@ const CONFIG = {
   baseGold: 0.3,                               // 香火錢（每秒基礎資金）
   repGold: 0.0015,                             // 聲望轉為香火錢的比例
   foodPerDisciple: 0.2,                        // 每名弟子每秒耗糧
-  maxLevel: 10,                                // 建築等級上限
+  maxLevel: 20,                                // 建築等級上限（11 級以後為後期內容）
   maxArts: 3,                                  // 每名弟子最多學幾門真傳功法
   masterPower: 12000,                          // 掌門戰力（政變難度）
   legitRank: 3,                                // 「正統傳位」：門派榜名次需達到前幾名
@@ -376,7 +447,12 @@ const TECHS = [
   { id: 'qing',     name: '輕功．隨風步', reqLib: 4, key: 'luck',   base: .05, adv: .20, req: 120, cost: 400,  desc: '事件成功率' },
   { id: 'taiji',    name: '靜水心法',   reqLib: 5, key: 'guard',    base: .15, adv: .50, req: 160, cost: 700,  desc: '受傷抗性' },
   { id: 'chunyang', name: '純陽無極功', reqLib: 7, key: 'train',    base: .25, adv: .90, req: 300, cost: 1800, desc: '修煉速度' },
-  { id: 'tingfeng', name: '聽風十三劍', reqLib: 9, key: 'power',    base: .10, adv: .40, req: 450, cost: 4000, desc: '實戰戰力' }
+  { id: 'tingfeng', name: '聽風十三劍', reqLib: 9, key: 'power',    base: .10, adv: .40, req: 450, cost: 4000, desc: '實戰戰力' },
+  // 後期功法（藏經閣 11 級以上）
+  { id: 'hanjiang', name: '寒江釣雪功', reqLib: 11, key: 'gold',    base: .12, adv: .45, req: 600,  cost: 7000,  desc: '資金產出（據說是掌門釣魚時悟的）' },
+  { id: 'jingang',  name: '金剛不壞體', reqLib: 13, key: 'guard',   base: .15, adv: .60, req: 800,  cost: 10000, desc: '受傷抗性' },
+  { id: 'baibu',    name: '百步神拳',   reqLib: 15, key: 'power',   base: .12, adv: .50, req: 1000, cost: 15000, desc: '實戰戰力' },
+  { id: 'taixu',    name: '太虛劍經',   reqLib: 18, key: 'train',   base: .30, adv: 1.0, req: 1400, cost: 25000, desc: '修煉速度' }
 ];
 const TECH_MAP = Object.fromEntries(TECHS.map(t => [t.id, t]));
 const KEY_NAME = { train: '修煉速度', gold: '資金產出', foodSave: '耗糧減免', luck: '事件成功率', guard: '受傷抗性', power: '實戰戰力' };
@@ -465,6 +541,8 @@ const genTitle = () => pick(TITLE_A) + pick(TITLE_B);
 const arrow = (prev, cur) => !prev ? '<span class="up">新</span>' : prev > cur ? `<span class="up">▲${prev - cur}</span>` : prev < cur ? `<span class="down">▼${cur - prev}</span>` : '—';
 
 /* ================= 4. 存檔 / 讀檔 ================= */
+const STATS_DEF = { recruited: 0, forged: 0, events: 0, promoted: 0, travels: 0, dispatches: 0, greats: 0, enc: 0, camp3: 0, rivalWin: 0, fests: 0 };
+const AUTO_OFF = { recruit: false, equip: false, sell: false, travel: false, dispatch: false, events: false };
 function newState() {
   const S = {
     ver: CONFIG.version, clock: 0, savedAt: Date.now(), sectName: '聽風劍派',
@@ -475,13 +553,18 @@ function newState() {
     evTimer: 60, rivalTimer: 180, advCd: 0, tributeCd: 0, schemeCd: 0,
     npcs: [], sects: SECTS_INIT.map(([id, name, score, grow]) => ({ id, name, score, grow })),
     fame: 0, seasons: 0, nextSeason: CONFIG.seasonLen, rank: null, story: 0,
-    stats: { recruited: 0, forged: 0, events: 0 },
+    stats: Object.assign({}, STATS_DEF),
     trips: [], reports: [],
+    // v3 新增
+    gen: meta.runs + 1, buffs: [], branches: 0, aura: 0, festCd: 0, giftCd: 0, steward: perk('auto') > 0,
+    auto: Object.assign({}, AUTO_OFF), lastDispatch: null, autoSig: '', dip: initDip(), hist: [],
+    tut: (meta.tutDone || meta.runs > 0) ? -1 : 0, tutFlags: {}, relTimer: 90, autoTimer: 5, histTimer: 0, unpaid: false, lastYear: 0,
     log: [], flags: { intro: false, wonA: false, wonTop: false, truth: false }, ending: null, over: false
   };
   state = S;
   initNPCs();
-  for (let i = 0; i < 3; i++) S.disciples.push(genDisciple());
+  for (let i = 0; i < 3 + perk('disc'); i++) S.disciples.push(genDisciple());
+  S.res.gold += 300 * perk('gold');
   syncTechs(true);
   publishRank(true);
   return S;
@@ -490,6 +573,7 @@ function saveGame() {
   try {
     state.savedAt = Date.now();
     localStorage.setItem(CONFIG.saveKey, JSON.stringify(state));
+    saveMeta();
   } catch (e) { /* 無痕模式或容量不足時略過 */ }
 }
 function loadGame() {
@@ -501,7 +585,11 @@ function loadGame() {
     const S = Object.assign(base, data);
     S.res = Object.assign({ gold: 0, rep: 0, food: 0 }, data.res);
     S.b = Object.assign({ dojo: 1, garden: 1, library: 1 }, data.b);
-    S.stats = Object.assign({ recruited: 0, forged: 0, events: 0 }, data.stats);
+    S.stats = Object.assign({}, STATS_DEF, data.stats);
+    S.auto = Object.assign({}, AUTO_OFF, data.auto);
+    S.dip = Object.assign(initDip(), data.dip || {});
+    S.tutFlags = data.tutFlags || {};
+    if (data.tut === undefined) S.tut = -1;            // 舊存檔不再顯示新手指引
     S.flags = Object.assign({ intro: false, wonA: false, wonTop: false, truth: false }, data.flags);
     S.disciples = (data.disciples || []).map(d => Object.assign(blankDisciple(), d));
     S.items = data.items || [];
@@ -528,11 +616,11 @@ function saveEnding(id) {
 /* ================= 5. 弟子與數值計算 ================= */
 function blankDisciple() {
   return { id: uid(), name: '無名', talent: 50, bone: 50, power: 0, contrib: 0, job: 'train', age: rint(16, 24), title: '',
-           cond: null, trip: null, weapon: null, armor: null, arts: [], realm: 0, trait: 'shechu' };
+           cond: null, trip: null, master: null, rel: {}, weapon: null, armor: null, arts: [], realm: 0, trait: 'shechu' };
 }
 function genDisciple(opt = {}) {
   const rep = (state && state.res.rep) || 0;
-  const boost = Math.min(15, rep / 300) + (opt.boost || 0) + (state && state.rank ? rankRecruitBoost() : 0);
+  const boost = Math.min(15, rep / 300) + (opt.boost || 0) + (state && state.rank ? rankRecruitBoost() : 0) + 3 * perk('talent');
   const roll = () => clamp(Math.round(10 + (Math.random() + Math.random()) / 2 * 85 + boost), 10, 100);
   const d = blankDisciple();
   d.talent = roll(); d.bone = roll();
@@ -554,7 +642,7 @@ const getItem = id => state.items.find(i => i.id === id) || null;
 const lvl = k => state.b[k];
 const dojoMul = () => dojoMulAt(lvl('dojo'));
 const gardenProd = () => gardenProdAt(lvl('garden'));
-const capacity = () => 4 + 2 * lvl('dojo') + lvl('garden');
+const capacity = () => 4 + 2 * Math.min(10, lvl('dojo')) + Math.max(0, lvl('dojo') - 10) + Math.min(10, lvl('garden'));   // 10 級後人數成長減半
 const condOf = d => (d.cond && d.cond.until > state.clock) ? COND[d.cond.type] : null;
 const listedOf = d => (state.rank && state.rank.mine[d.id]) || null;   // 弟子目前的上榜資訊 {tier,pos}
 
@@ -564,7 +652,7 @@ function sectBonus(key) {                     // 全門派被動（基礎功法�
 function dBonus(d, key) {                      // 單一弟子總加成：基礎 + 真傳
   let s = sectBonus(key);
   for (const id of d.arts) { const t = TECH_MAP[id]; if (t && t.key === key) s += t.adv; }
-  return s;
+  return s + comboBonus(d, key);
 }
 function eqPow(d) { let s = 0; for (const k of ['weapon', 'armor']) { const it = d[k] && getItem(d[k]); if (it) s += it.pow; } return s; }
 function guardOf(d) { const a = d.armor && getItem(d.armor); return dBonus(d, 'guard') + (a ? (a.guard || 0) : 0); }
@@ -584,10 +672,12 @@ function rankBonus() {
 }
 const rankRecruitBoost = () => Math.max(0, (SECTS_INIT.length + 1 - state.rank.myPos) * 0.6);
 
+const WAGE = [0.01, 0.03, 0.08, 0.18];           // 各境界弟子月錢（每秒資金）
 // 計算當前每秒產出（UI 與 tick 共用）
 function calc() {
   const S = state, starveK = S.starve > 0 ? 0.3 : 1, libK = 1 + 0.03 * (lvl('library') - 1), dm = dojoMul();
-  let gold = CONFIG.baseGold + S.res.rep * CONFIG.repGold, rep = 0, farm = 0, cons = 0, sp = 0;
+  let gold = CONFIG.baseGold + S.res.rep * CONFIG.repGold, rep = 0, farm = 0, cons = 0, sp = 0, upkeep = 0;
+  const tMul = (1 + 0.1 * perk('train')) * (1 + 0.03 * S.aura) * buffMul('train');
   const per = [];
   for (const d of S.disciples) {
     const tr = TRAITS[d.trait] || TRAITS.shechu, job = JOBS[d.job] || JOBS.train, c = condOf(d), L = listedOf(d);
@@ -595,7 +685,8 @@ function calc() {
     const ep = effPower(d); sp += ep;
     cons += CONFIG.foodPerDisciple * (1 + tr.food) * (1 - clamp(dBonus(d, 'foodSave'), 0, 0.8));
     if (d.trip) { per.push({ d, train: 0, contrib: 0 }); continue; }      // 外出中：不產出、不修煉，只耗糧
-    const work = wm * (1 + tr.work) * starveK;
+    const rm = relMod(d), work = wm * (1 + tr.work) * starveK * rm.work * (S.unpaid ? 0.6 : 1) * buffMul('work');
+    upkeep += WAGE[d.realm];
     gold += (0.12 + 0.0018 * ep) * job.gold * work * (1 + tr.gold + dBonus(d, 'gold'));
     rep  += (0.0006 * ep + REALMS[d.realm].bonus) * job.rep * work * (1 + tr.rep) * libK;
     if (L) { gold += TIER_GOLD[L.tier]; rep += TIER_REP[L.tier]; }           // 上榜弟子的名氣收益
@@ -604,21 +695,25 @@ function calc() {
     const jt = (c && c.train > 1) ? Math.max(job.train, 1) : job.train;
     let train = 0;
     if (jt > 0) {
-      train = (0.25 + d.talent / 100) * jt * tm * dm * Math.max(0.1, 1 + tr.train + dBonus(d, 'train')) * starveK;
+      train = (0.25 + d.talent / 100) * jt * tm * dm * Math.max(0.1, 1 + tr.train + dBonus(d, 'train')) * starveK * rm.train * tMul;
       if (d.power >= capOf(d)) train *= 0.05;      // 超過根骨上限後成長極慢
     }
-    per.push({ d, train, contrib: 0.12 * job.ct * wm * starveK });
+    per.push({ d, train, contrib: 0.12 * job.ct * wm * starveK + 0.04 * S.disciples.filter(x => x.master === d.id).length });
   }
-  const rb = 1 + rankBonus();
-  return { gold: gold * rb, rep: rep * rb, foodProd: gardenProd() + farm, foodCons: cons, sp, per };
+  gold += S.branches * 3 + dipIncome(); rep += S.branches * 0.6;              // 分舵與通商
+  const rb = (1 + rankBonus()) * (1 + 0.1 * perk('prod')) * achMul() * (1 + 0.03 * S.aura);
+  return { gold: gold * rb * buffMul('gold'), rep: rep * rb * buffMul('rep'), foodProd: (gardenProd() + farm) * buffMul('food'), foodCons: cons, sp, per, upkeep };
 }
 
 /* ================= 6. 主迴圈 ================= */
 // dt：現實秒數；ws：江湖時間倍率（離線時縮小，避免一次老好幾十歲）
 function tick(dt, offline, ws = 1) {
-  const S = state, k = offline ? CONFIG.offlineEfficiency : 1, r = calc(), wt = dt * ws;
+  const S = state, k = offline ? offlineEff() : 1, r = calc(), wt = dt * ws;
   S.clock += wt;
-  S.res.gold += r.gold * dt * k;
+  S.res.gold += (r.gold - r.upkeep) * dt * k;
+  // 月錢：資金見底時發不出月錢，弟子工作效率下降
+  if (S.res.gold <= 0) { S.res.gold = 0; if (!S.unpaid && r.gold < r.upkeep) { S.unpaid = true; if (!offline) addLog('帳房哭喪著臉來報：資金見底，這個月的月錢發不出來了！弟子們幹活明顯沒勁。', 'bad'); } }
+  else if (S.unpaid && S.res.gold > 50) { S.unpaid = false; if (!offline) addLog('月錢補發了，弟子們重新打起精神。', 'good'); }
   S.res.rep  += r.rep * dt * k;
   S.res.food += (r.foodProd - r.foodCons) * dt * k;
 
@@ -658,6 +753,17 @@ function tick(dt, offline, ws = 1) {
     addLog(`${d.name} 年屆六旬，決定告老還鄉，臨走前對著山門磕了三個響頭。（聲望 +30）`, 'gold');
   }
 
+  // 增益／天災到期、各種計時
+  S.buffs = S.buffs.filter(b => b.until > S.clock);
+  S.festCd = Math.max(0, S.festCd - wt); S.giftCd = Math.max(0, S.giftCd - wt);
+  S.autoTimer -= wt; if (S.autoTimer <= 0) { S.autoTimer = 5; runAuto(offline); }
+  S.relTimer -= wt; if (S.relTimer <= 0) { S.relTimer = rnd(80, 140); relTick(offline); }
+  S.histTimer -= wt; if (S.histTimer <= 0) { S.histTimer = 30; sampleHist(); }
+  // 每年年初：官府課稅（持有資金的 5%）
+  const yr = Math.floor(S.clock / CONFIG.yearLen);
+  if (yr > S.lastYear) { S.lastYear = yr; const tax = Math.floor(S.res.gold * 0.05); if (tax > 0) { S.res.gold -= tax; if (!offline) addLog(`新的一年，官府派人來收「門派稅」${fmt(tax)} 資金。帳房一邊數錢一邊嘆氣。`, 'bad'); } }
+  if (!offline) tutTick();
+
   // 外出歸來：結算遊歷／討伐
   for (const t of S.trips.slice()) if (S.clock >= t.until) { S.trips = S.trips.filter(x => x !== t); runTrip(t); }
 
@@ -695,10 +801,12 @@ function endSeclusion(d) {
 function promote(d, nr) {
   d.realm = nr;
   const R = REALMS[nr];
-  d.contrib += R.contrib; state.res.rep += R.rep;
+  d.contrib += R.contrib; state.res.rep += R.rep; state.stats.promoted++; qProg('promote');
   addLog(`${d.name} 晉升為「${R.n}」！（貢獻 +${R.contrib}、聲望 +${R.rep}）`, 'gold');
+  if (!simulating) { burst(document.querySelector(`.dcard[data-id="${d.id}"]`), '#a77bd8'); Snd.play('level'); }
 }
 function removeDisciple(d) {
+  cleanRel(d);
   for (const t of state.trips) t.ids = t.ids.filter(id => id !== d.id);
   state.trips = state.trips.filter(t => t.ids.length);
   for (const it of state.items) if (it.owner === d.id) it.owner = null;
@@ -807,7 +915,7 @@ function publishRank(quiet) {
   }
   if (!quiet) toast(`第${S.seasons}期天機榜放榜：門派第 ${myPos} 名`);
 }
-function settleSeason(quiet) { state.seasons++; ageWorld(); publishRank(quiet); }
+function settleSeason(quiet) { state.seasons++; ageWorld(); dipSeason(); publishRank(quiet); }
 
 /* ================= 8. 玩家行動 ================= */
 function pay(gold) { if (state.res.gold < gold) { toast('資金不足'); return false; } state.res.gold -= gold; return true; }
@@ -815,18 +923,25 @@ function pay(gold) { if (state.res.gold < gold) { toast('資金不足'); return 
 function upgrade(key) {
   if (lvl(key) >= CONFIG.maxLevel) return;
   if (!pay(upgradeCost(key))) return;
-  state.b[key]++;
+  state.b[key]++; qProg('upgrade'); Snd.play('level');
   if (key === 'library') syncTechs(false);
   addLog(`${BUILDINGS[key].name}升到 ${lvl(key)} 級！`, 'gold');
-  const card = $(`.bcard[data-key="${key}"]`); if (card) { card.classList.remove('flash'); void card.offsetWidth; card.classList.add('flash'); }
+  const card = $(`.bcard[data-key="${key}"]`); if (card) { card.classList.remove('flash'); void card.offsetWidth; card.classList.add('flash'); burst(card); }
   update(true);
+}
+function doRecruit(silent) {
+  if (state.disciples.length >= capacity()) return null;
+  const cost = recruitCost(); if (state.res.gold < cost) return null;
+  state.res.gold -= cost;
+  const d = genDisciple(); state.disciples.push(d); state.stats.recruited++; qProg('recruit');
+  addLog(`${silent ? '管事堂代為' : ''}招募新弟子：${d.name}（${Math.floor(d.age)}歲，${quality(d)}，資質${d.talent}／根骨${d.bone}，「${TRAITS[d.trait].n}」）`, 'good');
+  return d;
 }
 function recruit() {
   if (state.disciples.length >= capacity()) return toast('弟子人數已達上限，先升級練武場或藥園吧');
-  const cost = recruitCost(); if (!pay(cost)) return;
-  const d = genDisciple(); state.disciples.push(d); state.stats.recruited++;
-  addLog(`招募新弟子：${d.name}（${Math.floor(d.age)}歲，${quality(d)}，資質${d.talent}／根骨${d.bone}，「${TRAITS[d.trait].n}」）`, 'good');
-  popText($('#btnRecruit'), '+1 弟子');
+  if (state.res.gold < recruitCost()) return toast('資金不足');
+  doRecruit(false);
+  popText($('#btnRecruit'), '+1 弟子'); Snd.play('coin');
   update(true);
 }
 function genItem(minTier = 0, forceTier = null) {   // 隨機生成裝備
@@ -845,8 +960,8 @@ function genItem(minTier = 0, forceTier = null) {   // 隨機生成裝備
 const itemHTML = it => `<span style="color:${RARITY[it.r].c}">${it.name}［${RARITY[it.r].n}］</span>`;
 function forge() {
   const c = forgeCost(); if (!pay(c)) return;
-  state.stats.forged++;
-  const it = genItem();
+  state.stats.forged++; qProg('forge');
+  const it = genItem(); Snd.play(it.r >= 3 ? 'ach' : 'coin');
   addLog(`鍛造採購獲得：${it.name}［${RARITY[it.r].n}］（戰力 +${it.pow}）`, it.r >= 2 ? 'gold' : '');
   toast(`獲得 ${it.name}［${RARITY[it.r].n}］`);
   update(true);
@@ -855,7 +970,7 @@ function tribute() {
   if (state.tributeCd > 0) return;
   if (!pay(tributeCost())) return;
   const add = state.trust > 80 ? 2 : 5;
-  state.trust = clamp(state.trust + add, 0, 100); state.tributeCd = 25;
+  state.trust = clamp(state.trust + add, 0, 100); state.tributeCd = 25; qProg('tribute');
   addLog(`你提著一壺好酒去寒潭邊陪掌門${MASTER}釣魚，他笑呵呵地說「還是你懂事」。（信任 +${add}）`, 'good');
   popText($('#btnTribute'), `信任 +${add}`);
   update(true);
@@ -911,7 +1026,7 @@ function autoEquip(silent) {
     const list = S.items.filter(it => it.slot === slot).sort((a, b) => b.pow - a.pow || b.r - a.r);
     list.slice(0, order.length).forEach((it, i) => { equip(order[i], slot, it.id); n++; });
   }
-  if (!silent) { toast(`已重新配發 ${n} 件裝備`); addLog(`副掌門整頓兵器庫，把好裝備優先發給了門內高手。（配發 ${n} 件）`); }
+  if (!silent) { toast(`已重新配發 ${n} 件裝備`); Snd.play('click'); addLog(`副掌門整頓兵器庫，把好裝備優先發給了門內高手。（配發 ${n} 件）`); }
   return n;
 }
 function teach(d, techId) {
@@ -1232,7 +1347,8 @@ const EVENTS = [
 /* ---- 事件引擎 ---- */
 const fmtText = (s, ctx) => s
   .replace(/\{d\}/g, ctx && ctx.d ? ctx.d.name : '某位弟子').replace(/\{m\}/g, MASTER)
-  .replace(/\{s\}/g, esc(state.sectName)).replace(/\{rm\}/g, RIVAL_MASTER).replace(/\{r\}/g, RIVAL_STAR).replace(/\{n\}/g, RIVAL);
+  .replace(/\{s\}/g, esc(state.sectName)).replace(/\{rm\}/g, RIVAL_MASTER).replace(/\{r\}/g, RIVAL_STAR).replace(/\{n\}/g, RIVAL)
+  .replace(/\{h\}/g, ctx && ctx.h ? ctx.h : '敵對門派');
 const rollRange = v => Array.isArray(v) ? Math.round(rnd(v[0], v[1])) : v;
 
 function availableDisciples() { return state.disciples.filter(d => !d.trip && !(d.cond && d.cond.type === 'seclusion')); }
@@ -1244,7 +1360,13 @@ function triggerEvent(opt = {}) {
   if (!pool.length) return;
   const ev = wpick(pool, e => e.weight);
   const c = candidates(ev);
-  showEvent({ ev, d: c.length ? pick(c) : null });
+  const ctx = { ev, d: c.length ? pick(c) : null, h: ev.hostile && hostileSects().length ? pick(hostileSects()).name : '' };
+  if (state.steward && state.auto.events) {          // 事件託管：自動選擇，不跳視窗
+    const i = autoChoice(ctx);
+    if (i >= 0) { resolveChoice(ctx, i, true); return; }
+  }
+  Snd.play('click');
+  showEvent(ctx);
 }
 function canAfford(cost) { if (!cost) return true; for (const k in cost) if (state.res[k] < cost[k]) return false; return true; }
 function costText(cost) {
@@ -1277,17 +1399,19 @@ function successMult(ctx, ch) {
   }
   return m * (1 + luck);
 }
-function resolveChoice(ctx, i) {
+function resolveChoice(ctx, i, quiet) {
   const S = state, ev = ctx.ev, ch = ev.choices[i];
   if (!canAfford(ch.cost)) return toast('資源不足');
   if (ch.cost) for (const k in ch.cost) S.res[k] -= ch.cost[k];
   const mult = successMult(ctx, ch);
   const out = wpick(ch.outcomes, o => o.w * (o.good ? mult : 1));
-  S.stats.events++;
+  S.stats.events++; qProg('event');
   if (out.end) { doEnding(out.end); return; }
   const lines = out.fx ? applyFx(out.fx, ctx) : [];
   const text = fmtText(out.text, ctx);
-  addLog(`【${fmtText(ev.title, ctx)}】${text}`, out.good ? 'good' : '');
+  addLog(`【${fmtText(ev.title, ctx)}】${quiet ? '（管事堂代為處理：' + fmtText(ch.label, ctx) + '）' : ''}${text}`, out.good ? 'good' : '');
+  if (quiet) { toast(`管事堂處理了「${fmtText(ev.title, ctx)}」`); update(true); return; }
+  Snd.play(out.good ? 'win' : 'click');
   const fxHtml = lines.map(l => `<div class="fxline ${l.cls}">${l.t}</div>`).join('');
   openModal({
     title: fmtText(ev.title, ctx) + '・結果',
@@ -1319,6 +1443,11 @@ function applyFx(fx, ctx) {
     }
   }
   if (fx.item !== undefined) { const it = genItem(fx.item); info(`獲得 ${itemHTML(it)}（戰力 +${it.pow}）`); }
+  if (fx.buff) { const b = fx.buff; addBuff(b.id, b.n, b.dur, b.mods, b.bad); info(`「${b.n}」持續 ${b.dur} 秒`); }
+  if (fx.sickN) { const pool = S.disciples.filter(x => !x.cond && !x.trip).sort(() => Math.random() - .5).slice(0, fx.sickN);
+    pool.forEach(x => { x.cond = { type: 'sick', until: S.clock + 90 }; }); if (pool.length) out.push({ t: `${pool.map(x => x.name).join('、')} 染上風寒`, cls: 'neg' }); }
+  if (fx.att !== undefined && ctx.h) { const sc = S.sects.find(x => x.name === ctx.h); if (sc && S.dip[sc.id]) { const v = rollRange(fx.att); S.dip[sc.id].att = clamp(S.dip[sc.id].att + v, -100, 100); num(ctx.h + ' 態度', v); } }
+  if (fx.hscore !== undefined && ctx.h) { const sc = S.sects.find(x => x.name === ctx.h); if (sc) { const v = rollRange(fx.hscore); sc.score = Math.max(500, sc.score + v); num(ctx.h + ' 評分', v, true); } }
   if (fx.recruit) {
     if (S.disciples.length >= capacity()) out.push({ t: '山門人滿為患，新人只好悻悻離去', cls: 'neg' });
     else { const nd = genDisciple(fx.recruit); S.disciples.push(nd); S.stats.recruited++; info(`${nd.name} 加入門派（${Math.floor(nd.age)}歲，${quality(nd)}，資質${nd.talent}／根骨${nd.bone}，「${TRAITS[nd.trait].n}」）`); }
@@ -1351,12 +1480,16 @@ const TARGETS = {
   camp3: { name: '斷魂嶺匪王巢', kind: 'bandit', desc: '盤踞三州交界的匪王，手下數百人，官府三次圍剿都無功而返。',
     diff: 3500, min: 5, dur: 200, food: 6, cond: () => state.res.rep >= 600, lock: '聲望 600',
     loot: { gold: [900, 1600], rep: [100, 180], contrib: [32, 55], power: [15, 30], itemChance: 1, itemMin: 2, fame: 700 } },
+  feud: { name: '敵派分堂', kind: 'feud', desc: '攻打與你們交惡的門派設在附近的分堂（需先在「江湖外交」中挑釁）。打贏可大幅削弱對方評分並繳獲戰利品。',
+    diff: sid => { const sc = state.sects.find(x => x.id === sid); return Math.round(700 + 0.08 * (sc ? sc.score : 3000)); }, min: 4, dur: 160, food: 6,
+    cond: () => hostileSects().some(x => x.id !== 'tiequan'), lock: '外交中挑釁其他門派',
+    loot: { gold: [350, 800], rep: [50, 100], contrib: [20, 36], power: [10, 22], itemChance: .7, itemMin: 1, fame: 400, rival: [-900, -400] } },
   rival: { name: '鐵拳門山下分館', kind: 'rival', desc: '鐵拳門在山腳開的分館，掌櫃是鐵震山的遠房侄子。打贏可繳獲對方兵器，並削弱鐵拳門評分。',
     diff: () => Math.round(800 + 0.12 * ((rivalSect() || { score: 0 }).score)), min: 4, dur: 180, food: 6,
     cond: () => state.seasons >= 1 && state.res.rep >= 200, lock: '首次放榜後、聲望 200',
     loot: { gold: [400, 900], rep: [60, 110], contrib: [24, 40], power: [12, 25], itemChance: .8, itemMin: 1, fame: 500, rival: [-700, -300] } }
 };
-const TARGET_ORDER = ['camp1', 'camp2', 'camp3', 'rival'];
+const TARGET_ORDER = ['camp1', 'camp2', 'camp3', 'rival', 'feud'];
 const TRIP_TEXT = {
   travel: {
     great: ['{d}在{place}遇上一位隱世高人點撥，又順手替當地百姓解了圍，滿載而歸，把沿途所得盡數上繳門派。',
@@ -1374,6 +1507,11 @@ const TRIP_TEXT = {
     lose:  ['{camp}的地形比想像中難纏，{d}等人中了埋伏，狼狽撤退，還得靠百姓指路才找到回山的路。',
             '{camp}的匪徒比情報裡多出一倍。{d}一行打到一半，不得不撤。出師未捷，丟了不少顏面。']
   },
+  feud: {
+    great: ['{d}等人殺進{n}的分堂，對方的堂主還在吃早飯，筷子都沒放下就被打翻在地。繳獲的財物裝了滿滿三車。'],
+    win:   ['一番苦戰後，{d}等人攻下了{n}的分堂。對方撤退時撂下狠話，但沒人回頭。'],
+    lose:  ['{n}早有防備，{d}等人一進門就中了埋伏，狼狽撤退。']
+  },
   rival: {
     great: ['{d}等人殺進{n}山下分館，把招牌拆下來當柴燒。{rm}的侄子抱頭鼠竄，館內的兵器銀兩全成了戰利品。',
             '分館的弟子們剛擺好架勢，就被{d}打得坐了一地。你們扛著繳獲的兵器浩浩蕩蕩回山，沿途鄉親爭相圍觀。'],
@@ -1389,24 +1527,28 @@ function tripWeights(ratio, luck) {
   return [m, 1.5 * clamp(m, 0.3, 2), 2.2 / (0.5 + m)];
 }
 const weightPct = w => { const t = w[0] + w[1] + w[2]; return w.map(x => Math.round(x / t * 100)); };
-const diffOf = s => typeof s.diff === 'function' ? s.diff() : s.diff;
+const diffOf = (s, sid) => typeof s.diff === 'function' ? s.diff(sid) : s.diff;
 const tripSpec = t => t.kind === 'travel' ? TRAVELS.find(x => x.id === t.spec) : TARGETS[t.spec];
 function injureD(d, dur) {
   const v = Math.round(dur * (1 - clamp(guardOf(d), 0, 0.8)));
   d.cond = { type: 'injured', until: state.clock + v };
   return v;
 }
-function startTrip(kind, spec, members) {
+function startTrip(kind, spec, members, opt = {}) {
   const S = state, s = kind === 'travel' ? TRAVELS.find(x => x.id === spec) : TARGETS[spec];
   const cost = kind === 'travel' ? s.food : s.food * members.length;
-  if (members.some(d => !idle(d))) return toast('有弟子目前無法出發');
-  if (S.res.food < cost) return toast(`乾糧不夠（需要 ${cost}）`);
+  const fail = m => { if (!opt.silent) toast(m); return false; };
+  if (members.some(d => !idle(d))) return fail('有弟子目前無法出發');
+  if (S.res.food < cost) return fail(`乾糧不夠（需要 ${cost}）`);
   S.res.food -= cost;
-  const trip = { id: uid(), kind, spec, ids: members.map(d => d.id), start: S.clock, until: S.clock + s.dur, diff: diffOf(s), place: pick(PLACES) };
+  const trip = { id: uid(), kind, spec, ids: members.map(d => d.id), start: S.clock, until: S.clock + s.dur, diff: diffOf(s, opt.sect), place: pick(PLACES), sect: opt.sect || null };
   members.forEach(d => { d.trip = trip.id; });
   S.trips.push(trip);
-  addLog(kind === 'travel' ? `${members[0].name} 背起行囊，前往${trip.place}遊歷（${s.dur} 秒）。` : `${members.length} 名弟子出發前往「${s.name}」（${s.dur} 秒）。`);
-  toast(`已出發，預計 ${s.dur} 秒後返回`);
+  if (kind === 'travel') { S.stats.travels++; qProg('travel'); }
+  else { S.stats.dispatches++; qProg('dispatch'); S.lastDispatch = { target: spec, ids: members.map(d => d.id), sect: opt.sect || null }; }
+  const tgt = spec === 'feud' && opt.sect ? (S.sects.find(x => x.id === opt.sect) || {}).name + '分堂' : s.name;
+  if (!simulating) addLog(kind === 'travel' ? `${opt.silent ? '（自動）' : ''}${members[0].name} 背起行囊，前往${trip.place}遊歷（${s.dur} 秒）。` : `${opt.silent ? '（自動）' : ''}${members.length} 名弟子出發前往「${tgt}」（${s.dur} 秒）。`);
+  if (!opt.silent) toast(`已出發，預計 ${s.dur} 秒後返回`);
   return true;
 }
 const tripName = (t, members) => members.length > 1 ? `${members[0].name}等${members.length}人` : members[0].name;
@@ -1417,9 +1559,15 @@ function runTrip(trip) {
   members.forEach(d => { d.trip = null; });
   if (!members.length) return;
   const power = members.reduce((a, d) => a + effPower(d), 0);
-  const luck = members.reduce((a, d) => a + dBonus(d, 'luck'), 0) / members.length;
+  // 運氣：功法、盟友助陣（每個盟友 +8%）、同隊知己（每對 +4%）
+  let pairs = 0; members.forEach(a => members.forEach(b => { if (a !== b && (a.rel || {})[b.id] === 'friend') pairs += 0.5; }));
+  const luck = members.reduce((a, d) => a + dBonus(d, 'luck'), 0) / members.length + (trip.kind !== 'travel' ? 0.08 * pactCount('ally') : 0) + 0.04 * pairs;
   const gi = wpick([0, 1, 2], i => tripWeights(power / Math.max(1, trip.diff), luck)[i]);
-  const grade = ['great', 'win', 'lose'][gi], m = [1.6, 1, 0.25][gi], L = s.loot, solo = trip.kind === 'travel';
+  const grade = ['great', 'win', 'lose'][gi], m = [1.6, 1, 0.25][gi] * (1 + 0.15 * perk('trip')), L = s.loot, solo = trip.kind === 'travel';
+  const fsect = trip.sect ? S.sects.find(x => x.id === trip.sect) : null, fname = fsect ? fsect.name : RIVAL;
+  if (gi === 0 && !solo) { S.stats.greats++; qProg('win'); }
+  if (gi < 2 && trip.spec === 'camp3') S.stats.camp3++;
+  if (gi < 2 && trip.spec === 'rival') S.stats.rivalWin++;
   const lines = [], add = (t, cls) => lines.push(`<div class="fxline ${cls}">${t}</div>`);
   const sg = v => (v >= 0 ? '+' : '') + v;
 
@@ -1432,8 +1580,9 @@ function runTrip(trip) {
   if (rep) add(`聲望 ${sg(rep)}`, rep > 0 ? 'pos' : 'neg');
   if (L.fame) { const f = Math.round(gi === 2 ? -L.fame * 0.5 : L.fame * m); S.fame += f; if (f) add(`天機閣印象 ${sg(f)}`, f > 0 ? 'pos' : 'neg'); }
   if (L.rival) {
-    const r = rivalSect(), v = gi === 2 ? 300 : Math.round(rollRange(L.rival) * (gi === 0 ? 1.4 : 1));
-    if (r) { r.score = Math.max(500, r.score + v); add(`${RIVAL}評分 ${sg(v)}`, v < 0 ? 'pos' : 'neg'); }
+    const r = fsect || rivalSect(), v = gi === 2 ? 300 : Math.round(rollRange(L.rival) * (gi === 0 ? 1.4 : 1));
+    if (r) { r.score = Math.max(500, r.score + v); add(`${fname}評分 ${sg(v)}`, v < 0 ? 'pos' : 'neg'); }
+    if (fsect && S.dip[fsect.id]) S.dip[fsect.id].att = clamp(S.dip[fsect.id].att - 8, -100, 100);
   }
   // 裝備戰利品
   if (gi < 2) {
@@ -1452,16 +1601,21 @@ function runTrip(trip) {
   if (members.length <= 3) members.forEach((d, i) => add(`${d.name} 上繳戰利品，貢獻 ${sg(cs[i])}、實力略有精進`, 'pos'));
   else add(`全體出戰弟子上繳戰利品，貢獻各 +${Math.min(...cs)}～${Math.max(...cs)}，實力略有精進`, 'pos');
   if (hurt.length) add(`${hurt.join('、')} 受了傷`, 'neg');
+  // 並肩作戰：大勝時同隊弟子可能結為知己
+  if (gi === 0 && members.length >= 2 && Math.random() < 0.3) {
+    const a = pick(members), b = pick(members.filter(x => x !== a));
+    if (b && !(a.rel || {})[b.id] && Object.keys(a.rel || {}).length < 3 && Object.keys(b.rel || {}).length < 3) { setRel(a, b, 'friend'); add(`${a.name}與${b.name}並肩作戰，結為知己`, 'pos'); }
+  }
   let enc = null;
   if (solo && gi < 2) enc = tryEncounter(trip, members, gi);
 
   const ctxText = x => x.replace(/\{d\}/g, tripName(trip, members)).replace(/\{place\}/g, trip.place).replace(/\{camp\}/g, s.name)
-    .replace(/\{n\}/g, RIVAL).replace(/\{rm\}/g, RIVAL_MASTER);
+    .replace(/\{n\}/g, fname).replace(/\{rm\}/g, RIVAL_MASTER);
   const text = ctxText(pick(TRIP_TEXT[solo ? 'travel' : s.kind][grade]));
-  const title = solo ? `${tripName(trip, members)}・遊歷歸來` : `${s.name}戰報・${GRADE_NAME[gi]}`;
+  const title = solo ? `${tripName(trip, members)}・遊歷歸來` : `${fsect ? fname + '分堂' : s.name}戰報・${GRADE_NAME[gi]}`;
   addLog(`【${title}】${text}`, gi === 2 ? 'bad' : gi === 0 ? 'gold' : 'good');
   S.reports.push({ title, html: `<p class="story">${text}</p><div style="margin-top:8px">${lines.join('')}</div>` + (enc ? `<h3>途中奇遇</h3><p class="story">${enc.txt}</p>${enc.lines}` : '') });
-  if (enc) addLog(`【奇遇】${enc.txt}`, 'gold');
+  if (enc) { addLog(`【奇遇】${enc.txt}`, 'gold'); S.stats.enc++; }
   if (S.reports.length > 6) S.reports.shift();
 }
 /* ---- 遊歷奇遇：單人遊歷歸來時有機率觸發（{d}=弟子名 {place}=地名） ---- */
@@ -1476,7 +1630,7 @@ const ENCOUNTERS = [
   { w: 4, text: '{d}迷路誤入深山，竟發現一處前輩閉關的石洞，洞壁上刻滿拳譜。他抄了個大概，回來越想越對。', fx: { dPower: [18, 36], dContrib: [10, 18], injure: 40 } },
   { w: 3, text: '{d}在{place}遇見一位同樣是「穿越者」的賣藝老鄉，兩人用暗號對了半夜的台詞，臨別時對方送了一件壓箱底的寶貝。', fx: { item: 3, dContrib: [8, 14] } }
 ];
-function tryEncounter(trip, members, gi) {
+function tryEncounter(trip, members, gi) {   // 由 runTrip 呼叫
   const d = members[0];
   if (Math.random() > (gi === 0 ? 0.38 : 0.2)) return null;
   const pool = ENCOUNTERS.filter(e => !e.fx.recruit || state.disciples.length < capacity());
@@ -1486,32 +1640,37 @@ function tryEncounter(trip, members, gi) {
   return { txt, lines };
 }
 /* ---- 一鍵出售閒置裝備 ---- */
-function sellIdle(maxRarity) {
+function sellIdle(maxRarity, silent) {
   const S = state, list = S.items.filter(it => !it.owner && it.r <= maxRarity);
-  if (!list.length) return toast('沒有符合條件的閒置裝備');
+  if (!list.length) return silent ? 0 : toast('沒有符合條件的閒置裝備');
   const total = list.reduce((a, it) => a + RARITY[it.r].sell, 0);
   S.items = S.items.filter(it => !list.includes(it));
   S.res.gold += total;
-  addLog(`清倉！賣掉 ${list.length} 件閒置裝備，共換得 ${total} 資金。`, 'gold');
-  toast(`已出售 ${list.length} 件，+${total} 資金`);
+  if (!simulating) addLog(`${silent ? '管事堂' : ''}清倉！賣掉 ${list.length} 件閒置裝備，共換得 ${total} 資金。`, 'gold');
+  if (!silent) { toast(`已出售 ${list.length} 件，+${total} 資金`); Snd.play('coin'); }
 }
 function showReport() {
   const r = state.reports.shift(); if (!r) return;
+  Snd.play(/鎩羽/.test(r.title) ? 'bad' : 'win');
   openModal({ title: r.title, wide: true, html: r.html, buttons: [{ label: '收下' }] });
   update(true);
 }
 
 /* ---- 出動討伐介面 ---- */
-let dp = { target: 'camp1', sel: [] };
+let dp = { target: 'camp1', sel: [], sect: null };
 function openDispatch() {
-  dp = { target: 'camp1', sel: [] };
+  const hs = hostileSects().filter(x => x.id !== 'tiequan');
+  dp = { target: 'camp1', sel: [], sect: hs.length ? hs[0].id : null };
   openModal({
     title: '出動討伐', wide: true, html: '', buttons: [{ label: '取消' }],
     on: {
       target: el => { dp.target = el.dataset.t; renderDispatch(); },
+      sect: el => { dp.sect = el.dataset.id; renderDispatch(); },
+      last: () => { const ld = state.lastDispatch; if (!ld) return; dp.target = ld.target; if (ld.sect) dp.sect = ld.sect;
+        dp.sel = ld.ids.filter(id => { const d = findD(id); return d && idle(d); }); renderDispatch(); },
       toggle: el => { const id = el.dataset.id; dp.sel = dp.sel.includes(id) ? dp.sel.filter(x => x !== id) : dp.sel.concat(id); renderDispatch(); },
       auto: () => {                                   // 自動挑選：由強到弱，直到戰力足以達標（上限 12 人）
-        const T = TARGETS[dp.target], diff = diffOf(T);
+        const T = TARGETS[dp.target], diff = diffOf(T, dp.sect);
         const pool = state.disciples.filter(idle).sort((a, b) => effPower(b) - effPower(a));
         dp.sel = []; let p = 0;
         for (const d of pool) { if (dp.sel.length >= 12 || (dp.sel.length >= T.min && p >= diff * 1.1)) break; dp.sel.push(d.id); p += effPower(d); }
@@ -1520,20 +1679,22 @@ function openDispatch() {
       go: () => {
         const T = TARGETS[dp.target], members = state.disciples.filter(d => dp.sel.includes(d.id) && idle(d));
         if (members.length < T.min) return toast(`至少需要 ${T.min} 人`);
-        if (startTrip('dispatch', dp.target, members)) { closeModal(); update(true); }
+        if (startTrip('dispatch', dp.target, members, { sect: dp.target === 'feud' ? dp.sect : null })) { closeModal(); update(true); }
       }
     }
   });
   renderDispatch();
 }
 function renderDispatch() {
-  const S = state, T = TARGETS[dp.target], diff = diffOf(T);
+  const S = state, T = TARGETS[dp.target], diff = diffOf(T, dp.sect);
   const pool = S.disciples.filter(idle);
+  const hs = hostileSects().filter(x => x.id !== 'tiequan');
+  const sectSel = dp.target === 'feud' ? `<div class="jobs" style="justify-content:center">${hs.map(x => `<button class="btn small ${dp.sect === x.id ? 'on' : ''}" data-m="sect" data-id="${x.id}">${x.name}</button>`).join('')}</div>` : '';
   dp.sel = dp.sel.filter(id => pool.some(d => d.id === id));
   const members = pool.filter(d => dp.sel.includes(d.id));
   const power = members.reduce((a, d) => a + effPower(d), 0);
   const luck = members.length ? members.reduce((a, d) => a + dBonus(d, 'luck'), 0) / members.length : 0;
-  const pct = weightPct(tripWeights(power / diff, luck));
+  const pct = weightPct(tripWeights(power / diff, luck + 0.08 * pactCount('ally')));
   const tabs = TARGET_ORDER.map(k => {
     const t = TARGETS[k], ok = !t.cond || t.cond();
     return `<button class="btn small ${dp.target === k ? 'on' : ''}" data-m="target" data-t="${k}" ${ok ? '' : 'disabled'}>${t.name}${ok ? '' : '（需' + t.lock + '）'}</button>`;
@@ -1544,8 +1705,8 @@ function renderDispatch() {
     return `<div class="row"><div><b>${d.name}</b> <span style="color:var(--mute);font-size:12px">${REALMS[d.realm].n}・戰力 ${Math.floor(effPower(d))}${reason ? '・' + reason : ''}</span></div>
       <button class="btn small ${dp.sel.includes(d.id) ? 'on' : ''}" data-m="toggle" data-id="${d.id}" ${ok ? '' : 'disabled'}>${dp.sel.includes(d.id) ? '已選' : '出戰'}</button></div>`;
   }).join('');
-  setModalBody(`<div class="tabs">${tabs}</div>
-    <p class="rnote">${T.desc}</p>
+  setModalBody(`<div class="tabs">${tabs}</div>${sectSel}
+    <p class="rnote">${T.desc}${pactCount('ally') ? `（盟友助陣：勝率提升）` : ''}</p>
     <div class="grid2">
       <div><span>難度</span> ${fmt(diff)} 戰力</div><div><span>歷時</span> ${T.dur} 秒</div>
       <div><span>最少人數</span> ${T.min} 人</div><div><span>乾糧</span> 每人 ${T.food}（共 ${cost}）</div>
@@ -1555,7 +1716,7 @@ function renderDispatch() {
       <div class="ln"><span>目前出戰</span><span>${members.length} 人・戰力 ${fmt(power)}</span></div>
       <div class="ln"><span>大獲全勝 / 小有斬獲 / 鎩羽而歸</span><span>${members.length ? `${pct[0]}% / ${pct[1]}% / ${pct[2]}%` : '—'}</span></div>
     </div>
-    <div class="jobs"><button class="btn small" data-m="auto">自動挑選</button>
+    <div class="jobs"><button class="btn small" data-m="auto">自動挑選</button><button class="btn small" data-m="last" ${S.lastDispatch ? '' : 'disabled'}>上次隊伍</button>
       <button class="btn" data-m="go" ${members.length >= T.min && S.res.food >= cost ? '' : 'disabled'}>出發</button></div>
     ${rows}`);
 }
@@ -1565,10 +1726,757 @@ function renderTripsPanel() {
   return S.trips.map(t => {
     const s = tripSpec(t), ms = t.ids.map(id => S.disciples.find(d => d.id === id)).filter(Boolean);
     if (!s || !ms.length) return '';
+    const nm = t.sect ? ((S.sects.find(x => x.id === t.sect) || {}).name || '') + '分堂' : s.name;
     const left = Math.max(0, Math.ceil(t.until - S.clock));
-    return `<div class="row"><div><b>${t.kind === 'travel' ? `${ms[0].name} 遊歷${t.place}` : `${s.name}（${ms.length} 人出征）`}</b>
+    return `<div class="row"><div><b>${t.kind === 'travel' ? `${ms[0].name} 遊歷${t.place}` : `${nm}（${ms.length} 人出征）`}</b>
       <small>${t.kind === 'travel' ? s.name : ms.map(d => d.name).join('、')}・剩餘 ${left} 秒</small></div></div>`;
   }).join('');
+}
+
+// v3：天災與敵對門派事件（加入事件池）
+EVENTS.push(
+{ id: 'drought', title: '大旱', weight: 4, cond: () => state.clock > 400 && !state.buffs.some(b => b.id === 'drought'),
+  text: '連續兩個月沒下一滴雨，藥園的土裂成了龜殼。弟子們每天抬頭看天，掌門則抱怨寒潭的魚都不咬鉤了。',
+  choices: [
+    { label: '花錢從山下買水灌溉', cost: { gold: 200 }, outcomes: [ { w: 1, text: '一車車的水運上山，藥園勉強保住了。帳房心疼得直跺腳。', fx: { buff: { id: 'drought', n: '小旱', dur: 120, mods: { food: 0.8 }, bad: true } } } ] },
+    { label: '帶弟子求雨', outcomes: [
+      { w: 2, good: 1, text: '你帶著弟子跳了一下午的求雨舞，傍晚果然下起大雨。附近村民從此尊稱你為「雨神副掌門」。', fx: { rep: [20, 40], fame: 150 } },
+      { w: 3, text: '舞跳了三天，天上一朵雲也沒有。只好硬撐過去。', fx: { buff: { id: 'drought', n: '大旱', dur: 180, mods: { food: 0.4 }, bad: true } } } ] },
+    { label: '咬牙硬撐', outcomes: [ { w: 1, text: '你決定節衣縮食撐過去。伙房的粥一天比一天稀。', fx: { buff: { id: 'drought', n: '大旱', dur: 180, mods: { food: 0.4 }, bad: true } } } ] }
+  ] },
+{ id: 'flood', title: '山洪暴發', weight: 3, cond: () => state.clock > 400,
+  text: '一夜暴雨，山洪沖垮了糧倉的半面牆，還捲走了兵器庫門口的兩箱銀子。',
+  choices: [
+    { label: '全員搶救物資', outcomes: [
+      { w: 3, good: 1, text: '弟子們冒雨搶救，大部分糧食都保住了。雨停後大家渾身泥濘地相視而笑。', fx: { food: [-40, -20], cAll: 3 } },
+      { w: 2, text: '水勢太大，搶救不及。損失慘重，還有人被沖倒摔傷。', fx: { food: [-120, -60], gold: [-200, -80], injure: 60 } } ] },
+    { label: '先保人，物資隨它去', outcomes: [ { w: 1, text: '人都平安，但糧倉幾乎空了一半。', fx: { food: [-150, -80], gold: [-150, -50], trust: 2 } } ] }
+  ] },
+{ id: 'plague', title: '山下瘟疫', weight: 3, cond: () => state.disciples.length >= 4,
+  text: '山下村莊爆發時疫，已經有弟子開始咳嗽。郎中說，再不處理恐怕會傳遍全派。',
+  choices: [
+    { label: '重金請名醫', cost: { gold: 250 }, outcomes: [ { w: 1, text: '名醫開了幾帖藥，疫情很快壓下來。名醫順便替村民義診，大家都誇{s}仁義。', fx: { rep: [15, 30] } } ] },
+    { label: '封山隔離', outcomes: [ { w: 1, text: '你下令封山，雖然擋住了大半病氣，仍有幾名弟子病倒，練功也停了好一陣子。', fx: { sickN: 3, buff: { id: 'plague', n: '封山', dur: 120, mods: { gold: 0.8 }, bad: true } } } ] },
+    { label: '派弟子下山救治村民', needD: true, outcomes: [
+      { w: 3, good: 1, text: '{d}帶著藥箱下山，日夜照顧病患。疫情退去後，村民送了一面「仁心俠骨」的錦旗。', fx: { rep: [40, 70], fame: 300, dContrib: [10, 18] } },
+      { w: 2, text: '{d}救了不少人，自己卻也病倒了，還把病氣帶回山上。', fx: { rep: [15, 30], sickN: 4 } } ] }
+  ] },
+{ id: 'bumper', title: '大豐收', weight: 3, cond: () => state.clock > 200,
+  text: '今年風調雨順，藥園的作物長得特別好，連掌門都難得誇了一句「這菜不錯」。',
+  choices: [ { label: '好！', outcomes: [ { w: 1, good: 1, text: '糧倉堆得滿滿的，伙房加菜三天。', fx: { food: [80, 160], buff: { id: 'bumper', n: '豐收', dur: 150, mods: { food: 1.5 } } } } ] } ] },
+{ id: 'raid', title: '{h}上門找碴', weight: 6, hostile: true, needD: true, cond: () => hostileSects().length > 0,
+  diff: ctx => { const sc = state.sects.find(x => x.name === ctx.h); return Math.round(300 + (sc ? sc.score : 2000) * 0.02); },
+  text: '{h}的一群弟子在山門口叫陣：「聽說{s}很狂？今天就來領教領教！」為首那人一腳踢翻了你們的功德箱。',
+  choices: [
+    { label: '派{d}迎戰', needD: true, check: true, hint: '看實力', outcomes: [
+      { w: 3, good: 1, text: '{d}以一敵三，把對方打得抱頭鼠竄，還順手繳了幾樣兵器。', fx: { rep: [25, 50], fame: 300, hscore: [-600, -200], item: 1, dContrib: [6, 12] } },
+      { w: 3, text: '{d}寡不敵眾，被打傷了。{h}的人大笑而去。', fx: { rep: -15, injure: 80, fame: -200 } } ] },
+    { label: '賠錢了事，派人去講和', cost: { gold: 300 }, outcomes: [ { w: 1, text: '你備了禮去{h}賠不是，對方的態度總算緩和了些。', fx: { att: [25, 40] } } ] },
+    { label: '閉門不出', outcomes: [ { w: 1, text: '對方在門口罵了半天才走。附近的人都在傳{s}是縮頭烏龜。', fx: { rep: -10, fame: -300 } } ] }
+  ] }
+);
+
+/* ================= 9.7 全面升級（v3）：傳承、成就、目標、擴張、外交、關係、自動化、統計、音效 ================= */
+
+/* ---------- 跨周目資料（重置／傳承都會保留） ---------- */
+const META_KEY = 'wuxia_second_meta_v1';
+function blankMeta() {
+  return { dao: 0, daoTotal: 0, runs: 0, perks: {}, ach: [], questDone: 0, quests: null, tutDone: false,
+           settings: { sfx: true, bgm: false, vol: 0.5 }, best: { score: 0, pos: 99 } };
+}
+let meta = blankMeta();
+function loadMeta() {
+  try {
+    const m = JSON.parse(localStorage.getItem(META_KEY)) || {};
+    meta = Object.assign(blankMeta(), m);
+    meta.perks = m.perks || {}; meta.ach = m.ach || [];
+    meta.settings = Object.assign(blankMeta().settings, m.settings || {});
+    meta.best = Object.assign(blankMeta().best, m.best || {});
+  } catch (e) { meta = blankMeta(); }
+}
+function saveMeta() { try { localStorage.setItem(META_KEY, JSON.stringify(meta)); } catch (e) {} }
+
+/* ---------- 道統傳承（轉生）與永久天賦 ---------- */
+const PERKS = [
+  { id: 'gold',    n: '祖產豐厚', d: '開局資金 +300',                 max: 5,  cost: 3 },
+  { id: 'disc',    n: '舊部追隨', d: '開局多 1 名弟子',               max: 3,  cost: 6 },
+  { id: 'talent',  n: '名門氣象', d: '招募弟子資質、根骨 +3',         max: 5,  cost: 4 },
+  { id: 'prod',    n: '香火鼎盛', d: '資金、聲望產出 +10%',           max: 10, cost: 5 },
+  { id: 'train',   n: '祖師遺訓', d: '弟子修煉速度 +10%',             max: 10, cost: 5 },
+  { id: 'trip',    n: '江湖人脈', d: '遊歷、討伐戰利品 +15%',         max: 5,  cost: 4 },
+  { id: 'offline', n: '閉門修行', d: '離線收益效率 +10%（最高 80%）', max: 3,  cost: 6 },
+  { id: 'auto',    n: '管事世家', d: '開局即擁有「管事堂」（自動化）', max: 1,  cost: 8 },
+  { id: 'heir',    n: '傳家寶',   d: '傳承時保留最強的一件裝備',       max: 1,  cost: 10 }
+];
+const perk = id => (meta.perks[id] || 0);
+const perkCost = p => p.cost * (perk(p.id) + 1);
+const offlineEff = () => Math.min(0.8, CONFIG.offlineEfficiency + 0.1 * perk('offline'));
+function daoGain() {
+  const S = state;
+  return Math.max(1, Math.floor(Math.sqrt(liveScore() / 400) + countRealm(3) * 0.3 + S.seasons * 0.2
+    + (S.flags.wonA ? 5 : 0) + (S.flags.wonTop ? 8 : 0) + (S.flags.truth ? 10 : 0)));
+}
+const canReborn = () => state.seasons >= 6 || state.flags.wonA || state.flags.wonTop || !!state.over;
+function doReborn() {
+  const S = state, gain = daoGain();
+  let heir = null;
+  if (perk('heir') && S.items.length) heir = Object.assign({}, S.items.slice().sort((a, b) => b.pow - a.pow)[0], { owner: null, id: uid() });
+  meta.dao += gain; meta.daoTotal += gain; meta.runs++;
+  meta.best.score = Math.max(meta.best.score, Math.round(liveScore()));
+  if (S.rank) meta.best.pos = Math.min(meta.best.pos, S.rank.myPos);
+  saveMeta();
+  try { localStorage.removeItem(CONFIG.saveKey); } catch (e) {}
+  closeModal(); newState(); lastVals = {};
+  if (heir) { state.items.push(heir); addLog(`傳家寶「${heir.name}」隨你一同轉世，靜靜躺在兵器庫裡。`, 'gold'); }
+  renderLog(); update(true); saveGame();
+  Snd.play('level');
+  openIntro();
+  toast(`傳承完成，獲得道統 ${gain} 點`);
+}
+function openReborn() {
+  const ok = canReborn(), g = daoGain();
+  openModal({ title: '道統傳承', wide: true, buttons: [{ label: '關閉' }], html: '',
+    on: {
+      buy: el => { const p = PERKS.find(x => x.id === el.dataset.id); if (!p || perk(p.id) >= p.max || meta.dao < perkCost(p)) return;
+        meta.dao -= perkCost(p); meta.perks[p.id] = perk(p.id) + 1; saveMeta(); Snd.play('coin');
+        if (p.id === 'auto') state.steward = true;
+        render(); update(true); },
+      reborn: () => confirmBox(`確定要傳承轉世嗎？本世的門派、弟子、資源會全部重來，換得 ${g} 點道統（天賦、成就、結局圖鑑保留）。`, doReborn)
+    } });
+  function render() {
+    setModalBody(`<p class="rnote">道統是跨越輪迴的門派底蘊。傳承轉世後一切重來，但道統天賦、成就、結局圖鑑會永久保留。</p>
+      <div class="rankbox" style="margin-bottom:8px">
+        <div class="ln"><span>目前道統</span><span class="big">${meta.dao}</span></div>
+        <div class="ln"><span>已轉世</span><span>${meta.runs} 次（此為第 ${meta.runs + 1} 世）</span></div>
+        <div class="ln"><span>若現在傳承可得</span><span>${ok ? g + ' 點' : '需第 6 次放榜後，或達成任一結局'}</span></div>
+      </div>
+      <div class="jobs"><button class="btn danger" data-m="reborn" ${ok ? '' : 'disabled'}>傳承轉世（+${g} 道統）</button></div>
+      <h3>道統天賦</h3>
+      ${PERKS.map(p => { const l = perk(p.id), mx = l >= p.max;
+        return `<div class="row"><div><b>${p.n}</b> <span class="tag">Lv.${l}/${p.max}</span><small>${p.d}</small></div>
+        <button class="btn small" data-m="buy" data-id="${p.id}" ${mx || meta.dao < perkCost(p) ? 'disabled' : ''}>${mx ? '已滿' : '習得（' + perkCost(p) + ' 道統）'}</button></div>`; }).join('')}`);
+  }
+  render();
+}
+
+/* ---------- 成就（永久：每個成就資金、聲望產出 +2%，並給予道統） ---------- */
+const ACHS = [
+  { id: 'r10',   n: '廣收門徒',   d: '累計招募 10 名弟子',          c: S => S.stats.recruited >= 10, dao: 1 },
+  { id: 'r50',   n: '桃李滿山',   d: '累計招募 50 名弟子',          c: S => S.stats.recruited >= 50, dao: 2 },
+  { id: 'zc1',   n: '嶄露頭角',   d: '擁有 1 名真傳弟子',            c: () => countRealm(3) >= 1, dao: 1 },
+  { id: 'zc10',  n: '人才濟濟',   d: '同時擁有 10 名真傳弟子',       c: () => countRealm(3) >= 10, dao: 2 },
+  { id: 'lv5',   n: '大興土木',   d: '任一建築達 5 級',              c: S => Math.max(...Object.values(S.b)) >= 5, dao: 1 },
+  { id: 'lv15',  n: '雄踞一方',   d: '任一建築達 15 級',             c: S => Math.max(...Object.values(S.b)) >= 15, dao: 3 },
+  { id: 'g1w',   n: '小有積蓄',   d: '持有資金 1 萬',               c: S => S.res.gold >= 1e4, dao: 1 },
+  { id: 'g10w',  n: '富甲一方',   d: '持有資金 10 萬',              c: S => S.res.gold >= 1e5, dao: 3 },
+  { id: 'rep1w', n: '名動一方',   d: '聲望達 1 萬',                 c: S => S.res.rep >= 1e4, dao: 1 },
+  { id: 'rep10w',n: '名滿天下',   d: '聲望達 10 萬',                c: S => S.res.rep >= 1e5, dao: 3 },
+  { id: 'ren1',  n: '少年英雄',   d: '有弟子登上人榜',               c: S => S.rank && S.rank.cnt.ren >= 1, dao: 1 },
+  { id: 'di1',   n: '地榜留名',   d: '有弟子登上地榜',               c: S => S.rank && S.rank.cnt.di >= 1, dao: 2 },
+  { id: 'tian1', n: '天下十強',   d: '有弟子登上天榜',               c: S => S.rank && S.rank.cnt.tian >= 1, dao: 3 },
+  { id: 'top10', n: '躋身十強',   d: '門派榜進入前十',               c: S => S.rank && S.seasons > 0 && S.rank.myPos <= 10, dao: 1 },
+  { id: 'top1',  n: '天下第一派', d: '登上門派榜第一',               c: S => S.rank && S.seasons > 0 && S.rank.myPos === 1, dao: 4 },
+  { id: 'beat',  n: '揚眉吐氣',   d: '門派榜超越鐵拳門',             c: S => S.rank && S.seasons > 0 && S.rank.myPos < S.rank.rivalPos, dao: 1 },
+  { id: 'camp3', n: '匪王授首',   d: '攻破斷魂嶺匪王巢',             c: S => S.stats.camp3 > 0, dao: 2 },
+  { id: 'rival3',n: '踢館反殺',   d: '攻破鐵拳門分館 3 次',          c: S => S.stats.rivalWin >= 3, dao: 2 },
+  { id: 'tr20',  n: '行萬里路',   d: '弟子累計遊歷 20 次',           c: S => S.stats.travels >= 20, dao: 1 },
+  { id: 'enc10', n: '奇遇連連',   d: '累計觸發 10 次遊歷奇遇',       c: S => S.stats.enc >= 10, dao: 1 },
+  { id: 'god',   n: '神兵出世',   d: '擁有一件「神」品裝備',         c: S => S.items.some(i => i.r >= 4), dao: 2 },
+  { id: 'fg30',  n: '鐵匠之友',   d: '累計鍛造 30 次',               c: S => S.stats.forged >= 30, dao: 1 },
+  { id: 'br3',   n: '分舵遍地',   d: '開設 3 座分舵',                c: S => S.branches >= 3, dao: 2 },
+  { id: 'ally',  n: '合縱連橫',   d: '與任一門派結盟',               c: S => Object.values(S.dip).some(x => x.pact === 'ally'), dao: 1 },
+  { id: 'mst',   n: '名師高徒',   d: '有弟子拜師',                   c: S => S.disciples.some(d => d.master), dao: 1 },
+  { id: 'combo', n: '融會貫通',   d: '有弟子領悟功法組合技',         c: S => S.disciples.some(d => combosOf(d).length), dao: 2 },
+  { id: 'fest',  n: '萬人空巷',   d: '舉辦 3 次門派大典',            c: S => S.stats.fests >= 3, dao: 1 },
+  { id: 'end3',  n: '閱盡人生',   d: '解鎖 3 種結局',                c: () => endingsCount >= 3, dao: 3 },
+  { id: 'reb',   n: '再世為人',   d: '完成一次道統傳承',             c: () => meta.runs >= 1, dao: 2 },
+  { id: 'q20',   n: '勤勉副掌門', d: '累計完成 20 個每日／每週目標', c: () => meta.questDone >= 20, dao: 2 }
+];
+const achMul = () => 1 + 0.02 * meta.ach.length;
+function checkAch() {
+  const S = state;
+  for (const a of ACHS) {
+    if (meta.ach.includes(a.id)) continue;
+    let ok = false; try { ok = a.c(S); } catch (e) {}
+    if (!ok) continue;
+    meta.ach.push(a.id); meta.dao += a.dao; meta.daoTotal += a.dao; saveMeta();
+    addLog(`【成就達成】「${a.n}」——${a.d}（永久產出 +2%、道統 +${a.dao}）`, 'gold');
+    achBanner(a); Snd.play('ach');
+  }
+}
+function openAch() {
+  openModal({ title: `成就（${meta.ach.length}／${ACHS.length}）`, wide: true, buttons: [{ label: '關閉' }],
+    html: `<p class="rnote">每個成就永久提升資金、聲望產出 2%（目前 +${meta.ach.length * 2}%），並給予道統點。成就跨周目保留。</p>` +
+      ACHS.map(a => { const ok = meta.ach.includes(a.id);
+        return `<div class="row ${ok ? '' : 'lock'}"><div><b>${ok ? '★' : '☆'} ${a.n}</b><small>${a.d}</small></div><span class="tag">道統 +${a.dao}</span></div>`; }).join('') });
+}
+
+/* ---------- 每日／每週目標（以現實日期刷新） ---------- */
+const QUEST_POOL = [
+  { k: 'recruit', n: '招募 {n} 名弟子', r: [2, 4] },      { k: 'travel', n: '派弟子遊歷 {n} 次', r: [2, 4] },
+  { k: 'dispatch', n: '出動討伐 {n} 次', r: [1, 2] },      { k: 'win', n: '討伐大獲全勝 {n} 次', r: [1, 2] },
+  { k: 'event', n: '處理江湖事件 {n} 件', r: [3, 5] },     { k: 'upgrade', n: '升級建築 {n} 次', r: [2, 3] },
+  { k: 'forge', n: '鍛造兵器 {n} 次', r: [2, 4] },         { k: 'promote', n: '弟子晉升 {n} 次', r: [2, 3] },
+  { k: 'tribute', n: '陪掌門釣魚 {n} 次', r: [1, 3] },     { k: 'gift', n: '向其他門派送禮 {n} 次', r: [1, 2] }
+];
+const pad2 = n => String(n).padStart(2, '0');
+const dayKey = (t = new Date()) => `${t.getFullYear()}-${pad2(t.getMonth() + 1)}-${pad2(t.getDate())}`;
+const weekKey = (t = new Date()) => { const d = new Date(t); d.setDate(d.getDate() - ((d.getDay() + 6) % 7)); return dayKey(d); };
+function rollQuests(n, mul) {
+  const pool = QUEST_POOL.slice(), out = [];
+  for (let i = 0; i < n && pool.length; i++) {
+    const q = pool.splice(Math.floor(Math.random() * pool.length), 1)[0];
+    out.push({ k: q.k, n: q.n, need: rint(q.r[0], q.r[1]) * mul, have: 0, claimed: false });
+  }
+  return out;
+}
+function ensureQuests() {
+  let q = meta.quests; const dk = dayKey(), wk = weekKey();
+  if (!q) q = meta.quests = {};
+  if (q.day !== dk) { q.day = dk; q.daily = rollQuests(3, 1); q.bonus = false; }
+  if (q.week !== wk) { q.week = wk; q.weekly = rollQuests(3, 5); }
+  return q;
+}
+function qProg(k, n = 1) {
+  const q = ensureQuests();
+  for (const x of q.daily.concat(q.weekly)) if (x.k === k && x.have < x.need) x.have = Math.min(x.need, x.have + n);
+}
+const qText = x => x.n.replace('{n}', x.need);
+function questReward(weekly) {
+  const r = calc();
+  return { gold: Math.round(Math.max(150, r.gold * (weekly ? 900 : 180))), rep: Math.round(Math.max(20, r.rep * (weekly ? 600 : 120))), dao: weekly ? 2 : 0 };
+}
+function claimQuest(weekly, i) {
+  const q = ensureQuests(), x = (weekly ? q.weekly : q.daily)[i];
+  if (!x || x.claimed || x.have < x.need) return;
+  const rw = questReward(weekly);
+  x.claimed = true; meta.questDone++;
+  state.res.gold += rw.gold; state.res.rep += rw.rep; meta.dao += rw.dao; meta.daoTotal += rw.dao;
+  let msg = `完成${weekly ? '每週' : '每日'}目標「${qText(x)}」：資金 +${fmt(rw.gold)}、聲望 +${fmt(rw.rep)}${rw.dao ? '、道統 +' + rw.dao : ''}`;
+  if (!weekly && !q.bonus && q.daily.every(z => z.claimed)) { q.bonus = true; meta.dao += 1; meta.daoTotal += 1; msg += '；今日全勤，道統 +1'; }
+  addLog(msg, 'gold'); toast('目標獎勵已領取'); Snd.play('coin'); saveMeta();
+}
+function questRows(list, weekly) {
+  return list.map((x, i) => `<div class="row"><div>${qText(x)}<small>進度 ${x.have}／${x.need}</small><div class="bar"><i style="width:${x.have / x.need * 100}%"></i></div></div>
+    ${x.claimed ? '<span class="tag">已領取</span>' : `<button class="btn small" data-m="claim" data-w="${weekly ? 1 : 0}" data-i="${i}" ${x.have >= x.need ? '' : 'disabled'}>領取</button>`}</div>`).join('');
+}
+function openQuests() {
+  openModal({ title: '每日・每週目標', wide: true, buttons: [{ label: '關閉' }], html: '',
+    on: { claim: el => { claimQuest(el.dataset.w === '1', +el.dataset.i); render(); update(true); } } });
+  function render() {
+    const q = ensureQuests(), rd = questReward(false), rw = questReward(true);
+    setModalBody(`<p class="rnote">每日目標於每天 0 點刷新、每週目標於週一刷新；完成全部每日目標額外 +1 道統。獎勵會隨門派產出成長。</p>
+      <h3>每日目標（每項約 資金 ${fmt(rd.gold)}・聲望 ${fmt(rd.rep)}）</h3>${questRows(q.daily, false)}
+      <h3>每週目標（每項約 資金 ${fmt(rw.gold)}・聲望 ${fmt(rw.rep)}・道統 +2）</h3>${questRows(q.weekly, true)}`);
+  }
+  render();
+}
+function questMini() {
+  const q = ensureQuests(), all = q.daily.concat(q.weekly), ready = all.filter(x => !x.claimed && x.have >= x.need).length;
+  return q.daily.map(x => `<div class="qmini ${x.claimed ? 'done' : ''}"><span>${qText(x)}</span><span>${x.claimed ? '✓' : x.have + '/' + x.need}</span></div>`).join('') +
+    (ready ? `<div class="qmini ready">有 ${ready} 個目標可領取獎勵！</div>` : '');
+}
+
+/* ---------- 暫時增益／天災（buff） ---------- */
+// mods：gold/rep/food/train/work 為倍率
+function addBuff(id, n, dur, mods, bad) {
+  const S = state; S.buffs = S.buffs.filter(b => b.id !== id);
+  S.buffs.push(Object.assign({ id, n, until: S.clock + dur, bad: !!bad }, mods));
+}
+const buffMul = key => state.buffs.reduce((m, b) => m * (b[key] !== undefined ? b[key] : 1), 1);
+
+/* ---------- 門派擴張：分舵、山門氣象、大典、神兵、管事堂 ---------- */
+const CITIES = ['臨安', '金陵', '洛陽', '長安', '成都', '揚州', '泉州', '大理'];
+const BRANCH_MAX = CITIES.length;
+const branchCost = () => Math.round(4000 * Math.pow(2, state.branches));
+const auraCost = () => Math.round(6000 * Math.pow(1.45, state.aura));
+const festCost = () => Math.round(500 + state.res.rep * 0.02);
+const GOD_COST = 25000, STEWARD_COST = 1500;
+function buyBranch() {
+  const S = state; if (S.branches >= BRANCH_MAX) return;
+  if (!pay(branchCost())) return;
+  const city = CITIES[S.branches]; S.branches++;
+  addLog(`${esc(S.sectName)}在${city}開設分舵！掛牌當天，鞭炮放了半條街。（每秒資金 +3、聲望 +0.6）`, 'gold');
+  qProg('upgrade'); Snd.play('level'); burst($('#btnBranch')); update(true);
+}
+function buyAura() {
+  if (!pay(auraCost())) return;
+  state.aura++;
+  addLog(`你重修山門、立碑刻銘，${esc(state.sectName)}氣象一新。（山門氣象 Lv.${state.aura}：產出與修煉 +${state.aura * 3}%）`, 'gold');
+  Snd.play('level'); burst($('#btnAura')); update(true);
+}
+function holdFestival() {
+  const S = state; if (S.festCd > 0) return;
+  if (!pay(festCost())) return;
+  S.festCd = 360; S.stats.fests++;
+  addBuff('fest', '門派大典', 150, { gold: 1.5, rep: 1.5 });
+  const f = 300 + Math.round(S.res.rep * 0.01); S.fame += f;
+  addLog(`${esc(S.sectName)}舉辦開山大典，四方賓客雲集。（150 秒內資金、聲望產出 ×1.5；天機閣印象 +${f}）`, 'gold');
+  Snd.play('ach'); document.body.classList.remove('shake'); void document.body.offsetWidth; document.body.classList.add('shake');
+  update(true);
+}
+function forgeGod() {
+  if (!pay(GOD_COST)) return;
+  const it = genItem(4, 4); state.stats.forged++; qProg('forge');
+  addLog(`你請來天下第一鑄劍師，耗費重金鑄成神兵「${it.name}」！`, 'gold'); toast(`神兵出世：${it.name}`);
+  Snd.play('ach'); burst($('#btnGod'), '#f0b03a'); update(true);
+}
+function buySteward() {
+  if (state.steward) return openAuto();
+  if (!pay(STEWARD_COST)) return;
+  state.steward = true;
+  addLog('管事堂落成！你請了幾位精明的老帳房，從此瑣事可以交給他們打理了。', 'gold');
+  Snd.play('level'); update(true); openAuto();
+}
+
+/* ---------- 自動化（管事堂） ---------- */
+const AUTO_DEF = [
+  ['recruit', '自動招募', '資金充裕（保留兩倍招募費）時自動補滿弟子'],
+  ['equip', '自動裝備', '有新裝備時自動執行「一鍵裝備」'],
+  ['sell', '自動出售', '閒置的「凡」「良」品裝備累積 6 件以上時自動賣掉'],
+  ['travel', '自動遊歷', '閒置的外門以上弟子輪流外出遊歷（同時最多 2＋弟子數/10 人）'],
+  ['dispatch', '自動討伐', '依「上次出征」的目標與隊伍自動再出征'],
+  ['events', '事件託管', '江湖事件自動選擇（勝算高才冒險），只顯示提示不跳視窗']
+];
+function openAuto() {
+  if (!state.steward) return toast('需先建造管事堂');
+  openModal({ title: '管事堂・自動化', wide: true, buttons: [{ label: '關閉' }], html: '',
+    on: { tog: el => { const k = el.dataset.k; state.auto[k] = !state.auto[k]; Snd.play('click'); render(); } } });
+  function render() {
+    const ld = state.lastDispatch;
+    setModalBody(`<p class="rnote">開啟後由管事堂代為打理（離線期間也會運作，事件託管除外）。</p>` +
+      AUTO_DEF.map(([k, n, d]) => `<div class="row"><div><b>${n}</b><small>${d}${k === 'dispatch' ? `（目前：${ld ? TARGETS[ld.target].name : '尚未出征過'}）` : ''}</small></div>
+      <button class="btn small ${state.auto[k] ? 'on' : ''}" data-m="tog" data-k="${k}">${state.auto[k] ? '已開啟' : '關閉中'}</button></div>`).join(''));
+  }
+  render();
+}
+function pickTravelSpec(d) {
+  const p = effPower(d); let sp = TRAVELS[0];
+  for (const t of TRAVELS) if (p >= t.diff * 0.9) sp = t;
+  return sp;
+}
+function runAuto(offline) {
+  const S = state; if (!S.steward) return;
+  const A = S.auto;
+  if (A.recruit) {
+    let n = 0;
+    while (S.disciples.length < capacity() && S.res.gold >= recruitCost() * 2 + 100 && n < 3) { doRecruit(true); n++; }
+  }
+  if (A.sell && S.items.filter(i => !i.owner && i.r <= 1).length >= 6) sellIdle(1, true);
+  if (A.equip) {
+    const sig = S.items.length + '|' + S.disciples.length + '|' + S.items.filter(i => i.owner).length;
+    if (sig !== S.autoSig) { autoEquip(true); S.autoSig = S.items.length + '|' + S.disciples.length + '|' + S.items.filter(i => i.owner).length; }
+  }
+  if (A.travel) {
+    const max = 2 + Math.floor(S.disciples.length / 10);
+    let out = S.trips.filter(t => t.kind === 'travel').length;
+    const pool = S.disciples.filter(d => idle(d) && d.realm >= 1 && d.job !== 'trade').sort(() => Math.random() - 0.5);
+    for (const d of pool) {
+      if (out >= max) break;
+      const sp = pickTravelSpec(d);
+      if (S.res.food < sp.food + 60) break;
+      if (startTrip('travel', sp.id, [d], { silent: true })) out++;
+    }
+  }
+  if (A.dispatch && S.lastDispatch && !S.trips.some(t => t.kind === 'dispatch')) {
+    const ld = S.lastDispatch, T = TARGETS[ld.target];
+    if (T && (!T.cond || T.cond()) && (ld.target !== 'feud' || hostileSects().some(s => s.id === ld.sect))) {
+      const members = S.disciples.filter(d => ld.ids.includes(d.id) && idle(d));
+      const need = diffOf(T, ld.sect);
+      let p = members.reduce((a, d) => a + effPower(d), 0);
+      for (const d of S.disciples.filter(x => idle(x) && !members.includes(x)).sort((a, b) => effPower(b) - effPower(a))) {
+        if (members.length >= T.min && p >= need) break;
+        if (members.length >= 12) break;
+        members.push(d); p += effPower(d);
+      }
+      if (members.length >= T.min && p >= need * 0.8 && S.res.food >= T.food * members.length + 40)
+        startTrip('dispatch', ld.target, members, { silent: true, sect: ld.sect, keepLast: true });
+    }
+  }
+}
+// 事件託管：勝算高才選擇需要判定的選項，否則選最保守（無花費、無判定）的選項
+function autoChoice(ctx) {
+  const ev = ctx.ev; let best = -1, bestScore = -1e9;
+  ev.choices.forEach((ch, i) => {
+    if (!canAfford(ch.cost) || (ch.needD && !ctx.d)) return;
+    let sc;
+    if (ch.check || ch.chk) { const m = successMult(ctx, ch); sc = m >= 1.6 ? 10 + m : -5; }
+    else sc = ch.cost ? 1 : 3;
+    if (ch.outcomes.some(o => o.end)) sc -= 100;
+    if (ch.outcomes.some(o => o.fx && o.fx.lose)) sc -= 4;
+    if (sc > bestScore) { bestScore = sc; best = i; }
+  });
+  return best;
+}
+
+/* ---------- 弟子關係：師徒、知己、宿怨 ---------- */
+const findD = id => state.disciples.find(d => d.id === id);
+const apprentices = m => state.disciples.filter(d => d.master === m.id);
+function canTeach(m, a) { return m !== a && m.realm >= 2 && m.realm > a.realm && apprentices(m).length < 2 && m.master !== a.id; }
+function relMod(d) {                                // 回傳 {train, work}
+  let train = 1, work = 1;
+  for (const [id, t] of Object.entries(d.rel || {})) {
+    const o = findD(id); if (!o || o.trip) continue;
+    if (t === 'friend') { train += 0.08; work += 0.08; } else { work -= 0.1; }
+  }
+  const m = d.master && findD(d.master);
+  if (m && !m.trip) train += 0.3 + m.talent / 500;
+  return { train, work: Math.max(0.3, work) };
+}
+function setRel(a, b, t) {
+  a.rel = a.rel || {}; b.rel = b.rel || {};
+  if (t) { a.rel[b.id] = t; b.rel[a.id] = t; } else { delete a.rel[b.id]; delete b.rel[a.id]; }
+}
+const FRIEND_TXT = ['{a}和{b}在練武場切磋了一整夜，結為知己。', '{a}替生病的{b}熬了三天藥，兩人從此形影不離。', '{a}與{b}都愛偷吃廚房的饅頭，在案發現場不期而遇，一見如故。'];
+const FOE_TXT = ['{a}嫌{b}練劍太吵，兩人在飯堂大打出手，結下樑子。', '{b}搶了{a}心儀已久的位置，兩人從此互看不順眼。', '{a}和{b}為了誰的師門輩分高吵了一下午，誰也不服誰。'];
+function relTick(offline) {
+  const S = state; if (S.disciples.length < 2) return;
+  const pool = S.disciples.filter(d => Object.keys(d.rel || {}).length < 3);
+  if (pool.length < 2 || Math.random() > 0.55) return;
+  const a = pick(pool), b = pick(pool.filter(x => x !== a && !(a.rel || {})[x.id]));
+  if (!b) return;
+  const friend = Math.random() < 0.65, txt = pick(friend ? FRIEND_TXT : FOE_TXT).replace('{a}', a.name).replace('{b}', b.name);
+  setRel(a, b, friend ? 'friend' : 'foe');
+  if (!offline) addLog(`${txt}${friend ? '（兩人修煉、工作 +8%）' : '（兩人工作 -10%，可在弟子頁調解）'}`, friend ? 'good' : 'bad');
+}
+const mediateCost = () => 80 + 15 * state.disciples.length;
+function mediate(a, b) {
+  if (!pay(mediateCost())) return;
+  const r = Math.random();
+  if (r < 0.3) { setRel(a, b, 'friend'); addLog(`你請${a.name}和${b.name}喝了一頓酒，兩人哭著抱在一起，化敵為友。`, 'good'); }
+  else if (r < 0.8) { setRel(a, b, null); addLog(`在你苦口婆心的調解下，${a.name}和${b.name}握手言和。`, 'good'); }
+  else addLog(`${a.name}和${b.name}當著你的面又吵了起來。調解失敗，酒錢白花了。`, 'bad');
+}
+function cleanRel(d) {
+  for (const o of state.disciples) { if (o.rel) delete o.rel[d.id]; if (o.master === d.id) o.master = null; }
+}
+
+/* ---------- 功法組合技 ---------- */
+const COMBOS = [
+  { id: 'yinyang',  n: '陰陽調和', arts: ['tuna', 'chunyang'],    key: 'train',    v: .35 },
+  { id: 'fengying', n: '風中劍影', arts: ['qing', 'tingfeng'],    key: 'power',    v: .25 },
+  { id: 'kuxing',   n: '苦行商旅', arts: ['quan', 'bigu'],        key: 'gold',     v: .30 },
+  { id: 'jingdong', n: '以靜制動', arts: ['taiji', 'tingfeng'],   key: 'guard',    v: .30 },
+  { id: 'youshen',  n: '游身八卦', arts: ['qing', 'quan'],        key: 'luck',     v: .15 },
+  { id: 'guixi',    n: '龜息大法', arts: ['bigu', 'taiji'],       key: 'foodSave', v: .25 },
+  { id: 'duzhou',   n: '寒江獨釣', arts: ['hanjiang', 'tuna'],    key: 'luck',     v: .20 },
+  { id: 'wudi',     n: '拳劍雙絕', arts: ['baibu', 'tingfeng'],   key: 'power',    v: .35 },
+  { id: 'taixuyang',n: '太虛純陽', arts: ['taixu', 'chunyang'],   key: 'train',    v: .50 },
+  { id: 'budong',   n: '不動如山', arts: ['jingang', 'taiji'],    key: 'guard',    v: .40 }
+];
+const combosOf = d => COMBOS.filter(c => c.arts.every(a => d.arts.includes(a)));
+const comboBonus = (d, key) => combosOf(d).reduce((s, c) => s + (c.key === key ? c.v : 0), 0);
+
+/* ---------- 江湖外交 ---------- */
+function initDip() {
+  const dip = {};
+  for (const s of SECTS_INIT) dip[s[0]] = { att: s[0] === 'tiequan' ? -80 : rint(-10, 25), pact: null };
+  return dip;
+}
+const attName = a => a <= -30 ? '敵視' : a < 0 ? '冷淡' : a < 30 ? '中立' : a < 60 ? '友好' : '莫逆';
+const hostileSects = () => state.sects.filter(s => s.id !== 'tiequan' && state.dip[s.id] && state.dip[s.id].att <= -30);   // 鐵拳門另有專屬事件，不計入
+const pactCount = t => Object.values(state.dip).filter(x => x.pact === t).length;
+const giftCost = s => Math.round(100 + s.score * 0.004);
+const tradeIncome = s => 0.3 + s.score * 0.00004;
+function dipIncome() {
+  let g = 0; for (const s of state.sects) { const x = state.dip[s.id]; if (x && x.pact === 'trade') g += tradeIncome(s); }
+  return g;
+}
+function dipSeason() {                              // 每季：態度回歸、盟友贈禮、條約檢查
+  const S = state;
+  for (const s of S.sects) {
+    const x = S.dip[s.id]; if (!x) continue;
+    if (x.pact === 'trade') x.att += 2; else if (x.pact === 'ally') x.att += 3; else x.att += x.att > 0 ? -2 : x.att < 0 ? 2 : 0;
+    if (s.id === 'tiequan') x.att = Math.min(x.att, -50);
+    x.att = clamp(x.att, -100, 100);
+    if (x.pact === 'ally' && x.att < 40) { x.pact = null; addLog(`${s.name}與你們關係轉淡，盟約名存實亡。`, 'bad'); }
+    else if (x.pact === 'trade' && x.att < 15) { x.pact = null; addLog(`${s.name}終止了與你們的通商。`, 'bad'); }
+    if (x.pact === 'ally') { const f = Math.round(200 + s.score * 0.006); S.fame += f; S.res.rep += Math.round(f / 10); }
+  }
+}
+function openDiplomacy() {
+  openModal({ title: '江湖外交', wide: true, buttons: [{ label: '關閉' }], html: '',
+    on: {
+      gift: el => { const s = state.sects.find(x => x.id === el.dataset.id), x = state.dip[s.id];
+        if (state.giftCd > 0) return toast('剛送過禮，稍後再送');
+        if (!pay(giftCost(s))) return;
+        const v = rint(8, 14); x.att = clamp(x.att + v, -100, s.id === 'tiequan' ? -50 : 100); state.giftCd = 20; qProg('gift');
+        addLog(`你派人帶著厚禮拜訪${s.name}。（態度 +${v}）`); Snd.play('coin'); render(); update(true); },
+      trade: el => { const x = state.dip[el.dataset.id], s = state.sects.find(z => z.id === el.dataset.id);
+        if (x.pact === 'trade') { x.pact = null; addLog(`你與${s.name}終止通商。`); }
+        else { if (pactCount('trade') >= 3) return toast('最多同時與 3 個門派通商'); x.pact = 'trade'; addLog(`你與${s.name}簽下通商契約。（每秒資金 +${tradeIncome(s).toFixed(1)}）`, 'good'); }
+        render(); update(true); },
+      ally: el => { const x = state.dip[el.dataset.id], s = state.sects.find(z => z.id === el.dataset.id);
+        if (x.pact === 'ally') { x.pact = null; x.att -= 20; addLog(`你單方面解除了與${s.name}的盟約，對方相當不滿。`, 'bad'); }
+        else { if (pactCount('ally') >= 2) return toast('最多同時與 2 個門派結盟'); x.pact = 'ally'; addLog(`${esc(state.sectName)}與${s.name}歃血為盟！（每季天機閣印象、聲望提升；討伐時盟友助陣）`, 'gold'); Snd.play('ach'); }
+        render(); update(true); },
+      provoke: el => { const x = state.dip[el.dataset.id], s = state.sects.find(z => z.id === el.dataset.id);
+        x.att = Math.min(x.att - 40, -30); x.pact = null;
+        addLog(`你公開嘲諷${s.name}「徒有虛名」。對方放話要你們好看——現在可以出動討伐他們的分堂了。`, 'bad'); render(); update(true); }
+    } });
+  function render() {
+    const rows = state.sects.slice().sort((a, b) => b.score - a.score).map(s => {
+      const x = state.dip[s.id], tq = s.id === 'tiequan';
+      const tag = x.pact === 'ally' ? '<span class="tag">盟友</span>' : x.pact === 'trade' ? '<span class="tag">通商</span>' : '';
+      const cls = x.att <= -30 ? 'neg' : x.att >= 30 ? 'pos' : '';
+      return `<div class="row"><div><b>${s.name}</b> ${tag}<small>評分 ${fmt(s.score)}・態度 <span class="fxline ${cls}" style="display:inline">${attName(x.att)}（${Math.round(x.att)}）</span></small></div>
+        <div class="jobs" style="margin:0">
+          <button class="btn small" data-m="gift" data-id="${s.id}" ${state.giftCd > 0 || state.res.gold < giftCost(s) ? 'disabled' : ''}>送禮 ${fmt(giftCost(s))}</button>
+          ${tq ? '' : `<button class="btn small ${x.pact === 'trade' ? 'on' : ''}" data-m="trade" data-id="${s.id}" ${x.pact === 'trade' || (x.att >= 30 && x.pact !== 'ally') ? '' : 'disabled'}>${x.pact === 'trade' ? '終止通商' : '通商'}</button>
+          <button class="btn small ${x.pact === 'ally' ? 'on' : ''}" data-m="ally" data-id="${s.id}" ${x.pact === 'ally' || x.att >= 60 ? '' : 'disabled'}>${x.pact === 'ally' ? '解盟' : '結盟'}</button>
+          <button class="btn small danger" data-m="provoke" data-id="${s.id}" ${x.att <= -30 ? 'disabled' : ''}>挑釁</button>`}
+        </div></div>`;
+    }).join('');
+    setModalBody(`<p class="rnote">態度 ≥30 可通商（最多 3 派，每秒得資金）；≥60 可結盟（最多 2 派，每季贈天機閣印象與聲望，討伐成功率提升）；
+      挑釁會讓對方轉為敵視，之後可「出動討伐」其分堂，但對方也會上門找碴。送禮冷卻 ${Math.ceil(state.giftCd)} 秒。</p>
+      <div class="rankbox" style="margin-bottom:8px"><div class="ln"><span>通商收入</span><span>+${dipIncome().toFixed(2)}/秒</span></div>
+      <div class="ln"><span>盟友／通商／敵對</span><span>${pactCount('ally')}／${pactCount('trade')}／${hostileSects().length + 1}（含鐵拳門）</span></div></div>${rows}`);
+  }
+  render();
+}
+
+/* ---------- 門派統計與圖表 ---------- */
+function sampleHist() {
+  const S = state, r = calc();
+  S.hist.push({ c: Math.round(S.clock), g: +r.gold.toFixed(2), rep: Math.round(S.res.rep), sp: Math.round(r.sp), pos: S.rank ? S.rank.myPos : 17, n: S.disciples.length });
+  if (S.hist.length > 240) S.hist.splice(0, S.hist.length - 240);
+}
+function svgLine(data, key, color, invert, label, fmtv) {
+  const W = 300, H = 90, pts = data.map(x => x[key]);
+  if (pts.length < 2) return `<div class="chart"><div class="ct">${label}</div><p class="rnote">資料累積中……</p></div>`;
+  let mn = Math.min(...pts), mx = Math.max(...pts); if (mx === mn) { mx += 1; mn -= 1; }
+  const xy = pts.map((v, i) => { const x = i / (pts.length - 1) * W, y = invert ? (v - mn) / (mx - mn) * H : H - (v - mn) / (mx - mn) * H; return x.toFixed(1) + ',' + y.toFixed(1); });
+  const last = pts[pts.length - 1];
+  return `<div class="chart"><div class="ct">${label}<b>${fmtv(last)}</b></div>
+    <svg viewBox="-2 -4 ${W + 4} ${H + 8}" preserveAspectRatio="none"><polyline points="0,${H} ${xy.join(' ')} ${W},${H}" fill="${color}" fill-opacity=".12" stroke="none"/>
+    <polyline points="${xy.join(' ')}" fill="none" stroke="${color}" stroke-width="2" vector-effect="non-scaling-stroke"/></svg>
+    <div class="cr"><span>${timeStr(data[0].c)}</span><span>${invert ? '最佳 ' + fmtv(mn) : '最低 ' + fmtv(mn) + '・最高 ' + fmtv(mx)}</span></div></div>`;
+}
+function openStats() {
+  const S = state, h = S.hist, st = S.stats;
+  const total = [['累計招募', st.recruited], ['累計晉升', st.promoted], ['鍛造次數', st.forged], ['處理事件', st.events],
+    ['遊歷次數', st.travels], ['觸發奇遇', st.enc], ['討伐次數', st.dispatches], ['大獲全勝', st.greats],
+    ['攻破匪王巢', st.camp3], ['攻破鐵拳門分館', st.rivalWin], ['舉辦大典', st.fests], ['放榜次數', S.seasons]];
+  openModal({ title: '門派統計', wide: true, buttons: [{ label: '關閉' }],
+    html: `<div class="charts">
+      ${svgLine(h, 'g', '#d4af37', false, '資金產出（每秒）', v => v.toFixed(1))}
+      ${svgLine(h, 'rep', '#6fbf73', false, '聲望', fmt)}
+      ${svgLine(h, 'sp', '#5aa7e8', false, '門派總戰力', fmt)}
+      ${svgLine(h, 'pos', '#e08c84', true, '門派榜名次', v => '第 ' + v + ' 名')}</div>
+      <h3>本世紀錄</h3><div class="grid2">${total.map(([k, v]) => `<div><span>${k}</span> ${v || 0}</div>`).join('')}</div>
+      <h3>歷代紀錄</h3><div class="grid2"><div><span>轉世次數</span> ${meta.runs}</div><div><span>累計道統</span> ${meta.daoTotal}</div>
+      <div><span>最高評分</span> ${fmt(Math.max(meta.best.score, liveScore()))}</div><div><span>最佳名次</span> ${Math.min(meta.best.pos, S.rank ? S.rank.myPos : 99)}</div>
+      <div><span>成就</span> ${meta.ach.length}／${ACHS.length}</div><div><span>結局</span> ${endingsCount}／${ENDING_COUNT}</div></div>` });
+}
+
+/* ---------- 存檔匯出／匯入 ---------- */
+const EXPORT_TAG = 'WXSC1:';
+function exportString() {
+  saveGame();
+  const data = { s: state, m: meta, e: loadEndings() };
+  return EXPORT_TAG + btoa(unescape(encodeURIComponent(JSON.stringify(data))));
+}
+function importString(str) {
+  str = (str || '').trim();
+  if (!str.startsWith(EXPORT_TAG)) throw new Error('格式不正確');
+  const data = JSON.parse(decodeURIComponent(escape(atob(str.slice(EXPORT_TAG.length)))));
+  if (!data.s || !data.s.res || !Array.isArray(data.s.disciples)) throw new Error('存檔內容不完整');
+  data.s.savedAt = Date.now();
+  localStorage.setItem(CONFIG.saveKey, JSON.stringify(data.s));
+  if (data.m) localStorage.setItem(META_KEY, JSON.stringify(data.m));
+  if (data.e) localStorage.setItem(CONFIG.endKey, JSON.stringify(data.e));
+  loadMeta(); endingsCount = loadEndings().length;
+  if (!loadGame()) throw new Error('讀取失敗');
+  lastVals = {}; renderLog(); update(true);
+}
+function openSaveIO() {
+  openModal({ title: '存檔匯出／匯入', wide: true, buttons: [{ label: '關閉' }],
+    html: `<p class="rnote">匯出碼包含目前存檔、道統與成就、結局圖鑑。可貼到別的瀏覽器或裝置匯入。</p>
+      <h3>匯出</h3><textarea class="txt io" id="ioOut" readonly>${exportString()}</textarea>
+      <div class="jobs"><button class="btn small" data-m="copy">複製匯出碼</button><button class="btn small" data-m="dl">下載存檔檔案</button></div>
+      <h3>匯入</h3><textarea class="txt io" id="ioIn" placeholder="把匯出碼貼在這裡"></textarea>
+      <div class="jobs"><button class="btn small danger" data-m="imp">匯入（會覆蓋目前進度）</button>
+      <label class="btn small">從檔案匯入<input type="file" id="ioFile" accept=".txt" style="display:none"></label></div>`,
+    on: {
+      copy: () => { const t = $('#ioOut'); t.select(); try { navigator.clipboard.writeText(t.value).then(() => toast('已複製'), () => { document.execCommand('copy'); toast('已複製'); }); } catch (e) { document.execCommand('copy'); toast('已複製'); } },
+      dl: () => { const a = document.createElement('a'); a.href = URL.createObjectURL(new Blob([$('#ioOut').value], { type: 'text/plain' }));
+        a.download = `武俠副掌門存檔_${dayKey()}.txt`; document.body.appendChild(a); a.click(); a.remove(); },
+      imp: () => doImport($('#ioIn').value)
+    } });
+  $('#ioFile').addEventListener('change', e => { const f = e.target.files[0]; if (!f) return; const r = new FileReader(); r.onload = () => doImport(r.result); r.readAsText(f); });
+}
+function doImport(str) {
+  try { importString(str); closeModal(); toast('匯入成功'); addLog('從匯出碼讀取了存檔。', 'gold'); }
+  catch (e) { toast('匯入失敗：' + e.message); }
+}
+
+/* ---------- 掛機準備（下線前檢查） ---------- */
+function offlineFoodHours() {
+  const r = calc(), net = (r.foodProd - r.foodCons) * offlineEff();
+  if (net >= 0) return Infinity;
+  return state.res.food / -net / 3600;
+}
+function sendAllTravel() {
+  let n = 0;
+  for (const d of state.disciples.filter(idle)) {
+    const sp = pickTravelSpec(d);
+    if (state.res.food < sp.food + 30) break;
+    if (startTrip('travel', sp.id, [d], { silent: true })) n++;
+  }
+  toast(n ? `${n} 名弟子出發遊歷` : '沒有可出發的弟子或糧食不足');
+  return n;
+}
+function openIdlePrep() {
+  openModal({ title: '掛機準備', wide: true, buttons: [{ label: '關閉' }], html: '',
+    on: {
+      travel: () => { sendAllTravel(); update(true); render(); },
+      equip: () => { autoEquip(); update(true); render(); },
+      farm: () => { const need = state.disciples.filter(d => !d.trip).sort((a, b) => a.power - b.power).slice(0, 2); need.forEach(d => { d.job = 'farm'; }); toast(`${need.length} 名弟子改去務農`); update(true); render(); },
+      save: () => { saveGame(); toast('已存檔，可以放心離開了'); closeModal(); }
+    } });
+  function render() {
+    const S = state, h = offlineFoodHours(), idleN = S.disciples.filter(idle).length, r = calc();
+    const okFood = h >= 8;
+    setModalBody(`<p class="rnote">離線期間以 ${Math.round(offlineEff() * 100)}% 效率計算，最多 ${CONFIG.offlineCapSec / 3600} 小時；外出隊伍、自動化會照常結算。</p>
+      <div class="rankbox">
+        <div class="ln"><span>離線每秒資金</span><span>+${(r.gold * offlineEff() - r.upkeep * offlineEff()).toFixed(2)}</span></div>
+        <div class="ln"><span>糧食可撐</span><span class="${okFood ? '' : 'warn'}">${h === Infinity ? '糧食持續增加，沒問題' : h.toFixed(1) + ' 小時' + (okFood ? '' : '（不足 8 小時！）')}</span></div>
+        <div class="ln"><span>閒置弟子</span><span>${idleN} 人</span></div>
+        <div class="ln"><span>管事堂自動化</span><span>${S.steward ? AUTO_DEF.filter(([k]) => S.auto[k] && k !== 'events').map(x => x[1]).join('、') || '全部關閉' : '尚未建造'}</span></div>
+      </div>
+      <h3>建議操作</h3>
+      <div class="jobs">
+        <button class="btn small" data-m="travel" ${idleN ? '' : 'disabled'}>閒置弟子全員遊歷</button>
+        <button class="btn small" data-m="equip">一鍵裝備</button>
+        ${okFood ? '' : '<button class="btn small" data-m="farm">派 2 名弟子務農</button>'}
+        <button class="btn" data-m="save">存檔，準備下線</button>
+      </div>`);
+  }
+  render();
+}
+
+/* ---------- 新手引導 ---------- */
+const TUT = [
+  { t: '招募一名新弟子', sel: '#btnRecruit', done: S => S.stats.recruited >= 1 },
+  { t: '點擊右側任一弟子，查看資料並指派職務', sel: '#discList .dcard', done: S => S.tutFlags.disc },
+  { t: '升級「藥園」，讓糧食更充足', sel: '.bcard[data-key="garden"] .btn', done: S => S.b.garden >= 2 },
+  { t: '按「下山歷練」，體驗一次江湖事件', sel: '#btnAdv', done: S => S.stats.events >= 1 },
+  { t: '打開弟子詳情，派一名弟子外出「遊歷」', sel: '#discList .dcard', done: S => S.stats.travels >= 1 || S.trips.some(t => t.kind === 'travel') },
+  { t: '鍛造一件兵器，再按「一鍵裝備」', sel: '#btnForge', done: S => S.items.some(i => i.owner) },
+  { t: '點擊左側「天機榜」，看看門派排名', sel: '.rankbox', done: S => S.tutFlags.rank },
+  { t: '查看「每日目標」，完成可領獎勵', sel: '#btnQuest', done: S => S.tutFlags.quest }
+];
+function tutTick() {
+  const S = state;
+  if (S.tut < 0 || S.tut >= TUT.length) return;
+  if (TUT[S.tut].done(S)) {
+    const g = 60 + 20 * S.tut; S.res.gold += g;
+    addLog(`【新手指引】完成「${TUT[S.tut].t}」（資金 +${g}）`, 'good'); Snd.play('coin');
+    S.tut++;
+    if (S.tut >= TUT.length) { S.tut = -1; meta.tutDone = true; saveMeta(); addLog('新手指引全部完成！接下來就靠你自己了，副掌門。', 'gold'); }
+  }
+}
+function renderTut() {
+  const S = state, box = $('#guide');
+  document.querySelectorAll('.guide-hl').forEach(e => e.classList.remove('guide-hl'));
+  if (S.tut < 0 || S.tut >= TUT.length || !S.flags.intro) { box.style.display = 'none'; return; }
+  box.style.display = '';
+  setHTML('guideText', `新手指引（${S.tut + 1}／${TUT.length}）：${TUT[S.tut].t}`);
+  if (!modal) { const el = document.querySelector(TUT[S.tut].sel); if (el) el.classList.add('guide-hl'); }
+}
+
+/* ---------- 動畫：粒子、成就橫幅 ---------- */
+function burst(el, color = '#f2dc94') {
+  if (!el || !el.getBoundingClientRect) return;
+  const r = el.getBoundingClientRect(), cx = r.left + r.width / 2, cy = r.top + r.height / 2;
+  for (let i = 0; i < 14; i++) {
+    const p = document.createElement('i'); p.className = 'spark';
+    const a = Math.random() * Math.PI * 2, dist = 30 + Math.random() * 50;
+    p.style.left = cx + 'px'; p.style.top = cy + 'px'; p.style.background = color;
+    p.style.setProperty('--dx', Math.cos(a) * dist + 'px'); p.style.setProperty('--dy', Math.sin(a) * dist + 'px');
+    document.body.appendChild(p); setTimeout(() => p.remove(), 800);
+  }
+}
+function achBanner(a) {
+  const el = document.createElement('div'); el.className = 'achpop';
+  el.style.top = (60 + 78 * document.querySelectorAll('.achpop').length) + 'px';   // 同時多個成就時往下排
+  el.innerHTML = `<small>成就達成</small><b>${a.n}</b><span>${a.d}</span>`;
+  document.body.appendChild(el); setTimeout(() => el.remove(), 3600);
+}
+
+/* ---------- 音效與背景音樂（Web Audio 即時合成，無外部檔案） ---------- */
+const PENTA = [261.63, 293.66, 329.63, 392.0, 440.0];   // 宮商角徵羽
+const Snd = {
+  ctx: null, out: null, bgmT: null, step: 0,
+  init() {
+    if (this.ctx) return true;
+    try { const C = window.AudioContext || window.webkitAudioContext; if (!C) return false;
+      this.ctx = new C(); this.out = this.ctx.createGain(); this.out.gain.value = meta.settings.vol; this.out.connect(this.ctx.destination); return true;
+    } catch (e) { return false; }
+  },
+  // 撥弦音色：快速起音、指數衰減，模擬古箏
+  pluck(f, dur = 1.2, vol = .22, when = 0, type = 'triangle') {
+    if (!this.ctx) return;
+    const t = this.ctx.currentTime + when, o = this.ctx.createOscillator(), g = this.ctx.createGain(), o2 = this.ctx.createOscillator(), g2 = this.ctx.createGain();
+    o.type = type; o.frequency.value = f; o2.type = 'sine'; o2.frequency.value = f * 2; g2.gain.value = .3;
+    g.gain.setValueAtTime(0.0001, t); g.gain.exponentialRampToValueAtTime(vol, t + 0.01); g.gain.exponentialRampToValueAtTime(0.0001, t + dur);
+    o.connect(g); o2.connect(g2); g2.connect(g); g.connect(this.out); o.start(t); o2.start(t); o.stop(t + dur + .05); o2.stop(t + dur + .05);
+  },
+  play(name) {
+    if (!meta.settings.sfx || !this.init()) return;
+    const P = PENTA;
+    if (name === 'click') this.pluck(P[4] * 2, .15, .08);
+    else if (name === 'coin') { this.pluck(P[3] * 2, .3, .15); this.pluck(P[0] * 4, .4, .12, .07); }
+    else if (name === 'level') [0, 1, 2, 3, 4].forEach((i, k) => this.pluck(P[i] * 2, .6, .14, k * .06));
+    else if (name === 'ach') [0, 2, 4, 3, 4].forEach((i, k) => this.pluck(P[i] * (k > 2 ? 4 : 2), .9, .16, k * .1));
+    else if (name === 'bad') { this.pluck(P[1], .6, .18, 0, 'sawtooth'); this.pluck(P[0] * .75, .8, .15, .12, 'sawtooth'); }
+    else if (name === 'win') [0, 2, 3, 4].forEach((i, k) => this.pluck(P[i] * 2, .7, .16, k * .08));
+  },
+  setVol(v) { meta.settings.vol = v; if (this.out) this.out.gain.value = v; },
+  bgmOn() {
+    if (this.bgmT || !this.init()) return;
+    const tick = () => {                             // 簡單的五聲音階隨機旋律＋低音
+      if (!this.ctx || this.ctx.state === 'suspended') return;
+      const s = this.step++;
+      if (s % 8 === 0) this.pluck(PENTA[[0, 3, 4, 2][(s / 8) % 4 | 0]] / 2, 3.2, .1, 0, 'sine');
+      if (Math.random() < .55) this.pluck(PENTA[rint(0, 4)] * (Math.random() < .3 ? 2 : 1), 1.6, .07);
+    };
+    this.bgmT = setInterval(tick, 480);
+  },
+  bgmOff() { clearInterval(this.bgmT); this.bgmT = null; }
+};
+function applyAudio() { if (meta.settings.bgm) Snd.bgmOn(); else Snd.bgmOff(); }
+document.addEventListener('pointerdown', () => {      // 瀏覽器需要使用者互動後才允許播放
+  if (meta.settings.sfx || meta.settings.bgm) { if (Snd.init() && Snd.ctx.state === 'suspended') Snd.ctx.resume(); applyAudio(); }
+}, { once: false, passive: true });
+
+/* ---------- 設定 ---------- */
+function openSettings() {
+  openModal({ title: '設定', wide: true, buttons: [{ label: '關閉' }], html: '',
+    on: {
+      sfx: () => { meta.settings.sfx = !meta.settings.sfx; saveMeta(); Snd.play('click'); render(); },
+      bgm: () => { meta.settings.bgm = !meta.settings.bgm; saveMeta(); applyAudio(); render(); },
+      io: openSaveIO, reborn: openReborn,
+      tut: () => { state.tut = 0; state.tutFlags = {}; toast('新手指引已重新開始'); closeModal(); update(true); },
+      reset: () => confirmBox('確定要重置遊戲嗎？目前的進度（資源、弟子、建築、榜單）會全部清除，無法復原。（道統、成就、結局圖鑑保留）', resetGame)
+    } });
+  function render() {
+    const s = meta.settings;
+    setModalBody(`<div class="row"><div><b>音效</b><small>按鈕、升級、成就等提示音</small></div><button class="btn small ${s.sfx ? 'on' : ''}" data-m="sfx">${s.sfx ? '開' : '關'}</button></div>
+      <div class="row"><div><b>背景音樂</b><small>即時合成的五聲音階古風旋律</small></div><button class="btn small ${s.bgm ? 'on' : ''}" data-m="bgm">${s.bgm ? '開' : '關'}</button></div>
+      <div class="row"><div><b>音量</b></div><input type="range" min="0" max="1" step="0.05" value="${s.vol}" id="volIn"></div>
+      <h3>存檔與進度</h3>
+      <div class="jobs"><button class="btn small" data-m="io">存檔匯出／匯入</button><button class="btn small" data-m="reborn">道統傳承</button>
+      <button class="btn small" data-m="tut">重看新手指引</button><button class="btn small danger" data-m="reset">重置遊戲</button></div>`);
+    const v = $('#volIn'); if (v) v.addEventListener('input', e => { Snd.setVol(+e.target.value); saveMeta(); });
+  }
+  render();
+}
+
+/* ---------- 手機版分頁 ---------- */
+function setMobileTab(t) {
+  document.body.dataset.tab = t;
+  document.querySelectorAll('.mtabs button').forEach(b => b.classList.toggle('on', b.dataset.tab === t));
 }
 
 /* ================= 10. 主線：掌門祕聞 ================= */
@@ -1663,7 +2571,9 @@ function doEnding(id) {
   const years = Math.floor(S.clock / CONFIG.yearLen);
   const buttons = [];
   if (E.cont) buttons.push({ label: '繼續經營', fn: () => { S.over = false; S.ending = null; E.onCont(S); addLog(`【${E.name}】江湖路還很長……`, 'gold'); saveGame(); update(true); } });
+  buttons.push({ label: `傳承轉世（+${daoGain()} 道統）`, fn: () => { doReborn(); return false; } });
   buttons.push({ label: '重新開始', cls: 'danger', fn: () => { resetGame(); return false; } });
+  Snd.play(E.cont ? 'ach' : 'bad');
   openModal({
     title: '結局', wide: true, noClose: true,
     html: `<div class="ending-title">${E.name}</div>
@@ -1748,8 +2658,8 @@ function buildBuildingCards() {
   }
 }
 function buildingText(key, l) {
-  if (key === 'dojo')   return `修煉效率 ×${dojoMulAt(l).toFixed(1)}　人數上限 +${2 * l}`;
-  if (key === 'garden') return `糧食 +${gardenProdAt(l).toFixed(1)}/秒　人數上限 +${l}`;
+  if (key === 'dojo')   return `修煉效率 ×${dojoMulAt(l).toFixed(1)}　人數上限 +${2 * Math.min(10, l) + Math.max(0, l - 10)}`;
+  if (key === 'garden') return `糧食 +${gardenProdAt(l).toFixed(1)}/秒　人數上限 +${Math.min(10, l)}`;
   return `功法 ${TECHS.filter(t => t.reqLib <= l).length}／${TECHS.length}　聲望 +${3 * (l - 1)}%`;
 }
 function updateBuildings() {
@@ -1814,7 +2724,9 @@ function update(forceList) {
   setText('v-gold', fmt(S.res.gold)); bumpIf('v-gold', S.res.gold);
   setText('v-rep', fmt(S.res.rep));   bumpIf('v-rep', S.res.rep);
   setText('v-food', fmt(S.res.food)); bumpIf('v-food', S.res.food);
-  setText('r-gold', signed(r.gold) + '/秒');
+  setText('r-gold', signed(r.gold - r.upkeep) + '/秒');
+  $('#r-gold').title = `收入 ${r.gold.toFixed(2)}／秒，弟子月錢 -${r.upkeep.toFixed(2)}／秒`;
+  $('#r-gold').classList.toggle('neg', r.gold - r.upkeep < 0);
   setText('r-rep', signed(r.rep) + '/秒');
   const net = r.foodProd - r.foodCons;
   setText('r-food', signed(net) + '/秒'); $('#r-food').classList.toggle('neg', net < 0 || S.res.food <= 0);
@@ -1856,6 +2768,24 @@ function update(forceList) {
   btnH('btnAdv', `下山歷練 <span class="cd">（-${CONFIG.advFood} 糧食）</span>`, S.advCd > 0);
   setText('advCd', S.advCd > 0 ? `冷卻中 ${Math.ceil(S.advCd)} 秒` : '隨時可以出發，江湖路遠。');
 
+  // 門派擴張
+  btnH('btnBranch', `開設分舵<span class="cost">${S.branches >= BRANCH_MAX ? '已遍佈八城' : `第 ${S.branches + 1} 座（${CITIES[S.branches]}）・${fmt(branchCost())}`}</span>`, S.branches >= BRANCH_MAX || S.res.gold < branchCost());
+  btnH('btnAura', `山門氣象 Lv.${S.aura}<span class="cost">產出修煉 +3%・${fmt(auraCost())}</span>`, S.res.gold < auraCost());
+  btnH('btnFest', `舉辦大典<span class="cost">${S.festCd > 0 ? '冷卻 ' + Math.ceil(S.festCd) + ' 秒' : '產出 ×1.5・' + fmt(festCost())}</span>`, S.festCd > 0 || S.res.gold < festCost());
+  btnH('btnGod', `鑄造神兵<span class="cost">必出神品・${fmt(GOD_COST)}</span>`, S.res.gold < GOD_COST);
+  btnH('btnSteward', S.steward ? `管事堂<span class="cost">自動化設定（${Object.values(S.auto).filter(Boolean).length} 項開啟）</span>` : `建造管事堂<span class="cost">解鎖自動化・${fmt(STEWARD_COST)}</span>`, !S.steward && S.res.gold < STEWARD_COST);
+  const q = ensureQuests(), qr = q.daily.concat(q.weekly).filter(x => !x.claimed && x.have >= x.need).length;
+  setHTML('questCost', qr ? `<b style="color:var(--green)">${qr} 項可領取</b>` : `今日 ${q.daily.filter(x => x.claimed).length}/3 完成`);
+  setText('achCost', `${meta.ach.length}／${ACHS.length}・產出 +${meta.ach.length * 2}%`);
+  setText('daoCost', `道統 ${meta.dao}${canReborn() ? '・可傳承 +' + daoGain() : ''}`);
+  setHTML('questMini', questMini());
+  setText('genText', `第 ${S.gen || 1} 世`);
+  setHTML('buffBox', S.buffs.map(b => `<span class="buff ${b.bad ? 'bad' : ''}">${b.n} ${Math.ceil(b.until - S.clock)}s</span>`).join('')
+    + (S.branches ? `<span class="buff">分舵 ×${S.branches}</span>` : '') + (pactCount('trade') ? `<span class="buff">通商 ×${pactCount('trade')}</span>` : ''));
+  const fh = offlineFoodHours();
+  setHTML('warnBox', S.unpaid ? '⚠ 發不出月錢，弟子工作效率 -40%' : (r.foodProd - r.foodCons < 0 && S.res.food / Math.max(0.01, r.foodCons - r.foodProd) < 120) ? '⚠ 糧食即將見底！' : '');
+  renderTut();
+
   btnH('btnDispatch', `出動討伐 <span class="cd">（${S.trips.filter(t => t.kind !== 'travel').length ? '討伐隊出征中' : '剿匪・鬥鐵拳門'}）</span>`, false);
   setHTML('trips', renderTripsPanel());
 
@@ -1866,6 +2796,7 @@ function update(forceList) {
 /* ---- 天機榜彈窗 ---- */
 let rankTab = 'sect';
 function openRanks() {
+  state.tutFlags.rank = true;
   openModal({ title: '天機榜', wide: true, html: '', buttons: [{ label: '闔上榜單' }], on: { tab: el => { rankTab = el.dataset.t; renderRanks(); } } });
   renderRanks();
 }
@@ -1892,7 +2823,7 @@ function renderRanks() {
 let discView = 'main';
 function openDisc(id) {
   const d = state.disciples.find(x => x.id === id); if (!d) return;
-  discView = 'main';
+  discView = 'main'; state.tutFlags.disc = true;
   openModal({
     title: d.name, wide: true, html: '',
     buttons: [{ label: '關閉' }],
@@ -1904,6 +2835,10 @@ function openDisc(id) {
       unequip: el => { equip(d, el.dataset.slot, null); discView = 'main'; renderDisc(d); update(true); },
       teach: el => { teach(d, el.dataset.art); renderDisc(d); update(true); },
       seclude: () => { startSeclusion(d); renderDisc(d); update(true); },
+      bai: el => { const m = findD(el.dataset.id); if (m && canTeach(m, d)) { d.master = m.id; addLog(`${d.name} 拜 ${m.name} 為師，行了三跪九叩之禮。（修煉 +${Math.round((0.3 + m.talent / 500) * 100)}%）`, 'good'); Snd.play('ach'); } renderDisc(d); update(true); },
+      unbai: () => { const m = findD(d.master); d.master = null; addLog(`${d.name} 出師了${m ? '，向 ' + m.name + ' 敬了一杯謝師酒' : ''}。`); renderDisc(d); update(true); },
+      mediate: el => { const o = findD(el.dataset.id); if (o) mediate(d, o); renderDisc(d); update(true); },
+      goto: el => { closeModal(); openDisc(el.dataset.id); },
       travel: el => { const sp = TRAVELS.find(x => x.id === el.dataset.tv); if (startTrip('travel', sp.id, [d])) { renderDisc(d); update(true); } },
       dismiss: () => confirmBox(`確定要逐出「${d.name}」嗎？`, () => { removeDisciple(d); addLog(`${d.name} 被逐出了師門。`, 'bad'); closeModal(); update(true); })
     }
@@ -1946,6 +2881,9 @@ function renderDisc(d) {
     <div class="row"><div>兵器：${w ? itemHTML(w) + `<small>戰力 +${w.pow}</small>` : '無'}</div><button class="btn small" data-m="equipMenu" data-slot="w">更換</button></div>
     <div class="row"><div>防具：${a ? itemHTML(a) + `<small>戰力 +${a.pow}　受傷抗性 +${Math.round((a.guard || 0) * 100)}%</small>` : '無'}</div><button class="btn small" data-m="equipMenu" data-slot="a">更換</button></div>
     <h3>真傳功法（${d.arts.length}/${CONFIG.maxArts}）</h3>${techRows}
+    <div class="combos">${COMBOS.filter(c => c.arts.every(a => S.techs.includes(a))).map(c => { const has = c.arts.every(a => d.arts.includes(a));
+      return `<span class="tag ${has ? 'on' : 'off'}" title="${c.arts.map(a => TECH_MAP[a].name).join(' ＋ ')}">${has ? '✦' : '◇'} ${c.n}：${KEY_NAME[c.key]} +${Math.round(c.v * 100)}%</span>`; }).join('') || '<span style="color:var(--mute);font-size:12px">解鎖更多功法後，同時習得特定兩門真傳可領悟組合技。</span>'}</div>
+    ${relSection(d)}
     <h3>外出遊歷</h3>
     ${d.trip ? `<div style="font-size:13px;color:var(--gold2)">外出中，歸來後會上繳戰利品並獲得貢獻。</div>` : `<div class="jobs">${TRAVELS.map(x => `<button class="btn small" data-m="travel" data-tv="${x.id}" ${idle(d) && S.res.food >= x.food ? '' : 'disabled'}>${x.name} ${x.dur}秒（-${x.food}糧）</button>`).join('')}</div>
     <div style="font-size:12px;color:var(--mute)">遊歷期間不產出，歸來時繳交戰利品（資金、聲望、偶有裝備），本人獲得貢獻與實力。戰力越高越容易大獲全勝，失敗可能受傷。</div>`}
@@ -1953,6 +2891,19 @@ function renderDisc(d) {
     <div class="jobs"><button class="btn small" data-m="seclude" ${d.cond || d.trip ? 'disabled' : ''}>閉關 60 秒（-30 糧食）</button>
     <button class="btn small danger" data-m="dismiss" ${d.trip ? 'disabled' : ''}>逐出師門</button></div>
     <div style="font-size:12px;color:var(--mute)">閉關期間修煉 ×3，成功可提升根骨與實力，失敗則可能走火入魔。</div>`);
+}
+function relSection(d) {
+  const S = state, m = d.master && findD(d.master), aps = apprentices(d);
+  const rels = Object.entries(d.rel || {}).map(([id, t]) => { const o = findD(id); if (!o) return '';
+    return `<div class="row"><div><span class="tag ${t === 'friend' ? 'on' : 'foe'}">${t === 'friend' ? '知己' : '宿怨'}</span> <a class="lnk" data-m="goto" data-id="${o.id}">${o.name}</a></div>
+      ${t === 'foe' ? `<button class="btn small" data-m="mediate" data-id="${o.id}" ${S.res.gold >= mediateCost() ? '' : 'disabled'}>調解（${mediateCost()}）</button>` : ''}</div>`; }).join('');
+  const cands = S.disciples.filter(x => canTeach(x, d) && !d.master).sort((a, b) => effPower(b) - effPower(a)).slice(0, 4);
+  return `<h3>師徒與同門</h3>
+    <div class="row"><div>師父：${m ? `<a class="lnk" data-m="goto" data-id="${m.id}">${m.name}</a><small>修煉 +${Math.round((0.3 + m.talent / 500) * 100)}%</small>` : '無'}</div>
+      ${m ? '<button class="btn small" data-m="unbai">出師</button>' : ''}</div>
+    ${!m && cands.length ? `<div class="jobs">${cands.map(x => `<button class="btn small" data-m="bai" data-id="${x.id}">拜 ${x.name} 為師</button>`).join('')}</div>` : ''}
+    ${aps.length ? `<div class="row"><div>徒弟：${aps.map(a => `<a class="lnk" data-m="goto" data-id="${a.id}">${a.name}</a>`).join('、')}<small>每名徒弟讓師父貢獻持續增加</small></div></div>` : ''}
+    ${rels || '<div style="font-size:12px;color:var(--mute)">尚無知己或宿怨。同門相處久了自然會有交情（或恩怨）。</div>'}`;
 }
 const renCutoff = () => { const r = state.rank && state.rank.ren; return r && r.length ? r[r.length - 1].p : 0; };
 function confirmBox(msg, yes) {
@@ -1982,6 +2933,15 @@ function openHelp() {
     <p><b>建築：</b>練武場提升修煉效率與人數上限；藥園產糧；藏經閣解鎖全門派被動功法。弟子貢獻足夠時，可花資金傳授該功法的「真傳版」。</p>
     <p><b>掌門：</b>信任歸零會被逐出師門；野心 ≥50 時信任會持續下滑。那個成天釣魚的老頭似乎藏著什麼……隨著門派崛起，你會逐步揭開「掌門祕聞」。</p>
     <p><b>結局：</b>共 ${ENDING_COUNT} 種。例如「正統傳位」需門派榜前 ${CONFIG.legitRank}、真傳弟子 ${CONFIG.winElite} 人、掌門信任 ≥60；「榜首之派」需登上門派榜第一。</p>
+    <p><b>經營壓力：</b>弟子每秒領月錢（境界越高越貴），資金見底會發不出月錢、工作效率下降；每年年初官府收取持有資金 5% 的稅；偶爾會有大旱、山洪、瘟疫等天災。</p>
+    <p><b>門派擴張：</b>開設分舵（永久增加資金與聲望）、提升山門氣象（無上限，產出與修煉 +3%/級）、舉辦大典（短時間產出 ×1.5）、鑄造神兵；建築上限提高到 20 級，藏經閣 11 級後解鎖後期功法。</p>
+    <p><b>管事堂：</b>建造後可開啟自動招募、自動裝備、自動出售、自動遊歷、自動討伐、事件託管，離線時也會運作（事件除外）。</p>
+    <p><b>師徒與同門：</b>內門以上弟子可收徒（最多 2 名），徒弟修煉大幅加快。同門相處久了會結為知己（互相加成）或結下宿怨（工作效率下降，可花錢調解）。</p>
+    <p><b>功法組合技：</b>同一名弟子習得特定兩門真傳功法，會領悟組合技，獲得額外加成（弟子詳情頁可查看）。</p>
+    <p><b>江湖外交：</b>送禮提升各派態度；友好可通商（每秒資金），莫逆可結盟（每季贈印象與聲望、討伐勝率提升）；挑釁會使對方敵視，可討伐其分堂，但對方也會上門找碴。</p>
+    <p><b>成就與目標：</b>成就永久提升產出 2%／個並給予道統；每日、每週目標依現實日期刷新。</p>
+    <p><b>道統傳承：</b>第 6 次放榜後或達成結局，可傳承轉世：一切重來，但獲得「道統」購買永久天賦，成就與結局圖鑑保留。</p>
+    <p><b>存檔：</b>設定中可匯出／匯入存檔碼，換電腦、換瀏覽器也能繼續。</p>
     <p><b>倍速：</b>右上角可切換 1×／2×／5×，加快線上遊戲進度（收益、計時、事件都會一起加速）。離線掛機收益只看實際離開的時間，不受倍速影響。</p>
     <p><b>存檔：</b>每 ${CONFIG.autosaveSec} 秒自動存檔。關閉頁面期間以 ${Math.round(CONFIG.offlineEfficiency * 100)}% 效率累積最多 ${CONFIG.offlineCapSec / 3600} 小時的收益（江湖時間最多推進一年）。</p>`
   });
@@ -1992,6 +2952,13 @@ function openRename() {
   setTimeout(() => { const i = $('#renameInput'); if (i) i.select(); }, 50);
 }
 function openIntro() {
+  if (meta.runs > 0) {
+    return openModal({ title: `第 ${state.gen} 世`, wide: true, noClose: true, buttons: [{ label: '再來一次', fn: () => { state.flags.intro = true; saveGame(); } }],
+      html: `<p class="story">又是一道雷。</p>
+        <p class="story">你睜開眼，硬木板床、漏風的練武場、歪掉的「聽風人派」匾額——一切都和記憶中一模一樣。只是這一次，你腦子裡多了 ${meta.runs} 世的經營心得。</p>
+        <p class="story">${MASTER}拎著釣竿晃進門，盯著你看了半晌，忽然笑了：「咦，你這眼神……怎麼像是已經當過一回掌門的人？」</p>
+        <p class="story">不等你回答，他又哼著小曲去寒潭了。你嘆了口氣，翻開帳本——道統尚在，天賦猶存。這一世，要走得更遠。</p>` });
+  }
   openModal({ title: '穿 越', wide: true, noClose: true, buttons: [{ label: '開始我的副掌門人生', fn: () => { state.flags.intro = true; saveGame(); } }],
     html: `<p class="story">一道雷劈下來，你睜開眼睛，發現自己躺在一張硬得要命的木板床上。</p>
       <p class="story">窗外是風雨飄搖的山門，一塊歪歪斜斜的黑漆匾額上，用燙金大字勉強刷著「聽風劍派」四個大字，只不過「劍」字剛好被白蟻蛀掉大半，遠看活像「聽風人派」。</p>
@@ -2010,7 +2977,10 @@ function resetGame() {
 /* ================= 14. 事件委派、初始化與主迴圈 ================= */
 const ACTIONS = {
   upgrade: el => upgrade(el.dataset.key), recruit, forge, tribute, scheme, coup, adventure,
-  armory: openArmory, speed: el => setSpeed(+el.dataset.v), autoequip: () => { autoEquip(); update(true); }, dispatch: () => { if (modal) return toast('請先處理眼前的事'); openDispatch(); }, help: openHelp, rename: openRename, ranks: openRanks,
+  armory: openArmory, branch: buyBranch, aura: buyAura, fest: holdFestival, god: forgeGod, steward: buySteward,
+  dip: openDiplomacy, stats: openStats, ach: openAch, quest: () => { state.tutFlags.quest = true; openQuests(); }, reborn: openReborn, idle: openIdlePrep,
+  settings: openSettings, saveio: openSaveIO, mtab: el => setMobileTab(el.dataset.tab),
+  tutskip: () => { state.tut = -1; meta.tutDone = true; saveMeta(); update(true); }, speed: el => setSpeed(+el.dataset.v), autoequip: () => { autoEquip(); update(true); }, dispatch: () => { if (modal) return toast('請先處理眼前的事'); openDispatch(); }, help: openHelp, rename: openRename, ranks: openRanks,
   disc: el => openDisc(el.dataset.id),
   save: () => { saveGame(); toast('已存檔'); },
   reset: () => confirmBox('確定要重置遊戲嗎？目前的進度（資源、弟子、建築、榜單）會全部清除，無法復原。', resetGame)
@@ -2023,10 +2993,10 @@ $('#sortSel').addEventListener('change', e => { discSort = e.target.value; updat
 
 function simulate(seconds, offline) {              // 長時間模擬（離線收益）
   const ws = offline ? Math.min(1, CONFIG.offlineWorldCap / Math.max(1, seconds)) : 1;
-  const step = 5; let left = seconds;
-  while (left > 0) { const dt = Math.min(step, left); tick(dt, offline, ws); left -= dt; }
+  const step = 5; let left = seconds; simulating = seconds > 30;
+  try { while (left > 0) { const dt = Math.min(step, left); tick(dt, offline, ws); left -= dt; } } finally { simulating = false; }
 }
-function offlineReport(sec, before, seasonsBefore) {
+function offlineReport(sec, before, seasonsBefore, snap) {
   const S = state;
   const h = Math.floor(sec / 3600), m = Math.floor(sec % 3600 / 60);
   const dg = Math.floor(S.res.gold - before.gold), dr = Math.floor(S.res.rep - before.rep), df = Math.floor(S.res.food - before.food);
@@ -2038,16 +3008,32 @@ function offlineReport(sec, before, seasonsBefore) {
       <div class="fxline ${dr >= 0 ? 'pos' : 'neg'}">聲望 ${sg(dr)}</div>
       <div class="fxline ${df >= 0 ? 'pos' : 'neg'}">糧食 ${sg(df)}${S.res.food <= 0 ? '（糧倉已見底！）' : ''}</div>
       ${ns > 0 ? `<div class="fxline neu">期間天機閣放榜 ${ns} 次，門派榜目前第 ${S.rank.myPos} 名</div>` : ''}
-      <p style="color:var(--mute);font-size:12px">離線期間不會觸發隨機事件，收益以 ${Math.round(CONFIG.offlineEfficiency * 100)}% 效率計算，江湖時間最多推進一年。</p>` });
+      ${snap ? offlineExtra(snap) : ''}
+      <p style="color:var(--mute);font-size:12px">離線期間不會觸發隨機事件，收益以 ${Math.round(offlineEff() * 100)}% 效率計算，江湖時間最多推進一年。外出戰報稍後逐一呈上。</p>` });
 }
+function offlineExtra(snap) {
+  const S = state, st = S.stats, o = snap.stats, L = [];
+  const dsp = sectPower() - snap.sp; if (Math.abs(dsp) >= 1) L.push([`門派總戰力 ${dsp >= 0 ? '+' : ''}${fmt(dsp)}`, dsp >= 0 ? 'pos' : 'neg']);
+  if (st.promoted > o.promoted) L.push([`弟子晉升 ${st.promoted - o.promoted} 次`, 'pos']);
+  if (st.recruited > o.recruited) L.push([`管事堂招募了 ${st.recruited - o.recruited} 名新弟子`, 'pos']);
+  const tr = (st.travels + st.dispatches) - (o.travels + o.dispatches); if (tr > 0) L.push([`自動派出 ${tr} 趟遊歷／討伐`, 'neu']);
+  const back = S.reports.length - snap.reports; if (back > 0) L.push([`${back} 支外出隊伍歸來，帶回戰利品`, 'pos']);
+  if (st.enc > o.enc) L.push([`遊歷途中奇遇 ${st.enc - o.enc} 次`, 'neu']);
+  const di = S.items.length - snap.items; if (di) L.push([`兵器庫 ${di > 0 ? '+' : ''}${di} 件`, 'neu']);
+  if (S.disciples.length < snap.n) L.push([`有 ${snap.n - S.disciples.length} 名弟子離開了門派`, 'neg']);
+  return L.map(([t, c]) => `<div class="fxline ${c}">${t}</div>`).join('');
+}
+let simulating = false;                            // 長時間模擬中（不播特效、不寫細碎紀錄）
 function runOffline(sec) {
-  const before = Object.assign({}, state.res), sb = state.seasons;
+  const S = state, before = Object.assign({}, S.res), sb = S.seasons;
+  const snap = { stats: Object.assign({}, S.stats), sp: sectPower(), items: S.items.length, n: S.disciples.length, reports: S.reports.length, realms: S.disciples.map(d => d.realm) };
   simulate(sec, true);
   update(true);
-  if (sec > 60) offlineReport(sec, before, sb);
+  if (sec > 60) offlineReport(sec, before, sb, snap);
+  checkAch();
 }
 
-let lastTime = Date.now(), acc = 0, saveAcc = 0;
+let lastTime = Date.now(), acc = 0, saveAcc = 0, achAcc = 0;
 let speed = 1;                                    // 線上倍速（1/2/5）；不存檔，重新開啟一律回到 1×
 function setSpeed(v) { speed = v; document.querySelectorAll('[data-act="speed"]').forEach(b => b.classList.toggle('on', +b.dataset.v === v)); }
 function loop() {
@@ -2056,7 +3042,8 @@ function loop() {
   if (state.over) { update(false); return; }
   if (dt > 8) { if (!modal) closeModal(); runOffline(Math.min(dt, CONFIG.offlineCapSec)); dt = 0; }   // 分頁被凍結或電腦休眠：視為離線補算
   acc += dt * speed;                               // 倍速只放大線上的遊戲時間；離線補算仍以實際離開秒數計
-  while (acc >= 1) { tick(1, false); acc -= 1; saveAcc += 1; }
+  while (acc >= 1) { tick(1, false); acc -= 1; saveAcc += 1; achAcc += 1; }
+  if (achAcc >= 2) { achAcc = 0; checkAch(); }
   if (!modal) {
     checkEndings();
     if (!modal) checkStory();
@@ -2070,7 +3057,9 @@ function loop() {
 }
 
 function init() {
+  loadMeta(); ensureQuests();
   endingsCount = loadEndings().length;
+  setMobileTab('center');
   buildBuildingCards();
   const loaded = loadGame();
   if (!loaded) newState();
