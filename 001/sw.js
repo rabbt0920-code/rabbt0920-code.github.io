@@ -3,7 +3,7 @@
    ★ 每次更新網站（改入口頁或任何遊戲）後，把版本號 +1，
      玩家下次開啟就會自動拿到新版。
    遊戲清單不用寫在這裡：入口頁會自動把 GAMES 裡的遊戲交給它離線快取。 */
-const VERSION = 'v5';
+const VERSION = 'v7';
 const CACHE = 'life-sim-' + VERSION;
 const SHELL = [
   './',
@@ -57,8 +57,9 @@ self.addEventListener('fetch', e => {
   if (url.origin !== location.origin) return;
 
   // 網頁與遊戲：先連網拿最新版，斷線時用快取
+  // cache:'no-cache' 讓瀏覽器每次都向伺服器確認有沒有新版，避免卡在 GitHub Pages 的 10 分鐘 HTTP 快取
   e.respondWith(
-    fetch(req).then(res => {
+    fetch(req, { cache: 'no-cache' }).then(res => {
       if (res.ok) { const copy = res.clone(); caches.open(CACHE).then(c => c.put(req, copy)); }
       return res;
     }).catch(() =>
