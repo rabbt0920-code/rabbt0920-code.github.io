@@ -185,7 +185,9 @@ body{background:radial-gradient(ellipse at 50% -16%,#493116 0,#1c160e 36%,#0d0b0
 </style>
 
 
-<style id="v23-sanity">
+<style id="addons">
+/* ===== 擴充樣式(v2.3 之後的功能,依版本排列) ===== */
+/* ---------- v23-sanity ---------- */
 body::after{content:"";position:fixed;inset:0;pointer-events:none;z-index:25;opacity:0;transition:opacity 1.2s;background:radial-gradient(ellipse at 50% 40%,transparent 40%,#0009 85%,#000c 100%)}
 body.san-low::after{opacity:.7}
 body.san-crit::after{opacity:1;background:radial-gradient(ellipse at 50% 40%,transparent 30%,#1c0505aa 74%,#000d 100%);animation:sanPulse 1.15s infinite}
@@ -196,8 +198,7 @@ body.san-crit .card h2{text-shadow:2px 0 #c4513a66,-2px 0 #6c8be066}
 .gl{display:inline-block;color:#e2a9a0;animation:glx 2.6s infinite}
 @keyframes glx{0%,88%,100%{transform:none;opacity:1}91%{transform:translate(1px,-1px);opacity:.35}95%{transform:translate(-1px,1px);opacity:.8}}
 @media(prefers-reduced-motion:reduce){body.san-crit::after{animation:none}.gl{animation:none}}
-</style>
-<style id="v24-rulewhy">
+/* ---------- v24-rulewhy ---------- */
 .rule-why .tablet div{position:relative}
 .rule-why .rw-bad{color:#f0a296}
 .rule-why .gone{text-decoration:line-through;text-decoration-color:#c4513a}
@@ -205,8 +206,7 @@ body.san-crit .card h2{text-shadow:2px 0 #c4513a66,-2px 0 #6c8be066}
 .rw-tag.bad{color:#f0a296;border-color:#c4513a;background:#c4513a22}
 .rw-tag.good{color:#8fd3bd;border-color:#58a08a;background:#58a08a22}
 .rule-why.good{border-color:#58a08a}.rule-why.bad{border-color:#c4513a}.rule-why.mid{border-color:#a8873e}
-</style>
-<style id="v25-feel">
+/* ---------- v25-feel ---------- */
 /* 卜卦 */
 .gua{display:flex;align-items:center;gap:14px;margin:10px 0 6px;padding:12px 14px;border:1px solid var(--line);border-radius:12px;background:linear-gradient(135deg,#2a1f12,#15100a)}
 .gua-tube{width:36px;height:50px;flex:none;border:2px solid #8b6a35;border-radius:6px 6px 10px 10px;background:#3a2a14;display:flex;justify-content:center;gap:3px;margin-top:12px}
@@ -296,18 +296,59 @@ body.fx-hit #app{animation:shake .35s}
 .title-badge{display:inline-block;margin-top:10px;padding:2px 12px;border:1px solid #8b6a35;border-radius:99px;color:#efbd5b;font-size:13px;letter-spacing:.15em;background:#1d1812}
 .codex-tabs{grid-template-columns:repeat(auto-fit,minmax(58px,1fr))!important}
 @media(prefers-reduced-motion:reduce){body.fx-hit #app{animation:none}#app.gua-pending .gua-tube,#app.gua-pending .gua-tube i,.oil-lamp b{animation:none!important}.lcard,.bark{animation:none}}
-</style>
-<style id="v27-route">
+/* ---------- v27-route ---------- */
 .route{display:flex;flex-wrap:wrap;align-items:center;gap:4px 6px;margin-top:10px;font-size:12px}
 .route i{color:#5d5040;font-style:normal}
 .rt{padding:1px 8px;border-radius:99px;border:1px solid var(--line);color:var(--dim);white-space:nowrap}
 .rt.done{color:#7d725f;text-decoration:line-through;text-decoration-color:#5d5040}
 .rt.cur{color:#1a1209;background:#efbd5b;border-color:#efbd5b;font-weight:700}
-</style>
-<style id="v28-fate">
+/* ---------- v28-fate ---------- */
 .fate.marked{border-color:#7a3a4a;background:linear-gradient(160deg,#2a1218,#16100c)}
 .fate.marked h2{color:#e88aa3}
 .fate.clean h2{color:#8fd3bd}
+/* ---------- v2.9 隊友人生線 ---------- */
+.cp-gone{font-size:13px;color:var(--dim);border:1px dashed var(--line);border-radius:10px;padding:10px 12px;margin:10px 0}
+.cp-gone b{color:var(--ink)}
+.tl{border-left:2px solid #5a4a33;margin:6px 0 4px 6px;padding-left:12px}
+.tl p{margin:6px 0;font-size:14px;position:relative}
+.tl p:before{content:"";position:absolute;left:-17px;top:9px;width:8px;height:8px;border-radius:50%;background:#8b6a35}
+.tl-h{display:flex;justify-content:space-between;align-items:center;margin-top:12px}
+.tl-h b{color:var(--gold)}
+.tl-h small{color:var(--dim)}
+/* ---------- v2.9 盜墓傳奇 ---------- */
+#bookFx{position:fixed;inset:0;z-index:60;display:none;align-items:center;justify-content:center;background:#000d;padding:14px;overflow:auto}
+#bookFx.on{display:flex}
+.bk-wrap{width:100%;max-width:520px;margin:auto}
+.bk-book{position:relative;min-height:62vh;background:linear-gradient(90deg,#d9c39a 0,#efe0bd 6%,#f3e6c6 50%,#ead9b3 100%);color:#2b1d10;border-radius:4px 10px 10px 4px;box-shadow:0 18px 50px #000c,inset 6px 0 12px #00000040;padding:34px 28px 46px;font-size:16px;line-height:2;animation:pageIn .45s}
+@keyframes pageIn{from{opacity:0;transform:perspective(900px) rotateY(-14deg)}to{opacity:1;transform:none}}
+.bk-page h3{text-align:center;font-size:20px;letter-spacing:.2em;color:#6b2a14;margin:0 0 16px;padding-bottom:10px;border-bottom:1px solid #b89a68}
+.bk-page p{text-indent:2em;margin:0 0 12px}
+.bk-cover{text-align:center;padding-top:10px;position:relative}
+.bk-seal{position:absolute;right:0;top:-10px;width:46px;height:46px;background:#9c2b1e;color:#f3d9c4;display:grid;place-items:center;font-size:24px;font-weight:700;border-radius:4px;transform:rotate(6deg)}
+.bk-k{letter-spacing:.6em;color:#8b5a2b;font-size:15px}
+.bk-name{font-size:40px;font-weight:700;letter-spacing:.2em;margin:26px 0 6px;color:#3b1d0b}
+.bk-name:after{content:"傳"}
+.bk-sub{color:#6b2a14;letter-spacing:.2em}
+.bk-line{width:60%;height:1px;background:#b89a68;margin:22px auto}
+.bk-meta{font-size:14px;color:#5c4630;line-height:2}
+.bk-in{display:block;margin-top:26px;font-size:13px;color:#6b5236}
+.bk-in input{display:block;margin:6px auto 0;width:70%;font:inherit;font-size:16px;text-align:center;background:#fff8e6;border:1px solid #b89a68;border-radius:6px;padding:6px;color:#2b1d10}
+.bk-no{position:absolute;bottom:14px;left:0;right:0;text-align:center;font-size:12px;color:#8b7250;letter-spacing:.2em}
+.bk-nav{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:12px}
+.bk-tools{display:grid;grid-template-columns:repeat(2,1fr);gap:6px}
+.bk-tools .btn,.bk-nav .btn{margin:4px 0;text-align:center}
+.bk-msg{font-size:13px;color:#c7b896;text-align:center;min-height:18px;margin-top:6px}
+#printBook{display:none}
+@media print{
+ body>*:not(#printBook){display:none!important}
+ body{background:#fff!important}
+ #printBook{display:block!important;color:#111;font-family:"Noto Serif TC","PingFang TC",serif;line-height:2;padding:0 8mm}
+ #printBook h1{text-align:center;letter-spacing:.5em;font-size:16pt;margin-top:30mm}
+ #printBook h2{text-align:center;font-size:30pt;letter-spacing:.2em;margin:10mm 0 4mm}
+ #printBook .pb-sub{text-align:center;color:#555;page-break-after:always}
+ #printBook h3{font-size:15pt;text-align:center;letter-spacing:.2em;margin:12mm 0 6mm;page-break-before:always}
+ #printBook p{text-indent:2em;font-size:12pt;margin:0 0 3mm}
+}
 </style>
 </head>
 
@@ -315,6 +356,22 @@ body.fx-hit #app{animation:shake .35s}
 <div id="app"></div>
 <div id="modal"><div class="box" id="mbox"></div></div>
 <script>
+/* ==========================================================
+   盜墓人生模擬器 · 程式目錄
+   (搜尋下面的區段標題,就能找到對應的程式)
+   資料 ............ 能力、出身、天賦、裝備、隊友、明器、墓穴
+   事件 ............ 成長、江湖、各墓房間、規則房、結局、主線章節
+   引擎 ............ 狀態、判定、效果、畫面、下墓、出貨、結局
+   試玩回饋與遊玩統計、規則房解析、墓中續玩
+   v2.5 手感與回饋 . 卜卦、數值跳動、開箱、進度、燈火、詭異文字、隊友對話、成就
+   v2.6 新墓 ....... 戰國將軍墓、蓬萊墓、藏王墓
+   v2.7 路線 ....... 前三座固定、中間隨機、無名墓收尾
+   v2.9 隊友人生線 . 隊友的個人事件與結局
+   v2.9 盜墓傳奇 ... 人生紀錄與人生小說
+   機關解謎、黑商換物、魔窟
+   v2.0 / v2.1 ..... 介面、指南、人物關係頁(使用者調整版)
+   v2.2 氛圍音樂與音效
+   ========================================================== */
 /* ===== 資料 ===== */
 const SK={f:"尋龍",m:"機關",a:"鑑定",g:"膽識",b:"體能",n:"人脈"};
 const ORIGINS=[
@@ -1150,6 +1207,7 @@ function applyFx(fx,e){
  if(fx.clue&&S.journal.indexOf(fx.clue)<0){S.journal.push(fx.clue);ch.push('<span class="it">線索已記入筆記</span>')}
  [["food","乾糧"],["herb","藥材"],["mat","材料"]].forEach(function(r){if(fx[r[0]]){S[r[0]]=Math.max(0,S[r[0]]+fx[r[0]]);ch.push('<span class="'+(fx[r[0]]>0?"up":"dn")+'">'+r[1]+" "+(fx[r[0]]>0?"+":"")+fx[r[0]]+'</span>')}});
  if(fx.flag)S.flags[fx.flag]=1;
+ if(fx.cp)cpApply(fx.cp,ch);
  if(fx.loot)addLoot(fx.loot,ch);
  if(fx.loot&&fx.tm===undefined&&TM()&&TM().k==="army"){const o=S.tm;S.tm=Math.min(TM().max,S.tm+fx.loot);if(S.tm>o)ch.push('<span class="dn">殺氣 +'+(S.tm-o)+'</span>')}
  if(fx.lose){if(S.team.length){const id=pick(S.team);S.team.splice(S.team.indexOf(id),1);ch.push('<span class="dn">失去隊友 '+TEAM[id].n+'</span>')}else{S.hp-=3;ch.push('<span class="dn">體力 -3</span>')}}
@@ -1169,6 +1227,7 @@ function needOK(n){
  if(n.notMarked&&S.marked)return false;
  if(n.virtue&&S.virtue<n.virtue)return false;
  if(n.team&&S.team.length<n.team)return false;
+ if(n.mate&&S.team.indexOf(n.mate)<0)return false;
  if(n.mat&&S.mat<n.mat)return false;
  if(n.food&&S.food<n.food)return false;
  if(n.herb&&S.herb<n.herb)return false;
@@ -1185,6 +1244,7 @@ function showResult(e,out,chk,ctx){
  RES={e:e,out:out,chk:chk,ctx:ctx,chips:chips,end:out.end||null,death:out.end?null:deathCheck()};
  RES.roll=(chk&&chk.indexOf("判定")>=0)?LASTROLL:null;LASTROLL=null;
  achResult(e,out,chk,RES.roll);
+ lifeLog(e,out,chk,RES.roll);
  RES.bark=resultBark(e,out,snd,RES.roll);
  if(S.tomb&&!S.tomb.delve&&!out.end){S.phase="after";saveProgress()}
  renderResult();
@@ -1213,7 +1273,7 @@ function lastStand(id,cont){
  const acts=[],B=Bk(acts);
  let h=bar()+'<div class="card"><div class="cat">生死關頭</div><h2>'+(hpD?"眼前一黑":"腦子裡全是聲音")+'</h2><p>'+(hpD?"你的腿軟了下去。手指在懷裡摸到了最後一點乾糧。":"你抓著自己的頭,有人在你耳邊一直叫你的名字。你摸到了懷裡的安神藥。")+'</p></div>';
  h+=B(hpD?"硬撐:嚼下乾糧 <small>乾糧 -1,體力回到 2</small>":"硬撐:吞下安神藥 <small>藥材 -1,理智回到 2</small>",function(){
-  if(hpD){S.food--;S.hp=2}else{S.herb--;S.san=2}unlock("survive");
+  if(hpD){S.food--;S.hp=2}else{S.herb--;S.san=2}unlock("survive");lifeNote("rescue",hpD?"生死關頭,你嚼下最後一點乾糧,硬是撐了過來。":"耳邊全是聲音的時候,你吞下安神藥,把自己拉了回來。");
   const d=deathCheck();if(d)lastStand(d,cont);else cont();
  },"main");
  h+=B("放手",function(){endGame(id)},"ghost");
@@ -1263,12 +1323,13 @@ function startRound(){
  PTAB="gear";
  S.tomb=null;S.hp=Math.min(hpMax(),S.hp+3);S.san=Math.min(sanMax(),S.san+2);
  S.team=[];S.cons={};S.prep={gear:{},team:[]};S.loot=[];
+ if(S.round>1&&S.flags.yaoClinic)S.herb++;
  if(S.round>1){S.food+=S.camp.stove;S.herb+=S.camp.herb;S.mat+=S.camp.shop}
  try{localStorage.setItem(SAVEKEY,JSON.stringify(S))}catch(e){}
  const left=JIANGHU.filter(id=>S.seen.indexOf(id)<0);
- const id=pick(left.length?left:JIANGHU);S.seen.push(id);
+ const ce=cpPending();const id=ce||pick(left.length?left:JIANGHU);if(!ce)S.seen.push(id);
  playEvent(E[id],{
-  head:function(){return '<div class="cat" style="margin-top:6px">第 '+S.round+' 輪 · 江湖</div>'},
+  head:function(){return '<div class="cat" style="margin-top:6px">第 '+S.round+' 輪 · '+(ce?'人情 · '+TEAM[E[id].cp].n:'江湖')+'</div>'},
   sub:"出發之前",
   nav:function(){return[{l:"前往備戰",cls:"main",f:renderPrep}]}
  });
@@ -1294,7 +1355,7 @@ function goTomb(){
  for(const k in S.prep.gear)if(S.prep.gear[k]){if(GEAR[k].perm)S.owned[k]=1;else S.cons[k]=1}
  S.team=S.prep.team.slice();
  S.team.forEach(function(id){if(S.loyal[id]===undefined)S.loyal[id]=5});
- const t=curTomb();S.tomb=t;
+ const t=curTomb();S.tomb=t;cpOnDepart();
  let mids=[];
  if(t.fixed){const alt=shuffle(t.alt||[]);S.rooms=t.fixed.map(x=>x==="?"?alt.shift():x)}
  else{
@@ -1369,8 +1430,10 @@ function tombExit(){
   else t="你走出墓門,風雪如常。山沒有怪你,也沒有謝你。";
   return interlude("業力 "+k+" · "+t,tombExit,"下山");
  }
+ if(fatSkim(tombExit))return;
  S.phase="exit";saveProgress();
  S.tombsDone++;
+ lifeExit();
  unlock("first");if(S.team.length>=3)unlock("team3");
  const acts=[],B=Bk(acts);
  const total=S.loot.reduce((a,b)=>a+b.v,0);
@@ -1428,6 +1491,7 @@ function epilogue(id){
 function endGame(id){
  if(S&&S.mode==="delve")return delveEnd(id);
  AUD.mode="end";AUD.ending(id);recordStats(id);
+ let BOOKNOW=null;try{BOOKNOW=buildBook(id)}catch(err){BOOKNOW=null}
  if(S&&S.visited&&S.visited.length){CODEX.recent=S.visited.slice();saveCodex()}
  CODEX.end[id]=1;saveCodex();
  if(Object.keys(CODEX.end).length>=10)unlock("ends10");
@@ -1443,7 +1507,8 @@ function endGame(id){
  '<div class="cell">出身:'+S.origin.n+'</div><div class="cell">下墓:'+S.tombsDone+' 座</div>'+
  '<div class="cell">資金:'+S.money+'</div><div class="cell">通緝 '+S.wanted+' · 陰德 '+S.virtue+'</div>'+
  '<div class="cell" style="grid-column:span 2">最值錢的戰利品:'+(S.best?S.best.n+"("+S.best.v+")":"無")+'</div></div></div>';
- h+=B("生成分享卡",function(){shareCard(id,ttl)},"main");
+ if(BOOKNOW)h+=B("閱讀《盜墓傳奇》 <small>這一世的人生小說,共 "+BOOKNOW.chs.length+" 章</small>",function(){openBook(BOOKNOW)},"main");
+ h+=B("生成分享卡",function(){shareCard(id,ttl)});
  h+=B("再投一次胎",startNew);
  h+=B("試玩回饋 <small>告訴開發者這一局玩起來怎麼樣</small>",function(){renderFeedback(id)},"ghost");
  h+=B("圖鑑",renderCodex,"ghost");
@@ -1525,7 +1590,7 @@ function delveCard(depth,score,val,rec,id){
    FEEDBACK_URL:若之後做了 Google 表單,把表單網址貼在這裡,
    玩家按「送出回饋」時會開啟表單;留空則改為複製回饋文字。 */
 const FEEDBACK_URL="";
-const VERSION="v2.3";
+const VERSION="v2.9";
 let LAST_END=null;
 function recordStats(id){
  const st=CODEX.stats=CODEX.stats||{runs:0,rounds:0,ends:{},deathAt:{}};
@@ -2133,6 +2198,326 @@ function routeLine(){
  }).join('<i>›</i>')+'</div>';
 }
 
+
+/* ==========================================================
+   v2.9 隊友人生線
+   遊戲會記住你和每位隊友之間發生的事(一起下過幾座墓、分帳、
+   冷落、賣黑市),條件成熟時,他們的人生事件會在江湖階段出現。
+   ========================================================== */
+const CP_STATUS={left:"已離隊",expelled:"被你趕走",broke:"與你決裂",dead:"已過世",retired:"歸隱"};
+function cp(id){S.cp=S.cp||{};return S.cp[id]=S.cp[id]||{tombs:0,neglect:0,fair:0,solo:0,hired:0,mem:[]}}
+function cpMem(id,t){const c=cp(id);c.mem.push({r:S.round,t:t.replace("{tomb}",S.tomb?S.tomb.n:"墓裡")});if(c.mem.length>12)c.mem.shift()}
+function cpGone(id){return !!(S.cp&&S.cp[id]&&S.cp[id].gone)}
+function cpApply(o,ch){
+ for(const id in o){
+  const c=cp(id),v=o[id];
+  if(v.mem)cpMem(id,v.mem);
+  if(v.fate)c.fate=v.fate;
+  if(v.set)Object.assign(c,v.set);
+  if(v.returnLoot&&c.stolen){S.loot.push(c.stolen);ch.push('<span class="it">取回 '+c.stolen.n+'</span>');c.stolen=null}
+  if(v.gone){c.gone=v.gone;const i=S.team.indexOf(id);if(i>=0)S.team.splice(i,1);ch.push('<span class="dn">'+TEAM[id].n+' · '+CP_STATUS[v.gone]+'</span>')}
+ }
+}
+/* 出發時:一起下墓的次數、被冷落的次數 */
+function cpOnDepart(){
+ Object.keys(TEAM).forEach(function(id){
+  const c=cp(id);if(c.gone)return;
+  if(S.team.indexOf(id)>=0){c.tombs++;c.hired=1;c.neglect=0;c.lastRound=S.round;if(c.tombs===1){c.firstTomb=S.tomb.n;cpMem(id,"第一次和你一起下墓,去的是{tomb}。")}}
+  else if(c.hired)c.neglect++;
+ });
+ S.fatChecked=0;
+}
+function cpShare(kind){S.team.forEach(function(id){const c=cp(id);if(kind==="fair")c.fair++;else c.solo++})}
+function cpBlack(){S.blackSales=(S.blackSales||0)+1;const c=cp("prof");if(c.promise&&!c.broken){c.broken=1;cpMem("prof","你答應過教授不再賣給黑市,但你還是賣了。")}}
+
+/* 每輪江湖階段:檢查有沒有隊友的人生事件該發生(一輪最多一件) */
+function cpPending(){
+ S.cpDone=S.cpDone||{};
+ const c=cp,L=function(id){return S.loyal[id]===undefined?5:S.loyal[id]},done=function(k){return S.cpDone[k]};
+ const rules=[
+  ["c_old_legacy",function(){return S.round>=5&&!cpGone("old")&&c("old").tombs>=3&&L("old")>=6}],
+  ["c_old_letter",function(){return S.round>=5&&!cpGone("old")&&c("old").tombs>=1&&!done("c_old_legacy")}],
+  ["c_fat_reveal",function(){return !cpGone("fat")&&c("fat").stage==="hidden"&&S.round>c("fat").stolenRound}],
+  ["c_prof_break",function(){return !cpGone("prof")&&c("prof").tombs>=1&&((S.blackSales||0)>=3||c("prof").broken)}],
+  ["c_lian_leave",function(){return !cpGone("lian")&&c("lian").hired&&c("lian").neglect>=2}],
+  ["c_mo_secret",function(){return !cpGone("mo")&&c("mo").tombs>=3}],
+  ["c_prof_warn",function(){return !cpGone("prof")&&c("prof").tombs>=1&&(S.blackSales||0)>=2&&!done("c_prof_break")}],
+  ["c_prof_teach",function(){return !cpGone("prof")&&c("prof").tombs>=2&&(S.donated||0)>=2}],
+  ["c_lian_quest",function(){return !cpGone("lian")&&c("lian").tombs>=3&&L("lian")>=6}],
+  ["c_fat_good",function(){return !cpGone("fat")&&!c("fat").stolenEver&&(c("fat").fair>=3||c("fat").stage==="forgiven")}],
+  ["c_zhou_grow",function(){return !cpGone("zhou")&&c("zhou").tombs>=2}],
+  ["c_tie_injury",function(){return !cpGone("tie")&&c("tie").tombs>=2}],
+  ["c_yao_clinic",function(){return !cpGone("yao")&&c("yao").tombs>=2}]
+ ];
+ for(const r of rules)if(!done(r[0])&&r[1]()){S.cpDone[r[0]]=1;return r[0]}
+ return null;
+}
+
+/* 胖叔私吞:出墓時檢查 */
+function fatSkim(next){
+ const f=cp("fat");
+ if(S.fatChecked||S.team.indexOf("fat")<0||f.gone||S.loot.length<2||(S.cpDone&&(S.cpDone.c_fat_caught||f.stolenEver)))return false;
+ if(!(f.solo>=1||(S.loyal.fat!==undefined&&S.loyal.fat<=3)))return false;
+ S.fatChecked=1;if(Math.random()>.7)return false;
+ let bi=0;S.loot.forEach(function(it,i){if(it.v>S.loot[bi].v)bi=i});
+ f.stolen=S.loot.splice(bi,1)[0];f.stolenEver=1;f.stolenRound=S.round;
+ const chk=doCheck({s:"a",d:7});
+ S.cpDone=S.cpDone||{};
+ if(chk.ok){S.cpDone.c_fat_caught=1;playEvent(E.c_fat_caught,{head:function(){return'<div class="cat" style="margin-top:6px">人情 · 胖叔</div>'},sub:chk.txt,nav:function(){return[{l:"走出墓穴",cls:"main",f:next}]}});return true}
+ f.stage="hidden";cpMem("fat","在{tomb},你帶出來的東西少了一件,但你沒有發現。");
+ return false;
+}
+
+/* --- 老鬼:摸金傳承 --- */
+ev("c_old_legacy","老鬼的最後一課","老鬼病倒了。你去看他時,他把一個用紅繩繫著的小東西塞進你手裡,是一枚磨得發亮的摸金符。「我這一身本事,沒傳給過誰。」他咳了好久,「今天,我把最後一課教給你。」",[
+{l:"跪下來聽他說",r:{flag:"lucky",sk:{f:1},cp:{old:{gone:"dead",mem:"老鬼臨終前,把摸金符和最後一課都交給了你。",fate:"老鬼走的那天,天氣很好。他的摸金符,後來一直掛在你的脖子上,每次下墓,你都會先摸一下。"}},x:"他說了一整夜:怎麼聽土、怎麼看山、什麼東西不能拿、什麼時候該轉身。天亮時,他閉上了眼睛,手還握著你的手。(獲得摸金符:每座墓第一次判定失敗可再求一卦;尋龍 +1)"}},
+{l:"握著他的手,說「你會好起來的」",r:{flag:"lucky",san:-1,cp:{old:{gone:"dead",mem:"你騙老鬼說他會好起來。他笑了,把摸金符塞給你。",fate:"老鬼走的時候,嘴角是笑著的。他大概知道你在騙他,也知道你是為什麼騙他。"}},x:"他笑了,說:「你這小子,跟你師父一樣,不會說謊。」(獲得摸金符:每座墓第一次判定失敗可再求一卦)"}}
+],{cp:"old"});
+ev("c_old_letter","遲來的信","你收到一封信,字跡歪歪扭扭的。寄信的人說,老鬼上個月走了,走之前託他把這封信交給你。",[
+{l:"讀信",r:{san:-1,st:{truth:1},clue:"老鬼的信:「三十年前那七個人,我是替他們望風的。他們進去的那天,有一個人沒出來,姓燼。」",cp:{old:{gone:"dead",mem:"老鬼過世了,你是從一封信裡知道的。",fate:"老鬼走的時候,身邊沒有人。他留給你的信,你讀了很多遍,最後一句是:「這一行,別待太久。」"}},x:"信裡沒有怪你,只是講了一些三十年前的事,最後一句是:「這一行,別待太久。」"}},
+{l:"把信收起來,不忍心打開",r:{cp:{old:{gone:"dead",mem:"老鬼過世了。他的信,你一直沒有打開。",fate:"老鬼的信,你一直沒有打開。你怕裡面寫的是你沒做到的事。"}},x:"你把信放進抽屜最深處。窗外下起了雨。"}}
+],{cp:"old"});
+
+/* --- 胖叔:分帳與私吞 --- */
+ev("c_fat_caught","少了一件","出墓前清點時,你發現少了一件最值錢的。胖叔站在一旁,手一直插在口袋裡,不敢看你。",[
+{l:"當面拆穿他",r:{loyal:{fat:-1},cp:{fat:{returnLoot:1,set:{stage:"confronted"},mem:"在{tomb},你當場抓到胖叔私藏明器,他紅著臉把東西還了回來。"}},x:"胖叔把東西掏出來,低著頭說:「上次你一個人拿走那麼多,我以為……」"}},
+{l:"睜一隻眼閉一隻眼",r:{loyal:{fat:2},cp:{fat:{set:{stage:"forgiven"},mem:"在{tomb},胖叔私藏了一件明器。你看見了,但什麼也沒說。"}},x:"你轉過身,假裝沒看見。走出墓門時,胖叔走在你旁邊,一直沒說話。"}},
+{l:"當場趕他走",r:{cp:{fat:{returnLoot:1,gone:"expelled",mem:"在{tomb},你抓到胖叔私藏明器,當場把他趕走了。",fate:"胖叔被你趕走以後,有人在黑市見過他,瘦了很多,一個人扛著貨。"}},x:"胖叔把東西放在地上,轉身走進黑暗裡。你聽見他在遠處罵了一句,聲音有點啞。"}}
+],{cp:"fat"});
+ev("c_fat_reveal","古董圈裡的熟面孔",function(S){const f=S.cp&&S.cp.fat;return "古董圈的朋友拿出一件東西,問你認不認得。是"+(f&&f.stolen?f.stolen.n:"一件明器")+"——你帶出墓的東西裡,本來應該有它。賣家,是胖叔。"},[
+{l:"去找胖叔問清楚",r:function(S){const ok=(S.loyal.fat===undefined?5:S.loyal.fat)>=4,v=S.cp.fat.stolen?Math.round(S.cp.fat.stolen.v*.5):200;return ok?{money:v,loyal:{fat:-1},cp:{fat:{set:{stage:"confessed",stolen:null},mem:"胖叔承認私吞過一件明器,把賣得的錢分了一半給你。"}},x:"胖叔沉默了很久,把一疊錢推到你面前:「我女兒要開刀……這是一半,剩下的我會還。」"}:{cp:{fat:{gone:"left",set:{stolen:null},mem:"你去找胖叔對質,他連夜搬走了。",fate:"胖叔連夜搬走了,誰也不知道他去了哪裡。"}},x:"你找到他住的地方時,屋裡已經空了,只剩一張沒吃完的飯桌。"}}},
+{l:"算了",r:{cp:{fat:{set:{stage:"let"},mem:"你知道胖叔私吞過一件明器,但你選擇不追究。"}},x:"你沒有再提這件事。有些人情,不是用錢算的。"}},
+{l:"從此不再找他",r:{cp:{fat:{gone:"expelled",mem:"你知道胖叔私吞明器後,再也沒有找過他。",fate:"你再也沒有找過胖叔。很多年後,你聽說他在老家開了間小店,賣的是假古董。"}},x:"你把胖叔的名字從心裡劃掉了。"}}
+],{cp:"fat"});
+ev("c_fat_good","胖叔請客","胖叔難得請你吃飯,喝到一半,他從皮夾裡掏出一張照片,是一個穿著校服的小女孩。「我女兒。她說以後要當醫生。」",[
+{l:"舉杯,敬她",r:{loyal:{fat:2},cp:{fat:{mem:"胖叔請你吃飯,給你看了他女兒的照片。",fate:"胖叔後來金盆洗手,在老家開了間麵館。他女兒考上醫學院那年,他寄了一大箱臘肉給你。"}},x:"胖叔喝得滿臉通紅,說了好多女兒的事。那是你第一次看見他不談錢。"}},
+{l:"塞給他一筆錢,說是給孩子的學費",r:{money:-300,virtue:1,loyal:{fat:3},cp:{fat:{mem:"你替胖叔的女兒出了一筆學費。",fate:"胖叔的女兒後來真的當了醫生。她診間的牆上,掛著一張全家福,角落裡站著一個人,是你。"}},x:"胖叔愣了很久,把錢推回來,又被你推回去。最後他收下了,眼睛紅紅的。"}}
+],{cp:"fat"});
+
+/* --- 阿蓮:冷落與恩師 --- */
+ev("c_lian_leave","阿蓮的信","你在門縫裡發現一封信,是阿蓮寫的:「最近你下墓都不找我了。我想,你大概不需要一個拆機關的人了。我要去南方,不用送。」",[
+{l:"連夜去車站追她",c:K("n",8),ok:{loyal:{lian:3},cp:{lian:{set:{neglect:0},mem:"阿蓮要離開時,你連夜追到車站,把她留了下來。"}},x:"你在月台上找到她。她看著你,沉默了很久,最後把行李放了下來。"},ng:{cp:{lian:{gone:"left",mem:"阿蓮走了。你追到車站時,車已經開了。",fate:"阿蓮去了南方。聽說她在一間鐘錶行當學徒,修的都是別人修不好的老錶。"}},x:"你趕到車站時,火車剛好開走。月台上只剩下一個空的長椅。"}},
+{l:"讓她走",r:{cp:{lian:{gone:"left",mem:"阿蓮留下一封信就走了,你沒有去追。",fate:"阿蓮去了南方,再也沒有回來。你偶爾會想,如果那天去了車站,會不會不一樣。"}},x:"你把信摺好,收進抽屜裡。"}}
+],{cp:"lian"});
+ev("c_lian_quest","恩師的機關","阿蓮第一次跟你說起她的恩師:一位機關匠,二十年前死在自己設計的機關裡。「我不相信他會失手。」她說,「我想回去看看。」",[
+{l:"陪她回去",r:{sk:{m:1},loyal:{lian:2},cp:{lian:{mem:"你陪阿蓮回到她恩師喪命的地方,找到了真相。",fate:"阿蓮查清了恩師的死因:那個機關被人動過手腳。她沒有報仇,只是把恩師的工具一件一件擦乾淨,收進了箱子裡。"}},x:"你們在廢棄的工坊裡找到那個機關。阿蓮拆開它,手停住了:有人在裡面多裝了一根針。(機關 +1)"}},
+{l:"給她一筆盤纏,讓她自己去",r:{money:-200,loyal:{lian:1},cp:{lian:{mem:"阿蓮去追查恩師的死因,你替她出了盤纏。",fate:"阿蓮後來回來了,什麼也沒說,只是從此拆機關的時候,手比以前更穩。"}},x:"她收下了錢,說:「等我回來。」"}},
+{l:"現在不是時候",r:{loyal:{lian:-2},x:"阿蓮點點頭,沒再說什麼。"}}
+],{cp:"lian"});
+
+/* --- 教授:文物與決裂 --- */
+ev("c_prof_warn","教授的質問","教授找上門,把一份報紙拍在桌上,上面是黑市查獲文物的新聞。「我知道你把東西賣給了誰。」他的聲音在發抖,「那些東西,是一整個時代的記憶。」",[
+{l:"答應他,以後不再賣給黑市",r:{loyal:{prof:1},cp:{prof:{set:{promise:1},mem:"你答應教授,以後不再把東西賣給黑市。"}},x:"教授盯著你很久,最後點了點頭:「我會記住你說的話。」"}},
+{l:"敷衍過去",r:{loyal:{prof:-2},x:"教授走的時候,沒有回頭。"}},
+{l:"「這是我的事。」",r:{cp:{prof:{gone:"broke",mem:"教授質問你賣文物的事,你們吵翻了。",fate:"教授回到了大學。後來他在課堂上講到盜墓的危害時,總會停頓一下,像是想起了誰。"}},x:"教授拿起報紙,一句話也沒說就走了。"}}
+],{cp:"prof"});
+ev("c_prof_break","決裂","教授站在你家門口,手裡拿著一份文件。「我把這些年看到的東西,都寫下來了。」他說,「我不會攔你,但我不能再假裝沒看見。」",[
+{l:"求他再給你一次機會",c:K("n",9),ok:{loyal:{prof:-1},cp:{prof:{set:{promise:1,broken:0},mem:"教授本來要和你決裂,你求他再給你一次機會。"}},x:"教授嘆了一口氣,把文件收回包裡:「最後一次。」"},ng:{wanted:2,cp:{prof:{gone:"broke",mem:"教授和你決裂,把他看到的事交給了文物單位。",fate:"教授的報告交上去以後,你被盯了很長一段時間。你不恨他。你只是偶爾會想起,他在墓裡替你擋過一塊落石。"}},x:"教授搖搖頭,轉身走了。幾天後,你發現巷口多了一個陌生人。(通緝 +2)"}},
+{l:"讓他走",r:{wanted:1,cp:{prof:{gone:"broke",mem:"教授和你決裂了。",fate:"教授後來寫了一本書,講的是文物和守護它們的人。書裡沒有提到你,一個字也沒有。"}},x:"你沒有攔他。門關上的聲音很輕。(通緝 +1)"}}
+],{cp:"prof"});
+ev("c_prof_teach","教授的筆記","教授送你一本厚厚的手寫筆記,封面寫著「器物辨識入門」。「你把東西還回去的那幾次,我都知道。」他推了推眼鏡,「這一行需要你這樣的人。」",[
+{l:"收下,跟他學",r:{sk:{a:1},loyal:{prof:2},cp:{prof:{mem:"教授把一整本器物辨識的筆記傳給了你。",fate:"教授後來的新書裡,有一章寫的是「一位懂得把東西還回去的人」。你知道那是在寫你。"}},x:"你們在書房裡待了一整個下午。教授講起器物時,眼睛會發光。(鑑定 +1)"}},
+{l:"說你配不上這本筆記",r:{virtue:1,loyal:{prof:1},cp:{prof:{mem:"教授要把筆記傳給你,你說你配不上。",fate:"教授說,會說自己配不上的人,通常都配得上。他後來還是把筆記寄給了你。"}},x:"教授笑了:「會這樣說的人,通常都配得上。」"}}
+],{cp:"prof"});
+
+/* --- 阿默:不說話的原因 --- */
+ev("c_mo_secret","阿默的紙條","下墓回來的那晚,阿默第一次主動來找你。他在紙上寫了很久,然後把紙推給你:「三十年前,我哥哥替我走進了那座沒有名字的墓。我在門外等了三天。從那天起,我就說不出話了。我哥哥的名字,叫燼。」",[
+{l:"握住他的手",r:{flag:"moSecret",st:{jin:1},loyal:{mo:2},clue:"阿默是燼的弟弟。三十年前,燼替他走進了無名墓。",cp:{mo:{mem:"阿默告訴你,他是燼的弟弟。"}},x:"阿默的手很冰。他沒有哭,只是一直看著你,像是等這一天等了很久。"}},
+{l:"問他想要你做什麼",r:{flag:"moSecret",st:{jin:1},clue:"阿默希望在無名墓的最深處,親口喊一次哥哥的名字。",cp:{mo:{mem:"阿默說,他想在無名墓的最深處,親口喊一次哥哥的名字。"}},x:"阿默在紙上寫:「帶我去最深的地方。我想喊他的名字。」"}},
+{l:"陪他坐到天亮",r:{flag:"moSecret",loyal:{mo:3},cp:{mo:{mem:"阿默說出了他的秘密,你陪他坐到了天亮。"}},x:"你們誰都沒有說話。天亮的時候,阿默在紙上寫了兩個字:「謝謝」。"}}
+],{cp:"mo"});
+
+/* --- 小周:被收買 --- */
+ev("c_zhou_grow","小周的新朋友","最近小周常常不見人影,身上卻多了一支新手錶。你聽說,洪三爺的人找過他。",[
+{l:"直接問他",c:K("n",7),ok:{flag:"intel",st:{hong:-1},loyal:{zhou:2},cp:{zhou:{mem:"小周坦白洪三爺想收買他,他選擇站在你這邊。",fate:"小周後來成了行裡最可靠的領路人。他常跟新人說,他這條命,是你撿回來的。"}},x:"小周低著頭說了實話,還把洪三爺的下一步計畫告訴了你。(獲得一條捷徑情報)"},ng:{wanted:2,cp:{zhou:{gone:"left",mem:"小周被洪三爺收買,出賣了你的行蹤。",fate:"小周跟了洪三爺。有一次你在街上遇到他,他假裝不認識你,但走過去以後,回頭看了很久。"}},x:"小周說你想太多了。三天後,有人照著你的行程堵你。(通緝 +2)"}},
+{l:"給他一筆錢,叫他別跟那些人來往",r:{money:-200,loyal:{zhou:3},cp:{zhou:{mem:"你塞錢給小周,叫他離洪三爺的人遠一點。",fate:"小周用那筆錢讀完了夜校。後來他寄了一張畢業照給你,背面寫著:「師父,謝謝你。」"}},x:"小周愣住了,收下錢的時候手在抖。"}},
+{l:"不管他",r:function(S){return (S.loyal.zhou===undefined?5:S.loyal.zhou)>=6?{cp:{zhou:{mem:"洪三爺想收買小周,他自己拒絕了。",fate:"小周拒絕了洪三爺。他說,他不想變成連自己都看不起的人。"}},x:"後來你聽說,小周把手錶退了回去。"}:{wanted:2,cp:{zhou:{gone:"left",mem:"小周被洪三爺收買了。",fate:"小周跟了洪三爺,幾年後在一次火拼裡受了傷,從此離開了這一行。"}},x:"小周再也沒有來找你。不久之後,你發現自己被人跟蹤了。(通緝 +2)"}}}
+],{cp:"zhou"});
+
+/* --- 鐵頭:舊傷 --- */
+ev("c_tie_injury","鐵頭的腿","鐵頭走路開始一跛一跛的。他說是老毛病,沒事。但你看見他偷偷吃止痛藥,一次吃好幾顆。",[
+{l:"出錢讓他去治",r:{money:-300,loyal:{tie:3},cp:{tie:{mem:"你出錢讓鐵頭去治腿。",fate:"鐵頭的腿治好了。他後來在城郊開了一間武館,教小孩紮馬步,說是要把他們練得跟他一樣結實。"}},x:"鐵頭嘴上說不用,最後還是去了。他回來的那天,特地跑了一圈給你看。"}},
+{l:"勸他退休",r:{cp:{tie:{gone:"retired",mem:"鐵頭的腿傷了,你勸他退休。",fate:"鐵頭退休後回了老家,每天在河邊釣魚。他說他終於知道,不往前衝是什麼感覺。"}},x:"鐵頭沉默了很久,說:「好。」那是他第一次沒有跟你頂嘴。"}},
+{l:"叫他忍一忍",r:{loyal:{tie:-2},cp:{tie:{mem:"鐵頭的腿痛,你叫他忍一忍。",fate:"鐵頭一直忍著。後來他的腿再也跑不動了,但他從來沒有怪過你。"}},x:"鐵頭咧嘴一笑:「行!」你知道他在逞強。"}}
+],{cp:"tie"});
+
+/* --- 阿瑤:醫館 --- */
+ev("c_yao_clinic","阿瑤的醫館","阿瑤說,她存了一些錢,想在城南開一間小醫館。「我治了太多從墓裡爬出來的人了,」她說,「我想治一些普通的病人。」",[
+{l:"出資幫她開醫館",r:{money:-400,flag:"yaoClinic",virtue:1,cp:{yao:{gone:"retired",mem:"你出資幫阿瑤開了醫館。",fate:"阿瑤的醫館後來在城南很有名。每次你帶著傷去找她,她都會先罵你一頓,再替你包紮。"}},x:"醫館開張那天,阿瑤在門口掛了一塊匾,上面寫著「平安」。(之後每輪會收到阿瑤寄來的藥材)"}},
+{l:"祝福她",r:{cp:{yao:{gone:"retired",mem:"阿瑤離開這一行,去開醫館了。",fate:"阿瑤的醫館開在城南的巷子裡。她說,看診不收錢的人,只有你一個。"}},x:"阿瑤抱了你一下:「受傷了記得來找我。」"}},
+{l:"請她再留一陣子",r:{loyal:{yao:-1},cp:{yao:{mem:"阿瑤想去開醫館,你請她再留一陣子。"}},x:"阿瑤嘆了口氣:「好吧。但你要答應我,少受點傷。」"}}
+],{cp:"yao"});
+
+/* 結局時,每位隊友的後來 */
+const FATE_POOL={
+ hi:["{n}後來常跟人提起,和你一起下墓的那幾年。","{n}的屋裡一直掛著一張你們的合照,是在{tomb}外頭拍的。","每年清明,{n}都會替你多點一盞燈。","{n}說,這輩子最不後悔的,就是那年跟著你走進{tomb}。"],
+ mid:["{n}後來和你斷斷續續地聯絡著,偶爾一起喝酒。","{n}換了一行,但每次經過古董街,都會在你的店門口站一會兒。","{n}偶爾會寄來一封短信,只寫三個字:「還活著。」","{n}再也沒下過墓。聽說他把在{tomb}撿到的一塊碎陶,一直放在枕頭底下。"],
+ lo:["你和{n}後來沒有再見過面。","{n}後來跟了別的隊伍。在路上遇見時,你們只是點了點頭。","聽說{n}到處說你分帳不公。你沒有去解釋。","{n}的消息,你是從別人嘴裡聽說的。沒有一句是好話。"]
+};
+function cpFates(){
+ const out=[],used={hi:0,mid:0,lo:0},off=Math.floor(Math.random()*4);
+ Object.keys(TEAM).forEach(function(id){
+  const c=S.cp&&S.cp[id];if(!c||!c.tombs)return;
+  const L=S.loyal[id]===undefined?5:S.loyal[id];
+  let f=c.fate;
+  if(!f){const band=L>=7?"hi":L>=4?"mid":"lo",pool=FATE_POOL[band];f=pool[(off+used[band]++)%pool.length].replace(/\{n\}/g,TEAM[id].n).replace(/\{tomb\}/g,c.firstTomb||"那座墓")}
+  out.push({id:id,n:TEAM[id].n,tombs:c.tombs,status:c.gone?CP_STATUS[c.gone]:"",f:f});
+ });
+ return out;
+}
+
+/* 無名墓最後一間:阿默的選項 */
+E.r7.o.push({l:"讓阿默開口,喊出哥哥的名字",need:{flag:"moSecret",mate:"mo"},r:{end:"M2",cp:{mo:{fate:"阿默在無名墓的最深處,第一次開口,喊的是哥哥的名字。從那以後他會說話了,只是話很少,而且每一句都很溫柔。"}},x:"阿默張開嘴,發出了三十年來的第一個聲音。他喊的是:「哥。」黑暗裡,有人回答了他。"}});
+
+
+/* ==========================================================
+   v2.9 盜墓傳奇:結局時,依這一世的經歷寫成一本人生小說
+   - 人生紀錄:每個選擇、每座墓、隊友的事都會記下來
+   - 生成:用預先寫好的段落,依紀錄挑選、拼接成章節
+   - 閱讀:翻頁書本介面、存成 PDF、下載封面、交給 AI 潤稿
+   ========================================================== */
+const CN_NUM=["零","一","二","三","四","五","六","七","八","九","十","十一","十二","十三","十四","十五","十六","十七","十八"];
+function cn(n){return CN_NUM[n]||String(n)}
+function cnc(n){return n===2?"兩":cn(n)}
+function lifeLog(e,out,chk,roll){
+ if(!S||!e||S.mode==="delve")return;
+ S.life=S.life||[];
+ const ph=e.age?"grow":e.vol?"story":(e.cp?"cp":(S.tomb?"tomb":"jh"));
+ let d="";if(ph==="story"||ph==="cp"){try{d=typeof e.d==="function"?e.d(S):e.d}catch(err){d=""}d=String(d||"");if(d.length>120){const k=d.indexOf("。",60);d=d.slice(0,k>0&&k<130?k+1:120)}}
+ S.life.push({ph:ph,r:S.round,age:e.age||0,tomb:S.tomb?S.tomb.n:"",t:e.t,x:out.x||"",roll:roll?roll.roll:0,ok:roll?roll.ok:null,
+  why:out.why?(out.why.ok?1:-1):0,loot:out.loot||0,hurt:(out.hp||0)<=-2,mad:(out.san||0)<=-2,ghost:!!e.ghost,
+  main:!!(S.tomb&&S.rooms&&S.ri===S.rooms.length-1&&!e.vol),vol:e.vol||"",cp:e.cp||"",d:d});
+ if(S.life.length>180)S.life.splice(30,1);
+}
+function lifeExit(){
+ if(!S||S.mode==="delve")return;
+ S.life=S.life||[];
+ S.life.push({ph:"exit",r:S.round,tomb:S.tomb.n,loot:S.loot.map(function(i){return i.n}),val:S.loot.reduce(function(a,b){return a+b.v},0),team:S.team.map(function(id){return TEAM[id].n})});
+}
+function lifeNote(ph,t){if(!S||S.mode==="delve")return;S.life=S.life||[];S.life.push({ph:ph,r:S.round,tomb:S.tomb?S.tomb.n:"",x:t})}
+
+const TOMB_OPEN={
+ "荒丘漢墓":["那是你的第一座墓。荒丘上的風很大,舊盜洞像一張張沒有牙的嘴。","荒丘漢墓不大,前人來過很多次。可對第一次下墓的人來說,每一步都像踩在別人的骨頭上。"],
+ "唐代貴族合葬墓":["唐墓的壁畫鮮豔得不像千年之物。你總覺得,畫裡的人在看你。","那座合葬墓裡躺著一對夫妻。牆上的儀仗隊,一直陪他們走到今天。"],
+ "明代藩王墓":["藩王墓的機關一環扣一環,做它的人,是真的不想讓任何人活著出去。","明代的藩王把整座山掏空了,只為了讓自己睡得安穩。"],
+ "沙漠古城墓(架空)":["沙漠裡的古城,只剩半截城牆露在黃沙外面。水囊晃一下,你的心就跟著晃一下。","風沙把來時的路抹平了。你們能依靠的,只有腰間的水囊。"],
+ "水下沉墓":["沉墓在水底,燈火照不遠。每一口氣,都要省著用。","黑色的水面像一塊安靜的玻璃。你知道下面有東西,也知道下面有人在等。"],
+ "戰國將軍墓":["將軍帶著他的軍隊,一起睡在地底。陶兵的戈,還是真的。","甬道兩旁站滿了兵俑。你走過的時候,它們都沒有動,但你總覺得它們在數你的腳步。"],
+ "蓬萊墓(海外東洋)":["只有退潮的時候,蓬萊門才會露出海面。你們能待多久,由潮水說了算。","傳說中求不死的方士,最後葬在了海外的仙山。海浪聲在洞窟裡,像在數數。"],
+ "藏王墓":["雪山深處的王陵,經幡在風裡獵獵作響。這裡的一切,都在看著你怎麼對待它。","高原的風很冷。走進藏王墓之前,你不知道自己帶進去的,是貪心還是敬畏。"],
+ "無名墓":["門在你身後無聲地合上。從這裡開始,沒有回頭路。","這座墓沒有名字。三十年前七個人走進去,只有三個人走出來。"]
+};
+const pickOne=function(a){return a[Math.floor(Math.random()*a.length)]};
+function beatText(b){
+ let pre="";
+ if(b.why===1)pre=pickOne(["殘壁上的規則,你一條一條看穿了。","你讀懂了牆上的規則,也讀懂了哪一條在說謊。"]);
+ else if(b.why===-1)pre=pickOne(["你讀錯了牆上的規則。","那面規則牆,你沒有讀懂。"]);
+ else if(b.roll===6)pre=pickOne(["那一卦是大吉。","籤筒裡掉出的是上上籤。"]);
+ else if(b.roll===1)pre=pickOne(["卜出大凶的那一刻,燈火晃了一下。","下下籤。你握著籤,手心全是汗。"]);
+ else if(b.main)pre=pickOne(["終於到了主墓室。","主墓室就在眼前。"]);
+ return pre+"「"+b.t+"」——"+b.x;
+}
+function lootSum(a){const c={},o=[];a.forEach(function(n){if(!c[n]){c[n]=0;o.push(n)}c[n]++});return o.map(function(n){return n+(c[n]>1?cnc(c[n])+"件":"")}).join("、")}
+function scoreBeat(b){return(b.why?5:0)+(b.cp?6:0)+(b.roll===6||b.roll===1?4:0)+(b.main?4:0)+(b.loot?2:0)+(b.hurt?2:0)+(b.mad?2:0)+(b.ghost?1:0)}
+function topBeats(list,n){
+ return list.map(function(b,i){return{b:b,i:i,s:scoreBeat(b)}}).filter(function(o){return o.s>0&&o.b.x}).sort(function(a,b){return b.s-a.s}).slice(0,n).sort(function(a,b){return a.i-b.i}).map(function(o){return o.b});
+}
+function buildBook(endId){
+ const L=S.life||[],chs=[];
+ /* 序章 */
+ const o=S.origin||{n:"無名之人",d:""};
+ let p=[pickOne(["你出生的時候,沒有人想到你會走上這條路。","命運替你寫下的第一行字是:"+o.n+"。"]),o.d];
+ if(S.talents&&S.talents.length)p.push("大人們說你"+S.talents.map(function(t){return"「"+t.n+"」"}).join("、")+"。那時候沒人知道,這些會在地底下救你的命。");
+ p.push(S.marked?"接生婆抱起你時愣了一下。她說,這孩子的命格裡,有不乾淨的東西。":"算命先生說,你的命格乾乾淨淨。後來你常想,他到底有沒有看錯。");
+ chs.push({h:"序章 · 命",p:p});
+ /* 少年篇 */
+ const g=L.filter(function(b){return b.ph==="grow"&&b.x});
+ if(g.length){
+  const sel=g.length<=4?g:[g[0],g[Math.floor(g.length*.35)],g[Math.floor(g.length*.7)],g[g.length-1]];
+  chs.push({h:"少年篇",p:sel.map(function(b){return cn(b.age)+"歲那年,"+b.t+"。"+b.x})});
+ }
+ /* 每座墓一章 */
+ const rounds=[];L.forEach(function(b){if(b.ph==="tomb"&&b.tomb&&rounds.indexOf(b.r)<0)rounds.push(b.r)});
+ rounds.forEach(function(r,ci){
+  const tb=L.filter(function(b){return b.r===r&&b.ph==="tomb"}),name=tb[0].tomb;
+  const ex=L.filter(function(b){return b.ph==="exit"&&b.r===r})[0];
+  const before=L.filter(function(b){return b.r===r&&b.ph==="cp"});
+  const after=L.filter(function(b){return b.r===r+1&&(b.ph==="story")});
+  const p=[];
+  before.forEach(function(b){p.push((b.d?b.d:b.t+"。")+b.x)});
+  p.push(pickOne(TOMB_OPEN[name]||["你走進了"+name+"。"]));
+  if(ex&&ex.team.length)p.push("同行的有"+ex.team.join("、")+"。");
+  topBeats(tb,3).forEach(function(b){p.push(beatText(b))});
+  L.filter(function(b){return b.r===r&&(b.ph==="rescue"||b.ph==="cpnote")}).forEach(function(b){p.push(b.x)});
+  if(ex)p.push(ex.loot.length?pickOne(["你帶著"+lootSum(ex.loot)+",走出了"+name+"。","走出"+name+"時,你的包裡多了"+lootSum(ex.loot)+"。"]):"你空著手走出了"+name+"。有些墓,能活著出來就已經是收穫。");
+  after.forEach(function(b,k){p.push((k===0?pickOne(["回到地面以後,","那年冬天,","那段日子裡,"]):"")+(b.d||"")+b.x)});
+  chs.push({h:"第"+cn(ci+1)+"章 · "+name.replace(/\(.*\)/,""),p:p});
+ });
+ /* 終章 */
+ const en=ENDINGS[endId]||{n:"",c:"",t:""};
+ const ep=[endText(endId)].concat(epilogue(endId));
+ chs.push({h:"終章 · "+en.n,p:ep});
+ /* 後記 */
+ const f=cpFates();
+ if(f.length)chs.push({h:"後記 · 他們後來",p:f.map(function(x){return x.n+"(同行 "+cnc(x.tombs)+" 次"+(x.status?" · "+x.status:"")+"):"+x.f})});
+ const book={v:1,date:new Date().toISOString().slice(0,10),name:CODEX.lastName||"",title:titleOf(endId),ending:en.n,cat:en.c,origin:o.n,tombs:S.tombsDone||0,money:S.money,chs:chs,ai:aiPrompt(endId,chs)};
+ CODEX.books=CODEX.books||[];CODEX.books.unshift(book);if(CODEX.books.length>5)CODEX.books.length=5;saveCodex();
+ return book;
+}
+function aiPrompt(endId,chs){
+ const L=["請根據下面這份遊戲人生紀錄,用繁體中文寫一篇約 3000 字的短篇人生小說,書名為《盜墓傳奇》。",
+ "要求:第二人稱「你」;筆調帶一點懸疑與江湖氣;保留每個角色的名字與關鍵事件;不要使用任何現有小說的角色或情節;最後以隊友們的後來作結。",
+ "","【人生紀錄】"];
+ chs.forEach(function(c){L.push("— "+c.h);c.p.forEach(function(x){L.push("  "+x)})});
+ return L.join("\n");
+}
+
+/* ---------- 閱讀介面 ---------- */
+let BOOK=null,BOOK_P=0;
+function bookName(b){return b.name||"無名氏"}
+function openBook(b){
+ BOOK=b;BOOK_P=0;
+ let box=document.getElementById("bookFx");
+ if(!box){box=document.createElement("div");box.id="bookFx";box.setAttribute("role","dialog");box.setAttribute("aria-label","盜墓傳奇");document.body.appendChild(box)}
+ box.classList.add("on");drawBook();
+ const pb=document.getElementById("printBook")||(function(){const d=document.createElement("div");d.id="printBook";document.body.appendChild(d);return d})();
+ pb.innerHTML='<h1>盜墓傳奇</h1><h2>'+escB(bookName(b))+'傳</h2><p class="pb-sub">'+b.title+' · '+b.ending+' · '+b.date+'</p>'+b.chs.map(function(c){return'<h3>'+c.h+'</h3>'+c.p.map(function(x){return'<p>'+escB(x)+'</p>'}).join("")}).join("");
+}
+function escB(s){return String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;")}
+function closeBook(){const b=document.getElementById("bookFx");if(b)b.classList.remove("on")}
+function drawBook(){
+ const b=BOOK,box=document.getElementById("bookFx"),n=b.chs.length+1,i=BOOK_P;
+ let page;
+ if(i===0)page='<div class="bk-cover"><div class="bk-seal">傳</div><div class="bk-k">盜墓傳奇</div><div class="bk-name" id="bkName">'+escB(bookName(b))+'</div><div class="bk-sub">'+b.title+'</div><div class="bk-line"></div><div class="bk-meta">出身 · '+escB(b.origin)+'<br>走過 '+b.tombs+' 座墓 · 結局「'+b.ending+'」<br>'+b.date+'</div>'+
+  '<label class="bk-in">替主角題個名號<input id="bkInput" maxlength="12" value="'+escB(b.name||"")+'" placeholder="例如:沈三更"></label></div>';
+ else{const c=b.chs[i-1];page='<div class="bk-page"><h3>'+c.h+'</h3>'+c.p.map(function(x){return'<p>'+escB(x)+'</p>'}).join("")+'</div>'}
+ box.innerHTML='<div class="bk-wrap"><div class="bk-book">'+page+'<div class="bk-no">'+(i===0?"封面":i+" / "+(n-1))+'</div></div>'+
+  '<div class="bk-nav"><button class="btn ghost" id="bkPrev" '+(i===0?"disabled":"")+'>上一頁</button><button class="btn main" id="bkNext">'+(i===n-1?"闔上書":"下一頁")+'</button></div>'+
+  '<div class="bk-tools"><button class="btn ghost" id="bkPdf">存成 PDF</button><button class="btn ghost" id="bkCover">下載封面</button><button class="btn ghost" id="bkAi">交給 AI 潤稿</button><button class="btn ghost" id="bkClose">關閉</button></div><div class="bk-msg" id="bkMsg"></div></div>';
+ const $b=function(id){return document.getElementById(id)};
+ $b("bkPrev").onclick=function(){if(BOOK_P>0){BOOK_P--;drawBook()}};
+ $b("bkNext").onclick=function(){if(BOOK_P<n-1){BOOK_P++;drawBook()}else closeBook()};
+ $b("bkClose").onclick=closeBook;
+ $b("bkPdf").onclick=function(){try{window.print()}catch(e){}};
+ $b("bkCover").onclick=function(){bookCover(b)};
+ $b("bkAi").onclick=function(){copyText(b.ai.replace("《盜墓傳奇》","《盜墓傳奇:"+bookName(b)+"傳》"),function(ok){$b("bkMsg").textContent=ok?"已複製人生紀錄與寫作提示。貼到任何 AI 聊天工具,就能得到潤飾過的版本。":"無法自動複製,請改用「存成 PDF」。"})};
+ const inp=$b("bkInput");
+ if(inp)inp.onchange=function(){b.name=inp.value.trim();CODEX.lastName=b.name;saveCodex();const pb=document.querySelector("#printBook h2");if(pb)pb.textContent=bookName(b)+"傳";$b("bkName").textContent=bookName(b)};
+}
+function bookCover(b){
+ const cv=document.createElement("canvas");cv.width=720;cv.height=1000;
+ const g=cv.getContext("2d"),F='"Noto Serif TC","PingFang TC","Microsoft JhengHei",serif';
+ const gr=g.createLinearGradient(0,0,720,1000);gr.addColorStop(0,"#3a2614");gr.addColorStop(1,"#1a100a");g.fillStyle=gr;g.fillRect(0,0,720,1000);
+ g.fillStyle="#2a1a0e";g.fillRect(0,0,46,1000);g.strokeStyle="#8b6a35";g.lineWidth=2;g.strokeRect(80,60,580,880);g.strokeRect(92,72,556,856);
+ g.textAlign="center";g.fillStyle="#c9a35c";g.font="28px "+F;g.fillText("盜 墓 傳 奇",370,180);
+ g.fillStyle="#f0d9a0";g.font="bold 84px "+F;
+ const nm=bookName(b)+"傳";let y=330;for(const ch of nm){g.fillText(ch,370,y);y+=96;if(y>720)break}
+ g.fillStyle="#c9a35c";g.font="26px "+F;g.fillText(b.title+" · "+b.ending,370,800);
+ g.fillStyle="#8b7550";g.font="20px "+F;g.fillText("出身 "+b.origin+" · 走過 "+b.tombs+" 座墓",370,850);g.fillText("盜墓人生模擬器",370,900);
+ g.fillStyle="#9c2b1e";g.fillRect(560,110,60,60);g.fillStyle="#f3d9c4";g.font="bold 34px "+F;g.fillText("傳",590,152);
+ cardModal(cv,"tomb-legend.png");closeBook();
+}
+
 /* ===== 機關解謎 ===== */
 const PZ={};
 const BEAST_V=[
@@ -2379,10 +2764,11 @@ function doCheck(c){
 function needReason(n){
  const out=[];
  if(n.gear)out.push("裝備："+(GEAR[n.gear]?GEAR[n.gear].n:n.gear));
- if(n.flag){const names={last:"師父的遺言",noturn:"不回頭的約定",notebook:"師父的筆記",intel:"老鬼的路線情報",extraOil:"額外燈油",seen:"城門上的字跡"};out.push(names[n.flag]||"特殊線索")}
+ if(n.flag){const names={moSecret:"阿默的秘密",last:"師父的遺言",noturn:"不回頭的約定",notebook:"師父的筆記",intel:"老鬼的路線情報",extraOil:"額外燈油",seen:"城門上的字跡"};out.push(names[n.flag]||"特殊線索")}
  if(n.marked)out.push("命中帶印");
  if(n.notMarked)out.push("命格乾淨");
  if(n.virtue)out.push("陰德至少 "+n.virtue);
+ if(n.mate)out.push(TEAM[n.mate].n+" 同行");
  if(n.team)out.push("隊伍至少 "+n.team+" 人");
  if(n.mat)out.push("材料至少 "+n.mat);
  if(n.food)out.push("乾糧至少 "+n.food);
@@ -2550,12 +2936,15 @@ function renderPrep(){SCREEN_KEY="prep";
  }else if(PTAB==="team"){
   h+='<div class="save-strip">隊伍最多 3 人。隊友會提供專長判定加成，部分角色還有特殊能力。</div>';
   Object.keys(TEAM).forEach(function(k){
+   if(cpGone(k))return;
    const m=TEAM[k],on=S.prep.team.indexOf(k)>=0,full=S.prep.team.length>=3;
    h+=B('<span class="mate"><span>'+m.n+' <small>'+SK[m.sk]+' · '+m.c+' 元</small></span><span class="dim">'+hearts(k)+'</span></span><small>'+m.d+'</small>',function(){
     if(on)S.prep.team.splice(S.prep.team.indexOf(k),1);else if(S.prep.team.length<3)S.prep.team.push(k);
     renderPrep();
    },on?"sel":"",!on&&full);
   });
+ const gone=Object.keys(TEAM).filter(cpGone);
+  if(gone.length)h+='<div class="cp-gone">'+gone.map(function(k){return'<b>'+TEAM[k].n+'</b> · '+CP_STATUS[S.cp[k].gone]}).join("　")+'</div>';
  }else if(PTAB==="camp"){
   h+='<div class="owned">物資庫存：乾糧 '+S.food+' · 藥材 '+S.herb+' · 材料 '+S.mat+'</div>';
   [["stove","營灶","每輪產出乾糧"],["herb","藥圃","每輪產出藥材"],["shop","工坊","每輪產出材料"]].forEach(function(b){
@@ -2624,7 +3013,7 @@ function retireEnding(){
 }
 function chooseChannel(c,total){
  let gain,fx={},note="";
- if(c==="black"){gain=Math.round(total*1.25);fx={wanted:1,virtue:-1};note="你把東西交給了黑市的人，他們數錢數得很快。";S.loyal.prof=Math.max(0,(S.loyal.prof===undefined?5:S.loyal.prof)-2)}
+ if(c==="black"){cpBlack();gain=Math.round(total*1.25);fx={wanted:1,virtue:-1};note="你把東西交給了黑市的人，他們數錢數得很快。";S.loyal.prof=Math.max(0,(S.loyal.prof===undefined?5:S.loyal.prof)-2)}
  else if(c==="ant"){
   gain=Math.round(total*(1+.05*S.sk.a));
   if(S.team.indexOf("prof")>=0&&S.loyal.prof>0){gain=Math.round(gain*1.1);note="教授替你把關真偽，談成了一筆更好的價格。"}
@@ -2632,7 +3021,7 @@ function chooseChannel(c,total){
  }else{gain=Math.round(total*.3);fx={wanted:-1,virtue:2};S.donated++;note="你把東西交給了文物單位。對方認真地登記了每一件，最後遞給你一份補助。"}
  if(!S.team.length){S.money+=gain;return afterSale(note+" 入帳 "+gain+" 元。",fxChips(fx))}
  const acts=[],B=Bk(acts),fat=S.team.indexOf("fat")>=0&&S.loyal.fat>0,share=fat?0.85:0.8,shareLoyal=fat?2:1,soloPenalty=fat?3:2;
- show(bar()+'<div class="card"><p>'+note+'</p><p>這筆錢，<b style="color:var(--gold)">'+gain+'</b> 元，怎麼分？</p>'+(fat?'<div class="hint">胖叔替你談了分帳比例，你可以保留 85% 的收入。</div>':'')+'</div>'+B('平分 <small>你拿 ×'+share.toFixed(2)+'，隊友好感 +'+shareLoyal+'</small>',function(){S.money+=Math.round(gain*share);applyFx({loyal:{all:shareLoyal}});afterSale(note+" 入帳 "+Math.round(gain*share)+" 元。",fxChips(fx))})+B('獨吞 <small>你拿全部，隊友好感 -'+soloPenalty+'</small>',function(){S.money+=gain;applyFx({loyal:{all:-soloPenalty}});afterSale(note+" 入帳 "+gain+" 元，隊友們沒說話。",fxChips(fx))}),acts);
+ show(bar()+'<div class="card"><p>'+note+'</p><p>這筆錢，<b style="color:var(--gold)">'+gain+'</b> 元，怎麼分？</p>'+(fat?'<div class="hint">胖叔替你談了分帳比例，你可以保留 85% 的收入。</div>':'')+'</div>'+B('平分 <small>你拿 ×'+share.toFixed(2)+'，隊友好感 +'+shareLoyal+'</small>',function(){cpShare("fair");S.money+=Math.round(gain*share);applyFx({loyal:{all:shareLoyal}});afterSale(note+" 入帳 "+Math.round(gain*share)+" 元。",fxChips(fx))})+B('獨吞 <small>你拿全部，隊友好感 -'+soloPenalty+'</small>',function(){cpShare("solo");S.money+=gain;applyFx({loyal:{all:-soloPenalty}});afterSale(note+" 入帳 "+gain+" 元，隊友們沒說話。",fxChips(fx))}),acts);
 }
 
 
@@ -2661,7 +3050,7 @@ function importSaveFile(){
 let CODEX_TAB="ends";
 function renderCodex(){SCREEN_KEY="codex";
  const acts=[],B=Bk(acts),endCount=Object.keys(CODEX.end).length,itemCount=Object.keys(CODEX.items).filter(n=>ITEMS.some(row=>row.some(x=>x.n===n))).length;
- let h=bar()+'<div class="card"><div class="cat">收藏與紀錄</div><h2>圖鑑</h2><div class="dashboard"><div class="cell"><strong>'+endCount+'/'+Object.keys(ENDINGS).length+'</strong><small>已解鎖結局</small></div><div class="cell"><strong>'+itemCount+'/'+ITEMS.reduce((a,r)=>a+r.length,0)+'</strong><small>已發現明器</small></div><div class="cell"><strong>'+((CODEX.delve&&CODEX.delve.depth)||0)+'</strong><small>魔窟最深層</small></div></div><div class="tabs codex-tabs">'+B("結局",function(){CODEX_TAB="ends";renderCodex()},CODEX_TAB==="ends"?"sel":"")+B("明器",function(){CODEX_TAB="items";renderCodex()},CODEX_TAB==="items"?"sel":"")+B("探索紀錄",function(){CODEX_TAB="recent";renderCodex()},CODEX_TAB==="recent"?"sel":"")+B("遊玩統計",function(){CODEX_TAB="stats";renderCodex()},CODEX_TAB==="stats"?"sel":"")+B("成就",function(){CODEX_TAB="ach";renderCodex()},CODEX_TAB==="ach"?"sel":"")+'</div>';
+ let h=bar()+'<div class="card"><div class="cat">收藏與紀錄</div><h2>圖鑑</h2><div class="dashboard"><div class="cell"><strong>'+endCount+'/'+Object.keys(ENDINGS).length+'</strong><small>已解鎖結局</small></div><div class="cell"><strong>'+itemCount+'/'+ITEMS.reduce((a,r)=>a+r.length,0)+'</strong><small>已發現明器</small></div><div class="cell"><strong>'+((CODEX.delve&&CODEX.delve.depth)||0)+'</strong><small>魔窟最深層</small></div></div><div class="tabs codex-tabs">'+B("結局",function(){CODEX_TAB="ends";renderCodex()},CODEX_TAB==="ends"?"sel":"")+B("明器",function(){CODEX_TAB="items";renderCodex()},CODEX_TAB==="items"?"sel":"")+B("探索紀錄",function(){CODEX_TAB="recent";renderCodex()},CODEX_TAB==="recent"?"sel":"")+B("遊玩統計",function(){CODEX_TAB="stats";renderCodex()},CODEX_TAB==="stats"?"sel":"")+B("成就",function(){CODEX_TAB="ach";renderCodex()},CODEX_TAB==="ach"?"sel":"")+B("書架",function(){CODEX_TAB="books";renderCodex()},CODEX_TAB==="books"?"sel":"")+'</div>';
  if(CODEX_TAB==="ends"){
   ["主線","財富線","法律線","詭異線","江湖線"].forEach(function(c){
    const ids=Object.keys(ENDINGS).filter(k=>ENDINGS[k].c===c);
@@ -2670,6 +3059,11 @@ function renderCodex(){SCREEN_KEY="codex";
   });
  }else if(CODEX_TAB==="items"){
   ITEMS.forEach(function(row,i){h+='<div class="section-title"><span>第 '+(i+1)+' 類明器</span><span>'+row.filter(x=>CODEX.items[x.n]).length+'/'+row.length+'</span></div><div class="grid2">';row.forEach(function(it){h+=CODEX.items[it.n]?'<div class="cell"><b>'+it.n+'</b><br><small class="dim">圖鑑估價 '+it.v+'</small></div>':'<div class="cell lock">？？？<br><small>尚未發現</small></div>'});h+='</div>'});
+ }else if(CODEX_TAB==="books"){
+  const bs=CODEX.books||[];
+  h+='<p class="dim">最近 5 本《盜墓傳奇》。每完成一局,就會多一本。</p>';
+  if(!bs.length)h+='<div class="cell lock" style="padding:14px">書架還是空的。</div>';
+  bs.forEach(function(b){h+=B('<span class="choice-main">《'+(b.name||"無名氏")+'傳》</span><small>'+b.date+' · '+b.title+' · 結局「'+b.ending+'」 · '+b.chs.length+' 章</small>',function(){openBook(b)})});
  }else if(CODEX_TAB==="ach"){
   h+=achHtml();
   ACH.forEach(function(a){
@@ -2747,6 +3141,11 @@ function renderRelationships(){SCREEN_KEY="rel";
  });
  h+='</div><div class="card"><div class="section-title"><span>江湖熟人</span><span>尚未同行</span></div>';
  ids.filter(id=>!active.includes(id)).forEach(function(id){const m=TEAM[id],v=S.loyal[id]===undefined?5:S.loyal[id];h+='<div class="cell" style="margin:7px 0"><div class="relation-top"><b>'+m.n+'</b><span class="relation-score">'+v+'/9 · '+relationLevel(v)+'</span></div><small class="dim">'+m.d+'</small></div>'});
+ h+='</div>';
+ const tl=Object.keys(TEAM).filter(function(id){return S.cp&&S.cp[id]&&S.cp[id].mem.length});
+ h+='<div class="card"><div class="section-title"><span>我們之間的事</span><span>他們會記得</span></div>';
+ if(!tl.length)h+='<p class="dim">和隊友一起下墓、分帳、共患難,這裡會記下你們之間發生的事。</p>';
+ tl.forEach(function(id){const c=S.cp[id];h+='<div class="tl-h"><b>'+TEAM[id].n+'</b><small>同行 '+c.tombs+' 次'+(c.gone?' · '+CP_STATUS[c.gone]:'')+'</small></div><div class="tl">'+c.mem.map(function(m){return'<p>第 '+m.r+' 輪 · '+m.t+'</p>'}).join("")+'</div>'});
  h+='</div>'+B('返回備戰',function(){PTAB='team';renderPrep()},'main');
  show(h,acts);
  document.querySelectorAll('[data-rel-talk]').forEach(function(el){el.addEventListener('click',function(){const id=this.getAttribute('data-rel-talk');if(S.relationActions[id]===S.round)return;S.loyal[id]=Math.min(9,(S.loyal[id]===undefined?5:S.loyal[id])+1);S.relationActions[id]=S.round;saveProgress();renderRelationships()})});
