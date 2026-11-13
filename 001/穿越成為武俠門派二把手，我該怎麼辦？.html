@@ -52,6 +52,7 @@ h3::after{content:"";flex:1;height:1px;background:linear-gradient(90deg,var(--li
 .btn:disabled{opacity:.4;cursor:not-allowed}
 .btn.danger{border-color:var(--red);color:#f1b3ac;background:linear-gradient(#3a1a17,#1d0e0c)}
 .btn.small{font-size:12px;padding:.25em .6em}
+.hdr-r{display:flex;align-items:center;gap:10px}.speedbox{display:flex;align-items:center;gap:4px;font-size:12px;color:var(--mute)}.speedbox .btn.on{background:linear-gradient(#6b5420,#3b2e19);box-shadow:0 0 10px rgba(212,175,55,.5);color:#fff}
 .mini{font:inherit;font-size:12px;color:var(--mute);background:none;border:1px solid var(--line);border-radius:3px;cursor:pointer;padding:1px 6px}
 .mini:hover{color:var(--gold2);border-color:var(--gold)}
 .btn .cost{display:block;font-size:11px;color:var(--mute);letter-spacing:0}
@@ -184,7 +185,15 @@ input.txt{width:100%;font:inherit;padding:6px 8px;background:#0e0b08;border:1px 
       <h1>穿越成為武俠門派二把手，我該怎麼辦？</h1>
       <div class="sub">單機經營 · 自動存檔 · 離線可收益</div>
     </div>
-    <button class="btn small" data-act="help">玩法說明</button>
+    <div class="hdr-r">
+      <div class="speedbox" title="加速只影響線上遊玩；離線收益依實際離開時間計算，不受倍速影響">
+        <span>速度</span>
+        <button class="btn small on" data-act="speed" data-v="1">1×</button>
+        <button class="btn small" data-act="speed" data-v="2">2×</button>
+        <button class="btn small" data-act="speed" data-v="5">5×</button>
+      </div>
+      <button class="btn small" data-act="help">玩法說明</button>
+    </div>
   </header>
 
   <main class="layout">
@@ -236,6 +245,7 @@ input.txt{width:100%;font:inherit;padding:6px 8px;background:#0e0b08;border:1px 
         <button class="btn" id="btnRecruit" data-act="recruit"></button>
         <button class="btn" id="btnForge" data-act="forge"></button>
         <button class="btn" data-act="armory">兵器庫</button>
+        <button class="btn" data-act="autoequip">一鍵裝備</button>
         <button class="btn" data-act="ranks">查看天機榜</button>
         <button class="btn" id="btnTribute" data-act="tribute"></button>
         <button class="btn" id="btnScheme" data-act="scheme"></button>
@@ -889,6 +899,21 @@ function equip(d, slot, itemId) {
   const old = d[key] && getItem(d[key]); if (old) old.owner = null;
   d[key] = itemId; if (itemId) getItem(itemId).owner = d.id;
 }
+// 一鍵裝備：重新分配所有兵器／防具，裝備由強到弱配給戰力由強到弱的弟子
+function autoEquip(silent) {
+  const S = state;
+  if (!S.disciples.length || !S.items.length) { if (!silent) toast('沒有可分配的裝備或弟子'); return 0; }
+  const order = S.disciples.slice().sort((a, b) => (b.power * (1 + dBonus(b, 'power'))) - (a.power * (1 + dBonus(a, 'power'))));
+  S.items.forEach(it => { it.owner = null; });
+  S.disciples.forEach(d => { d.weapon = null; d.armor = null; });
+  let n = 0;
+  for (const slot of ['w', 'a']) {
+    const list = S.items.filter(it => it.slot === slot).sort((a, b) => b.pow - a.pow || b.r - a.r);
+    list.slice(0, order.length).forEach((it, i) => { equip(order[i], slot, it.id); n++; });
+  }
+  if (!silent) { toast(`已重新配發 ${n} 件裝備`); addLog(`副掌門整頓兵器庫，把好裝備優先發給了門內高手。（配發 ${n} 件）`); }
+  return n;
+}
 function teach(d, techId) {
   const t = TECH_MAP[techId];
   if (d.arts.includes(techId)) return;
@@ -1427,14 +1452,48 @@ function runTrip(trip) {
   if (members.length <= 3) members.forEach((d, i) => add(`${d.name} 上繳戰利品，貢獻 ${sg(cs[i])}、實力略有精進`, 'pos'));
   else add(`全體出戰弟子上繳戰利品，貢獻各 +${Math.min(...cs)}～${Math.max(...cs)}，實力略有精進`, 'pos');
   if (hurt.length) add(`${hurt.join('、')} 受了傷`, 'neg');
+  let enc = null;
+  if (solo && gi < 2) enc = tryEncounter(trip, members, gi);
 
   const ctxText = x => x.replace(/\{d\}/g, tripName(trip, members)).replace(/\{place\}/g, trip.place).replace(/\{camp\}/g, s.name)
     .replace(/\{n\}/g, RIVAL).replace(/\{rm\}/g, RIVAL_MASTER);
   const text = ctxText(pick(TRIP_TEXT[solo ? 'travel' : s.kind][grade]));
   const title = solo ? `${tripName(trip, members)}・遊歷歸來` : `${s.name}戰報・${GRADE_NAME[gi]}`;
   addLog(`【${title}】${text}`, gi === 2 ? 'bad' : gi === 0 ? 'gold' : 'good');
-  S.reports.push({ title, html: `<p class="story">${text}</p><div style="margin-top:8px">${lines.join('')}</div>` });
+  S.reports.push({ title, html: `<p class="story">${text}</p><div style="margin-top:8px">${lines.join('')}</div>` + (enc ? `<h3>途中奇遇</h3><p class="story">${enc.txt}</p>${enc.lines}` : '') });
+  if (enc) addLog(`【奇遇】${enc.txt}`, 'gold');
   if (S.reports.length > 6) S.reports.shift();
+}
+/* ---- 遊歷奇遇：單人遊歷歸來時有機率觸發（{d}=弟子名 {place}=地名） ---- */
+const ENCOUNTERS = [
+  { w: 10, text: '{d}在{place}的破廟裡避雨，遇見一位邋遢老者。老者嫌{d}吵，隨手點撥了兩招，{d}當場悟了。', fx: { dPower: [10, 24], dContrib: [6, 12] } },
+  { w: 8, text: '{d}在{place}的集市上撿到一個沒人認領的包袱，裡面竟是一件像樣的兵器。{d}猶豫了三息，還是帶回來了。', fx: { item: 2 } },
+  { w: 8, text: '{d}在{place}替一位富商擋下劫道的，對方硬塞了一袋謝禮，還說「少俠日後必成大器」。', fx: { gold: [120, 260], rep: [6, 14] } },
+  { w: 7, text: '{d}在{place}救了一個無家可歸的少年。少年死活要跟回來拜師，說{d}救他時「背影像一座山」。', fx: { recruit: { boost: 14 } } },
+  { w: 6, text: '{d}在{place}捲入一場當地的比武招親，打贏了擂台，婉拒了親事，帶著獎金和一壺好酒溜了。', fx: { gold: [80, 180], fame: [80, 200], dContrib: [4, 10] } },
+  { w: 6, text: '{d}在{place}偶遇天機閣的評榜使微服出巡，被問了一句「你家掌門還在釣魚嗎」。{d}答不上來，但對方記住了他的臉。', fx: { fame: [200, 450] } },
+  { w: 5, text: '{d}在{place}吃到一道絕世好菜，回山後硬是靠舌頭復刻出來，全門派的伙食從此升級。', fx: { food: [60, 140], trust: [1, 3] } },
+  { w: 4, text: '{d}迷路誤入深山，竟發現一處前輩閉關的石洞，洞壁上刻滿拳譜。他抄了個大概，回來越想越對。', fx: { dPower: [18, 36], dContrib: [10, 18], injure: 40 } },
+  { w: 3, text: '{d}在{place}遇見一位同樣是「穿越者」的賣藝老鄉，兩人用暗號對了半夜的台詞，臨別時對方送了一件壓箱底的寶貝。', fx: { item: 3, dContrib: [8, 14] } }
+];
+function tryEncounter(trip, members, gi) {
+  const d = members[0];
+  if (Math.random() > (gi === 0 ? 0.38 : 0.2)) return null;
+  const pool = ENCOUNTERS.filter(e => !e.fx.recruit || state.disciples.length < capacity());
+  const e = wpick(pool, x => x.w * (d.trait === 'caimi' && x.fx.gold ? 1.8 : d.trait === 'chihuo' && x.fx.food ? 2.2 : d.trait === 'xijing' && x.fx.fame ? 1.8 : 1));
+  const txt = e.text.replace(/\{d\}/g, d.name).replace(/\{place\}/g, trip.place);
+  const lines = applyFx(e.fx, { d }).map(o => `<div class="fxline ${o.cls}">${o.t}</div>`).join('');
+  return { txt, lines };
+}
+/* ---- 一鍵出售閒置裝備 ---- */
+function sellIdle(maxRarity) {
+  const S = state, list = S.items.filter(it => !it.owner && it.r <= maxRarity);
+  if (!list.length) return toast('沒有符合條件的閒置裝備');
+  const total = list.reduce((a, it) => a + RARITY[it.r].sell, 0);
+  S.items = S.items.filter(it => !list.includes(it));
+  S.res.gold += total;
+  addLog(`清倉！賣掉 ${list.length} 件閒置裝備，共換得 ${total} 資金。`, 'gold');
+  toast(`已出售 ${list.length} 件，+${total} 資金`);
 }
 function showReport() {
   const r = state.reports.shift(); if (!r) return;
@@ -1907,8 +1966,9 @@ function openArmory() {
     return `<div class="row"><div>${itemHTML(it)}<small>${SLOT_NAME[it.slot]}・戰力 +${it.pow}${it.guard ? `・抗傷 +${Math.round(it.guard * 100)}%` : ''}・${owner ? '裝備者：' + owner.name : '閒置'}</small></div>
       ${owner ? '' : `<button class="btn small" data-m="sell" data-id="${it.id}">出售 ${RARITY[it.r].sell}</button>`}</div>`;
   }).join('') || '<p style="color:var(--mute)">兵器庫空空如也。</p>';
-  openModal({ title: '兵器庫', wide: true, html: rows, buttons: [{ label: '關閉' }],
-    on: { sell: el => { const it = S.items.find(i => i.id === el.dataset.id); if (it) { sellItem(it); update(true); openArmory(); } } } });
+  openModal({ title: '兵器庫', wide: true, html: `<div class="jobs"><button class="btn small" data-m="auto">一鍵裝備（強裝給強人）</button>${[[0, '賣掉閒置「凡」'], [1, '賣掉閒置「良」以下'], [2, '賣掉閒置「精」以下']].map(([r, t]) => `<button class="btn small" data-m="sellidle" data-r="${r}">${t}</button>`).join('')}</div>` + rows, buttons: [{ label: '關閉' }],
+    on: { auto: () => { autoEquip(); update(true); openArmory(); },
+      sellidle: el => { confirmBox(`確定賣掉所有閒置的「${RARITY[+el.dataset.r].n}」品以下裝備嗎？（已裝備的不會賣）`, () => { sellIdle(+el.dataset.r); update(true); openArmory(); }); }, sell: el => { const it = S.items.find(i => i.id === el.dataset.id); if (it) { sellItem(it); update(true); openArmory(); } } } });
 }
 function openHelp() {
   openModal({ title: '玩法說明', wide: true, buttons: [{ label: '明白了' }], html: `
@@ -1918,9 +1978,11 @@ function openHelp() {
     <p><b>宿敵：</b>${RIVAL}掌門${RIVAL_MASTER}與天才弟子「小霸王」${RIVAL_STAR}會不斷找麻煩：踢館、挖角、抹黑、搶生意。</p>
     <p><b>弟子：</b>點擊弟子可指派職務（修煉／務農／經商／休息）、裝備兵器防具、傳授真傳功法，或讓他閉關突破。實力超過「根骨×12」後成長極慢，可靠閉關提升根骨。</p>
     <p><b>外出：</b>在弟子詳情頁可派他「遊歷」（短／中／遠，單人），主畫面「出動討伐」可挑選多名弟子剿匪或攻打${RIVAL}山下分館。外出期間弟子不產出、只耗糧；歸來時上繳戰利品（資金、聲望、偶有裝備），弟子獲得貢獻與實力，擊敗${RIVAL}還會削弱其評分。實力不足容易鎩羽而歸並受傷。</p>
+    <p><b>奇遇：</b>單人遊歷成功歸來時有機率碰上奇遇（高人點撥、拾得兵器、收徒、天機閣印象等）。兵器庫可「一鍵裝備」，也能一鍵出售閒置的低品裝備。</p>
     <p><b>建築：</b>練武場提升修煉效率與人數上限；藥園產糧；藏經閣解鎖全門派被動功法。弟子貢獻足夠時，可花資金傳授該功法的「真傳版」。</p>
     <p><b>掌門：</b>信任歸零會被逐出師門；野心 ≥50 時信任會持續下滑。那個成天釣魚的老頭似乎藏著什麼……隨著門派崛起，你會逐步揭開「掌門祕聞」。</p>
     <p><b>結局：</b>共 ${ENDING_COUNT} 種。例如「正統傳位」需門派榜前 ${CONFIG.legitRank}、真傳弟子 ${CONFIG.winElite} 人、掌門信任 ≥60；「榜首之派」需登上門派榜第一。</p>
+    <p><b>倍速：</b>右上角可切換 1×／2×／5×，加快線上遊戲進度（收益、計時、事件都會一起加速）。離線掛機收益只看實際離開的時間，不受倍速影響。</p>
     <p><b>存檔：</b>每 ${CONFIG.autosaveSec} 秒自動存檔。關閉頁面期間以 ${Math.round(CONFIG.offlineEfficiency * 100)}% 效率累積最多 ${CONFIG.offlineCapSec / 3600} 小時的收益（江湖時間最多推進一年）。</p>`
   });
 }
@@ -1948,7 +2010,7 @@ function resetGame() {
 /* ================= 14. 事件委派、初始化與主迴圈 ================= */
 const ACTIONS = {
   upgrade: el => upgrade(el.dataset.key), recruit, forge, tribute, scheme, coup, adventure,
-  armory: openArmory, dispatch: () => { if (modal) return toast('請先處理眼前的事'); openDispatch(); }, help: openHelp, rename: openRename, ranks: openRanks,
+  armory: openArmory, speed: el => setSpeed(+el.dataset.v), autoequip: () => { autoEquip(); update(true); }, dispatch: () => { if (modal) return toast('請先處理眼前的事'); openDispatch(); }, help: openHelp, rename: openRename, ranks: openRanks,
   disc: el => openDisc(el.dataset.id),
   save: () => { saveGame(); toast('已存檔'); },
   reset: () => confirmBox('確定要重置遊戲嗎？目前的進度（資源、弟子、建築、榜單）會全部清除，無法復原。', resetGame)
@@ -1986,12 +2048,14 @@ function runOffline(sec) {
 }
 
 let lastTime = Date.now(), acc = 0, saveAcc = 0;
+let speed = 1;                                    // 線上倍速（1/2/5）；不存檔，重新開啟一律回到 1×
+function setSpeed(v) { speed = v; document.querySelectorAll('[data-act="speed"]').forEach(b => b.classList.toggle('on', +b.dataset.v === v)); }
 function loop() {
   const now = Date.now();
   let dt = Math.max(0, (now - lastTime) / 1000); lastTime = now;
   if (state.over) { update(false); return; }
   if (dt > 8) { if (!modal) closeModal(); runOffline(Math.min(dt, CONFIG.offlineCapSec)); dt = 0; }   // 分頁被凍結或電腦休眠：視為離線補算
-  acc += dt;
+  acc += dt * speed;                               // 倍速只放大線上的遊戲時間；離線補算仍以實際離開秒數計
   while (acc >= 1) { tick(1, false); acc -= 1; saveAcc += 1; }
   if (!modal) {
     checkEndings();
