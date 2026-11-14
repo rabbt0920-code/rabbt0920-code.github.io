@@ -216,13 +216,31 @@ button,input,select,textarea{font:inherit;color:inherit}
  .ros .info{flex:1 1 45%;overflow-y:auto;padding:6vh 6vw 20px 0;align-self:stretch}
  .ros .nm{font-size:44px}
 }
+
+/* ===== 2.0 系統重製 UI ===== */
+.v2-week{background:linear-gradient(135deg,#271b2c,#17111d);border:1px solid #5a405e;border-radius:12px;padding:12px;margin:2px 0 12px;box-shadow:inset 0 0 24px #b3243f0b}
+.v2-week-top{display:flex;justify-content:space-between;align-items:center;gap:8px}.v2-week-top strong{color:var(--gold);font-size:15px}.v2-kicker{font:10px/1.4 Arial,sans-serif;color:var(--dim);letter-spacing:.18em}.v2-ap{color:var(--gold);border:1px solid #d4b05a55;border-radius:99px;padding:3px 10px;font-size:12px;white-space:nowrap}
+.v2-forecast{display:grid;grid-template-columns:auto 1fr;gap:2px 10px;margin-top:9px;padding:8px 9px;border-radius:8px;background:#100c16aa;font-size:12px}.v2-forecast span{color:var(--dim)}.v2-forecast b{color:#f0d9a0}.v2-forecast small{grid-column:2;color:var(--dim);font-size:11px}
+.v2-factions{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;margin-top:10px}.v2-factions>div{min-width:0;font-size:10px;color:var(--dim)}.v2-factions b{float:right;color:var(--text);font-size:11px}.v2-factions i{display:block;height:4px;background:#070609;border-radius:9px;overflow:hidden;margin-top:4px}.v2-factions em{display:block;height:100%;background:var(--gold);border-radius:9px}.v2-factions em.danger{background:var(--bad)}.v2-factions em.people{background:var(--good)}
+.v2-skill{background:var(--panel2);border:1px solid var(--line);border-radius:11px;padding:11px 12px;margin:8px 0}.v2-skill-head{display:flex;justify-content:space-between;gap:8px;color:var(--gold);font-size:14px}.v2-skill-head strong{font-size:13px;color:var(--text);font-variant-numeric:tabular-nums}.v2-skill>p{font-size:12px;color:var(--dim);margin:5px 0}.v2-track{height:7px;border-radius:99px;background:#070609;overflow:hidden;margin-top:7px}.v2-track i{display:block;height:100%;background:linear-gradient(90deg,#7d1a2e,#d4b05a);border-radius:99px;transition:width .25s}.v2-milestones{display:flex;flex-wrap:wrap;gap:4px;margin-top:8px}.v2-milestones span{font-size:10px;padding:2px 6px;border:1px solid var(--line);border-radius:5px;color:var(--dim)}.v2-milestones span.unlocked{color:var(--good);border-color:#7fc99a66;background:#7fc99a0a}
+.v2-char .v2-stage{display:inline-block;margin:2px 0 2px 6px;padding:1px 7px;border:1px solid #d4b05a66;border-radius:99px;color:var(--gold);font-size:10px;vertical-align:middle}.v2-trust .b i{background:var(--good)}
+.v2-network{background:radial-gradient(ellipse at center,#35213c,#17111d 72%);border:1px solid var(--line);border-radius:12px;padding:12px;margin-bottom:10px;text-align:center}.v2-network-center{display:inline-block;padding:6px 16px;border:1px solid var(--gold);border-radius:99px;background:#261727;color:var(--gold);font-size:13px}.v2-network-links{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:5px;margin-top:10px}.v2-network-links span{padding:5px 6px;border-radius:7px;background:#0c091088;color:var(--dim);font-size:10.5px}
+.v2-clue{display:flex;gap:10px;align-items:flex-start;padding:10px;margin:7px 0;border:1px solid var(--line);border-radius:10px;background:var(--panel2)}.v2-clue.found{border-color:#9b7be066;background:linear-gradient(100deg,#9b7be012,var(--panel2))}.v2-clue-icon{width:34px;height:34px;flex:0 0 34px;display:grid;place-items:center;border-radius:8px;background:#0c0910;color:var(--dim);font-size:17px}.v2-clue.found .v2-clue-icon{color:var(--karma);border:1px solid #9b7be055}.v2-clue-head{font-size:13px;color:var(--gold)}.v2-clue-head span{font-size:10px;color:var(--dim);margin-left:5px}.v2-clue p{font-size:12px;line-height:1.55;margin:4px 0;color:var(--text)}.v2-clue small{font-size:10px;color:var(--dim)}
+.v2-memory-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:7px}.v2-memory{background:#17111d;border:1px solid var(--line);border-radius:10px;padding:10px;min-width:0}.v2-memory.on{border-color:#9b7be077;background:linear-gradient(145deg,#30213a,#17111d)}.v2-memory-mark{font-size:18px;color:var(--dim)}.v2-memory.on .v2-memory-mark{color:var(--karma)}.v2-memory b{font-size:12px;color:var(--gold)}.v2-memory p{font-size:11px;color:var(--dim);line-height:1.55;margin:5px 0}.v2-memory small{font-size:10px;color:var(--good)}.v2-due{margin-top:7px;color:var(--karma);font-size:11px}
+.tabs{scrollbar-width:thin}.tab{padding-left:10px;padding-right:10px}.act{min-height:76px}.act .n{color:#f0d9a0}.act:disabled{filter:saturate(.55)}.dockbody{scrollbar-color:#5a405e #120c18;scrollbar-width:thin}
+@media(max-width:520px){#saveState{display:none}.hdr .mn{white-space:nowrap;padding:3px 7px}.hdr .cd{font-size:11px}.hdr .sub{font-size:10px}
+.tabs{display:grid;grid-template-columns:repeat(4,1fr);overflow:visible}.tabs .tab{text-align:center;padding:3px 0}
+.v2-week{padding:7px 9px;margin-bottom:8px}.v2-kicker{display:none}.v2-week-top strong{font-size:13px}.v2-forecast{margin-top:5px;padding:5px 8px;gap:0 8px}.v2-forecast small{display:none}.v2-factions{margin-top:6px}.v2-factions i{height:3px;margin-top:2px}
+.v2-memory-grid{grid-template-columns:1fr}.v2-factions{gap:5px}.v2-factions>div{font-size:9px}.v2-week{padding:9px}.v2-forecast{grid-template-columns:1fr}.v2-forecast small{grid-column:1}.v2-network-links{grid-template-columns:1fr 1fr}.tabs{gap:4px;padding:7px 6px}.tab{font-size:12px;padding:4px 9px}}
+@media(min-width:900px){.v2-network-links{grid-template-columns:repeat(3,minmax(0,1fr))}.v2-memory-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
+
 </style>
 </head>
 <body>
 <div class="app">
   <div class="top">
     <div class="hdr">
-      <div><h1>白薔薇與王冠</h1><div class="sub">穿越惡女小說模擬器・v0.7</div></div>
+      <div><h1>白薔薇與王冠</h1><div class="sub">穿越惡女小說模擬器・v2.1.0</div></div>
       <div style="display:flex;align-items:center"><div class="cd" id="cd"></div><button class="mn sndbtn" data-do="snd" title="音樂與音效">🔊</button><button class="mn" data-do="menu">選單</button></div>
     </div>
     <div class="stats" id="stats"></div>
@@ -313,9 +331,9 @@ const isKnown=f=>S.clarity>=f.need;
 const known=id=>isKnown(FLAGS.find(x=>x.id===id));
 
 /* ============ 狀態 ============ */
-function newState(){return{
+function baseState(){return{
   week:1,ap:3,apMax:3,
-  money:120,secrets:0,sanity:80,notor:45,drift:0,clarity:18+Math.min(2,loopCount())*12,diary:0,
+  money:120,secrets:0,sanity:80,notor:45,drift:0,clarity:18+(loopCount()>=1?8:0),diary:0,
   rel:{prince:{f:20,w:30},knight:{f:0,w:55},priest:{f:20,w:15},duke:{f:10,w:30},ailin:{f:8,w:5},queen:{f:8,w:40}},
   fest:{proof:0,ally:{},bond:0,resist:0,scape:false},festEnd:null,loop:loopCount(),originPeace:false,queenKey:false,
   flags:{f1:'idle',f2:'idle',f3:'idle',f4:'idle'},
@@ -324,31 +342,15 @@ function newState(){return{
   ailinKnows:false,knightKnows:false,ailinReborn:false,betrayedAilin:false,engaged:false,
   talk:{},dailyLast:{},plan:null,penalty:0,sacrifices:0,ending:null,tab:'act',started:false,scene:'bedroom'
 }}
-let S=newState();
+let S=null;
 let curEv=null;
 let ui={mode:'act',queue:[],lastLen:-1,lastTab:'',lastMode:''};
 let sownQ=[];
 
-function save(){try{localStorage.setItem(SAVE,JSON.stringify(S))}catch(e){}}
-function loadSave(){try{const t=localStorage.getItem(SAVE);return t?JSON.parse(t):null}catch(e){return null}}
-function clearSave(){try{localStorage.removeItem(SAVE)}catch(e){}}
 function endingsGot(){try{return JSON.parse(localStorage.getItem(ENDS)||'[]')}catch(e){return[]}}
 function addEnding(id){try{const a=endingsGot();if(!a.includes(id)){a.push(id);localStorage.setItem(ENDS,JSON.stringify(a))}}catch(e){}}
 function log(e){S.log.push(e);if(S.log.length>150)S.log.splice(0,S.log.length-150)}
 
-function add(k,v){
-  if(k.indexOf('.')>=0){const p=k.split('.');S.rel[p[0]][p[1]]=clamp(S.rel[p[0]][p[1]]+v,0,100);return}
-  const lim={sanity:[0,100],notor:[0,100],drift:[0,100],clarity:[0,100],diary:[0,6],money:[0,9999],secrets:[0,99]}[k]||[0,9999];
-  S[k]=clamp(S[k]+v,lim[0],lim[1]);
-}
-const isBad=(k,v)=>(k==='notor'||k.slice(-2)==='.w')?v>0:v<0;
-function nameOf(k){if(k.indexOf('.')>=0){const p=k.split('.');return CHARS[p[0]].name+(p[1]==='f'?'好感':'警戒')}return LABEL[k]||k}
-function applyFx(fx){
-  if(!fx)return'';
-  let h='';
-  for(const k in fx){const v=fx[k];if(!v)continue;add(k,v);h+=`<span class="chip ${isBad(k,v)?'neg':'pos'}">${nameOf(k)} ${v>0?'+':''}${v}</span>`}
-  return h;
-}
 
 /* ============ 因果系統 ============ */
 /* 每個重要選擇會「種因」，數週後自動觸發對應的「果」事件。 */
@@ -617,28 +619,6 @@ function talk(id){
 ['prince','knight','priest','ailin'].forEach(id=>{ACTIONS.find(a=>a.id===id).run=()=>talk(id)});
 ACTIONS.find(a=>a.id==='duke').run=()=>{const o=talk('duke');o.fx=Object.assign({money:-10},o.fx);return o};
 
-function doAction(id){
-  if(ui.mode!=='act')return;
-  const a=ACTIONS.find(x=>x.id===id);
-  if(!a||S.ap<=0)return;
-  if(a.req&&a.req())return;
-  if(a.show&&!a.show())return;
-  sfx('page');
-  const before=FLAGS.filter(isKnown).map(f=>f.id);
-  const o=a.run();
-  const fx=applyFx(o.fx);
-  S.ap--;
-  const nw=FLAGS.filter(f=>isKnown(f)&&before.indexOf(f.id)<0);
-  const lost=FLAGS.filter(f=>!isKnown(f)&&before.indexOf(f.id)>=0);
-  let notice='';
-  nw.forEach(f=>{notice+=`🔔 你想起了一件事：「${f.name}」（第 ${f.week} 週）\n`});
-  lost.forEach(f=>{notice+=`🌫 記憶變得模糊：「${f.name}」你又想不起來了。\n`});
-  const am=ACT_META[a.id]||['violet',null];if(am[1])S.scene=am[1];
-  if(o.tip)notice+=o.tip;
-  log({k:'act',title:a.name+(o.tag?`・${o.tag}`:''),text:o.text,fx:fx,notice:notice.trim(),who:am[0]});
-  if(S.sanity<=0)return finish('possessed');
-  save();render();
-}
 
 /* ============ 事件 ============ */
 const EVENTS={
@@ -719,7 +699,7 @@ const EVENTS={
   :`你只拼湊出零碎的線索：名冊上並排的兩個名字、神殿地下的空墓、日記裡那句「歷代惡女都沒有墳」。\n祭典不只是一場審判。有某種更大的東西，正在高台上等著你。你還缺最後幾塊拼圖。`,
  choices:[
   {label:`「告訴艾琳」`,do(){
-    if(S.rel.ailin.f>=35){S.ailinKnows=true;return{fx:{'ailin.f':10,sanity:-3},res:`她聽完，很久沒有出聲，然後握住你的手：「所以那把刀，本來是為我們兩個準備的。」\n她抬起頭，眼神是你從沒見過的堅定。「那我們就不要讓它落下。」`}}
+    if(S.rel.ailin.f>=35&&(S.rel.ailin.t||0)>=30){S.ailinKnows=true;return{fx:{'ailin.f':10,sanity:-3},res:`她聽完，很久沒有出聲，然後握住你的手：「所以那把刀，本來是為我們兩個準備的。」\n她抬起頭，眼神是你從沒見過的堅定。「那我們就不要讓它落下。」`}}
     return{fx:{'ailin.f':-5,sanity:-4},res:`她往後退了一步，像在看一個瘋子。「這不可能……」\n她沒有去告密，只是低聲說：「妳好好休息。」\n你這才明白，她還沒有那麼信任你。`}}},
   {label:`「告訴騎士團長」`,do(){
     if(S.rel.knight.f>=30){S.knightKnows=true;return{fx:{'knight.f':8,'knight.w':-8},res:`卡西安握緊了劍柄，又慢慢鬆開。「我會去查。」\n這是他第一次用不帶殺氣的聲音跟你說話。`}}
@@ -876,7 +856,7 @@ EVENTS[13]={id:'w13',title:'審判前夜',end:true,
   {label:`「連夜逃亡」`,req:()=>S.money<100?'需要金錢 ≥ 100':null,do(){S.plan='flee';return{res:`你只收拾了最小的行囊，把原身的戒指留在妝台上。馬車趁著夜色往北駛去。`}}},
   {label:`「寫字條給艾琳」`,req:()=>S.rel.ailin.f<45?'需要艾琳好感 ≥ 45':null,do(){S.fest.bond++;S.plan='fest';return{res:`你寫了一張字條，從門縫塞進艾琳的房間：「明天，站在我身邊。」\n沒有署名。她會懂的。`}}},
   {label:`「去騎士團找卡西安」`,req:()=>{const n=S.knightKnows?35:40;return S.rel.knight.f<n?`需要卡西安好感 ≥ ${n}`:null},do(){S.fest.ally.knight=true;S.plan='fest';return{res:`營地的燈還亮著。你什麼都沒解釋，只說：「明天，如果你看見了不該發生的事。」\n卡西安沉默了很久：「我會看著。」`}}},
-  {label:`「與公爵密謀」`,req:()=>S.rel.duke.f<40?'需要公爵好感 ≥ 40':null,do(){S.fest.ally.duke=true;S.plan='fest';return{res:`午夜，艾德里安的使者到了。「閣下說，人手已經布置在廣場四周。」\n「信號呢？」\n「您舉起右手的時候。」`}}},
+  {label:`「與公爵密謀」`,req:()=>(S.rel.duke.f<40&&!(S.rel.duke.f>=30&&S.factions.court>=60))?'需要公爵好感 ≥ 40（宮廷支持 ≥ 60 時只需 30）':null,do(){S.fest.ally.duke=true;S.plan='fest';return{res:`午夜，艾德里安的使者到了。「閣下說，人手已經布置在廣場四周。」\n「信號呢？」\n「您舉起右手的時候。」`}}},
   {label:`「回信給雷納德」`,req:()=>{const n=S.engaged?40:50;return S.rel.prince.f<n?`需要雷納德好感 ≥ ${n}`:null},do(){S.fest.ally.prince=true;S.plan='fest';return{res:`你寫信給雷納德：「明天，請看著我。」\n回信很快就來了，只有一行字：「我一直都在看。」`}}},
   {label:`「整理所有證據」`,do(){S.fest.proof+=S.secrets>=3?2:1;S.plan='fest';return{res:`你把蒐集到的紙條、帳目和日記一份份排好，縫進披風的內襯。\n手指被針扎了好幾次。你一點都沒感覺。`}}},
   {label:`「早點睡」`,do(){add('sanity',15);S.plan='fest';return{res:`你吹熄蠟燭，強迫自己閉上眼睛。明天需要一個清醒的你。（理智 +15）`}}}
@@ -890,32 +870,33 @@ const FEST=[
  choices:[
   {label:`「看向皇后」`,show:()=>S.queenKey,do(){S.fest.proof+=2;return{fx:{'queen.f':5},res:`皇后讀到一半，忽然停住了。她把羊皮紙捲起來，對全場說：「罪狀有疑。在神前，我不念有疑的罪。」\n整個廣場一片譁然。大神官的笑容，第一次消失了。`}}},
   {label:`「攤開皇后與神官的密信」`,req:()=>{const n=S.queenCountered?2:4;return(S.secrets<n&&!(S.karma.mirror_win&&S.karma.mirror_win.done))?`需要籌碼 ≥ ${n}，或原身的謝禮`:null},do(){S.fest.proof+=2;return{fx:{secrets:-2,drift:6},res:`你從披風內襯抽出那疊信，當眾高高舉起。神殿的印章在陽光下清清楚楚。\n人群開始騷動。有人念出了信上的句子，聲音一個傳一個，越傳越大。`}}},
-  {label:`「請卡西安出面作證」`,req:()=>(S.fest.ally.knight||(S.knightKnows&&S.rel.knight.f>=35))?null:'需要卡西安的協助',do(){S.fest.proof++;S.fest.ally.knight=true;return{fx:{'knight.f':5},res:`卡西安走上台階，摘下頭盔。「我以騎士團長的名義作證，」他的聲音傳遍廣場，「毒茶案的證據，是有人刻意安排的。」`}}},
-  {label:`「讓公爵出示神殿帳冊」`,req:()=>(S.fest.ally.duke||(S.talk&&S.talk.duke>=5))?null:'需要公爵的協助',do(){S.fest.proof++;S.fest.ally.duke=true;return{fx:{'duke.f':4},res:`艾德里安慢條斯理地翻開帳冊：「二十年來，神殿的捐款去了哪裡，各位不妨聽聽。」\n他每念一筆，大神官的臉色就白一分。`}}},
+  {label:`「請卡西安出面作證」`,req:()=>(S.fest.ally.knight||(S.knightKnows&&S.rel.knight.f>=35)||(S.rel.knight.t||0)>=55)?null:'需要卡西安的協助，或他的信任 ≥ 55',do(){S.fest.proof++;S.fest.ally.knight=true;return{fx:{'knight.f':5},res:`卡西安走上台階，摘下頭盔。「我以騎士團長的名義作證，」他的聲音傳遍廣場，「毒茶案的證據，是有人刻意安排的。」`}}},
+  {label:`「讓公爵出示神殿帳冊」`,req:()=>(S.fest.ally.duke||(S.talk&&S.talk.duke>=5&&(S.rel.duke.t||0)>=35))?null:'需要公爵的協助（或聽完他的帳冊劇情且信任 ≥ 35）',do(){S.fest.proof++;S.fest.ally.duke=true;return{fx:{'duke.f':4},res:`艾德里安慢條斯理地翻開帳冊：「二十年來，神殿的捐款去了哪裡，各位不妨聽聽。」\n他每念一筆，大神官的臉色就白一分。`}}},
   {label:`「接過認罪書，當眾撕碎」`,show:()=>S.queenDeal,do(){S.fest.proof++;return{fx:{drift:8,notor:-5},res:`皇后把認罪書遞過來。你接下，看著她的眼睛，一點一點把它撕成碎片。\n紙片落在白薔薇上。「我沒有罪。」你說，「該認罪的人，站在我旁邊。」`}}},
   {label:`「指向另一個人」`,req:()=>S.secrets<4?'需要籌碼 ≥ 4':null,do(){S.fest.scape=true;return{fx:{secrets:-3,sanity:-6},res:`「真正下毒的人，」你的聲音冷得連自己都陌生，「在台下第三排。」\n所有人都轉過頭去。那個人臉色慘白，張著嘴，說不出一個字。\n你知道這不公平。你也知道，你會活下來。`}}},
   {label:`「保持沉默」`,fx:{notor:5},res:`你沒有開口。皇后讀完罪狀，群眾的噓聲像潮水一樣湧來。`}
  ]},
 {id:'f2',title:'祭典・儀式',fest:true,
- text:()=>`大神官走上高台中央，舉起雙手。「神啊，請接受這一代的光與影。」\n腳下的石台亮了起來。你的身體忽然不聽使喚，膝蓋一軟，跪了下去。\n耳邊響起那個熟悉的聲音：「終於輪到我了。」\n原身，在你的身體裡醒過來了。`,
+ text:()=>`${S.factions.church>=70?'神殿的勢力牢牢掌控著廣場，連空氣都像被祈禱聲壓住。\n':S.factions.church<=40?'神殿的威信已經動搖，台下有人在低聲質疑。\n':''}大神官走上高台中央，舉起雙手。「神啊，請接受這一代的光與影。」\n腳下的石台亮了起來。你的身體忽然不聽使喚，膝蓋一軟，跪了下去。\n耳邊響起那個熟悉的聲音：「終於輪到我了。」\n原身，在你的身體裡醒過來了。`,
  choices:[
   {label:`「念出原身最後一頁日記」`,req:()=>S.diary<6?'需要日記殘頁 6 頁':null,do(){S.fest.resist=2;S.originPeace=true;return{fx:{sanity:5},res:`你在心裡一字一句地念：「如果有人讀到這裡，拜託，不要變成我。」\n聲音停了。很久之後，她輕輕地說：「妳沒有變成我。」\n「謝謝妳。」那股力量鬆開了你。`}}},
   {label:`「把身體還給她」`,show:()=>S.diary>=6&&S.karma.mirror_win&&S.karma.mirror_win.done,do(){S.festEnd='home';return{res:`你在心裡對她說：「這是妳的人生。剩下的路，妳自己走。」\n她愣住了。然後，你感覺到一隻手，輕輕把你推了出去。`}}},
   {label:`「握住艾琳的手」`,req:()=>(S.fest.bond>=1||(S.ailinKnows&&S.rel.ailin.f>=60))?null:'需要艾琳在你身邊',do(){S.fest.bond++;S.fest.resist=1;return{fx:{sanity:-6,'ailin.f':4},res:`一隻溫暖的手握住了你。艾琳不知道什麼時候走到了你身邊，跪下來，額頭抵著你的額頭。\n「妳是妳。」她說，「我記得的那個人，是妳。」\n你咬著牙，一點一點把身體搶了回來。`}}},
-  {label:`「咬牙硬撐」`,do(){const d=S.loop>=1?7:13;return{fx:{sanity:-d},res:S.loop>=1?`你記得這種感覺。上一次，你就是在這裡輸的。\n這一次你沒有慌，只是數著自己的心跳，一下，兩下，直到那個聲音退去。`:`你把指甲掐進掌心，逼自己清醒。血滴在白薔薇上，那個聲音還在笑，但漸漸遠了。`}}},
+  {label:`「咬牙硬撐」`,do(){const d=Math.max(4,(S.loop>=1?7:13)+Math.round((S.factions.church-50)/6));return{fx:{sanity:-d},res:S.loop>=1?`你記得這種感覺。上一次，你就是在這裡輸的。\n這一次你沒有慌，只是數著自己的心跳，一下，兩下，直到那個聲音退去。`:`你把指甲掐進掌心，逼自己清醒。血滴在白薔薇上，那個聲音還在笑，但漸漸遠了。`}}},
   {label:`「放手」`,do(){S.festEnd='possessed';return{res:`你太累了。你閉上眼睛，讓她接手。`}}}
  ]},
 {id:'f3',title:'祭典・刀落下的瞬間',fest:true,final:true,
  text:()=>`儀式到了最後一步。${S.fest.proof>=3?'台下的群眾已經不再噓你，而是在竊竊私語，有人在質疑神殿。':S.fest.proof>=1?'群眾開始動搖，可是儀式沒有停下來。':'沒有人替你說話。'}\n行刑人舉起了刀，刀刃映著血紅色的天空。\n這是你最後一次選擇。`,
  choices:[
   {label:`「呼喚艾琳」`,req:()=>S.fest.bond<1?'需要艾琳站在你身邊':(S.truth<2?'需要知道儀式的完整真相':null),do(){
-    const r=S.rel.ailin,lilyOK=S.lily&&!S.betrayedAilin&&S.fest.proof>=2&&S.fest.bond>=2&&r.f>=(S.ailinReborn?76:84);
+    const r=S.rel.ailin,lilyOK=S.lily&&!S.betrayedAilin&&S.fest.proof>=2&&S.fest.bond>=2&&r.f>=(S.ailinReborn?79:87);
     S.festEnd=lilyOK?'lily':(S.fest.proof>=1&&r.f>=55?'true':'martyr');
     return{res:`「艾琳！」\n她握住你的手，白色的光從你們交握的地方湧出來。`}}},
   {label:`「卡西安，拔劍吧」`,req:()=>S.fest.ally.knight?null:'需要卡西安的協助',do(){S.festEnd=S.rel.knight.f>=45?'knight':'exec';return{res:`你看向台下。卡西安的手，握上了劍柄。`}}},
   {label:`「舉起右手」`,req:()=>S.fest.ally.duke?null:'需要和公爵事先約好信號',do(){S.festEnd=(S.fest.proof>=1||S.secrets>=(S.queenCountered?2:4))?'duke':'exec';return{res:`你舉起右手。廣場四周，有人同時拔出了藏在斗篷裡的刀。`}}},
   {label:`「推出替罪者」`,req:()=>S.fest.scape?null:'需要在審判庭指認替罪者',do(){S.festEnd='scapegoat';return{res:`你沒有閉上眼睛。你看著那個人被押上高台，站在本該屬於你的位置上。`}}},
   {label:`「望向雷納德」`,req:()=>(S.fest.ally.prince||S.rel.prince.f>=60)?null:'需要雷納德願意出手',do(){S.festEnd='cage';return{res:`你看向貴賓席。雷納德站了起來，笑得溫柔：「停下。」`}}},
+  {label:`「向群眾呼喊」`,req:()=>S.factions.people<60?'需要民眾支持 ≥ 60':(S.fest.proof<1?'需要在審判庭攤開至少一項證據':null),do(){const ok=S.fest.bond>=1&&S.rel.ailin.f>=55&&S.truth>=2;S.festEnd=ok?'true':'exile';return{res:ok?`「你們都聽見了！」你朝台下大喊。\n先是一個人，接著是十個、一百個。群眾衝上高台，艾琳在人潮中握住了你的手。`:`「你們都聽見了！」你朝台下大喊。\n群眾衝破了衛兵的封鎖，廣場陷入混亂。有人把一件斗篷披在你身上，推著你往城門跑。`}}},
   {label:`「閉上眼睛」`,do(){S.festEnd='exec';return{res:`你閉上眼睛。風吹過來，帶著白薔薇的香氣。`}}}
  ]}
 ];
@@ -1011,75 +992,9 @@ function curMood(){if($('#title').classList.contains('show'))return'title';if(S.
 /* ============ 流程 ============ */
 function confirmEnd(){return typeof window.confirm==='function'?window.confirm('還有行動點沒用完，確定要結束本週嗎？'):true}
 
-function endWeek(){
-  if(ui.mode!=='act')return;
-  if(S.ap>0&&!confirmEnd())return;
-  const dec=2+(S.drift<15?1:0);
-  add('sanity',-dec);
-  let note=`夜裡，「強制力」在耳邊低語。理智 -${dec}。`;
-  if(S.sanity<=25&&rnd()<.5){S.penalty=Math.max(S.penalty,1);add('notor',6);note+=`\n你又一次失去了記憶。醒來時，手上多了不屬於你的痕跡。（下週行動 -1，惡名 +6）`}
-  log({k:'night',text:note});
-  if(S.sanity<=25)sfx('heart');
-  if(S.sanity<=0)return finish('possessed');
-  const due=Object.keys(S.karma).filter(id=>!S.karma[id].done&&S.karma[id].due<=S.week).slice(0,2);
-  ui.queue=due.map(id=>{S.karma[id].done=true;return karmaEvent(id)});
-  ui.queue.push(pickEvent(S.week));
-  nextEvent();
-}
-function nextEvent(){
-  if(!ui.queue.length)return advanceWeek();
-  curEv=ui.queue.shift();
-  if(curEv.onShow)curEv.onShow();
-  const m=META[curEv.id]||['violet','bedroom'];curEv.who=m[0];S.scene=m[1];
-  if(curEv.cg)addCg(curEv.cg);
-  log({k:curEv.isKarma?'karma':'ev',title:(curEv.isKarma?'🌱 因果：':'')+curEv.title+(curEv.flag?'（死亡 flag）':''),text:curEv.text(),who:m[0],cg:curEv.cg&&IMG[curEv.cg]?curEv.cg:null});
-  if(curEv.isKarma)sfx('karma');
-  music(curEv.fest?'fest':'game');
-  ui.mode='choose';
-  render();
-}
-function pick(i){
-  if(ui.mode!=='choose')return;
-  const c=curEv.choices[i];
-  if(!c)return;
-  if(c.show&&!c.show())return;
-  if(c.req&&c.req())return;
-  const o=c.do?c.do():{fx:c.fx,res:c.res,flag:c.flag};
-  let fx=applyFx(o.fx);
-  if(c.sow)[].concat(c.sow).forEach(sow);
-  fx+=flushSown();
-  const st=o.flag||null;
-  if(curEv.flag&&st)S.flags[curEv.flag]=st;
-  S.seen[curEv.id]=true;
-  let text=o.res;
-  if(curEv.flag&&st)text+=`\n〔死亡 flag「${FLAGS.find(f=>f.id===curEv.flag).name}」：${st==='cleared'?'已解除 ✔':'未能避開 ✘'}〕`;
-  let cg=c.cg||o.cg||null;
-  if(curEv.id==='w11'&&i<=1&&/石墓|空墓/.test(o.res||''))cg='ev_w11';
-  if(cg&&IMG[cg])addCg(cg);else cg=null;
-  log({k:'res',title:'▶ '+c.label,text:text,fx:fx,cg:cg});
-  sfx(st==='cleared'?'good':st==='failed'?'bad':'click');
-  ui.mode='cont';
-  render();
-}
-function next(){
-  if(ui.mode!=='cont')return;
-  if(S.sanity<=0)return finish('possessed');
-  if(curEv.end&&!ui.queue.length){
-    if(S.plan==='flee')return finish(resolveFlee());
-    S.festDay=true;log({k:'sep',w:'祭典'});ui.queue=FEST.slice();return nextEvent();
-  }
-  if(curEv.fest&&(S.festEnd||curEv.final))return finish(S.festEnd||'exec');
-  nextEvent();
-}
-function advanceWeek(){
-  S.week++;
-  S.ap=Math.max(1,S.apMax-S.penalty);S.penalty=0;
-  ui.mode='act';
-  log({k:'sep',w:S.week});
-  save();render();
-}
 function finish(id){
   id=id||'exec';
+  v2RewardEnding(id);
   S.ending=id;addEnding(id);clearSave();addLoop();
   sfx('bell');music(['true','hidden','normal'].includes(ENDINGS[id].kind)?'good':'bad');
   const e=ENDINGS[id];
@@ -1109,61 +1024,6 @@ function entHtml(e,isLast){
   if(e.who)return`<div class="ent ${e.k} hav ${isLast?'new':''}">${avatar(e.who)}<div class="body">${inner}</div></div>`;
   return`<div class="ent ${e.k} ${isLast?'new':''}">${inner}</div>`;
 }
-function render(){
-  const d=Math.max(0,100-(S.week-1)*7);
-  $('#cd').innerHTML=S.festDay?`<b>建國祭典</b><br>當日`:`第 ${S.week} / ${TOTAL_WEEKS} 週<br>祭典倒數 <b>${d}</b> 天`;
-  $('#stats').innerHTML=
-    stat('💰金錢',S.money,0,0,'money')+stat('🗝籌碼',S.secrets,0,0,'secrets')+
-    stat('🧠理智',S.sanity,100,S.sanity<=25,'sanity')+stat('🩸惡名',S.notor,100,S.notor>=75,'notor')+
-    stat('🌀偏移',S.drift,100,0,'drift')+stat('📖記憶',S.clarity,100,0,'clarity');
-  /* 劇情區：有新內容才捲到底 */
-  const st=$('#story');
-  const prevTop=st.scrollTop;
-  if(ui.lastScene!==S.scene){st.className='story sc-'+S.scene;st.style.background=IMG['bg_'+S.scene]?'':(SCENES[S.scene]||SCENES.bedroom).bg;ui.lastScene=S.scene}
-  st.innerHTML=`<div class="scn">📍 ${(SCENES[S.scene]||SCENES.bedroom).name}</div>`+S.log.map((e,i)=>entHtml(e,i===S.log.length-1)).join('');
-  if(S.log.length!==ui.lastLen)st.scrollTop=st.scrollHeight;else st.scrollTop=prevTop;
-  ui.lastLen=S.log.length;
-  /* 操作區 */
-  const prevBody=$('#dockbody');
-  const keep=(prevBody&&ui.lastMode===ui.mode&&ui.lastTab===S.tab)?prevBody.scrollTop:0;
-  $('#dock').innerHTML=dockHtml();
-  const nb=$('#dockbody');
-  if(nb)nb.scrollTop=keep;
-  ui.lastMode=ui.mode;ui.lastTab=S.tab;
-}
-function dockHtml(){
-  if(ui.mode==='choose'&&curEv){
-    const wi=avInfo(curEv.who||'violet');
-    let h=`<div class="evpor">${avatar(curEv.who||'violet')}<div><div class="nm">${wi.name}</div><div class="tt">${wi.title||''}</div><div class="dim" style="font-size:12px;margin-top:4px">${curEv.isKarma?'🌱 因果事件':curEv.fest?'🌹 建國祭典':curEv.id==='w13'?'最後一夜':'週末事件'}：${curEv.title}</div></div></div><div class="dockhead">請選擇</div><div class="dockbody" id="dockbody">`;
-    curEv.choices.forEach((c,i)=>{
-      if(c.show&&!c.show())return;
-      const why=c.req?c.req():null;
-      h+=`<button class="choice" data-pick="${i}" ${why?'disabled':''}>${c.label}${why?`<span class="r">🔒 ${why}</span>`:''}</button>`;
-    });
-    return h+`</div>`;
-  }
-  if(ui.mode==='cont'){
-    const last=curEv&&curEv.end&&!ui.queue.length;
-    return`<div class="dockhead">${curEv?curEv.title:''}</div><div class="dockbody" id="dockbody"><button class="btn contbtn pulse" data-do="next">${last?'迎向祭典 →':'繼續 →'}</button></div>`;
-  }
-  const tabs=[['act','行動'],['chars','人物'],['flags','死亡 flag'],['karma','因果'],['diary','日記']];
-  const body=S.tab==='act'?panelAct():S.tab==='chars'?panelChars():S.tab==='flags'?panelFlags():S.tab==='karma'?panelKarma():panelDiary();
-  const foot=`<div class="dockfoot"><div class="ap">行動點 <b>${'◆'.repeat(S.ap)}${'◇'.repeat(Math.max(0,S.apMax-S.ap))}</b></div><button class="btn ${S.ap===0?'pulse':''}" data-do="endweek">結束本週 →</button></div>`;
-  return`<div class="tabs">${tabs.map(t=>`<button class="tab ${S.tab===t[0]?'on':''}" data-tab="${t[0]}">${t[1]}</button>`).join('')}</div><div class="dockbody" id="dockbody">${body}</div>${foot}`;
-}
-function panelAct(){
-  let h='';
-  ['社交','調查','經營','自處'].forEach(cat=>{
-    h+=`<div class="cat">${cat}</div><div class="grid">`;
-    ACTIONS.filter(a=>a.cat===cat&&(!a.show||a.show())).forEach(a=>{
-      const why=a.req?a.req():null;
-      const dis=S.ap<=0||why;
-      h+=`<button class="act" data-act="${a.id}" ${dis?'disabled':''}><div class="n">${a.name}</div><div class="d">${a.desc}</div>${why?`<div class="r">🔒 ${why}</div>`:''}</button>`;
-    });
-    h+=`</div>`;
-  });
-  return h;
-}
 function hint(c){
   const r=S.rel[c];
   if(c==='ailin')return S.betrayedAilin?'她知道你出賣過她。她沒有說，但眼神已經不一樣了。':r.f>=75?'她看你的眼神，已經不只是同情。':r.f>=45?'她開始在意你的每一個表情。':r.f>=20?'她似乎真的想和你做朋友。':'她對你的善意，毫無保留。';
@@ -1174,15 +1034,6 @@ function hint(c){
   if(c==='duke')return S.dukePact?'你們之間有一份契約。價碼還沒到期。':r.f>=40?'他似乎認真考慮過，要不要賭在你身上。':'他在估價。';
   return'';
 }
-function panelChars(){
-  return Object.keys(CHARS).map(k=>{
-    const c=CHARS[k],r=S.rel[k];
-    return`<div class="card char">${avatar(k,'lg')}<div style="flex:1"><div><span class="nm">${c.name}</span> <span class="tt">${c.title}</span></div><div class="ds">${c.desc}</div>
-    <div class="meter f"><span class="l">好感</span><div class="b"><i style="width:${r.f}%"></i></div><span>${r.f}</span></div>
-    <div class="meter w"><span class="l">警戒</span><div class="b"><i style="width:${r.w}%"></i></div><span>${r.w}</span></div>
-    <div class="dim" style="font-size:12px;margin-top:3px">${hint(k)}</div>${(()=>{const T=TALK[k],st=(S.talk&&S.talk[k])||0,nx=T.story[st];return`<div class="prog">劇情進度 ${st}/${T.story.length}${nx?`　下一段：好感 ${nx.min}`:'　已全部解鎖'}</div>`})()}</div></div>`;
-  }).join('');
-}
 function panelFlags(){
   const pend=FLAGS.filter(x=>x.id!=='f5'&&S.flags[x.id]==='idle'&&x.week>=S.week)[0];
   return`<div class="card dim">你只讀到小說的中段。「記憶清晰度」越高，越能想起即將發生的死亡事件。已知的事件，往往有更好的應對方式。</div>`+
@@ -1192,15 +1043,6 @@ function panelFlags(){
     return`<div class="card flag ${st==='cleared'?'cleared':st==='failed'?'failed':pend===f?'next':''}"><h3>${k?f.name:'？？？'}<span class="badge">第 ${k?f.week:'?'} 週</span>${st==='cleared'?'<span class="badge ok">已解除</span>':st==='failed'?'<span class="badge no">未能避開</span>':''}</h3>
     <div class="${k?'':'dim'}">${k?f.hint:`你還想不起這件事。（記憶清晰度需達 ${f.need}，目前 ${S.clarity}）`}</div></div>`;
   }).join('');
-}
-function panelKarma(){
-  const ids=Object.keys(S.karma);
-  let h=`<div class="card dim">你的每個重要選擇，都可能種下「因」。過幾週，「果」會自己找上門。這裡記錄已種下的因與預兆；結果是好是壞，要等它發生才知道。</div>`;
-  const pend=ids.filter(id=>!S.karma[id].done),done=ids.filter(id=>S.karma[id].done);
-  if(!ids.length)h+=`<div class="card dim">目前還沒有種下任何因果。</div>`;
-  pend.forEach(id=>{const K=KARMA[id],s=S.karma[id];h+=`<div class="card kar"><h3>🌱 ${K.name}<span class="badge kr">第 ${s.sown} 週種下</span></h3><div>因：${K.cause}</div><div class="dim" style="margin-top:3px">預兆：${K.omen}</div></div>`});
-  done.forEach(id=>{const K=KARMA[id];h+=`<div class="card kar done"><h3>🍂 ${K.name}<span class="badge kr">已結果</span></h3><div class="dim">因：${K.cause}</div></div>`});
-  return h;
 }
 function panelDiary(){
   let h=`<div class="card dim">原身留下的日記殘頁（${S.diary} / ${DIARY.length}）。每一頁，都是她沒能說出口的話。</div>`;
@@ -1213,28 +1055,6 @@ function galleryHtml(){
   const got=endingsGot(),cgs=cgsGot();
   const evs=`<div style="color:var(--gold);margin:14px 0 4px">事件 CG ${cgs.length} / ${Object.keys(EVCG_NAME).length}</div><div class="gal">`+Object.keys(EVCG_NAME).map(k=>{const g=cgs.includes(k)&&IMG[k];return`<div class="gi" ${g?`data-evcg="${k}" style="cursor:pointer"`:''}><div class="gt ${g?'ecg-'+k:''}">${g?'':'？'}</div>${g?EVCG_NAME[k]:'？？？'}</div>`}).join('')+`</div>`;
   return`<div class="gal">`+Object.keys(ENDINGS).map(id=>{const g=got.includes(id);return`<div class="gi" ${g?`data-cg="${id}" style="cursor:pointer"`:''}><div class="gt ${g&&IMG['end_'+id]?'cg-'+id:''}">${g&&IMG['end_'+id]?'':'？'}</div>${g?ENDINGS[id].title:'？？？'}</div>`}).join('')+`</div>`+evs;
-}
-function showTitle(){
-  closeModal();
-  const sv=loadSave(),got=endingsGot().length,tot=Object.keys(ENDINGS).length;
-  let petals='';for(let i=0;i<14;i++)petals+=`<i class="petal" style="left:${Math.round(rnd()*110)}%;animation-duration:${(9+rnd()*9).toFixed(1)}s;animation-delay:-${(rnd()*15).toFixed(1)}s;transform:scale(${(.6+rnd()*.7).toFixed(2)})"></i>`;
-  const el=$('#title');
-  el.innerHTML=`<div class="tbg" id="tbg"></div><div class="tshade"></div>${petals}
-  <div class="tmain">${IMG.violet?`<div class="por i-violet"></div>`:''}
-   <div class="tleft"><div class="logo"><div class="en">TRANSMIGRATED VILLAINESS SIMULATOR</div><h1>穿越惡女小說模擬器</h1><div class="sub2">《白薔薇與王冠》</div><div class="tag">穿進虐戀小說的惡女，距離處刑還有 100 天。</div></div>
-   <div class="tmenu">
-    ${sv?`<button class="tbtn main" data-do="continue">繼續遊戲<small>第 ${sv.week} 週・祭典倒數 ${Math.max(0,100-(sv.week-1)*7)} 天</small></button>`:''}
-    <button class="tbtn ${sv?'':'main'}" data-do="askNew">開始新遊戲</button>
-    <button class="tbtn" data-do="gallery">結局收集<small>${got} / ${tot}</small></button>
-    <button class="tbtn" data-do="roster">人物介紹</button>
-    <button class="tbtn" data-do="help">遊戲說明</button>
-   </div>
-   <div class="tfoot"><span class="sndbtn" data-do="snd" style="cursor:pointer;font-size:15px">🔊</span>　v0.7　・　<span style="cursor:pointer;text-decoration:underline" data-do="askReset">清除所有紀錄</span></div></div>
-  </div>`;
-  if(IMG.bg_festival)$('#tbg').style.backgroundImage=`url(${IMG.bg_festival})`;
-  el.classList.add('show');
-  document.querySelectorAll('.sndbtn').forEach(b=>b.textContent=AU.on?'🔊':'🔇');
-  music('title');
 }
 function hideTitle(){const el=$('#title');el.classList.remove('show');el.innerHTML=''}
 function showGallery(back){
@@ -1269,16 +1089,6 @@ function showRoster(k){
   if(bg)$('#tbg').style.backgroundImage=`url(${bg})`;
   el.classList.add('show');
 }
-function showHelp(){
-  openModal(`<h2>遊戲說明</h2><div class="help">
-  <h3>目標</h3><p>你穿進了虐戀小說《白薔薇與王冠》，成了第 13 週建國祭典上會被處刑的惡女薇奧蕾特。想辦法活下去，或者找出祭典背後的真相。</p>
-  <h3>每週流程</h3><p>每週有 3 個行動點，可以社交、調查、經營或休息。用完後按「結束本週」，週末會觸發劇情事件。</p>
-  <h3>重要數值</h3><p>🧠 理智：歸零時原身會奪回身體，直接進入壞結局。<br>📖 記憶：越高越能想起即將發生的死亡事件。事先想起來，往往會多出更好的選項。<br>🌀 偏移：原著劇情被你改變的程度。太低時，強制力每晚會消耗更多理智。<br>🗝 籌碼：手上握有的秘密和把柄，關鍵時刻可以拿來交易或反擊。</p>
-  <h3>人物關係</h3><p>每位角色都有「好感」和「警戒」兩條數值。好感夠高時，拜訪他們會推進專屬劇情；不夠時，只會發生日常互動。</p>
-  <h3>因果</h3><p>重要的選擇會種下「因」，過幾週後「果」會自己找上門。你在「因果」分頁可以看到預兆，但看不到結果。</p>
-  <h3>建國祭典</h3><p>第 13 週的最後一夜只能做一件準備。祭典當天有三個階段：審判庭、儀式、刀落下的瞬間。能用的選項，取決於你一路累積的證據、盟友與真相。</p><h3>重生記憶</h3><p>每完成一次結局，下一輪開局的記憶會更清楚，也會解鎖「回溯前世記憶」行動。</p><h3>結局</h3><p>共有 12 種結局，其中 2 種是隱藏結局。點畫面上方的數值，可以查看說明；右上角的 🔊 可以開關音樂與音效。</p>
-  </div><div class="row"><button class="btn ghost" data-do="title">返回</button></div>`);
-}
 function askNew(){
   if(!loadSave())return startNew();
   openModal(`<h2>開始新遊戲？</h2><p>目前已有存檔（第 ${loadSave().week} 週）。開始新遊戲會覆蓋它。</p><div class="row"><button class="btn" data-do="startNew">覆蓋並開始</button><button class="btn ghost" data-do="title">取消</button></div>`);
@@ -1293,9 +1103,8 @@ function showPause(){
   <button class="tbtn" data-do="toTitle">回到主選單</button></div>`);
 }
 function startNew(){hideTitle();newGame()}
-function newGame(){hideTitle();S=newState();ui={mode:'act',queue:[],lastLen:-1,lastTab:'',lastMode:''};sownQ=[];curEv=null;clearSave();showPrologue()}
 function showPrologue(){
-  if(S.loop>=1)return openModal(`<h2>序章・又一次</h2><div class="tag">第 ${S.loop+1} 周目</div><p>你又醒在那張繡著薔薇的床上。\n刀的寒意、白薔薇的香氣、群眾的聲音，全都還記得。這不是夢。你已經在這本書裡死過一次了。</p><p>床頭的日曆上，紅筆圈著同一個日子：<b style="color:var(--crimson)">建國祭典，還有 100 天</b>。\n這一次，你知道得比上一次更多。</p><div class="up">重生記憶：初始記憶清晰度提高，並解鎖「回溯前世記憶」行動。</div><div style="text-align:right;margin-top:14px"><button class="btn" data-do="begin">再一次睜開眼睛</button></div>`);
+  if(S.loop>=1)return openModal(`<h2>序章・又一次</h2><div class="tag">第 ${S.loop+1} 周目</div><p>你又醒在那張繡著薔薇的床上。\n刀的寒意、白薔薇的香氣、群眾的聲音，全都還記得。這不是夢。你已經在這本書裡死過一次了。</p><p>床頭的日曆上，紅筆圈著同一個日子：<b style="color:var(--crimson)">建國祭典，還有 100 天</b>。\n這一次，你知道得比上一次更多。</p><div class="up">重生記憶：初始記憶清晰度提高，並解鎖「回溯前世記憶」行動。開局加成有上限，前世的經驗只能幫你一部分。</div><div style="text-align:right;margin-top:14px"><button class="btn" data-do="begin">再一次睜開眼睛</button></div>`);
   openModal(`<h2>序章・通勤列車</h2><div class="tag">《白薔薇與王冠》</div>
   <p>擠滿人的通勤列車上，你讀完了那本被罵到翻的虐戀小說。惡女薇奧蕾特因為嫉妒聖女艾琳一路作惡，最後在建國祭典上被公開處刑。\n「也太慘了吧。」你小聲嘀咕，然後睡著了。</p>
   <p>醒來時，頭頂是繡著薔薇的床帷。鏡子裡的女人有一頭深酒紅色的長髮，眼神冷得像結了霜。\n床頭的日曆上，有一個日子被紅筆圈了起來：<b style="color:var(--crimson)">建國祭典，還有 100 天</b>。</p>
@@ -1309,6 +1118,413 @@ function begin(){
   log({k:'ev',title:'穿越第一天',text:`建國祭典倒數 100 天。你只有一個目標：活下去。\n每週 3 個行動點，用完後點「結束本週」。`});
   closeModal();save();render();
 }
+
+/* ============================================================
+   WHITE ROSE & CROWN — VERSION 2.0 SYSTEM REMASTER
+   保留 v0.7 劇情、美術、CG 與音效；以下覆寫／擴充遊戲系統。
+   ============================================================ */
+const V2_VERSION='2.1.0';
+const V2_BACKUP=SAVE+'_backup';
+const V2_LEGACY='villainess_legacy_v2';
+
+const V2_SKILLS={
+  court:{name:'宮廷交際',icon:'♛',desc:'禮儀、談判、讀懂權力關係。高階能力能解鎖更有利的宮廷選項。',milestones:[[25,'讀懂禮節暗示'],[45,'公開談判'],[65,'左右宮廷風向'],[85,'王室級交涉']]},
+  insight:{name:'真相調查',icon:'⌕',desc:'蒐集線索、辨識矛盾、拼湊事件真相。高階能力能發現一般調查看不見的細節。',milestones:[[25,'辨認可疑痕跡'],[45,'交叉比對證據'],[65,'重建儀式全貌'],[85,'看穿原著之外的真相']]},
+  will:{name:'意志守護',icon:'✧',desc:'抵抗原身與劇情強制力，保護記憶與自我。高階能力能在關鍵時刻守住身體。',milestones:[[25,'穩定夢境'],[45,'抵抗精神侵蝕'],[65,'與原身對話'],[85,'完整掌握身體主導權']]}
+};
+const V2_CLUES={
+  sugar:{name:'苦味糖盒',type:'物證',desc:'皇后送來的糖裡摻了大量鎮痛藥。長期服用會讓人反應遲鈍、記憶模糊。送糖的人，似乎不希望收到糖的人在某一天感到痛。',source:'追查糖盒來源'},
+  footprints:{name:'池畔足跡',type:'現場證據',desc:'池畔泥地留有兩組方向相反的腳印，欄杆還有被人從後方拉扯的衣料痕跡。落水並非單純意外。',source:'禁園現場勘察'},
+  registry:{name:'雙生名冊',type:'檔案',desc:'歷屆祭典名冊都有兩個名字並列：聖女與惡女。被劃掉的名字從未留下墓葬紀錄。',source:'比對祭典名冊'},
+  ledger:{name:'神殿帳冊',type:'帳冊',desc:'王室捐款長期流入神殿的秘密帳戶，部分款項用於祭典前的封口與轉運。',source:'追查神殿帳目'},
+  diary:{name:'原身日記',type:'私人紀錄',desc:'日記殘頁顯示，原身早已察覺祭典真相，也曾試圖向外求救。',source:'搜集日記殘頁'},
+  graves:{name:'空墓名單',type:'現場證據',desc:'神殿地下的石墓全是空的。歷代惡女並非被埋葬，而是被儀式抹去。',source:'神殿地下'},
+  dream:{name:'共同夢境',type:'證詞',desc:'艾琳也夢見過高台、白薔薇與行刑之刀。這場儀式並非只作用於薇奧蕾特。',source:'艾琳的夢境'}
+};
+const V2_MEMORIES={
+  origin:{name:'鏡中的名字',desc:'原身真正的願望不是奪回身體，而是希望有人讀完她留下的日記。',bonus:'新周目初始理智 +4。'},
+  truth:{name:'高台之下',desc:'你曾經看見儀式中斷後的景象。神殿並非不可戰勝。',bonus:'新周目初始記憶清晰度提高（記憶類加成合計上限 +8）。'},
+  saint:{name:'白薔薇的約定',desc:'艾琳曾在另一條命運裡握住你的手。她值得被當成一個人，而非聖女。',bonus:'與艾琳初次互動時額外獲得信任。'},
+  knight:{name:'未出鞘的劍',desc:'卡西安曾經放下行刑刀。法律之外，他仍有自己的選擇。',bonus:'新周目初始籌碼 +1。'},
+  crown:{name:'王冠的裂縫',desc:'宮廷權力並非鐵板一塊，皇室內部也有人等待改變。',bonus:'新周目初始金錢 +12。'},
+  escape:{name:'北方的雪',desc:'你記得自由的滋味，也記得逃亡不代表真相會消失。',bonus:'新周目初始意志 +5。'},
+  shadow:{name:'惡女的代價',desc:'你曾經把代價轉嫁給別人。那段記憶提醒你，活下來不等於贏了。',bonus:'新周目初始記憶清晰度提高（記憶類加成合計上限 +8）。'}
+};
+
+function v2ReadLegacy(){
+  try{return Object.assign({fragments:[],runs:0,bestEnding:null},JSON.parse(localStorage.getItem(V2_LEGACY)||'{}'))}
+  catch(e){return{fragments:[],runs:0,bestEnding:null}}
+}
+function v2WriteLegacy(x){try{localStorage.setItem(V2_LEGACY,JSON.stringify(x))}catch(e){}}
+function v2UnlockMemory(id){
+  if(!V2_MEMORIES[id])return;
+  const m=v2ReadLegacy();
+  if(!m.fragments.includes(id))m.fragments.push(id);
+  v2WriteLegacy(m);
+}
+function v2RewardEnding(id){
+  const map={home:['origin','truth'],lily:['saint','origin'],true:['truth','saint'],knight:['knight'],duke:['crown'],exile:['escape'],cage:['crown','shadow'],scapegoat:['shadow'],martyr:['saint','shadow'],possessed:['origin','shadow'],caught:['escape'],exec:['shadow']};
+  (map[id]||['shadow']).forEach(v2UnlockMemory);
+  const m=v2ReadLegacy();m.runs=(m.runs||0)+1;m.bestEnding=id;v2WriteLegacy(m);
+}
+function v2InitialState(){
+  const base=baseState();
+  const mem=v2ReadLegacy();
+  base.v2Version=V2_VERSION;
+  base.skills={court:12,insight:14,will:16};
+  base.training={court:0,insight:0,will:0};
+  base.evidence=[];
+  base.recalled=[];
+  base.factions={court:22,church:68,people:18};
+  base.lastWorldPulse=0;
+  base.relationshipNotes=[];
+  base.rel.prince.t=12;base.rel.knight.t=24;base.rel.priest.t=10;
+  base.rel.duke.t=14;base.rel.ailin.t=30;base.rel.queen.t=8;
+  const bonus={clarity:0,money:0,secrets:0,will:0,trust:0};
+  mem.fragments.forEach(id=>{
+    if(id==='origin')bonus.will+=4;
+    if(id==='truth')bonus.clarity+=6;
+    if(id==='saint')bonus.trust+=5;
+    if(id==='knight')bonus.secrets+=1;
+    if(id==='crown')bonus.money+=12;
+    if(id==='escape')bonus.will+=5;
+    if(id==='shadow')bonus.clarity+=3;
+  });
+  base.clarity=clamp(Math.min(base.clarity+Math.min(8,bonus.clarity),36),0,100);
+  base.money+=0;
+  base.money+=Math.min(12,bonus.money);base.secrets+=Math.min(1,bonus.secrets);base.skills.will=clamp(base.skills.will+Math.min(6,bonus.will),0,100);
+  base.rel.ailin.t=clamp(base.rel.ailin.t+Math.min(5,bonus.trust),0,100);
+  return base;
+}
+function newState(){return v2InitialState()}
+
+function v2Migrate(raw){
+  const base=v2InitialState();
+  if(!raw||typeof raw!=='object')return base;
+  const s=Object.assign(base,raw);
+  s.rel=Object.assign({},base.rel,raw.rel||{});
+  Object.keys(base.rel).forEach(k=>{s.rel[k]=Object.assign({},base.rel[k],(raw.rel||{})[k]||{});if(typeof s.rel[k].t!=='number')s.rel[k].t=clamp(Math.round((s.rel[k].f||0)*.45-(s.rel[k].w||0)*.2+24),0,100)});
+  s.skills=Object.assign({court:12,insight:14,will:16},raw.skills||{});
+  s.training=Object.assign({court:0,insight:0,will:0},raw.training||{});
+  s.evidence=Array.isArray(raw.evidence)?raw.evidence.filter(x=>V2_CLUES[x]):[];
+  s.recalled=Array.isArray(raw.recalled)?raw.recalled:[];
+  s.factions=Object.assign({court:22,church:68,people:18},raw.factions||{});
+  s.karma=s.karma||{};s.log=Array.isArray(s.log)?s.log:[];s.seen=s.seen||{};
+  s.v2Version=V2_VERSION;
+  return s;
+}
+function v2EventKey(e){
+  if(!e)return null;
+  if(e.isKarma)return'karma:'+String(e.id).replace(/^k_/, '');
+  if(e.fest)return'fest:'+e.id;
+  return'event:'+e.id;
+}
+function v2EventFromKey(key){
+  if(!key)return null;
+  const p=key.split(':');
+  if(p[0]==='karma')return karmaEvent(p[1]);
+  if(p[0]==='fest')return FEST.find(x=>x.id===p[1])||null;
+  if(p[0]==='event')return EVENTS[Number(String(p[1]).replace(/^w/,''))]||RANDOM.find(x=>x.id===p[1])||(QUIET.id===p[1]?QUIET:null);
+  return null;
+}
+function v2Save(){
+  try{
+    const snap=JSON.parse(JSON.stringify(S));
+    snap.v2Version=V2_VERSION;
+    snap._runtime={mode:ui.mode,queue:(ui.queue||[]).map(v2EventKey),current:v2EventKey(curEv)};
+    const previous=localStorage.getItem(SAVE);
+    if(previous)localStorage.setItem(V2_BACKUP,previous);
+    localStorage.setItem(SAVE,JSON.stringify(snap));
+    const badge=$('#saveState');if(badge)badge.textContent='已自動儲存';
+  }catch(e){
+    const badge=$('#saveState');if(badge)badge.textContent='儲存空間不足';
+  }
+}
+function v2LoadSave(){
+  try{
+    const primary=localStorage.getItem(SAVE);
+    const raw=primary?JSON.parse(primary):JSON.parse(localStorage.getItem(V2_BACKUP)||'null');
+    return raw?v2Migrate(raw):null;
+  }catch(e){
+    try{return v2Migrate(JSON.parse(localStorage.getItem(V2_BACKUP)||'null'))}catch(e2){return null}
+  }
+}
+function v2RestoreSave(raw){
+  S=v2Migrate(raw);
+  const rt=S._runtime||{};delete S._runtime;
+  ui={mode:rt.mode||'act',queue:(rt.queue||[]).map(v2EventFromKey).filter(Boolean),lastLen:-1,lastTab:'',lastMode:'',lastScene:null};
+  curEv=v2EventFromKey(rt.current);
+  if(ui.mode==='choose'&&!curEv)ui.mode='act';
+  if(curEv){const m=META[curEv.id]||['violet','bedroom'];curEv.who=m[0];S.scene=m[1];}
+  sownQ=[];hideTitle();closeModal();music('game');render();save();
+}
+function add(k,v){
+  if(!v)return;
+  if(k.indexOf('.')>=0){
+    const p=k.split('.');
+    if(p[0]==='skill'){S.skills=S.skills||{};S.skills[p[1]]=clamp((S.skills[p[1]]||0)+v,0,100);return}
+    if(p[0]==='faction'){S.factions=S.factions||{court:22,church:68,people:18};S.factions[p[1]]=clamp((S.factions[p[1]]||0)+v,0,100);return}
+    S.rel[p[0]]=S.rel[p[0]]||{f:0,w:0,t:0};S.rel[p[0]][p[1]]=clamp((S.rel[p[0]][p[1]]||0)+v,0,100);return;
+  }
+  const lim={sanity:[0,100],notor:[0,100],drift:[0,100],clarity:[0,100],diary:[0,6],money:[0,9999],secrets:[0,99]}[k]||[0,9999];
+  S[k]=clamp((S[k]||0)+v,lim[0],lim[1]);
+}
+function nameOf(k){
+  if(k.indexOf('.')>=0){const p=k.split('.');if(p[0]==='skill')return V2_SKILLS[p[1]]?V2_SKILLS[p[1]].name:p[1];if(p[0]==='faction')return({court:'宮廷支持',church:'神殿控制',people:'民眾支持'})[p[1]]||p[1];return(CHARS[p[0]]||AV[p[0]]||{name:p[0]}).name+({f:'好感',w:'警戒',t:'信任'})[p[1]]}
+  return LABEL[k]||k;
+}
+const isBad=(k,v)=>{if(k==='notor'||k==='faction.church'||k.endsWith('.w'))return v>0;if(k.endsWith('.t')||k==='faction.court'||k==='faction.people')return v<0;return v<0};
+function applyFx(fx){
+  if(!fx)return'';
+  let h='';
+  for(const k in fx){const v=fx[k];if(!v)continue;
+    add(k,v);
+    if(k.indexOf('.')>0&&k.endsWith('.f')){const c=k.split('.')[0];if(S.rel[c])S.rel[c].t=clamp((S.rel[c].t||0)+Math.sign(v)*Math.max(1,Math.round(Math.abs(v)*.28)),0,100)}
+    if(k.indexOf('.')>0&&k.endsWith('.w')){const c=k.split('.')[0];if(S.rel[c])S.rel[c].t=clamp((S.rel[c].t||0)-Math.sign(v)*Math.max(1,Math.round(Math.abs(v)*.22)),0,100)}
+    h+=`<span class="chip ${isBad(k,v)?'neg':'pos'}">${nameOf(k)} ${v>0?'+':''}${v}</span>`;
+  }
+  return h;
+}
+function v2GainEvidence(id){
+  if(!V2_CLUES[id]||S.evidence.includes(id))return false;
+  S.evidence.push(id);
+  if(S.evidence.length>=3)S.truth=Math.max(S.truth||0,1);
+  if(S.evidence.length>=4&&S.diary>=3)S.truth=Math.max(S.truth||0,2);
+  return true;
+}
+function v2RelStage(id){
+  const r=S.rel[id]||{f:0,w:0,t:0};
+  if(id==='prince'&&r.f>=45&&r.w>=45&&r.t<48)return'危險的佔有';
+  if(id==='priest'&&r.f>=35&&r.w>=45)return'溫柔的控制';
+  if(r.f>=65&&r.t>=62)return'命運盟友';
+  if(r.f>=42&&r.t>=42)return'深度信任';
+  if(r.f>=22||r.t>=35)return'互相試探';
+  return'防備與觀察';
+}
+function v2FactionPulse(){
+  if(S.notor>=70)S.factions.people=clamp(S.factions.people-2,0,100);
+  else if(S.notor<=30)S.factions.people=clamp(S.factions.people+1,0,100);
+  if(S.truth>=2||S.evidence.length>=4)S.factions.church=clamp(S.factions.church-2,0,100);
+  if(S.queenCountered)S.factions.court=clamp(S.factions.court+2,0,100);
+  if(S.rel.duke.f>=45&&S.dukePact)S.factions.court=clamp(S.factions.court+1,0,100);
+}
+
+/* 新行動：每週各訓練一種能力一次；調查證據則是一次性內容。 */
+ACTIONS.push(
+ {id:'train_court',cat:'能力',name:'研習宮廷禮儀',desc:'練習談判、察言觀色與貴族禮節。本週限一次。',req:()=>S.training.court===S.week?'本週已研習過宮廷禮儀':null,run(){S.training.court=S.week;add('skill.court',10);add('faction.court',2);return{text:`你把宮廷禮儀手冊從頭讀了一遍，又在鏡前練習不同場合的行禮方式。真正重要的不是姿勢，而是知道誰希望你低頭。`,fx:{clarity:1}}}},
+ {id:'train_insight',cat:'能力',name:'研究歷屆祭典檔案',desc:'整理時間線與人物矛盾。本週限一次。',req:()=>S.training.insight===S.week?'本週已整理過檔案':null,run(){S.training.insight=S.week;add('skill.insight',10);add('secrets',1);return{text:`你將散落的名冊、信件與報告按年份排列。看似毫無關聯的兩件事，終於出現了同一個名字。`,fx:{clarity:3}}}},
+ {id:'train_will',cat:'能力',name:'鏡前靜心',desc:'練習分辨自己的聲音與原身的聲音。本週限一次。',req:()=>S.training.will===S.week?'本週已靜心過':null,run(){S.training.will=S.week;add('skill.will',10);return{text:`你坐在鏡子前，先說出自己的名字，再說出薇奧蕾特的名字。兩個聲音都是真的；你不必抹去任何一個，才能證明自己存在。`,fx:{sanity:5}}}},
+ {id:'clue_sugar',cat:'調查',name:'追查苦味糖盒',desc:'比對送禮紀錄與藥房採購清單，尋找皇后的糖盒來源。',show:()=>!S.evidence.includes('sugar'),req:()=>S.skills.insight<18?'需要真相調查 ≥ 18':null,run(){v2GainEvidence('sugar');return{text:`莉娜找來了半年前的送禮簿。糖盒每次都由皇后親信送達。藥房的採購單上，記著一種只在祭典前幾個月才大量購入的鎮痛藥。`,fx:{clarity:6,secrets:1,'faction.church':-1}}}},
+ {id:'clue_registry',cat:'調查',name:'比對祭典名冊',desc:'以調查能力交叉比對歷屆聖女與惡女的姓名。',show:()=>!S.evidence.includes('registry'),req:()=>S.skills.insight<25?'需要真相調查 ≥ 25':null,run(){v2GainEvidence('registry');return{text:`你找到七十年前的一本舊名冊。每一代都只有兩個名字被特別標記，而且兩人都在同一天從歷史紀錄中消失。`,fx:{clarity:7,secrets:1}}}},
+ {id:'clue_ledger',cat:'調查',name:'追查神殿帳目',desc:'從公爵的情報或僕人線索追出神殿資金流向。',show:()=>!S.evidence.includes('ledger'),req:()=>((S.rel.duke.t||0)<28&&S.secrets<3)?'需要公爵信任 ≥ 28 或籌碼 ≥ 3':null,run(){v2GainEvidence('ledger');return{text:`你把三份捐款收據疊在一起，發現收款印章相同，帳戶持有人卻是不存在的慈善機構。最後一筆款項在祭典前一週匯出。`,fx:{clarity:5,secrets:2,'faction.church':-3}}}},
+ {id:'clue_graves',cat:'調查',name:'整理地下墓室線索',desc:'把空墓、名冊與神殿白布的情報交叉整理。',show:()=>!S.evidence.includes('graves'),req:()=>S.clarity<48&&S.skills.insight<40?'需要記憶清晰度 ≥ 48 或真相調查 ≥ 40':null,run(){v2GainEvidence('graves');return{text:`你在地圖上標出每一座墓室的位置，發現它們都連向高台下方的同一條通道。墓碑不是紀念死者，而是儀式的索引。`,fx:{clarity:6,secrets:1,'faction.church':-2}}}}
+);
+
+/* 前世記憶：由已完成結局解鎖，不再只是重複的隨機文字。 */
+const v2PastLife=ACTIONS.find(a=>a.id==='pastlife');
+if(v2PastLife){
+  v2PastLife.show=()=>S.loop>=1&&v2ReadLegacy().fragments.length>0;
+  v2PastLife.run=function(){
+    const unlocked=v2ReadLegacy().fragments;
+    const nextId=unlocked.find(id=>!S.recalled.includes(id));
+    if(!nextId)return{text:`你努力回想，卻發現這一輪能取回的記憶都已經想起。剩下的空白，也許要靠新的選擇填補。`,fx:{clarity:2,sanity:-1}};
+    S.recalled.push(nextId);
+    const m=V2_MEMORIES[nextId];
+    if(nextId==='origin')S.originPeace=true;
+    if(nextId==='truth'){S.truth=Math.max(S.truth,1);v2GainEvidence('registry')}
+    if(nextId==='saint')v2GainEvidence('dream');
+    if(nextId==='knight')add('knight.t',5);
+    if(nextId==='crown')add('faction.court',5);
+    if(nextId==='escape')add('skill.will',5);
+    if(nextId==='shadow')add('notor',2);
+    return{text:`前世記憶・${m.name}\n${m.desc}\n\n這不是預言，而是你曾經付出代價才換來的經驗。`,fx:{clarity:8,sanity:2}};
+  };
+}
+
+/* 讓原本的關鍵事件接上能力檢定與證據系統。 */
+EVENTS[2].choices.push({label:'「依宮廷禮法要求公開驗茶」',show:()=>S.skills.court>=28,do(){v2GainEvidence('sugar');S.factions.people=clamp(S.factions.people+5,0,100);return{fx:{'ailin.f':5,'queen.w':5,clarity:4,drift:5},flag:'cleared',res:`你指出茶會的責任不應在證據未明前落到任何人身上，並要求由王室醫官當眾驗茶。藥粉在銀匙上顯出異樣。你沒有指認兇手，但至少阻止了無辜者被立刻定罪。\n〔能力檢定：宮廷交際 28〕`}}});
+EVENTS[4].choices.push({label:'「先查池畔腳印與衣料痕跡」',show:()=>S.skills.insight>=30,do(){v2GainEvidence('footprints');return{fx:{'knight.f':5,'knight.t':5,'ailin.f':4,clarity:5,drift:4},flag:'cleared',res:`你沒有急著伸手，而是先檢查池畔泥地與欄杆。兩組腳印方向相反，艾琳的披肩也有被人從後方拉扯的痕跡。卡西安據此封鎖現場，沒有任何宮女被帶走。\n〔能力檢定：真相調查 30〕`}}});
+EVENTS[8].choices.push({label:'「對鏡中的她說：我願意聽妳說完」',show:()=>S.skills.will>=38,do(){S.originPeace=true;S.mirrorTalk=true;v2GainEvidence('diary');return{fx:{sanity:12,drift:8,clarity:5,'skill.will':5},flag:'cleared',res:`你沒有念咒，也沒有求助神官。你只是把手貼在鏡面上，請她把話說完。鏡中的女人哭了很久，最後說：「我只是想知道，為什麼沒有人相信我。」\n你第一次沒有把她當成敵人。\n〔能力檢定：意志守護 38〕`}}});
+EVENTS[10].onShow=function(){
+  if(S.diary>=4||S.clarity>=70||S.evidence.length>=3)S.truth=Math.max(S.truth,2);
+  else if(S.evidence.length>=2)S.truth=Math.max(S.truth,1);
+};
+EVENTS[10].choices.push({label:'「攤開證據鏈，證明祭典是獻祭儀式」',show:()=>S.evidence.length>=4&&S.skills.insight>=40,do(){S.truth=2;S.queenCountered=true;S.factions.church=clamp(S.factions.church-8,0,100);S.factions.people=clamp(S.factions.people+8,0,100);return{fx:{secrets:2,clarity:8,drift:8,'duke.f':4},res:`苦味糖盒、雙生名冊、神殿帳冊與空墓名單被依序攤開。每一份證據都指向同一件事：聖女與惡女並不是審判者與罪人，而是被安排好的祭品。你終於有足夠的證據，讓真相不再只是猜測。\n〔能力檢定：真相調查 40〕`}}});
+EVENTS[12].choices.push({label:'「依王室法規要求皇后公開答辯」',show:()=>S.skills.court>=42,do(){S.queenCountered=true;S.factions.court=clamp(S.factions.court+10,0,100);S.factions.people=clamp(S.factions.people+4,0,100);return{fx:{'queen.w':8,'queen.t':4,drift:8,clarity:3},flag:'cleared',res:`你引用王室繼承法與祭典審判章程，指出皇后不能在沒有完整證詞的情況下要求你簽署認罪書。她沒有立刻回答，只命令侍女把溫室的門關上。這一次，她必須認真聽你說話。\n〔能力檢定：宮廷交際 42〕`}}});
+FEST[0].choices.push({label:'「以王室法規中止有疑義的審判」',show:()=>S.skills.court>=48||(S.skills.court>=36&&S.factions.court>=55),do(){S.fest.proof+=S.factions.court>=55?3:2;S.factions.people=clamp(S.factions.people+6,0,100);return{fx:{'queen.w':6,drift:6,notor:-3},res:`你逐條引用審判程序，指出皇后同時是證人、控訴者與宣讀罪狀的人。廣場上開始有人要求重新審理。\n〔能力檢定：宮廷交際 48〕`}}});
+FEST[1].choices.push({label:'「以意志守住身體，讓她與我並肩」',show:()=>S.skills.will>=48,do(){S.fest.resist=2;S.originPeace=true;return{fx:{sanity:8,drift:5},res:`你沒有把她推開，也沒有把身體交出去。你在心裡伸出手，說：「這一次，我們一起選。」鏡中的她握住了你的手。\n〔能力檢定：意志守護 48〕`}}});
+FEST[2].choices.push({label:'「公開完整證據鏈，讓民眾見證」',show:()=>S.truth>=2&&S.evidence.length>=4&&S.skills.insight>=52,do(){S.fest.proof+=2;const ally=S.rel.ailin.f>=55&&S.fest.bond>=1;S.festEnd=ally?'true':S.fest.ally.duke?'duke':S.factions.people>=50?'exile':'exec';return{res:`你把全部證據交給廣場上的記錄官，要求逐項公開。神殿無法再把它們稱作謠言。這一次，歷史必須留下證詞。${ally?'':S.fest.ally.duke?'\n廣場四周，公爵的人馬同時動了。':S.factions.people>=50?'\n群眾開始騷動，有人衝破了衛兵的封鎖線。':'\n可是沒有人站出來。證據被念完的那一刻，刀還是舉了起來。'}\n〔能力檢定：真相調查 52〕`}}});
+
+function save(){v2Save()}
+function loadSave(){return v2LoadSave()}
+function clearSave(){try{localStorage.removeItem(SAVE);localStorage.removeItem(V2_BACKUP)}catch(e){}}
+function restoreFromSave(raw){v2RestoreSave(raw)}
+function v2ShowHelp(){
+  openModal(`<h2>遊戲說明・2.0</h2><div class="help">
+  <h3>遊戲目標</h3><p>你穿進了虐戀小說《白薔薇與王冠》，成了第 13 週建國祭典上會被處刑的惡女薇奧蕾特。你可以求生、揭露儀式、改變人物命運，或追尋原身真正的願望。</p>
+  <h3>每週流程</h3><p>每週有 3 個行動點。社交、調查、經營、能力訓練與自處都會消耗行動點。結束本週後，會先結算夜間理智侵蝕，再觸發延遲因果與當週主線事件。</p>
+  <h3>三項能力</h3><p>宮廷交際：開啟談判與政治應對。真相調查：發現痕跡、比對檔案與重建真相。意志守護：抵抗原身與劇情強制力。每週每種能力最多訓練一次。</p>
+  <h3>人物關係</h3><p>好感代表情感親近，信任代表對方是否願意把真相交給你，警戒則代表對方對你的戒心。好感高不代表安全，有時也可能變成控制。</p>
+  <h3>證據與因果</h3><p>調查線索會記錄在「證據」分頁。重要選擇會種下因果，幾週後可能引發新的事件。證據、盟友與能力會共同影響祭典選項。</p>
+  <h3>多周目記憶</h3><p>完成結局後會解鎖永久記憶碎片。下一輪可使用「回溯前世記憶」取回已解鎖的片段，並取得少量開局加成。結局、CG 與記憶碎片會跨周目保存。</p>
+  <h3>三大勢力</h3><p>宮廷支持：越高，你在審判庭上的法理主張越有份量。神殿控制：越高，祭典儀式時原身的侵蝕越強。民眾支持：達到 60，祭典上群眾會願意為你出手。洗白形象、覲見皇后、調查神殿都會改變勢力。</p>
+<h3>建國祭典</h3><p>第 13 週最後一夜只能做一件準備。祭典分成審判庭、儀式、刀落下的瞬間三個階段，可用的選項取決於你累積的證據、盟友、能力與勢力。</p>
+<h3>結局與存檔</h3><p>共 12 種結局，其中 2 種是隱藏結局。每次行動與選擇都會自動存檔並保留備份。點畫面上方的數值可查看說明，右上角 🔊 可開關音樂。</p>
+  </div><div class="row"><button class="btn ghost" data-do="title">返回</button></div>`);
+}
+function showHelp(){v2ShowHelp()}
+function doAction(id){
+  if(ui.mode!=='act')return;
+  const a=ACTIONS.find(x=>x.id===id);if(!a||S.ap<=0)return;
+  const why=a.req?a.req():null;if(why)return;
+  if(a.show&&!a.show())return;
+  sfx('page');
+  const before=FLAGS.filter(isKnown).map(f=>f.id);
+  const o=a.run();
+  const FA={whitewash:{'faction.people':4},act:{'faction.people':-3},priest:{'faction.church':2},queen:{'faction.court':2},archive:{'faction.church':-1},servant:{'faction.people':1},bribe:{'faction.court':1},sell:{'faction.people':-1}}[a.id];
+  if(FA)o.fx=Object.assign({},o.fx,FA);
+  const fx=applyFx(o.fx);S.ap--;
+  if(S.diary>=3)v2GainEvidence('diary');
+  const nw=FLAGS.filter(f=>isKnown(f)&&before.indexOf(f.id)<0);
+  const lost=FLAGS.filter(f=>!isKnown(f)&&before.indexOf(f.id)>=0);
+  let notice='';nw.forEach(f=>notice+=`🔔 你想起了一件事：「${f.name}」（第 ${f.week} 週）\n`);lost.forEach(f=>notice+=`🌫 記憶變得模糊：「${f.name}」你又想不起來了。\n`);
+  const am=ACT_META[a.id]||['violet',null];if(am[1])S.scene=am[1];
+  if(o.tip)notice+=o.tip;
+  log({k:'act',title:a.name+(o.tag?`・${o.tag}`:''),text:o.text,fx:fx,notice:notice.trim(),who:am[0]});
+  if(S.sanity<=0)return finish('possessed');
+  save();render();
+}
+function pick(i){
+  if(ui.mode!=='choose')return;
+  const c=curEv.choices[i];if(!c)return;if(c.show&&!c.show())return;if(c.req&&c.req())return;
+  const selectedEvent=curEv;
+  const o=c.do?c.do():{fx:c.fx,res:c.res,flag:c.flag};
+  let fx=applyFx(o.fx);
+  if(c.sow)[].concat(c.sow).forEach(sow);
+  fx+=flushSown();
+  const st=o.flag||null;if(selectedEvent.flag&&st)S.flags[selectedEvent.flag]=st;
+  S.seen[selectedEvent.id]=true;
+  let text=o.res||'';
+  if(selectedEvent.flag&&st)text+=`\n〔死亡 flag「${FLAGS.find(f=>f.id===selectedEvent.flag).name}」：${st==='cleared'?'已解除 ✔':'未能避開 ✘'}〕`;
+  if(selectedEvent.id==='w9'&&S.ailinReborn)v2GainEvidence('dream');
+  if(selectedEvent.id==='w11'&&/石墓|空墓/.test(text))v2GainEvidence('graves');
+  if(selectedEvent.id==='w10'&&S.truth>=2)v2GainEvidence('registry');
+  let cg=c.cg||o.cg||null;
+  if(selectedEvent.id==='w11'&&i<=1&&/石墓|空墓/.test(o.res||''))cg='ev_w11';
+  if(cg&&IMG[cg])addCg(cg);else cg=null;
+  log({k:'res',title:'▶ '+c.label,text:text,fx:fx,cg:cg});
+  sfx(st==='cleared'?'good':st==='failed'?'bad':'click');
+  ui.mode='cont';save();render();
+}
+function nextEvent(){
+  if(!ui.queue.length){advanceWeek();return}
+  curEv=ui.queue.shift();if(curEv.onShow)curEv.onShow();
+  const m=META[curEv.id]||['violet','bedroom'];curEv.who=m[0];S.scene=m[1];
+  if(curEv.cg)addCg(curEv.cg);
+  log({k:curEv.isKarma?'karma':'ev',title:(curEv.isKarma?'🌱 因果：':'')+curEv.title+(curEv.flag?'（死亡 flag）':''),text:curEv.text(),who:m[0],cg:curEv.cg&&IMG[curEv.cg]?curEv.cg:null});
+  if(curEv.isKarma)sfx('karma');music(curEv.fest?'fest':'game');ui.mode='choose';save();render();
+}
+function endWeek(){
+  if(ui.mode!=='act')return;if(S.ap>0&&!confirmEnd())return;
+  v2FactionPulse();
+  const dec=2+(S.drift<15?1:0);add('sanity',-dec);
+  let note=`夜裡，「強制力」在耳邊低語。理智 -${dec}。`;
+  if(S.sanity<=25&&rnd()<.5){S.penalty=Math.max(S.penalty,1);add('notor',6);note+=`\n你又一次失去了記憶。醒來時，手上多了不屬於你的痕跡。（下週行動 -1，惡名 +6）`}
+  log({k:'night',text:note});if(S.sanity<=25)sfx('heart');if(S.sanity<=0)return finish('possessed');
+  const due=Object.keys(S.karma).filter(id=>!S.karma[id].done&&S.karma[id].due<=S.week).slice(0,2);
+  ui.queue=due.map(id=>{S.karma[id].done=true;return karmaEvent(id)});ui.queue.push(pickEvent(S.week));nextEvent();
+}
+function advanceWeek(){
+  S.week++;S.ap=Math.max(1,S.apMax-S.penalty);S.penalty=0;S.training={court:0,insight:0,will:0};
+  ui.mode='act';log({k:'sep',w:S.week});save();render();
+}
+function next(){
+  if(ui.mode!=='cont')return;if(S.sanity<=0)return finish('possessed');
+  if(curEv.end&&!ui.queue.length){if(S.plan==='flee')return finish(resolveFlee());S.festDay=true;log({k:'sep',w:'祭典'});ui.queue=FEST.slice();nextEvent();return}
+  if(curEv.fest&&(S.festEnd||curEv.final))return finish(S.festEnd||'exec');
+  nextEvent();
+}
+function panelAct(){
+  const fl=FLAGS.find(f=>f.week===S.week&&f.id!=='f5');
+  const dueK=Object.keys(S.karma).some(id=>!S.karma[id].done&&S.karma[id].due<=S.week);
+  const eventName=S.week>=13?'建國祭典前夜':fl?(isKnown(fl)?`⚠ ${fl.name}`:'？？？（你隱約覺得會出事）'):'王宮日常';
+  let h=`<div class="v2-week"><div class="v2-week-top"><div><div class="v2-kicker">WEEKLY PLANNING</div><strong>第 ${S.week} 週・倒數 ${Math.max(0,100-(S.week-1)*7)} 天</strong></div><span class="v2-ap">${S.ap} / ${S.apMax} AP</span></div><div class="v2-forecast"><span>本週焦點</span><b>${eventName}</b><small>${S.week>=13?'最後一夜：只能做一件準備':dueK?'🌱 有因果即將回到你身上':'結束本週後，週末會發生事件'}</small></div><div class="v2-factions"><div><span>宮廷支持</span><b>${S.factions.court}</b><i><em style="width:${S.factions.court}%"></em></i></div><div><span>神殿控制</span><b>${S.factions.church}</b><i><em class="danger" style="width:${S.factions.church}%"></em></i></div><div><span>民眾支持</span><b>${S.factions.people}</b><i><em class="people" style="width:${S.factions.people}%"></em></i></div></div></div>`;
+  ['社交','調查','經營','能力','自處'].forEach(cat=>{
+    h+=`<div class="cat">${cat}</div><div class="grid">`;
+    ACTIONS.filter(a=>a.cat===cat&&(!a.show||a.show())).forEach(a=>{const why=a.req?a.req():null;const dis=S.ap<=0||why;h+=`<button class="act" data-act="${a.id}" ${dis?'disabled':''}><div class="n">${a.name}</div><div class="d">${a.desc}</div>${why?`<div class="r">🔒 ${why}</div>`:''}</button>`});
+    h+='</div>';
+  });
+  return h;
+}
+function panelSkills(){
+  const rows=Object.keys(V2_SKILLS).map(k=>{const d=V2_SKILLS[k],v=S.skills[k]||0;return`<div class="v2-skill"><div class="v2-skill-head"><b>${d.icon} ${d.name}</b><strong>${v} / 100</strong></div><div class="v2-track"><i style="width:${v}%"></i></div><p>${d.desc}</p><div class="v2-milestones">${d.milestones.map(([n,t])=>`<span class="${v>=n?'unlocked':''}">${v>=n?'✓':'◇'} ${n} ${t}</span>`).join('')}</div></div>`}).join('');
+  return`<div class="card dim">能力不會只增加數值，也會開啟主線中的特殊應對。每週每項能力只能訓練一次。</div>${rows}<div class="card"><h3>能力培養提示</h3><p>宮廷交際 28：毒茶事件的公開驗茶選項</p><p>真相調查 30：禁園現場勘察選項</p><p>意志守護 38：鏡中對話選項</p><p>真相調查 40：第十週證據鏈選項</p><p>宮廷交際 42：皇后召見的法規交涉</p><p>意志守護 48：祭典儀式的自我守護</p><p>真相調查 52：祭典最終階段公開證據鏈</p></div>`;
+}
+function panelChars(){
+  const cards=Object.keys(CHARS).map(k=>{const c=CHARS[k],r=S.rel[k];const t=r.t||0;return`<div class="card char v2-char">${avatar(k,'lg')}<div style="flex:1"><div><span class="nm">${c.name}</span> <span class="tt">${c.title}</span><span class="v2-stage">${v2RelStage(k)}</span></div><div class="ds">${c.desc}</div><div class="meter f"><span class="l">好感</span><div class="b"><i style="width:${r.f}%"></i></div><span>${r.f}</span></div><div class="meter v2-trust"><span class="l">信任</span><div class="b"><i style="width:${t}%"></i></div><span>${t}</span></div><div class="meter w"><span class="l">警戒</span><div class="b"><i style="width:${r.w}%"></i></div><span>${r.w}</span></div><div class="dim" style="font-size:12px;margin-top:4px">${hint(k)}</div>${(()=>{const T=TALK[k],st=(S.talk&&S.talk[k])||0,nx=T.story[st];return`<div class="prog">專屬劇情 ${st}/${T.story.length}${nx?`　下一段：好感 ${nx.min}`:'　已全部解鎖'}</div>`})()}</div></div>`}).join('');
+  return`<div class="card dim">好感是情感親近，信任是願意交付秘密的程度，警戒是戒心。三者不一定同步：被迷戀的人，也可能同時被控制。</div><div class="v2-network"><div class="v2-network-center">薇奧蕾特</div><div class="v2-network-links"><span>雷納德 ↔ 王權與佔有</span><span>卡西安 ↔ 法律與良知</span><span>賽拉斐 ↔ 神殿與儀式</span><span>艾德里安 ↔ 情報與利益</span><span>艾琳 ↔ 聖女與自由</span><span>皇后 ↔ 王冠與愧疚</span></div></div>${cards}`;
+}
+function panelEvidence(){
+  const cards=Object.keys(V2_CLUES).map(id=>{const c=V2_CLUES[id],has=S.evidence.includes(id);return`<div class="v2-clue ${has?'found':''}"><div class="v2-clue-icon">${has?'✦':'？'}</div><div><div class="v2-clue-head">${has?c.name:'尚未取得的線索'} <span>${has?c.type:'未發現'}</span></div><p>${has?c.desc:'繼續調查、與人物建立信任，或在主線事件中留意細節。'}</p>${has?`<small>來源：${c.source}</small>`:''}</div></div>`}).join('');
+  return`<div class="card dim">已取得 ${S.evidence.length} / ${Object.keys(V2_CLUES).length} 項證據。至少三項線索能協助拼出祭典真相；更多證據會讓最終審判更有力量。</div>${cards}`;
+}
+function panelKarma(){
+  const ids=Object.keys(S.karma);let h=`<div class="card dim">重要選擇會在未來形成後果。因果不一定立刻懲罰你，也可能帶來援助、情報，或一個補救的機會。</div>`;
+  const pend=ids.filter(id=>!S.karma[id].done),done=ids.filter(id=>S.karma[id].done);
+  if(!ids.length)h+=`<div class="card dim">目前還沒有種下任何因果。重大選擇旁出現 🌱 時，代表已留下因果。</div>`;
+  pend.forEach(id=>{const K=KARMA[id],s=S.karma[id];h+=`<div class="card kar"><h3>🌱 ${K.name}<span class="badge kr">第 ${s.sown} 週種下</span></h3><div>因：${K.cause}</div><div class="dim" style="margin-top:3px">預兆：${K.omen}</div><div class="v2-due">預計在第 ${s.due} 週左右回應</div></div>`});
+  done.forEach(id=>{const K=KARMA[id];h+=`<div class="card kar done"><h3>🍂 ${K.name}<span class="badge kr">已結果</span></h3><div class="dim">因：${K.cause}</div></div>`});
+  return h;
+}
+function panelMemory(){
+  const mem=v2ReadLegacy();
+  return`<div class="card dim">已完成 ${mem.runs||0} 次人生。已解鎖 ${mem.fragments.length} / ${Object.keys(V2_MEMORIES).length} 枚記憶碎片。完成不同結局，會帶回不同人生經驗。</div><div class="v2-memory-grid">${Object.keys(V2_MEMORIES).map(id=>{const m=V2_MEMORIES[id],ok=mem.fragments.includes(id);return`<div class="v2-memory ${ok?'on':''}"><div class="v2-memory-mark">${ok?'✦':'◇'}</div><b>${ok?m.name:'未解鎖記憶'}</b><p>${ok?m.desc:'完成不同類型的結局，將逐步找回這段記憶。'}</p><small>${ok?m.bonus:'尚未取得'}</small></div>`}).join('')}</div>`;
+}
+function dockHtml(){
+  if(ui.mode==='choose'&&curEv){const wi=avInfo(curEv.who||'violet');let h=`<div class="evpor">${avatar(curEv.who||'violet')}<div><div class="nm">${wi.name}</div><div class="tt">${wi.title||''}</div><div class="dim" style="font-size:12px;margin-top:4px">${curEv.isKarma?'🌱 因果事件':curEv.fest?'🌹 建國祭典':curEv.id==='w13'?'最後一夜':'週末事件'}：${curEv.title}</div></div></div><div class="dockhead">請選擇</div><div class="dockbody" id="dockbody">`;
+    curEv.choices.forEach((c,i)=>{if(c.show&&!c.show())return;const why=c.req?c.req():null;h+=`<button class="choice" data-pick="${i}" ${why?'disabled':''}>${c.label}${why?`<span class="r">🔒 ${why}</span>`:''}</button>`});return h+'</div>';
+  }
+  if(ui.mode==='cont'){const last=curEv&&curEv.end&&!ui.queue.length;return`<div class="dockhead">${curEv?curEv.title:''}</div><div class="dockbody" id="dockbody"><button class="btn contbtn pulse" data-do="next">${last?'迎向祭典 →':'繼續 →'}</button></div>`}
+  const tabs=[['act','行動'],['skills','能力'],['chars','人物'],['flags','主線'],['evidence','證據'],['karma','因果'],['diary','日記'],['memory','記憶']];
+  const map={act:panelAct,skills:panelSkills,chars:panelChars,flags:panelFlags,evidence:panelEvidence,karma:panelKarma,diary:panelDiary,memory:panelMemory};
+  const body=(map[S.tab]||panelAct)();
+  const foot=`<div class="dockfoot"><div class="ap">行動點 <b>${'◆'.repeat(S.ap)}${'◇'.repeat(Math.max(0,S.apMax-S.ap))}</b></div><button class="btn ${S.ap===0?'pulse':''}" data-do="endweek">結束本週 →</button></div>`;
+  return`<div class="tabs">${tabs.map(t=>`<button class="tab ${S.tab===t[0]?'on':''}" data-tab="${t[0]}">${t[1]}</button>`).join('')}</div><div class="dockbody" id="dockbody">${body}</div>${foot}`;
+}
+function render(){
+  const d=Math.max(0,100-(S.week-1)*7);
+  $('#cd').innerHTML=S.festDay?`<b>建國祭典</b><br>當日`:`第 ${S.week} / ${TOTAL_WEEKS} 週<br>祭典倒數 <b>${d}</b> 天`;
+  $('#stats').innerHTML=stat('💰金錢',S.money,0,0,'money')+stat('🗝籌碼',S.secrets,0,0,'secrets')+stat('🧠理智',S.sanity,100,S.sanity<=25,'sanity')+stat('🩸惡名',S.notor,100,S.notor>=75,'notor')+stat('🌀偏移',S.drift,100,0,'drift')+stat('📖記憶',S.clarity,100,0,'clarity');
+  const st=$('#story'),prevTop=st.scrollTop;
+  if(ui.lastScene!==S.scene){st.className='story sc-'+S.scene;st.style.background=IMG['bg_'+S.scene]?'':(SCENES[S.scene]||SCENES.bedroom).bg;ui.lastScene=S.scene}
+  st.innerHTML=`<div class="scn">📍 ${(SCENES[S.scene]||SCENES.bedroom).name}</div>`+S.log.map((e,i)=>entHtml(e,i===S.log.length-1)).join('');
+  if(S.log.length!==ui.lastLen)st.scrollTop=st.scrollHeight;else st.scrollTop=prevTop;ui.lastLen=S.log.length;
+  const prevBody=$('#dockbody'),keep=(prevBody&&ui.lastMode===ui.mode&&ui.lastTab===S.tab)?prevBody.scrollTop:0;
+  $('#dock').innerHTML=dockHtml();const nb=$('#dockbody');if(nb)nb.scrollTop=keep;ui.lastMode=ui.mode;ui.lastTab=S.tab;
+  const saveBadge=$('#saveState');if(saveBadge)saveBadge.textContent='自動存檔已啟用';
+}
+function v2NewGame(){
+  hideTitle();S=newState();ui={mode:'act',queue:[],lastLen:-1,lastTab:'',lastMode:'',lastScene:null};sownQ=[];curEv=null;clearSave();showPrologue();
+}
+function newGame(){v2NewGame()}
+function showTitle(){
+  closeModal();
+  const sv=loadSave(),got=endingsGot().length,tot=Object.keys(ENDINGS).length,mem=v2ReadLegacy();
+  let petals='';for(let i=0;i<14;i++)petals+=`<i class="petal" style="left:${Math.round(rnd()*110)}%;animation-duration:${(9+rnd()*9).toFixed(1)}s;animation-delay:-${(rnd()*15).toFixed(1)}s;transform:scale(${(.6+rnd()*.7).toFixed(2)})"></i>`;
+  const el=$('#title');
+  el.innerHTML=`<div class="tbg" id="tbg"></div><div class="tshade"></div>${petals}<div class="tmain">${IMG.violet?`<div class="por i-violet"></div>`:''}<div class="tleft"><div class="logo"><div class="en">TRANSMIGRATED VILLAINESS SIMULATOR</div><h1>穿越惡女小說模擬器</h1><div class="sub2">《白薔薇與王冠》</div><div class="tag">穿進虐戀小說的惡女，距離處刑還有 100 天。</div></div><div class="tmenu">${sv?`<button class="tbtn main" data-do="continue">繼續遊戲<small>第 ${sv.week} 週・祭典倒數 ${Math.max(0,100-(sv.week-1)*7)} 天</small></button>`:''}<button class="tbtn ${sv?'':'main'}" data-do="askNew">開始新遊戲</button><button class="tbtn" data-do="gallery"><span>結局與 CG 收藏</span><small>${got} / ${tot} 種結局</small></button><button class="tbtn" data-do="roster">人物介紹</button><button class="tbtn" data-do="help">遊戲說明・2.0</button></div><div class="tfoot"><span class="sndbtn" data-do="snd" style="cursor:pointer;font-size:15px">🔊</span>　v${V2_VERSION}　・　已解鎖記憶 ${mem.fragments.length}/${Object.keys(V2_MEMORIES).length}　・　<span style="cursor:pointer;text-decoration:underline" data-do="askReset">清除所有紀錄</span></div></div></div>`;
+  if(IMG.bg_festival)$('#tbg').style.backgroundImage=`url(${IMG.bg_festival})`;
+  el.classList.add('show');document.querySelectorAll('.sndbtn').forEach(b=>b.textContent=AU.on?'🔊':'🔇');music('title');
+}
+function v2Init(){
+  S=v2Migrate(S||newState());
+  const hdr=document.querySelector('.hdr>div:last-child');
+  if(hdr&&!$('#saveState')){const b=document.createElement('span');b.id='saveState';b.textContent='自動存檔';b.style.cssText='font-size:10px;color:#9c8ca3;margin:0 5px;white-space:nowrap';hdr.insertBefore(b,hdr.firstChild)}
+  const sub=document.querySelector('.hdr .sub');if(sub)sub.textContent='穿越惡女小說模擬器・v'+V2_VERSION;
+  window.addEventListener('beforeunload',()=>{if(S&&S.started&&!S.ending)save()});
+}
+v2Init();
+
 
 /* ============ 事件綁定 ============ */
 document.addEventListener('click',e=>{
@@ -1331,7 +1547,7 @@ document.addEventListener('click',e=>{
     case'startNew':return startNew();
     case'askNew':return askNew();
     case'askReset':return askReset();
-    case'doReset':{try{localStorage.removeItem(SAVE);localStorage.removeItem(ENDS)}catch(e){}S=newState();return showTitle()}
+    case'doReset':{try{localStorage.removeItem(SAVE);localStorage.removeItem(V2_BACKUP);localStorage.removeItem(ENDS);localStorage.removeItem(V2_LEGACY);localStorage.removeItem(LOOPK);localStorage.removeItem(CGK)}catch(e){}S=newState();return showTitle()}
     case'title':return showTitle();
     case'toTitle':{if(ui.mode==='act'&&S.started&&!S.ending)save();return showTitle()}
     case'gallery':return showGallery('title');
@@ -1342,7 +1558,7 @@ document.addEventListener('click',e=>{
     case'begin':return begin();
     case'menu':return (S.started&&!S.ending)?showPause():showTitle();
     case'close':return closeModal();
-    case'continue':{const sv=loadSave();if(sv){const base=newState();S=Object.assign(base,sv);S.rel=Object.assign(newState().rel,sv.rel);music('game');ui={mode:'act',queue:[],lastLen:-1,lastTab:'',lastMode:''};sownQ=[];curEv=null;hideTitle();closeModal();render()}return}
+    case'continue':{const sv=loadSave();if(sv){restoreFromSave(sv)}return}
   }
 });
 
