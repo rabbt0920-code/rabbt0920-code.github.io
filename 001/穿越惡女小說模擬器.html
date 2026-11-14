@@ -1940,7 +1940,7 @@ async function buildShareCard(id,withRun){
   else stat=`結局收集 ${endingsGot().length} / ${Object.keys(ENDINGS).length}`;
   x.fillStyle='#bfa9c9';x.font=`400 28px ${FF}`;x.fillText(stat,W/2,H-150);
   x.fillStyle='#d9b45a';x.font=`700 34px ${FF}`;x.fillText('你，能活到第 100 天嗎？',W/2,H-96);
-  try{if(/^https?:/.test(location.protocol)){x.fillStyle='#8e7aa0';x.font=`400 22px ${FF}`;x.fillText(location.host+location.pathname.replace(/index\.html$/,''),W/2,H-58)}}catch(e){}
+  try{if(/^https?:/.test(location.protocol)){x.fillStyle='#8e7aa0';x.font=`400 22px ${FF}`;let u=location.host+location.pathname.replace(/index\.html$/,'');try{u=decodeURIComponent(u)}catch(e2){}if(x.measureText(u).width>W-120)u=location.host;x.fillText(u,W/2,H-58)}}catch(e){}
   return cv.toDataURL('image/png');
 }
 async function shareCard(){
