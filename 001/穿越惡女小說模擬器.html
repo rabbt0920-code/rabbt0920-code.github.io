@@ -235,6 +235,7 @@ button,input,select,textarea{font:inherit;color:inherit}
 .v2-memory-grid{grid-template-columns:1fr}.v2-factions{gap:5px}.v2-factions>div{font-size:9px}.v2-week{padding:9px}.v2-forecast{grid-template-columns:1fr}.v2-forecast small{grid-column:1}.v2-network-links{grid-template-columns:1fr 1fr}.tabs{gap:4px;padding:7px 6px}.tab{font-size:12px;padding:4px 9px}}
 @media(min-width:900px){.v2-network-links{grid-template-columns:repeat(3,minmax(0,1fr))}.v2-memory-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
 
+.sumrow{margin:6px 0 2px;font-size:12.5px;line-height:1.7}.sm{display:block;padding-left:8px;border-left:2px solid}.sm.pos{color:#7fd6a0;border-color:#7fd6a099}.sm.neg{color:#ff8da1;border-color:#ff8da199}.sm.mix{color:#f0c674;border-color:#f0c67499}.sm.karm{color:#c7a8ff;border-color:#c7a8ff99}.review{margin:12px 0;padding:10px 12px;border:1px solid #d4af3766;border-radius:10px;background:#d4af3710}.review .rt{color:#d4af37;font-weight:700;margin-bottom:4px}.review ul{margin:0;padding-left:18px}.review li{font-size:13.5px;line-height:1.7}.review .wk{color:#a89ab8;font-size:12px}
 </style>
 </head>
 <body>
@@ -1007,7 +1008,7 @@ function finish(id){
   const kn=Object.keys(S.karma).filter(k=>S.karma[k].done).length;
   const ew=END_WHO[id]||'violet';
   const ep=IMG['end_'+id]?`<div class="cg cg-${id}"></div>`:(IMG[ew]?`<div class="eport"><img src="${IMG[ew]}" alt=""></div>`:`<div class="eport fb">${avInfo(ew).icon}</div>`);
-  let h=`<div class="title-screen">${ep}<div class="end-kind ${e.kind==='bad'?'bad':''}">${KIND[e.kind]}</div><h2>${e.title}</h2></div><p>${e.text}${extra}</p>
+  let h=`<div class="title-screen">${ep}<div class="end-kind ${e.kind==='bad'?'bad':''}">${KIND[e.kind]}</div><h2>${e.title}</h2></div><p>${e.text}${extra}</p>${v25Review()}
   <div class="up">第 ${S.loop+1} 周目　・　已解鎖結局 ${got} / ${total}　・　犧牲他人 ${S.sacrifices} 次　・　結出的因果 ${kn} 個</div>
   ${nearMiss(id)}
   <div class="row"><button class="btn gold" data-do="startNew">再來一次</button><button class="btn" data-do="shareCard">📷 分享結局卡</button><button class="btn ghost" data-do="toTitle">回到主選單</button></div>`;
@@ -1023,7 +1024,7 @@ function closeModal(){$('#overlay').classList.remove('show')}
 function stat(k,v,max,warn,key){return`<div class="stat ${warn?'warn':''}" data-stat="${key}" style="cursor:help"><div class="k">${k}</div><div class="v">${v}</div>${max?`<div class="bar"><i style="width:${clamp(v/max*100,0,100)}%"></i></div>`:''}</div>`}
 function entHtml(e,isLast){
   if(e.k==='sep')return`<div class="sep">— ${typeof e.w==='number'?`第 ${e.w} 週`:'建國祭典・當日'} —</div>`;
-  const inner=`${e.cg?`<div class="cg ecg-${e.cg}" style="margin:4px 0 6px"></div>`:''}${e.title?`<div class="et">${e.title}</div>`:''}<div class="tx">${e.text}</div>${e.fx?`<div>${e.fx}</div>`:''}${e.notice?`<div class="nt">${e.notice}</div>`:''}`;
+  const inner=`${e.cg?`<div class="cg ecg-${e.cg}" style="margin:4px 0 6px"></div>`:''}${e.title?`<div class="et">${e.title}</div>`:''}<div class="tx">${e.text}</div>${e.fx?`<div>${e.fx}</div>`:''}${e.sum?`<div class="sumrow">${e.sum}</div>`:''}${e.notice?`<div class="nt">${e.notice}</div>`:''}`;
   if(e.who)return`<div class="ent ${e.k} hav ${isLast?'new':''}">${avatar(e.who)}<div class="body">${inner}</div></div>`;
   return`<div class="ent ${e.k} ${isLast?'new':''}">${inner}</div>`;
 }
@@ -1127,7 +1128,7 @@ function begin(){
    WHITE ROSE & CROWN — VERSION 2.0 SYSTEM REMASTER
    保留 v0.7 劇情、美術、CG 與音效；以下覆寫／擴充遊戲系統。
    ============================================================ */
-const V2_VERSION='2.4.0';
+const V2_VERSION='2.5.0';
 const V2_BACKUP=SAVE+'_backup';
 const V2_LEGACY='villainess_legacy_v2';
 
@@ -1407,6 +1408,7 @@ function pick(i){
   if(ui.mode!=='choose')return;
   const c=curEv.choices[i];if(!c)return;if(c.show&&!c.show())return;if(c.req&&c.req())return;
   const selectedEvent=curEv;
+  const _snap=v25Snap();
   const o=c.do?c.do():{fx:c.fx,res:c.res,flag:c.flag};
   let fx=applyFx(o.fx);
   if(c.sow)[].concat(c.sow).forEach(sow);
@@ -1421,7 +1423,7 @@ function pick(i){
   let cg=c.cg||o.cg||null;
   if(selectedEvent.id==='w11'&&i<=1&&/石墓|空墓/.test(o.res||''))cg='ev_w11';
   if(cg&&IMG[cg])addCg(cg);else cg=null;
-  log({k:'res',title:'▶ '+c.label,text:text,fx:fx,cg:cg});
+  log({k:'res',title:'▶ '+c.label,text:text,fx:fx,cg:cg,sum:v25Sum(_snap,c,selectedEvent)});
   sfx(st==='cleared'?'good':st==='failed'?'bad':'click');
   ui.mode='cont';save();render();
 }
@@ -2080,6 +2082,123 @@ hint=function(c){
     return r.f>=55?'他看你的眼神，像在看一個等了很久的人。':r.f>=40?'他總是比你早一步，站在你需要的地方。':'整座宅邸裡，只有他看你時沒有算計。';}
   return _hint0(c);
 };
+
+/* ============ v2.5：選擇後果摘要 / 關鍵抉擇回顧 / 結局尾聲擴充 / 新事件 ============ */
+function v25Snap(){
+  const rel={};for(const k in S.rel){rel[k]={f:S.rel[k].f||0,w:S.rel[k].w||0}}
+  return{rel,secrets:S.secrets||0,notor:S.notor||0,sanity:S.sanity||0,church:S.factions.church,people:S.factions.people,court:S.factions.court,
+   truth:S.truth||0,sac:S.sacrifices||0,karma:Object.keys(S.karma||{}).length,chain:Object.assign({},S.chain||{}),crisis:Object.assign({},S.crisis||{})};
+}
+function v25Sum(a,c,ev){
+  const b=v25Snap(),rel=[],pur=[],res=[];
+  const sp=(cls,t)=>`<span class="sm ${cls}">${t}</span>`;
+  const rows=[];
+  for(const k in b.rel){if(!a.rel[k])continue;const df=b.rel[k].f-a.rel[k].f,dw=b.rel[k].w-a.rel[k].w,n=avInfo(k).name;if(!n)continue;
+    const mag=Math.max(Math.abs(df),Math.abs(dw));if(!(Math.abs(df)>=3||Math.abs(dw)>=4))continue;rows.push([mag,k,n,df,dw])}
+  rows.sort((x,y)=>y[0]-x[0]);
+  rows.slice(0,2).forEach(([m,k,n,df,dw])=>{
+    if(k==='ailin'&&df>=3)rel.push(sp('pos','艾琳記住了這件事，祭典時她會更願意站在你這邊。'));
+    else if(df>=3&&dw>=4)rel.push(sp('mix',`${n}更信任你了，但警戒也跟著上升了。`));
+    else if(df>=3)rel.push(sp('pos',`${n}對你的好感上升了。`));
+    else if(df<=-3)rel.push(sp('neg',`${n}對你冷淡了一些。`));
+    else if(dw>=4)rel.push(sp('neg',`${n}對你多了一分戒心。`));
+    else if(dw<=-4)rel.push(sp('pos',`${n}放下了一些戒備。`));
+  });
+  if(b.karma>a.karma)pur.push(sp('karm','這個選擇種下了因果，它之後會找上你。'));
+  let adv=false;for(const k in b.chain)if((b.chain[k]||0)>(a.chain[k]||0))adv=true;
+  if(adv)pur.push(sp('karm','這件事還沒有結束。'));
+  let cr=false;for(const k in b.crisis)if(b.crisis[k]!==a.crisis[k])cr=true;
+  if(cr)pur.push(sp('karm','這個決定，會留下後果。'));
+  if(b.truth>a.truth)pur.push(sp('karm','你離真相又近了一步。'));
+  if(b.secrets-a.secrets>=2)res.push(sp('pos','你握住了新的籌碼。'));
+  if(b.notor-a.notor>=4)res.push(sp('neg','你的惡名又傳開了一些。'));
+  if(b.notor-a.notor<=-4)res.push(sp('pos','外界對你的印象好轉了。'));
+  if(b.church-a.church<=-3)res.push(sp('pos','神殿的威信動搖了。'));
+  if(b.church-a.church>=3)res.push(sp('neg','神殿的勢力更穩了。'));
+  if(b.people-a.people>=3)res.push(sp('pos','民眾更願意聽你說話。'));
+  if(b.people-a.people<=-3)res.push(sp('neg','民眾對你的信任下滑了。'));
+  if(b.court-a.court>=3)res.push(sp('pos','宮廷裡有人開始站在你這邊。'));
+  if(b.court-a.court<=-3)res.push(sp('neg','宮廷裡對你的風評變差了。'));
+  if(b.sanity-a.sanity<=-5)res.push(sp('neg','你的意識又被侵蝕了一些。'));
+  if(b.sanity-a.sanity>=5)res.push(sp('pos','你覺得清醒了些。'));
+  if(b.sac>a.sac)res.push(sp('neg','有人替你承擔了代價。'));
+  /* 關鍵抉擇紀錄 */
+  let w=0;
+  if(b.sac>a.sac)w+=3;if(b.karma>a.karma)w+=2;if(cr)w+=3;if(adv)w+=2;if(b.truth>a.truth)w+=2;
+  if(ev&&(ev.fest||ev.end))w+=3;
+  if(ev&&/^(rc_|ch_|bt_|e_)/.test(ev.id||''))w+=1;
+  for(const k in b.rel){if(a.rel[k]&&Math.abs(b.rel[k].f-a.rel[k].f)>=10)w+=1}
+  if(w>=3&&ev){
+    S.keyPicks=S.keyPicks||[];
+    const lab=String(c.label||'').replace(/^「|」$/g,'').replace(/[「」]/g,'');
+    S.keyPicks.push({wk:ev.fest?'祭典':S.week,ev:ev.title||'',label:lab,w});
+    if(S.keyPicks.length>40){let mi=0;for(let i=1;i<S.keyPicks.length;i++)if(S.keyPicks[i].w<S.keyPicks[mi].w)mi=i;S.keyPicks.splice(mi,1)}
+  }
+  const all=[rel[0],pur[0],rel[1],...pur.slice(1),...res].filter(Boolean).slice(0,3);
+  return all.length?all.join(''):'';
+}
+function v25Review(){
+  const ks=(S.keyPicks||[]).slice();if(!ks.length)return'';
+  const top=ks.map((x,i)=>({x,i})).sort((p,q)=>q.x.w-p.x.w||q.i-p.i).slice(0,5).sort((p,q)=>p.i-q.i).map(p=>p.x);
+  const li=top.map(x=>`<li><span class="wk">${typeof x.wk==='number'?'第 '+x.wk+' 週':x.wk}</span>　${x.ev.replace(/^(事件鏈|路線危機|因果|祭典)・/,'')}：<b>${x.label}</b></li>`).join('');
+  return`<div class="review"><div class="rt">🗝 這次的關鍵抉擇</div><ul>${li}</ul></div>`;
+}
+(function(){
+  const _ev=endingVariant;
+  endingVariant=function(id){
+    let out=_ev(id);
+    if(id==='exec'||id==='possessed'||id==='martyr')return out;
+    const c=S.crisis||{},tails=[];
+    if(S.framed&&id!=='scapegoat')tails.push(`\n\n偶爾，你還是會想起那個叫湯瑪斯的名字。`);
+    if(c.queen==='burn'&&id!=='queenfree')tails.push(`\n\n那幅被燒掉的畫像，皇后後來提起過一次。她說：「謝謝妳替我做了我不敢做的事。」`);
+    if(S.robeSwapped)tails.push(`\n\n祭典那天你穿的，是一件針腳很醜的禮服。你一直沒有把它丟掉。`);
+    if(((S.chain&&S.chain.ill)||0)>=2&&id!=='queenfree')tails.push(`\n\n你偶爾會翻出那本病歷。最後一頁的空白，至今沒有人補上。`);
+    if(id==='queenfree'&&S.queenClear)tails.push(`\n\n她始終記得，溫室那個清晨，你說過的每一句話。`);
+    return out+tails.slice(0,2).join('');
+  };
+  const _nm=nearMiss;
+  nearMiss=function(id){
+    let h=_nm(id);
+    if(h.indexOf('皇后的清晨')>=0&&!S.bellGot&&!((S.chain&&S.chain.bind)>=3)){
+      const hint=(S.chain&&S.chain.bind)<0?'（你曾經假裝沒看見皇后手腕上的銀紋）':'（你沒能走完「皇后的枷鎖」事件鏈）';
+      h=h.replace('</div>',hint+'</div>');
+    }
+    return h;
+  };
+  const _sc=setCrisis;
+  setCrisis=function(k,v){_sc(k,v);S.crisisW=S.crisisW||{};S.crisisW[k]=S.week};
+  const _rf=resolveFlee;
+  resolveFlee=function(){
+    if(S.wanted&&S.rel.knight.w>=(S.queenDeal?80:65))return'caught';
+    return _rf();
+  };
+})();
+const V25_EVENTS=[
+{id:'ch_bind4',pri:true,cond:()=>chainAt('bind',3,1)&&!!S.bellGot&&S.week<=11&&!S.queenClear&&!(S.crisis&&S.crisis.queen==='betray'),title:'事件鏈・皇后的枷鎖（四）',who:'queen',scene:'greenhouse',
+ text:()=>`清晨，溫室。你把莉莉安的銀鈴放在茶几上，輕輕搖了一下。\n皇后的眼神忽然清了，像霧散開之後的湖面。「……這是第幾次？」她看著自己的手腕，聲音很輕，「我已經好久，沒有在早上醒著了。」\n她知道這份清醒撐不了太久。茶還是熱的，她把杯子推到你面前，旁邊沒有糖。`,
+ choices:[
+  {label:`「問她契約的內容」`,do(){S.queenClear=true;const g=v2GainEvidence('sugar');return{fx:{'queen.t':6,clarity:5},res:`「二十年前，我簽了一份契約。」她說，「以侍奉者之身，換祭品之不痛。糖，是他給我的藥，也是我替每一位祭品準備的鎮痛劑。」\n她苦笑：「我以為自己在救她們。」${g?'\n你把那一整盒苦味糖的來歷記了下來。':''}`}}},
+  {label:`「請她在祭典那天，看著你的眼睛」`,do(){S.queenClear=true;return{fx:{'queen.t':10},res:`她愣了一下，然後笑了。「好。」她說，「如果那天我還能抬頭，我會看著妳。」\n她把銀鈴推回你手裡，指尖冷得像冰。`}}},
+  {label:`「我不會逼妳，先把這杯茶喝完」`,do(){return{fx:{'queen.f':6,'queen.t':4,sanity:5},res:`她端起茶杯，手微微發抖。「很多年，沒有人對我說過這句話。」\n你們安靜地喝完了那杯茶。窗外的晨光爬過玻璃，落在滿室的紅薔薇上。`}}}
+ ]},
+{id:'ch_kn_sup',pri:true,cond:()=>!!(S.crisis&&S.crisis.knight==='surrender')&&S.week>=((S.crisisW&&S.crisisW.knight)||99)+1&&S.week<=11&&!S.knightSupport&&!(S.seen&&S.seen.ch_kn_sup),title:'騎士團・沉默的多數',who:'knight',scene:'garden',
+ text:()=>`你自首之後，騎士團裡開始有人私下議論。一名年輕騎士在巡邏的路上攔住你，壓低聲音：「團裡不少人覺得，這案子有疑點。只是沒人敢先開口。」`,
+ choices:[
+  {label:`「請他們私下整理疑點」`,do(){S.knightSupport=true;return{fx:{'knight.t':6,secrets:1},res:`他用力點頭，轉身就跑。過了幾天，卡西安的桌上多了一疊匿名的備忘錄。他沒有說什麼，只是把它們收進了抽屜最上層。`}}},
+  {label:`「請他們別冒險」`,do(){return{fx:{'knight.f':4,notor:-2},res:`「謝謝你們。」你說，「但別為我賠上前途。」\n年輕騎士紅了眼眶，敬了一個很標準的禮。`}}}
+ ]},
+{id:'ch_kn_wanted',pri:true,cond:()=>!!(S.crisis&&S.crisis.knight==='flee')&&S.week>=((S.crisisW&&S.crisisW.knight)||99)+1&&S.week<=11&&!S.wanted&&!(S.seen&&S.seen.ch_kn_wanted),title:'通緝令',who:'knight',scene:'garden',
+ text:()=>`城門口貼出了一張告示，畫像畫得意外神似。簽署的名字是卡西安。\n他沒有替自己辯解，卻也沒有撤下那張通緝令。守城的衛兵開始盯著每一個戴兜帽的人。`,
+ choices:[
+  {label:`「花錢打點守門的人」`,req:()=>S.money<40?'需要金錢 ≥ 40':null,do(){return{fx:{money:-40,'knight.w':-3},res:`你塞給守門的人一袋銅幣。他看都沒看，就把袋子收進了袖子。告示還貼在那裡，但至少，今晚不會有人來敲門。`}}},
+  {label:`「低調躲一陣子」`,do(){S.wanted=true;return{fx:{sanity:-4,notor:3},res:`你把兜帽壓得更低，整整三天沒有出門。這張紙會跟著你一陣子，連夜逃亡的路，也會因此變得更難走。`}}}
+ ]}
+];
+V25_EVENTS.forEach(e=>{RANDOM.push(e);META[e.id]=[e.who||'violet',e.scene||'bedroom']});
+(function(){
+  const f=FEST[0].choices.find(x=>String(x.label).indexOf('卡西安出面作證')>=0);
+  if(f){const od=f.do;f.do=function(){const o=od();if(S.knightSupport){S.fest.proof++;o.res+='\n身後，幾名騎士也默默站了出來。他們沒有說話，只是站在那裡。'}return o}}
+})();
 
 /* ============ 事件綁定 ============ */
 document.addEventListener('click',e=>{
