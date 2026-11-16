@@ -439,14 +439,15 @@ button:focus-visible{outline:3px solid rgba(147,127,224,.45);outline-offset:3px}
   .neo-workspace{grid-template-columns:1fr;gap:12px}
   .neo-sidebar{position:relative;top:auto;max-height:none;overflow:visible;padding:9px 10px;border-radius:17px}
   .neo-nav-head{display:none}
-  .neo-nav-groups{display:flex;flex-direction:row;gap:5px;overflow-x:auto;scrollbar-width:none;padding:0 0 7px}
+  .neo-nav-groups{display:flex;flex-direction:row;flex-wrap:wrap;gap:5px;overflow:visible;padding:0 0 2px}
   .neo-nav-groups::-webkit-scrollbar{display:none}
   .neo-nav-group{flex:none;display:flex;align-items:center}
   .neo-group-title{border:0;background:#f6f1f9;border-radius:999px;padding:8px 12px;cursor:pointer;white-space:nowrap;font-size:10px}
   .neo-group-title:before{display:none}
   .neo-nav-group.is-active .neo-group-title{background:linear-gradient(110deg,#f9e5f1,#eee9fb);color:#a45f98}
   .neo-group-items{display:none}
-  .neo-nav-group.is-active .neo-group-items{display:flex;position:absolute;left:0;right:0;top:calc(100% + 5px);background:rgba(255,255,255,.98);border:1px solid #eee5f3;border-radius:14px;padding:6px;flex-direction:row;gap:5px;box-shadow:0 10px 25px rgba(84,62,111,.11);z-index:20;overflow-x:auto}
+  .neo-nav-group.is-active{display:contents}
+  .neo-nav-group.is-active .neo-group-items{display:flex;position:static;order:99;flex:0 0 100%;box-sizing:border-box;background:rgba(255,255,255,.98);border:1px solid #eee5f3;border-radius:14px;padding:6px;flex-direction:row;gap:5px;overflow-x:auto;scrollbar-width:none}
   .neo-tab.tab{width:auto;min-height:34px;white-space:nowrap;padding:6px 10px;background:#faf7fb}
   .neo-tab.tab.on{box-shadow:inset 0 -2px #d985ba}
   .neo-pagehead{margin:5px 2px 12px}
@@ -474,7 +475,7 @@ button:focus-visible{outline:3px solid rgba(147,127,224,.45);outline-offset:3px}
   .neo-workspace{gap:9px}
   .neo-sidebar{padding:7px;border-radius:14px}
   .neo-group-title{padding:7px 10px;font-size:9px}
-  .neo-nav-group.is-active .neo-group-items{top:calc(100% + 3px);padding:5px}
+  .neo-nav-group.is-active .neo-group-items{padding:5px}
   .neo-tab.tab{font-size:11px;min-height:31px;padding:5px 8px}
   .neo-pagehead{margin:3px 1px 10px}
   .neo-pagehead h1{font-size:20px}
