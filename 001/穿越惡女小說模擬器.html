@@ -237,6 +237,7 @@ button,input,select,textarea{font:inherit;color:inherit}
 
 .sumrow{margin:6px 0 2px;font-size:12.5px;line-height:1.7}.sm{display:block;padding-left:8px;border-left:2px solid}.sm.pos{color:#7fd6a0;border-color:#7fd6a099}.sm.neg{color:#ff8da1;border-color:#ff8da199}.sm.mix{color:#f0c674;border-color:#f0c67499}.sm.karm{color:#c7a8ff;border-color:#c7a8ff99}.review{margin:12px 0;padding:10px 12px;border:1px solid #d4af3766;border-radius:10px;background:#d4af3710}.review .rt{color:#d4af37;font-weight:700;margin-bottom:4px}.review ul{margin:0;padding-left:18px}.review li{font-size:13.5px;line-height:1.7}.review .wk{color:#a89ab8;font-size:12px}
 #tut{position:fixed;inset:0;z-index:99999}.tutblock{position:fixed;inset:0}.tuthole{position:fixed;display:none;border-radius:12px;box-shadow:0 0 0 9999px rgba(8,4,14,.82),0 0 0 2px #d4af37,0 0 20px #d4af37aa;pointer-events:none;transition:all .28s ease}.tutcard{position:fixed;background:#1d1228;border:1px solid #d4af37;border-radius:14px;padding:14px 16px;box-shadow:0 10px 40px #000a;transition:top .28s ease,left .28s ease;box-sizing:border-box}.tuttitle{color:#d4af37;font-weight:700;font-size:16px;display:flex;justify-content:space-between;align-items:center;margin-bottom:6px}.tutnum{font-size:12px;color:#a89ab8;font-weight:400}.tutdesc{font-size:14px;line-height:1.75;color:#eadff2}.tutdots{display:flex;gap:6px;justify-content:center;margin:10px 0 8px}.tutdots i{width:7px;height:7px;border-radius:50%;background:#5a4a6a}.tutdots i.on{background:#d4af37}.tutbtns{display:flex;gap:8px;justify-content:flex-end;align-items:center}.tutbtns button{font:inherit;font-size:14px;border-radius:9px;padding:7px 14px;cursor:pointer;border:1px solid #6b5a7c;background:transparent;color:#d9cce6}.tutbtns .tutnext{background:#d4af37;border-color:#d4af37;color:#2a1a10;font-weight:700}.tutbtns .tutskip{margin-right:auto;border:none;color:#8e7aa0;padding-left:0}
+.app{height:var(--appH,100dvh);padding-bottom:calc(8px + env(safe-area-inset-bottom,0px))}.dockfoot{padding-bottom:calc(7px + env(safe-area-inset-bottom,0px))}.dockfoot .btn{min-height:44px;padding-left:18px;padding-right:18px;font-weight:700}@media(max-width:899px) and (max-height:720px){.app{grid-template-rows:auto minmax(84px,26%) minmax(0,1fr)}}
 </style>
 </head>
 <body>
@@ -1129,7 +1130,7 @@ function begin(){
    WHITE ROSE & CROWN — VERSION 2.0 SYSTEM REMASTER
    保留 v0.7 劇情、美術、CG 與音效；以下覆寫／擴充遊戲系統。
    ============================================================ */
-const V2_VERSION='2.6.0';
+const V2_VERSION='2.6.1';
 const V2_BACKUP=SAVE+'_backup';
 const V2_LEGACY='villainess_legacy_v2';
 
@@ -2271,6 +2272,14 @@ if(typeof document!=='undefined'&&document.addEventListener){
   window.addEventListener('resize',()=>{if(_tut)v26TutPlace()});
 }
 
+
+/* v2.6.1：手機網址列/瀏覽器工具列遮住底部按鈕的問題 */
+(function(){
+  if(typeof window==='undefined'||!document.documentElement)return;
+  const fit=()=>{const vv=window.visualViewport,hh=Math.round(vv?vv.height:window.innerHeight);if(hh>200)document.documentElement.style.setProperty('--appH',hh+'px')};
+  fit();window.addEventListener('resize',fit);window.addEventListener('orientationchange',()=>setTimeout(fit,250));
+  if(window.visualViewport)window.visualViewport.addEventListener('resize',fit);
+})();
 /* ============ 事件綁定 ============ */
 document.addEventListener('click',e=>{
   auInit();if(AU.ctx&&AU.ctx.state==='suspended')AU.ctx.resume();if(AU.ctx&&AU.on&&!AU.timer)music(curMood());
