@@ -236,6 +236,7 @@ button,input,select,textarea{font:inherit;color:inherit}
 @media(min-width:900px){.v2-network-links{grid-template-columns:repeat(3,minmax(0,1fr))}.v2-memory-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
 
 .sumrow{margin:6px 0 2px;font-size:12.5px;line-height:1.7}.sm{display:block;padding-left:8px;border-left:2px solid}.sm.pos{color:#7fd6a0;border-color:#7fd6a099}.sm.neg{color:#ff8da1;border-color:#ff8da199}.sm.mix{color:#f0c674;border-color:#f0c67499}.sm.karm{color:#c7a8ff;border-color:#c7a8ff99}.review{margin:12px 0;padding:10px 12px;border:1px solid #d4af3766;border-radius:10px;background:#d4af3710}.review .rt{color:#d4af37;font-weight:700;margin-bottom:4px}.review ul{margin:0;padding-left:18px}.review li{font-size:13.5px;line-height:1.7}.review .wk{color:#a89ab8;font-size:12px}
+#tut{position:fixed;inset:0;z-index:99999}.tutblock{position:fixed;inset:0}.tuthole{position:fixed;display:none;border-radius:12px;box-shadow:0 0 0 9999px rgba(8,4,14,.82),0 0 0 2px #d4af37,0 0 20px #d4af37aa;pointer-events:none;transition:all .28s ease}.tutcard{position:fixed;background:#1d1228;border:1px solid #d4af37;border-radius:14px;padding:14px 16px;box-shadow:0 10px 40px #000a;transition:top .28s ease,left .28s ease;box-sizing:border-box}.tuttitle{color:#d4af37;font-weight:700;font-size:16px;display:flex;justify-content:space-between;align-items:center;margin-bottom:6px}.tutnum{font-size:12px;color:#a89ab8;font-weight:400}.tutdesc{font-size:14px;line-height:1.75;color:#eadff2}.tutdots{display:flex;gap:6px;justify-content:center;margin:10px 0 8px}.tutdots i{width:7px;height:7px;border-radius:50%;background:#5a4a6a}.tutdots i.on{background:#d4af37}.tutbtns{display:flex;gap:8px;justify-content:flex-end;align-items:center}.tutbtns button{font:inherit;font-size:14px;border-radius:9px;padding:7px 14px;cursor:pointer;border:1px solid #6b5a7c;background:transparent;color:#d9cce6}.tutbtns .tutnext{background:#d4af37;border-color:#d4af37;color:#2a1a10;font-weight:700}.tutbtns .tutskip{margin-right:auto;border:none;color:#8e7aa0;padding-left:0}
 </style>
 </head>
 <body>
@@ -1128,7 +1129,7 @@ function begin(){
    WHITE ROSE & CROWN — VERSION 2.0 SYSTEM REMASTER
    保留 v0.7 劇情、美術、CG 與音效；以下覆寫／擴充遊戲系統。
    ============================================================ */
-const V2_VERSION='2.5.0';
+const V2_VERSION='2.6.0';
 const V2_BACKUP=SAVE+'_backup';
 const V2_LEGACY='villainess_legacy_v2';
 
@@ -2200,6 +2201,76 @@ V25_EVENTS.forEach(e=>{RANDOM.push(e);META[e.id]=[e.who||'violet',e.scene||'bedr
   if(f){const od=f.do;f.do=function(){const o=od();if(S.knightSupport){S.fest.proof++;o.res+='\n身後，幾名騎士也默默站了出來。他們沒有說話，只是站在那裡。'}return o}}
 })();
 
+/* ============ v2.6：新手導覽（6 步，聚光燈） ============ */
+const TUT_KEY='villainess_tut_v1';
+const TUT_STEPS=[
+ {sel:'#cd',t:'⏳ 倒數與週數',d:'你被困在惡女薇奧蕾特的身體裡。<b>13 週（100 天）</b>後的建國祭典，她會被處刑。你只有這段時間改寫結局。'},
+ {sel:'#stats',t:'📊 六項數值',d:'💰金錢、🗝籌碼（情報與把柄）、🧠<b>理智</b>（歸零會被原身接管）、🩸惡名、🌀偏移（偏離原著的程度）、📖記憶（越高越看得清原著劇情）。數值變紅代表危險。'},
+ {sel:'#story',t:'📖 故事與選擇',d:'事件在這裡展開。每次選擇後會用顏色提示後果：<span style="color:#7fd6a0">綠色是好事</span>、<span style="color:#ff8da1">紅色是壞事</span>、<span style="color:#f0c674">橘色好壞參半</span>、<span style="color:#c7a8ff">紫色是因果，事情還沒結束</span>。'},
+ {sel:'.tabs',t:'🗂 八個分頁',d:'<b>行動</b>是你做事的地方；<b>人物</b>看好感、信任與警戒；<b>證據</b>、<b>因果</b>、<b>日記</b>記錄你查到的線索。卡關時，先翻翻人物和證據。'},
+ {sel:'.dockfoot',t:'◆ 行動點與結束本週',d:'每週有 <b>3 個行動點</b>，用在社交、調查、經營與能力訓練。用完後按<b>「結束本週」</b>，時間才會往前走，也才會觸發事件。'},
+ {sel:'[data-do=menu]',t:'☰ 選單與結局',d:'選單可以看遊戲說明、結局圖鑑與存檔。共有 <b>14 種結局</b>（其中 3 種隱藏），失敗了也可以再來一次。祝你活到第 100 天。'}
+];
+let _tut=null;
+function v26TutSeen(){try{return !!localStorage.getItem(TUT_KEY)}catch(e){return true}}
+function v26TutMark(){try{localStorage.setItem(TUT_KEY,'1')}catch(e){}}
+function v26TutPlace(){
+  if(!_tut)return;const st=TUT_STEPS[_tut.i];
+  const el=document.querySelector(st.sel);
+  const hole=_tut.hole,card=_tut.card;
+  card.innerHTML=`<div class="tuttitle">${st.t}<span class="tutnum">${_tut.i+1} / ${TUT_STEPS.length}</span></div><div class="tutdesc">${st.d}</div><div class="tutdots">${TUT_STEPS.map((_,k)=>`<i class="${k===_tut.i?'on':''}"></i>`).join('')}</div><div class="tutbtns"><button class="tutskip" data-tut="skip">跳過</button>${_tut.i>0?'<button class="tutprev" data-tut="prev">上一步</button>':''}<button class="tutnext" data-tut="next">${_tut.i===TUT_STEPS.length-1?'開始遊戲':'下一步'}</button></div>`;
+  const vw=window.innerWidth,vh=window.innerHeight;
+  const cw=Math.min(380,vw-24);card.style.width=cw+'px';
+  const ch=card.offsetHeight||190;
+  let top,left;
+  if(el){
+    const r=el.getBoundingClientRect(),pad=6;
+    hole.style.cssText=`display:block;left:${r.left-pad}px;top:${r.top-pad}px;width:${r.width+pad*2}px;height:${r.height+pad*2}px`;
+    left=Math.max(12,Math.min(vw-cw-12,r.left+r.width/2-cw/2));
+    if(r.bottom+ch+18<vh)top=r.bottom+14;
+    else if(r.top-ch-18>0)top=r.top-ch-14;
+    else top=vh-ch-14;
+  }else{hole.style.display='none';left=(vw-cw)/2;top=(vh-ch)/2}
+  card.style.left=left+'px';card.style.top=Math.max(8,top)+'px';
+}
+function v26Tut(force){
+  if(!document.body||!document.body.appendChild||!document.createElement('div').getBoundingClientRect)return;
+  if(_tut)return;
+  const root=document.createElement('div');root.id='tut';
+  root.innerHTML='<div class="tutblock"></div><div class="tuthole"></div><div class="tutcard"></div>';
+  document.body.appendChild(root);
+  _tut={i:0,root,hole:root.querySelector('.tuthole'),card:root.querySelector('.tutcard')};
+  v26TutPlace();
+}
+function v26TutEnd(){if(!_tut)return;_tut.root.remove();_tut=null;v26TutMark()}
+function v26TutCheck(){
+  if(_tut){v26TutPlace();return}
+  if(typeof window==='undefined'||!document.body||!document.body.appendChild)return;
+  if(v26TutSeen()||!S.started||S.ending||S.week!==1)return;
+  try{const ed=JSON.parse(localStorage.getItem('villainess_endings_v1')||'null');if(ed&&(Array.isArray(ed)?ed.length:Object.keys(ed).length)){v26TutMark();return}}catch(e){}
+  if(document.querySelector('#overlay.show'))return;
+  if(!document.querySelector('.tabs')||!document.querySelector('.dockfoot'))return;
+  v26Tut();
+}
+(function(){
+  const _r=render;
+  render=function(){_r();v26TutCheck()};
+  const _h=v2ShowHelp;
+  v2ShowHelp=function(){_h();try{$('#modal').insertAdjacentHTML('beforeend','<div class="row" style="margin-top:8px;text-align:center"><button class="btn gold" data-do="tutorial">🎓 重看新手教學</button></div>')}catch(e){}};
+})();
+if(typeof document!=='undefined'&&document.addEventListener){
+  document.addEventListener('click',e=>{
+    const b=e.target.closest&&e.target.closest('[data-tut]');if(!b||!_tut)return;
+    e.stopPropagation();
+    const a=b.dataset.tut;
+    if(a==='skip')v26TutEnd();
+    else if(a==='prev'){_tut.i=Math.max(0,_tut.i-1);v26TutPlace()}
+    else if(_tut.i>=TUT_STEPS.length-1)v26TutEnd();
+    else{_tut.i++;v26TutPlace()}
+  },true);
+  window.addEventListener('resize',()=>{if(_tut)v26TutPlace()});
+}
+
 /* ============ 事件綁定 ============ */
 document.addEventListener('click',e=>{
   auInit();if(AU.ctx&&AU.ctx.state==='suspended')AU.ctx.resume();if(AU.ctx&&AU.on&&!AU.timer)music(curMood());
@@ -2232,6 +2303,7 @@ document.addEventListener('click',e=>{
     case'pause':return showPause();
     case'roster':return showRoster('violet');
     case'help':return showHelp();
+    case'tutorial':closeModal();return v26Tut(true);
     case'begin':return begin();
     case'menu':return (S.started&&!S.ending)?showPause():showTitle();
     case'close':return closeModal();
