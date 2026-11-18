@@ -2372,7 +2372,21 @@ function tryBirth(){
   const c=makeNPC({name:genName(g)+'・'+p.familyName, gender:g, race, age:0, job:'孩子', region:p.region, aff:80, trust:70, respect:40, met:true, rel:'孩子', isChild:true, st, talents, pers:pick(Object.keys(PERSONALITIES)), prof:null});
   p.children.push(c.id); G.gacha.tickets++; history(`孩子${c.name}誕生了！${talents.length?`（遺傳天賦：${talents.map(t=>TALENTS[t].name).join('、')}）`:''}`);
 }
-function educateChild(cid, k){ const p=G.player, c=G.npcs[cid]; if(!c||!c.alive) return {err:'無此子女'}; if(p.ap<1) return {err:'行動點不足'}; if(!spendGold(50)) return {err:'需要50G教育費'}; p.ap--; c.st[k]=Math.min(100,c.st[k]+ri(2,3)); c.edu=k; c.aff=Math.min(100,c.aff+5); c.respect=Math.min(100,c.respect+5); if(c.age>=6 && chance(.4)){ const s=Object.keys(p.skills).sort((a,b)=>skLv(b)-skLv(a))[0]; if(s) addSkillExp(s,40,c); } return {msg:`教導${c.name}，${ATTR[k]}提升`}; }
+function educateChild(cid, k){
+  const p=G.player, c=G.npcs[cid];
+  if(!c||!c.alive) return {err:'無此子女'};
+  if(c.age<3) return {err:'子女滿3歲後才能接受教育'};
+  if(!Object.prototype.hasOwnProperty.call(ATTR,k)) return {err:'請選擇有效的教育項目'};
+  if(p.ap<1) return {err:'行動點不足'};
+  if(!spendGold(50)) return {err:'需要50G教育費'};
+  p.ap--;
+  c.st=c.st||{};
+  c.st[k]=Math.min(100,(Number(c.st[k])||0)+ri(2,3));
+  c.edu=k;
+  c.aff=Math.min(100,c.aff+5); c.respect=Math.min(100,c.respect+5);
+  if(c.age>=6 && chance(.4)){ const s=Object.keys(p.skills).sort((a,b)=>skLv(b)-skLv(a))[0]; if(s) addSkillExp(s,40,c); }
+  return {msg:`教導${c.name}，${ATTR[k]}提升`};
+}
 
 /* ===================== 世界動態 ===================== */
 function worldMonthly(){
@@ -3064,7 +3078,7 @@ const AudioManager = {
 
 /* ===================== 介面層 v0.0.2（只讀取 GameState，透過引擎函式修改） ===================== */
 function lsGet(k){ try{ return localStorage.getItem(k); }catch(e){ return null; } }
-const UI = { page:'home', last:{}, gPool:'destiny', eqT:'PLAYER', rel:'all', chron:'life', modal:[], create:null, pulling:false, trainK:'str' };
+const UI = { page:'home', last:{}, gPool:'destiny', eqT:'PLAYER', rel:'all', chron:'life', modal:[], create:null, pulling:false, trainK:'str', eduK:{} };
 const $ = s => document.querySelector(s);
 const esc = s => String(s==null?'':s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
 const SV = (d,extra='') => `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" ${extra}>${d}</svg>`;
@@ -3700,7 +3714,7 @@ function pFamily(){
     <div class="tiny sub">${c.gender}・${c.age}歲・${RACES[c.race]?RACES[c.race].name:''}・${PERSONALITIES[c.pers]?PERSONALITIES[c.pers].name:''}・${esc(c.job)}</div>
     <div class="small">${ATTR_KEYS.map(k=>`${ATTR[k]}${Math.floor(c.st[k])}`).join(' ')}</div>
     <div>${(c.talents||[]).map(t=>`<span class="tag r-${TALENTS[t].r}">${TALENTS[t].name}</span>`).join('')}${Object.entries(c.skills||{}).map(([s,v])=>`<span class="tag">${SKILLS[s].name}Lv${v.lv}</span>`).join('')}</div>
-    ${c.alive&&c.age>=3?`<div class="row mt"><select id="edu_${c.id}">${ATTR_KEYS.map(k=>`<option value="${k}">${ATTR[k]}</option>`).join('')}</select>${btn('教育',`A.edu('${c.id}',document.getElementById('edu_${c.id}').value)`,{cls:'sm',dis:p.ap<1||p.gold<50,cost:'1AP・50G'})}</div>`:''}</div>`).join('')||'<div class="empty card">尚無子女</div>'}</div>`;
+    ${c.alive&&c.age>=3?`<div class="row mt"><select id="edu_${c.id}" aria-label="選擇${esc(c.name)}的教育項目" onchange="A.eduSelect('${c.id}',this.value)">${ATTR_KEYS.map(k=>`<option value="${k}" ${(UI.eduK[c.id]||c.edu||'str')===k?'selected':''}>${ATTR[k]}</option>`).join('')}</select>${btn('教育',`A.edu('${c.id}',document.getElementById('edu_${c.id}').value)`,{cls:'sm',dis:p.ap<1||p.gold<50,cost:'1AP・50G'})}</div>`:''}</div>`).join('')||'<div class="empty card">尚無子女</div>'}</div>`;
 }
 
 /* ---------- 編年史・存檔 ---------- */
@@ -3819,7 +3833,8 @@ const A = {
   bizSell(u){ const b=G.businesses.find(x=>x.uid===u); const v=Math.floor(BUSINESSES[b.type].cost*0.5*(1+(b.level-1)*0.5)*(0.5+b.rep/100)); askConfirm(`以 ${fmt(v)}G 出售${BUSINESSES[b.type].name}？`, ()=>{ G.businesses=G.businesses.filter(x=>x.uid!==u); addGold(v); log(`出售${BUSINESSES[b.type].name}，得 ${v}G`); saveGame(); render(); }); },
   kids(){ G.player.wantChildren=!G.player.wantChildren; render(); },
   heir(id){ setWill(id); toast('已指定繼承人'); render(); },
-  edu(id,k){ handle(educateChild(id,k)); },
+  eduSelect(id,k){ if(ATTR[k]) UI.eduK[id]=k; },
+  edu(id,k){ if(ATTR[k]) UI.eduK[id]=k; handle(educateChild(id,k)); },
   chron(t){ UI.chron=t; render(); },
   check(){ const a=validateData(), b=debugCheck(); openModal(`<h2>資料與狀態檢查</h2><div class="small">遊戲資料：${a.length?`<span class="bad">${a.length} 個問題</span>`:'<span class="good">正常</span>'}</div>${a.map(e=>`<div class="tiny bad">・${esc(e)}</div>`).join('')}<div class="small mt">目前存檔狀態：${b.length?`<span class="bad">${b.length} 個問題</span>`:'<span class="good">正常</span>'}</div>${b.map(e=>`<div class="tiny bad">・${esc(e)}</div>`).join('')}<div class="row end mt">${btn('關閉','closeModal()')}</div>`); },
   ledger(){ const L=G.ledger||[]; openModal(`<h2>月結算流水</h2>${L.map(x=>`<div class="logline"><span class="d">${x.y}年${x.m}月</span><span class="small">${fmt(x.gold0)}G → ${fmt(x.gold1)}G<div class="tiny sub">${x.lines.map(esc).join('；')||'—'}</div></span></div>`).join('')||'<div class="empty">尚無紀錄</div>'}<div class="row end mt">${btn('關閉','closeModal()')}</div>`,{wide:true}); },
