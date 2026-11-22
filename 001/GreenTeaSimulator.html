@@ -410,6 +410,16 @@ body.flash::before{opacity:1}
   .b-stage,.b-side{min-height:auto;flex:none}
 }
 
+/* v1.1.0：表情立繪、內心 OS 頭像、審判證據 */
+.real-ex.ex-suspect{transform:none;filter:drop-shadow(0 10px 20px rgba(0,0,0,.2))!important}
+.real-ex.ex-angry{filter:drop-shadow(0 0 14px rgba(224,71,107,.45))!important}
+.real-ex.ex-dark{filter:brightness(.75) saturate(1.2) drop-shadow(0 0 24px rgba(160,0,60,.8))!important}
+.inner-pop{display:flex;align-items:center;gap:12px}
+.inner-pop .inner-ava{width:64px;height:64px;object-fit:cover;object-position:top;border-radius:50%;border:2px solid var(--crimson);background:#2b0d20;flex:none}
+.boss-acc .evidence{margin-top:8px;font-family:var(--sans);font-size:calc(13px * var(--fs));color:#ffb3cf;background:rgba(120,10,50,.35);border-radius:8px;padding:6px 10px;text-align:left}
+.inner-pop{padding-top:22px}.inner-pop::before{position:absolute;top:5px;left:20px}
+#battle.boss .foe img{visibility:hidden;flex:1}
+
 </style>
 </head>
 <body>
@@ -501,7 +511,7 @@ body.flash::before{opacity:1}
  * ============================================================ */
 const CONFIG = {
   schemaVersion: 1,
-  gameVersion: "1.0.2",
+  gameVersion: "1.1.0",
   totalDays: 42,
   actionsPerDay: 2,
   dailyEnergyRegen: 30,
@@ -602,6 +612,18 @@ const NPCS = {
   }
 };
 const NPC_IDS = ["lin", "shen", "gu", "chen", "xu"];
+// 表情立繪（缺圖時自動退回基本立繪）
+NPC_IDS.forEach(id => { NPCS[id].exImg = { angry: `assets/char_${id}_angry.png`, suspect: `assets/char_${id}_suspect.png` }; });
+const PLAYER_DARK_IMG = "assets/char_player_dark.png";
+
+/* 予辰 ♥ 若晴 的感情狀態（兩人互相關係值的平均） */
+const COUPLE_STATES = [
+  { k: "stable", min: 80, n: "感情穩定", c: "#e86a92" },
+  { k: "friction", min: 60, n: "偶有摩擦", c: "#e8a93a" },
+  { k: "tense", min: 40, n: "關係緊張", c: "#d9822b" },
+  { k: "cold", min: 20, n: "嚴重冷戰", c: "#7a8fb8" },
+  { k: "broken", min: 0, n: "感情破裂", c: "#777" }
+];
 
 /* NPC 關係網：有向（source → target 的親近度 0~100） */
 const RELATIONSHIPS = {
@@ -722,7 +744,7 @@ const DM_OPTIONS = [
 /* ---------- 隱藏目標（腹黑操盤手） ---------- */
 const HIDDEN_GOALS = [
   { id: "hg_lin_heart", name: "副社長的心", desc: "林予辰好感達 80" },
-  { id: "hg_split", name: "裂痕", desc: "林予辰與沈若晴的關係降到 40 以下" },
+  { id: "hg_split", name: "裂痕", desc: "讓林予辰與沈若晴陷入嚴重冷戰（感情值 40 以下）" },
   { id: "hg_intel5", name: "情報網", desc: "掌握 5 條以上情報" },
   { id: "hg_xu_ally", name: "茶水間同盟", desc: "取得許沐橙的信任（trusted_xu_mucheng）" },
   { id: "hg_counter", name: "反客為主", desc: "在修羅場中反客為主" }
@@ -759,16 +781,17 @@ const ACHIEVEMENTS = {
 const BACKGROUNDS = {
   campus: { img: "assets/bg_campus.jpg", name: "大學校園", grad: "linear-gradient(160deg,#ffe4ef,#d9e8ff 60%,#fff6e8)" },
   clubroom: { img: "assets/bg_clubroom.jpg", name: "社團教室", grad: "linear-gradient(160deg,#fff0f5,#f1e4ff)" },
-  corridor: { img: "assets/bg_clubroom.jpg", name: "社團走廊", grad: "linear-gradient(160deg,#f6eaff,#ffe9f0)", filter: "saturate(.8) brightness(.95)" },
-  office: { img: "assets/bg_clubroom.jpg", name: "社團辦公區", grad: "linear-gradient(160deg,#ece6ff,#fff)", filter: "hue-rotate(-12deg)" },
+  corridor: { img: "assets/bg_corridor.jpg", name: "社團走廊", grad: "linear-gradient(160deg,#f6eaff,#ffe9f0)" },
+  office: { img: "assets/bg_office.jpg", name: "社團辦公區", grad: "linear-gradient(160deg,#ece6ff,#fff)" },
+  judgment: { img: "assets/cg_boss.jpg", name: "鑑茶女王的審判", grad: "linear-gradient(160deg,#1c0b22,#4a1838)" },
   hotpot: { img: "assets/bg_hotpot.jpg", name: "火鍋店", grad: "linear-gradient(160deg,#ffd9c7,#ffb4a8)" },
-  cafeteria: { img: "assets/bg_campus.jpg", name: "校園餐廳", grad: "linear-gradient(160deg,#fff3d6,#ffe1ea)", filter: "sepia(.15)" },
+  cafeteria: { img: "assets/bg_cafeteria.jpg", name: "校園餐廳", grad: "linear-gradient(160deg,#fff3d6,#ffe1ea)" },
   library: { img: "assets/bg_library.jpg", name: "圖書館", grad: "linear-gradient(160deg,#efe6d8,#e6eefc)" },
   dorm: { img: "assets/bg_dorm.jpg", name: "宿舍", grad: "linear-gradient(160deg,#2b2440,#5a4a7a)" },
-  courtyard: { img: "assets/bg_campus.jpg", name: "校園中庭", grad: "linear-gradient(160deg,#e3ffe9,#ffe9f4)", filter: "saturate(1.15)" },
-  store: { img: "assets/bg_dorm.jpg", name: "便利商店", grad: "linear-gradient(160deg,#e8fff6,#fff)", filter: "brightness(1.15) saturate(.7)" },
+  courtyard: { img: "assets/bg_courtyard.jpg", name: "校園中庭", grad: "linear-gradient(160deg,#e3ffe9,#ffe9f4)" },
+  store: { img: "assets/bg_store.jpg", name: "便利商店", grad: "linear-gradient(160deg,#e8fff6,#fff)" },
   gala: { img: "assets/bg_gala.jpg", name: "迎新晚會會場", grad: "linear-gradient(160deg,#3a1f4d,#c9558b)" },
-  night: { img: "assets/bg_campus.jpg", name: "夜間校園", grad: "linear-gradient(160deg,#1c1530,#3d2b5c)", filter: "brightness(.45) hue-rotate(200deg) saturate(.8)" }
+  night: { img: "assets/bg_night.jpg", name: "夜間校園", grad: "linear-gradient(160deg,#1c1530,#3d2b5c)" }
 };
 
 /* ---------- 主線與條件事件 ---------- */
@@ -788,7 +811,12 @@ const EVENTS = [
   { id: "ev_gu_tea", type: "NPC", minDay: 15, story: "gu_tea", trigger: { minTrust: { gu: 45 } } },
   { id: "ev_shen_confront", type: "COND", minDay: 4, story: "shen_confront", trigger: { minSus: { shen: 80 } } },
   { id: "ev_gu_investigate", type: "COND", minDay: 4, story: "gu_investigate", trigger: { minSus: { gu: 80 } } },
-  { id: "ev_chen_hope", type: "NPC", minDay: 14, story: "chen_hope", trigger: { minFavor: { chen: 70 } } }
+  { id: "ev_chen_hope", type: "NPC", minDay: 14, story: "chen_hope", trigger: { minFavor: { chen: 70 } } },
+  // 予辰 ♥ 若晴 感情事件鏈
+  { id: "ev_couple_fight", type: "COND", minDay: 9, story: "couple_fight", trigger: { coupleMax: 59 } },
+  { id: "ev_couple_cold", type: "COND", minDay: 13, story: "couple_cold", trigger: { coupleMax: 39 } },
+  { id: "ev_couple_breakup", type: "COND", minDay: 18, story: "couple_breakup", trigger: { coupleMax: 19 } },
+  { id: "ev_couple_makeup", type: "COND", minDay: 12, story: "couple_makeup", trigger: { coupleMin: 75, flags: ["couple_fought"], notFlags: ["lin_shen_broke_up"] } }
 ];
 
 /* 支線（NPC 專屬／條件事件）在日誌中的名稱與提示 */
@@ -799,7 +827,11 @@ const EVENT_INFO = {
   ev_chen_hope: ["一杯奶茶", "陳柏宇好感 70 以上（第 14 天起）"],
   ev_gu_tea: ["社長的茶", "顧知夏信任 45 以上（第 15 天起）"],
   ev_shen_confront: ["走廊對峙", "？？？（小心沈若晴的懷疑）"],
-  ev_gu_investigate: ["白板上的「茶」", "？？？（小心顧知夏的懷疑）"]
+  ev_gu_investigate: ["白板上的「茶」", "？？？（小心顧知夏的懷疑）"],
+  ev_couple_fight: ["走廊上的爭吵", "予辰與若晴的感情降到「關係緊張」"],
+  ev_couple_cold: ["沉默的群組", "予辰與若晴陷入「嚴重冷戰」"],
+  ev_couple_breakup: ["分手", "予辰與若晴「感情破裂」"],
+  ev_couple_makeup: ["雨過天晴", "吵過架的兩人重新變得穩定"]
 };
 
 const RANDOM_EVENTS = [
@@ -872,7 +904,9 @@ const STORIES = {
     start: "g1", nodes: {
       g1: { bg: "dorm", sp: "narr", t: "第二週・凌晨十二點半。社團群組突然跳出一連串訊息。", n: "g2" },
       g2: { sp: "shen", ex: "angry", t: "【群組】誰今天最後離開社辦的？器材亂丟一地，音響還壞了！明天就要用欸！", n: "g3" },
-      g3: { sp: "chen", ex: "sad", t: "【群組】對不起……可能是我收的時候沒收好……", n: "g4" },
+      g3: { sp: "chen", ex: "sad", t: "【群組】對不起……可能是我收的時候沒收好……", n: "g3b" },
+      g3b: { cond: { coupleMin: 60 }, else: "g3c", sp: "lin", ex: "smile", t: "【群組】若晴別氣了～明天我早點去社辦，陪妳一起整理。", n: "g4" },
+      g3c: { sp: "narr", t: "（予辰已讀，沒有回應。若晴的訊息就這樣孤零零地掛在群組裡。）", n: "g4" },
       g4: { sp: "inner", t: "群組安靜了三分鐘。所有人都在看誰先說話。", n: "g5" },
       g5: { sp: "narr", t: "妳要怎麼做？", ch: [
         { t: "【公開】「學姊別生氣～柏宇學長今天一直在幫我們搬東西，一定是太累了」", fx: [["favor", "chen", 10], ["trust", "chen", 6], ["mem", "chen", "helped", true], ["flag", "helped_chen_boyu"], ["emo", "shen", -10], ["aura", 5], ["support", 2]], n: "g6", hint: "保護柏宇・公開示好" },
@@ -1008,7 +1042,7 @@ const STORIES = {
   judgment: {
     start: "j1", nodes: {
       j1: { bg: "office", sp: "narr", t: "第六週・評選日。社辦的窗簾被拉上，所有幹部都到齊了。", n: "j2" },
-      j2: { sp: "gu", ex: "dark", t: "在決定核心位置之前，我想先確認一件事。小茶，妳這六週，究竟是怎麼走到這裡的？", n: "j3" },
+      j2: { bg: "judgment", sp: "gu", ex: "dark", t: "在決定核心位置之前，我想先確認一件事。小茶，妳這六週，究竟是怎麼走到這裡的？", n: "j3" },
       j3: { sp: "inner", t: "《鑑茶女王的審判》——六回合，三個階段。她手上有我過去六週的每一筆紀錄。", n: "j4" },
       j4: { sp: "narr", t: "審判開始。", battle: { title: "鑑茶女王的審判", participants: ["gu"], context: "public", rounds: 6, type: "boss",
         result: { perfect: "j5p", win: "j5w", fail: "j5f" } } },
@@ -1071,6 +1105,51 @@ const STORIES = {
     ch2: { sp: "inner", t: "備胎，還是朋友？選擇權在我手上。", end: true }
   } },
 
+  /* ===== 予辰 ♥ 若晴 感情事件 ===== */
+  couple_fight: { start: "cf1", nodes: {
+    cf1: { bg: "corridor", sp: "narr", t: "社團大樓走廊轉角，傳來壓低聲音的爭吵。", fx: [["flag", "couple_fought"]], n: "cf2" },
+    cf2: { sp: "shen", ex: "angry", t: "你對每個人都這麼好……那我到底算什麼？", n: "cf3" },
+    cf3: { sp: "lin", ex: "angry", t: "若晴，我只是在帶新人而已，妳不要每次都這樣。", n: "cf4" },
+    cf4: { sp: "narr", t: "兩人都還沒發現妳。", ch: [
+      { t: "上前打圓場：「學長學姊……是我不好，最近一直麻煩學長。」", fx: [["rel", "lin", "shen", 10], ["aura", 4], ["trust", "shen", 4], ["trust", "lin", 3], ["flag", "mediated_couple"], ["mem", "shen", "helped"]], n: "cf5a", hint: "修復兩人關係" },
+      { t: "先躲起來，晚點私訊安慰予辰", fx: [["favor", "lin", 8], ["rel", "lin", "shen", -6], ["sus", "shen", 5], ["mem", "lin", "manipulated"]], n: "cf5b", inner: true, hint: "趁虛而入" },
+      { t: "悄悄離開", n: "cf5c" }
+    ] },
+    cf5a: { sp: "shen", ex: "normal", t: "……不關妳的事啦。（語氣卻軟了下來）", end: true },
+    cf5b: { sp: "inner", t: "吵架之後的溫柔，最容易被記住。", end: true },
+    cf5c: { sp: "inner", t: "這種事，還是別沾上比較好。", end: true }
+  } },
+  couple_cold: { start: "cc1", nodes: {
+    cc1: { bg: "dorm", sp: "narr", t: "社團群組已經三天沒看到予辰和若晴互相回話了。大家都在小心翼翼地繞開彼此。", n: "cc2" },
+    cc2: { sp: "xu", ex: "suspect", t: "【私訊】欸，妳也發現了吧？他們兩個是不是要分了啊……", ch: [
+      { t: "約兩人一起吃飯，製造和好的機會（精力 -10）", fx: [["energy", -10], ["rel", "lin", "shen", 12], ["flag", "mediated_couple"], ["trust", "lin", 4], ["trust", "shen", 4], ["aura", 3]], n: "cc3a", hint: "修復兩人關係" },
+      { t: "「我也覺得怪怪的……」跟沐橙一起聊", fx: [["favor", "xu", 5], ["rel", "lin", "shen", -5], ["sus", "shen", 4], ["global", 2]], n: "cc3b", inner: true },
+      { t: "「我們別管人家的事啦」", fx: [["aura", 2]], n: "cc3c" }
+    ] },
+    cc3a: { bg: "cafeteria", sp: "lin", ex: "smile", t: "（飯局上，兩人終於說了第一句話）……謝謝妳，小茶。", end: true },
+    cc3b: { sp: "inner", t: "八卦會自己長腳。我只要在旁邊點點頭就好。", end: true },
+    cc3c: { sp: "xu", ex: "normal", t: "好啦好啦～妳真的很乖耶。", end: true }
+  } },
+  couple_breakup: { start: "cb1", nodes: {
+    cb1: { bg: "night", sp: "narr", t: "那天晚上，社團群組安靜得可怕。——林予辰和沈若晴分手了。", fx: [["flag", "lin_shen_broke_up"], ["global", 3]], special: "breakup_branch" },
+    cb2a: { sp: "shen", ex: "angry", t: "（若晴在走廊攔住妳）都是因為妳！妳從一開始就打算這樣，對吧？", fx: [["sus", "shen", 15], ["global", 5], ["mem", "shen", "lied", true], ["emo", "shen", -50]], n: "cb3" },
+    cb2b: { sp: "shen", ex: "sad", t: "（若晴一個人坐在社辦角落，眼睛紅紅的）……我沒事，妳不用管我。", fx: [["emo", "shen", -30]], n: "cb3" },
+    cb3: { sp: "lin", ex: "sad", t: "（予辰傳來訊息）小茶，妳現在有空嗎？我想找個人說說話。", ch: [
+      { t: "陪予辰在夜晚的校園散步", fx: [["favor", "lin", 10], ["trust", "lin", 6], ["global", 3], ["sus", "shen", 6]], n: "cb4a" },
+      { t: "去陪若晴", fx: [["trust", "shen", 10], ["favor", "shen", 8], ["aura", 5], ["sus", "shen", -10]], n: "cb4b" },
+      { t: "兩邊都保持距離", fx: [["aura", 3]], n: "cb4c" }
+    ] },
+    cb4a: { sp: "inner", t: "空出來的位置，總要有人坐。", end: true },
+    cb4b: { sp: "shen", ex: "sad", t: "……謝謝。原來妳是會來找我的人。", end: true },
+    cb4c: { sp: "inner", t: "現在誰靠近，誰就是兇手。", end: true }
+  } },
+  couple_makeup: { start: "cm1", nodes: {
+    cm1: { bg: "courtyard", sp: "narr", t: "中庭的長椅上，予辰和若晴並肩坐著，若晴靠在他肩上。看起來，他們和好了。", fx: [["flag", "couple_reconciled"]], special: "makeup_branch" },
+    cm2a: { sp: "shen", ex: "smile", t: "小茶！那時候……謝啦。予辰說要不是妳，我們可能就這樣散了。", fx: [["favor", "shen", 10], ["trust", "shen", 8], ["trust", "lin", 6], ["support", 4]], n: "cm3" },
+    cm2b: { sp: "lin", ex: "smile", t: "啊，小茶！我們沒事了，讓妳擔心了。", fx: [["support", 1]], n: "cm3" },
+    cm3: { sp: "inner", t: "和好的情侶，會一起站在同一邊——這點要記住。", end: true }
+  } },
+
   /* ===== 隨機事件 ===== */
   r_store: { start: "a", nodes: {
     a: { bg: "store", sp: "chen", ex: "smile", t: "咦，小茶也來買宵夜？", ch: [
@@ -1121,13 +1200,18 @@ const STORIES = {
 /* ---------- NPC 每日自主行動 ---------- */
 const NPC_DAILY = {
   lin: [
-    { w: 3, t: "林予辰主動約沈若晴吃晚餐。", fx: [["rel", "lin", "shen", 2], ["rel", "shen", "lin", 2]] },
+    { w: 3, t: "林予辰主動約沈若晴吃晚餐。", cond: { coupleMin: 60 } },
+    { w: 3, t: "林予辰和沈若晴在社辦各忙各的，幾乎沒有交談。", cond: { coupleMin: 40, coupleMax: 59 } },
+    { w: 4, t: "林予辰和沈若晴在群組裡互不回應，大家都察覺到了。", cond: { coupleMin: 20, coupleMax: 39 }, fx: [["emo", "lin", -5]] },
+    { w: 4, t: "林予辰一個人坐在中庭發呆。", cond: { coupleMax: 19 }, fx: [["emo", "lin", -8]] },
     { w: 2, t: "林予辰在社辦幫新生整理資料。", fx: [["rep", 1]] },
     { w: 2, t: "林予辰和陳柏宇去打球。", fx: [["rel", "lin", "chen", 2]] },
     { w: 1, t: "林予辰看了妳的動態很久。", cond: { minFavor: { lin: 50 } }, fx: [["favor", "lin", 2]] }
   ],
   shen: [
     { w: 3, t: "沈若晴和社員討論迎新活動流程。", fx: [["rep", 1]] },
+    { w: 2, t: "沈若晴幫林予辰整理了明天的會議資料。", cond: { coupleMin: 80 } },
+    { w: 3, t: "沈若晴向許沐橙抱怨林予辰最近怪怪的。", cond: { coupleMax: 59, notFlags: ["lin_shen_broke_up"] }, fx: [["sus", "shen", 2]], share: ["shen", "xu"] },
     { w: 2, t: "沈若晴和許沐橙在中庭聊天。", fx: [["rel", "shen", "xu", 2]], share: ["shen", "xu"] },
     { w: 2, t: "沈若晴在群組裡分派工作。", fx: [] },
     { w: 2, t: "沈若晴似乎在注意妳。", cond: { minSus: { shen: 50 } }, fx: [["global", 1]] }
@@ -1189,16 +1273,16 @@ const BOSS_STRATEGIES = {
 };
 const BOSS_ACCUSATIONS = [
   { id: "acc_motive", phase: 1, t: "妳加入星光公關社，真正的目的是什麼？", weak: ["explain", "admit"], strong: ["deflect"], always: true },
-  { id: "acc_tears", phase: 1, t: "我注意到，妳每次掉眼淚，旁邊都剛好有人。", weak: ["admit", "ally"], strong: ["deflect"], cond: s => s.statistics.tagCounts.WEAKNESS >= 4 },
-  { id: "acc_lin", phase: 1, t: "妳和予辰走得很近。妳知道他有女朋友吧？", weak: ["explain", "ally"], strong: ["deflect"], cond: s => s.npcRelations.lin.favor >= 55 || s.story.flags.lin_walked_home },
-  { id: "acc_groupchat", phase: 2, t: "第二週的深夜群組之後，予辰和若晴就開始吵架。那天妳私訊了誰？", weak: ["admit", "intel"], strong: ["explain"], cond: s => s.story.flags.group_chat_backstab || s.story.flags.sold_out_chen },
-  { id: "acc_hotpot", phase: 2, t: "火鍋店那晚，妳說的每一句話，都讓若晴更難堪。是巧合嗎？", weak: ["explain", "ally"], strong: ["admit"], cond: s => s.story.flags.hotpot_counter || s.story.flags.hotpot_disaster || s.statistics.tagCounts.MANIPULATE >= 4 },
-  { id: "acc_posts", phase: 2, t: "妳的動態，好像每一篇都『剛好』寫給某個人看。", weak: ["admit", "explain"], strong: ["ally"], cond: s => s.social.posts.some(p => p.type === "flirt" || p.type === "snark") },
-  { id: "acc_vote", phase: 2, t: "投票前一天，有人在私下拉票，用的還是若晴企劃的內容。", weak: ["intel", "admit"], strong: ["deflect", "explain"], cond: s => s.story.flags.hidden_vote_manipulated || s.story.flags.promise_broken },
-  { id: "acc_leak", phase: 2, t: "匿名爆料那週，妳在哪裡？做了什麼？", weak: ["intel", "explain"], strong: ["deflect"], cond: s => s.story.flags.fanned_leak || s.story.flags.xu_blackmailed },
-  { id: "acc_intel", phase: 2, t: "妳好像知道很多不該知道的事。", weak: ["admit", "ally"], strong: ["intel"], cond: s => Object.keys(s.intel).length >= 4 },
-  { id: "acc_history", phase: 2, t: "我整理了這六週的紀錄。妳的說法，前後有好幾處對不上。", weak: ["admit", "intel"], strong: ["deflect"], always: true },
-  { id: "acc_public", phase: 3, t: "現在，所有人都在。請妳看著大家的眼睛回答：妳說過的話，有幾句是真的？", weak: ["admit", "ally"], strong: ["deflect", "intel"], always: true },
+  { id: "acc_tears", mem: ["public_weak"], phase: 1, t: "我注意到，妳每次掉眼淚，旁邊都剛好有人。", weak: ["admit", "ally"], strong: ["deflect"], cond: s => s.statistics.tagCounts.WEAKNESS >= 4 },
+  { id: "acc_lin", mem: ["manipulated", "sus_post"], phase: 1, t: "妳和予辰走得很近。妳知道他有女朋友吧？", weak: ["explain", "ally"], strong: ["deflect"], cond: s => s.npcRelations.lin.favor >= 55 || s.story.flags.lin_walked_home },
+  { id: "acc_groupchat", mem: ["manipulated", "lied"], phase: 2, t: "第二週的深夜群組之後，予辰和若晴就開始吵架。那天妳私訊了誰？", weak: ["admit", "intel"], strong: ["explain"], cond: s => s.story.flags.group_chat_backstab || s.story.flags.sold_out_chen },
+  { id: "acc_hotpot", mem: ["manipulated", "protected_self"], phase: 2, t: "火鍋店那晚，妳說的每一句話，都讓若晴更難堪。是巧合嗎？", weak: ["explain", "ally"], strong: ["admit"], cond: s => s.story.flags.hotpot_counter || s.story.flags.hotpot_disaster || s.statistics.tagCounts.MANIPULATE >= 4 },
+  { id: "acc_posts", mem: ["sus_post"], phase: 2, t: "妳的動態，好像每一篇都『剛好』寫給某個人看。", weak: ["admit", "explain"], strong: ["ally"], cond: s => s.social.posts.some(p => p.type === "flirt" || p.type === "snark") },
+  { id: "acc_vote", mem: ["lied"], phase: 2, t: "投票前一天，有人在私下拉票，用的還是若晴企劃的內容。", weak: ["intel", "admit"], strong: ["deflect", "explain"], cond: s => s.story.flags.hidden_vote_manipulated || s.story.flags.promise_broken },
+  { id: "acc_leak", mem: ["manipulated", "lied"], phase: 2, t: "匿名爆料那週，妳在哪裡？做了什麼？", weak: ["intel", "explain"], strong: ["deflect"], cond: s => s.story.flags.fanned_leak || s.story.flags.xu_blackmailed },
+  { id: "acc_intel", mem: ["manipulated", "protected_self"], phase: 2, t: "妳好像知道很多不該知道的事。", weak: ["admit", "ally"], strong: ["intel"], cond: s => Object.keys(s.intel).length >= 4 },
+  { id: "acc_history", mem: ["lied", "manipulated"], phase: 2, t: "我整理了這六週的紀錄。妳的說法，前後有好幾處對不上。", weak: ["admit", "intel"], strong: ["deflect"], always: true },
+  { id: "acc_public", mem: ["lied", "manipulated", "public_weak"], phase: 3, t: "現在，所有人都在。請妳看著大家的眼睛回答：妳說過的話，有幾句是真的？", weak: ["admit", "ally"], strong: ["deflect", "intel"], always: true },
   { id: "acc_final", phase: 3, t: "最後一個問題。如果把核心位置交給妳，妳能保證不會傷害這個社團的任何人嗎？", weak: ["explain", "ally", "admit"], strong: ["deflect"], always: true }
 ];
 
@@ -1206,16 +1290,18 @@ const BOSS_ACCUSATIONS = [
 const ENDINGS = {
   lotus: { name: "白蓮花女神", cg: "assets/cg_light.jpg", sub: "TRUE INNOCENCE?",
     t: "評選結果公布的那一刻，全場響起掌聲。\n「小茶是我們社團最純粹的人。」——每個人都這麼說。\n妳低下頭，害羞地笑了。沒有人看見，妳嘴角那一瞬間的弧度。\n白蓮花，從來不需要沾上一滴泥。" },
-  queen: { name: "社交女王", cg: "assets/cg_light.jpg", sub: "QUEEN OF STARLIGHT",
+  queen: { name: "社交女王", cg: "assets/cg_queen.jpg", sub: "QUEEN OF STARLIGHT",
     t: "核心企劃的名單上，妳的名字寫在第一行。\n妳記得每個人的生日、每個人喜歡的飲料、每個人不想被提起的事。\n社團的每條線，最後都牽在妳手上。\n「下一屆社長，應該就是她了吧。」走廊上，有人這麼說。" },
   schemer: { name: "腹黑操盤手", cg: "assets/cg_dark.jpg", sub: "THE MASTERMIND",
     t: "鑑茶女王的審判結束了。妳贏了——不是因為妳無辜，而是因為妳比她更早看透這盤棋。\n秘密、情報、裂痕、同盟。每一步都是妳親手佈下的。\n妳拿起顧知夏留在桌上的企劃書，輕輕翻開第一頁。\n「接下來，就換我來寫劇本了。」" },
-  exposed: { name: "全員鑑茶", cg: "assets/cg_dark.jpg", sub: "GAME OVER",
+  exposed: { name: "全員鑑茶", cg: "assets/cg_exposed.jpg", sub: "GAME OVER",
     t: "截圖、對話紀錄、證人。一件一件攤在所有人面前。\n「原來她一直都是這樣。」\n社團群組裡，妳被默默移除了。\n綠茶終究會涼。下一次——也許，要泡得更小心一點。" }
 };
 const EPILOGUES = [
-  { cond: s => s.npcRelations.lin.favor >= 75 && s.relationships.lin.shen < 45, t: "【尾聲・予辰】幾週後，林予辰和沈若晴分手了。他約妳去看海，說有話想對妳說。" },
-  { cond: s => s.npcRelations.lin.favor >= 75 && s.relationships.lin.shen >= 45, t: "【尾聲・予辰】林予辰仍然對妳很好——像對一個重要的學妹。也許，這樣就夠了。" },
+  { cond: s => s.story.flags.couple_reconciled && s.story.flags.mediated_couple, t: "【尾聲・予辰與若晴】和好後的兩人比以前更穩定。若晴偷偷跟妳說：「那時候，還好有妳。」" },
+  { cond: s => s.story.flags.lin_shen_broke_up && s.npcRelations.shen.suspicion >= 50, t: "【尾聲・若晴】沈若晴退出了星光公關社。離開前，她只看了妳一眼。" },
+  { cond: s => s.npcRelations.lin.favor >= 75 && Relations.couple() < 40, t: "【尾聲・予辰】幾週後，林予辰和沈若晴分手了。他約妳去看海，說有話想對妳說。" },
+  { cond: s => s.npcRelations.lin.favor >= 75 && Relations.couple() >= 40, t: "【尾聲・予辰】林予辰仍然對妳很好——像對一個重要的學妹。也許，這樣就夠了。" },
   { cond: s => s.npcRelations.shen.trust >= 60, t: "【尾聲・若晴】沈若晴成了妳最可靠的戰友。她到現在都不知道，有些事情的真相。" },
   { cond: s => s.npcRelations.chen.favor >= 70, t: "【尾聲・柏宇】陳柏宇每天都會在社辦放一杯奶茶，旁邊附一張寫著「加油」的便利貼。" },
   { cond: s => s.story.flags.trusted_xu_mucheng || s.story.flags.xu_blackmailed, t: "【尾聲・沐橙】「星光茶水間」從此再也沒有發過關於妳的貼文。" },
@@ -1407,7 +1493,7 @@ const Effects = {
           case "tp": State.get().player.talentPoints += a; notes.push(this._n("天賦點", a)); break;
           case "flag": Story.setFlag(a, b === undefined ? true : b); break;
           case "unflag": delete State.get().story.flags[a]; break;
-          case "mem": Memory.addMemory(a, { type: b, major: !!c }); break;
+          case "mem": Memory.addMemory(a, { type: b, major: !!c }); break; // 來源與細節由 Memory.ctx 自動帶入
           case "rel": { const d = Status.addRelation(a, b, c); Status.addRelation(b, a, Math.round(c * 0.6)); if (d) notes.push(`${NPCS[a].name}→${NPCS[b].name} 關係 ${d > 0 ? "+" : ""}${d}`); break; }
           case "intel": if (Intel.gain(a)) notes.push("獲得情報：" + INTEL[a].name); break;
           case "achieve": Achievements.unlock(a); break;
@@ -1435,6 +1521,8 @@ const Effects = {
     if (cond.minSupport != null && s.status.clubSupport < cond.minSupport) return false;
     if (cond.minGold != null && s.player.gold < cond.minGold) return false;
     if (cond.minDay != null && s.calendar.day < cond.minDay) return false;
+    if (cond.coupleMin != null && Relations.couple() < cond.coupleMin) return false;
+    if (cond.coupleMax != null && Relations.couple() > cond.coupleMax) return false;
     return true;
   }
 };
@@ -1592,12 +1680,49 @@ const Intel = {
 };
 
 /* ---------- MemoryManager ---------- */
+const STORY_LABELS = {
+  intro: "入社第一天", dinner: "迎新聚餐", groupchat: "深夜社團群組", hotpot: "火鍋店宵夜場", vote: "企劃投票", leak: "匿名爆料事件",
+  gala: "迎新晚會", judgment: "評選會議", chen_help: "器材室", lin_worry: "中庭談心", xu_trust: "茶水間的秘密", gu_tea: "社長的茶會",
+  shen_confront: "走廊對峙", gu_investigate: "社辦", chen_hope: "便利商店", couple_fight: "走廊上的爭吵", couple_cold: "沉默的群組",
+  couple_breakup: "分手的那晚", couple_makeup: "和好之後",
+  r_store: "便利商店", r_library: "圖書館", r_gossip: "中庭閒聊", r_rain: "下雨天", r_spill: "社辦打翻飲料那次", r_notes: "借筆記那次",
+  r_anon: "匿名私訊", r_scholar: "那天", r_blackout: "停電那晚", r_audit: "社長抽查", r_photo: "被沐橙拍照那次"
+};
 const Memory = {
+  ctx: null,          // 目前的事件來源 {src, label, involved, detail}
+  lastChoice: null,   // 劇情選項文字，作為記憶細節
+  setContext(src, label, involved = []) { const prev = this.ctx; this.ctx = { src, label, involved }; return prev; },
+  restoreContext(prev) { this.ctx = prev; },
+  choiceDetail(t) {
+    if (!t) return null;
+    let x = String(t).replace(/^【[^】]*】/, "").replace(/（[^）]*）/g, "").trim();
+    const q = x.match(/「[^」]+」/);
+    if (q) return `妳說了${q[0].length > 26 ? q[0].slice(0, 24) + "…」" : q[0]}`;
+    return "妳選擇" + (x.length > 24 ? x.slice(0, 24) + "…" : x);
+  },
   addMemory(npcId, data) {
     const list = State.get().npcMemories[npcId]; if (!list) return;
-    const s = State.get();
-    list.push({ type: data.type, major: !!data.major, day: s.calendar.day, weight: data.major ? 999 : 3 });
+    const s = State.get(), ctx = this.ctx || {};
+    const detail = data.detail !== undefined ? data.detail : (this.lastChoice ? this.choiceDetail(this.lastChoice) : ctx.detail || null);
+    s.story.memSeq = (s.story.memSeq || 0) + 1;
+    list.push({
+      id: "m" + s.story.memSeq, type: data.type, major: !!data.major, day: s.calendar.day, weight: data.major ? 999 : 3,
+      source: data.source || ctx.src || null, label: data.label || ctx.label || null, detail,
+      involved: (data.involved || ctx.involved || []).filter(x => x !== npcId), severity: data.severity || (data.major ? 3 : 1)
+    });
     if (list.length > 40) { const i = list.findIndex(m => !m.major); if (i >= 0) list.splice(i, 1); }
+  },
+  // 把一筆記憶寫成具體的一句話（給對話與審判引用）
+  describe(m, npcId) {
+    const wk = Math.min(6, Math.floor((m.day - 1) / 7) + 1);
+    const when = m.label ? `第${["", "一", "二", "三", "四", "五", "六"][wk]}週的${m.label}` : `第 ${m.day} 天`;
+    const who = m.involved && m.involved.length ? `，當時${m.involved.map(i => NPCS[i]?.name).filter(Boolean).join("和")}也在場` : "";
+    return { when, detail: m.detail, who, text: `${when}${m.detail ? "，" + m.detail : ""}${who}` };
+  },
+  evidence(types, used = []) {
+    const all = NPC_IDS.flatMap(id => this.getMemories(id).map(m => ({ ...m, npc: id }))).filter(m => types.includes(m.type) && (m.label || m.detail) && !used.includes(m.id));
+    all.sort((a, b) => (b.severity - a.severity) || ((b.major ? 1 : 0) - (a.major ? 1 : 0)) || (b.day - a.day));
+    return all[0] || null;
   },
   getMemories(npcId) { return State.get().npcMemories[npcId] || []; },
   findMemory(npcId, tag) { return this.getMemories(npcId).filter(m => m.type === tag); },
@@ -1615,6 +1740,17 @@ const Memory = {
     if (c("sus_post") >= 1) susMult *= 1.1;
     return { favorMult, susMult, resist };
   },
+  lineFor(npcId) {
+    const mems = this.getMemories(npcId).filter(m => m.label || m.detail).slice(-6).reverse();
+    const m = mems.find(x => x.major) || mems[0]; if (!m) return null;
+    const lb = m.label || "那次";
+    const T = {
+      helped: `${lb}那次，真的謝謝妳。`, lied: `${lb}的事，我還記得。妳那時候說的，是真的嗎？`,
+      manipulated: `妳在${lb}跟我說的那些……我後來想了很久。`, public_weak: `${lb}那時候，妳的眼淚來得真剛好。`,
+      protected_self: `${lb}那時候，妳躲得真快呢。`, sus_post: m.source === "post" ? `${m.label}——那篇是寫給誰看的？` : `${lb}那篇動態，是寫給誰看的？`
+    };
+    return T[m.type] || null;
+  },
   labels: { helped: "曾被妳幫助", lied: "發現妳說謊", public_weak: "看過妳公開示弱", manipulated: "聽妳說過別人的閒話", sus_post: "看過妳的可疑動態", protected_self: "看過妳在危機中自保" }
 };
 
@@ -1623,11 +1759,18 @@ const Relations = {
   getRelationship(a, b) { return State.get().relationships[a]?.[b] ?? 0; },
   updateRelationship(a, b, n) { return Status.addRelation(a, b, n); },
   getRelatedNPCs(id) { const r = State.get().relationships[id] || {}; return Object.entries(r).sort((x, y) => y[1] - x[1]).map(([k]) => k); },
+  couple() { const r = State.get().relationships; return Math.round(((r.lin?.shen ?? 85) + (r.shen?.lin ?? 88)) / 2); },
+  coupleState(v = this.couple()) { return COUPLE_STATES.find(c => v >= c.min) || COUPLE_STATES[COUPLE_STATES.length - 1]; },
   closest(id, exclude = []) { return this.getRelatedNPCs(id).find(k => !exclude.includes(k)); },
   calculateRelationshipEffects() {
-    // 每日：關係會逐漸回歸（情侶吵架後會慢慢和好，除非持續被挑撥）
-    const r = State.get().relationships;
-    NPC_IDS.forEach(a => NPC_IDS.forEach(b => { if (a !== b && r[a][b] != null) { const base = RELATIONSHIPS[a][b]; if (r[a][b] < base - 20) r[a][b] += 0; else if (r[a][b] < base) r[a][b] += 1; } }));
+    // 每日：小摩擦會慢慢修復；傷得太深（低於原本 20 以上）不會自己好；分手後兩人關係封頂 30
+    const s = State.get(), r = s.relationships;
+    NPC_IDS.forEach(a => NPC_IDS.forEach(b => { if (a !== b && r[a][b] != null && !((a === "lin" && b === "shen") || (a === "shen" && b === "lin"))) { const base = RELATIONSHIPS[a][b]; if (r[a][b] >= base - 20 && r[a][b] < base) r[a][b] += 1; } }));
+    // 予辰 ♥ 若晴：若晴起疑、予辰的心飄向妳，感情就會慢慢磨損；兩人都安心時才會自然修復（不超過原本）
+    const R = s.npcRelations, pressure = (R.shen.suspicion >= 50 ? 1 : 0) + (R.lin.favor >= 70 ? 1 : 0) + (R.shen.emotion <= -30 ? 1 : 0);
+    if (pressure) { Status.addRelation("lin", "shen", -pressure); Status.addRelation("shen", "lin", -pressure); }
+    else if (R.shen.suspicion < 35) { if (r.lin.shen < RELATIONSHIPS.lin.shen && r.lin.shen >= RELATIONSHIPS.lin.shen - 20) r.lin.shen += 1; if (r.shen.lin < RELATIONSHIPS.shen.lin && r.shen.lin >= RELATIONSHIPS.shen.lin - 20) r.shen.lin += 1; }
+    if (s.story.flags.lin_shen_broke_up) { r.lin.shen = Math.min(r.lin.shen, 30); r.shen.lin = Math.min(r.shen.lin, 30); }
   }
 };
 
@@ -1707,7 +1850,7 @@ const HiddenGoals = {
   check() {
     const s = State.get(), done = s.story.hiddenGoals, add = id => { if (!done.includes(id)) { done.push(id); UI.toast("隱藏目標達成：" + HIDDEN_GOALS.find(h => h.id === id).name, "dark"); } };
     if (s.npcRelations.lin.favor >= 80) add("hg_lin_heart");
-    if (s.relationships.lin.shen < 40) add("hg_split");
+    if (Relations.couple() < 40) add("hg_split");
     if (Object.keys(s.intel).length >= 5) add("hg_intel5");
     if (s.story.flags.trusted_xu_mucheng) add("hg_xu_ally");
     if (s.story.flags.hotpot_counter || s.story.flags.hotpot_counter_vote || s.story.flags.counter_any) add("hg_counter");
@@ -1788,8 +1931,11 @@ const CardMath = {
     if (resist) aff = Math.min(aff, CONFIG.affinityResist);
     const aura = card.type === "WHITE_LOTUS" ? this.auraMult() : 1;
     const im = this.intentMult(card, opt.intent);
+    // 予辰 ♥ 若晴：感情好時，在若晴面前對予辰示好會打折；冷戰／分手後反而更容易趁虛而入
+    let coupleMult = 1;
+    if (targetId === "lin" && card.tags.includes("FLIRT")) { const cs = Relations.coupleState().k; if ((cs === "stable" || cs === "friction") && (opt.observers || []).includes("shen")) coupleMult = 0.8; else if (cs === "cold" || cs === "broken") coupleMult = 1.2; }
     const tal = 1 + Talents.tagBonus(card.tags, targetId);
-    const favor = Math.max(0, Utils.round(card.fx.favor * aff * aura * im.m * lm * tal * mem.favorMult));
+    const favor = Math.max(0, Utils.round(card.fx.favor * aff * aura * im.m * lm * tal * mem.favorMult * coupleMult));
     const pureAura = Utils.round(card.fx.pureAura > 0 ? card.fx.pureAura * lm : card.fx.pureAura);
     const ctx = opt.context || "small", observers = opt.observers || [];
     let susInc = 0, susRed = 0, globalInc = 0;
@@ -1807,7 +1953,7 @@ const CardMath = {
       if (lv >= 3 && card.type === "WHITE_LOTUS") susRed -= 5;
     }
     const mood = Utils.round(favor * 0.7 - susInc * 0.6 + Math.abs(susRed) * 0.8 + (im.good ? 8 : im.bad ? -5 : 0));
-    return { card, favor, pureAura, susInc, susRed, globalInc, mood, aff, resist, intent: im, level: lv, cost: Cards.costOf(cardId) };
+    return { card, favor, pureAura, susInc, susRed, globalInc, mood, aff, resist, intent: im, level: lv, cost: Cards.costOf(cardId), coupleMult };
   }
 };
 
@@ -1817,7 +1963,8 @@ const NPCManager = {
   updateNPCEmotion(id, n) { return Status.addEmotion(id, n); },
   getNPCReaction(id, ctx = {}) {
     const r = Status.rel(id), lines = NPC_LINES[id]; if (!lines) return "……";
-    // 記憶優先：依記憶改變對話
+    // 記憶優先：具體引用某次事件，其次是記憶類型的台詞
+    if (Utils.chance(0.4)) { const ln = Memory.lineFor(id); if (ln) return ln; }
     const mems = Memory.getMemories(id).slice().reverse();
     for (const m of mems) { if (lines.mem[m.type] && Utils.chance(0.45)) return lines.mem[m.type]; }
     const band = r.emotion <= -21 || r.suspicion >= 70 ? "upset" : r.emotion >= 21 || r.favor >= 60 ? "happy" : "calm";
@@ -1874,19 +2021,21 @@ const Social = {
     const post = { id: s.social.nextId++, day: s.calendar.day, type: data.type, text: data.text || Utils.pick(type.samples), visibility: data.visibility || "all", targets: data.targets || [], likes: [], comments: [], leaked: false, viewers: [] };
     let mult = 1; if (s.player.persona === "lively_sweet") mult += 0.15; if (Talents.has("t_social3")) mult += 0.15;
     const viewers = NPC_IDS.filter(id => this.canSee(id, post)); post.viewers = viewers;
+    const prevCtx = Memory.setContext("post", `妳的動態「${post.text.length > 14 ? post.text.slice(0, 13) + "…" : post.text}」`, []);
     const notes = [];
     viewers.forEach(id => {
       const npc = NPCS[id], likes = type.likes.includes(id);
       const f = Utils.round(type.base.favor * mult * (likes ? 1.5 : 1));
       if (f) Status.addFavor(id, f);
       let sus = type.base.sus * type.sens * (0.5 + npc.attributes.sensitivity / 100);
-      if (data.type === "flirt" && id === "shen" && s.npcRelations.lin.favor >= 40) sus += 8;
+      if (data.type === "flirt" && id === "shen" && s.npcRelations.lin.favor >= 40) { sus += 8; Status.addRelation("shen", "lin", -3); }
       if (data.type === "flirt" && post.visibility === "only" && post.targets.length === 1 && post.targets[0] === id) { Status.addFavor(id, 4); sus *= 0.5; }
       if (data.type === "snark" && post.targets.includes(id) && post.visibility === "exclude") sus *= 0; // 被排除者不直接看到
       sus = Utils.round(sus); if (sus > 0) { Status.addSuspicion(id, sus); if (npc.attributes.sensitivity >= 60) Memory.addMemory(id, { type: "sus_post" }); }
       if (data.type === "growth") Status.addTrust(id, id === "gu" ? 4 : 1);
       if (s.npcRelations[id].favor >= 35 && s.npcRelations[id].emotion > -20 && s.npcRelations[id].suspicion < 60) post.likes.push(id);
     });
+    Memory.restoreContext(prevCtx);
     if (type.base.aura) Status.addPureAura(Utils.round(type.base.aura * mult));
     if (type.base.rep) Status.addReputation(type.base.rep);
     if (type.base.scheme) Status.addSchemePoints(type.base.scheme);
@@ -1925,7 +2074,7 @@ const Social = {
         if (Utils.chance(p)) {
           post.leaked = true;
           const inc = Utils.round(type.base.sus * 1.5 + 6);
-          Status.addSuspicion(h, inc); Status.addGlobalSuspicion(3); Memory.addMemory(h, { type: "sus_post", major: true });
+          Status.addSuspicion(h, inc); Status.addGlobalSuspicion(3); Memory.addMemory(h, { type: "sus_post", major: true, source: "post", label: `妳的動態「${post.text.slice(0, 13)}」`, detail: `${NPCS[v].name}把截圖傳了出去`, involved: [v] });
           const msg = `截圖外流！${NPCS[v].name} 把妳的動態截圖給了 ${NPCS[h].name}（${NPCS[h].name} 懷疑 +${inc}）`;
           GameLog.add(msg, "bad"); return msg;
         }
@@ -1963,15 +2112,16 @@ const Story = {
     if (!st) { console.warn("劇情不存在", storyId); onDone && onDone(); return; }
     this.cur = { id: storyId, story: st, nodeId: st.start, onDone };
     State.get().story.currentNode = storyId + ":" + st.start;
+    Memory.setContext(storyId, STORY_LABELS[storyId] || null, []);
     this.enterNode(st.start);
   },
-  playDynamic(story, onDone) { this.cur = { id: "dyn", story, nodeId: story.start, onDone }; this.enterNode(story.start); },
+  playDynamic(story, onDone, src = "dyn", label = null, involved = []) { this.cur = { id: src, story, nodeId: story.start, onDone }; Memory.setContext(src, label, involved); this.enterNode(story.start); },
   enterNode(nodeId) {
     if (!this.cur) return;
     let node = this.cur.story.nodes[nodeId];
     if (!node) { console.warn("節點不存在", nodeId); return this.finish(); }
     if (node.cond && !Effects.check(node.cond)) {
-      const nx = node.n || (node.ch && node.ch[node.ch.length - 1].n);
+      const nx = node.else || node.n || (node.ch && node.ch[node.ch.length - 1].n);
       return nx ? this.enterNode(nx) : this.finish();
     }
     this.cur.nodeId = nodeId; State.get().story.currentNode = this.cur.id + ":" + nodeId;
@@ -1992,7 +2142,9 @@ const Story = {
     const c = node.ch[idx]; if (!c || !Effects.check(c.cond)) return;
     State.get().story.choices.push({ day: State.get().calendar.day, story: this.cur.id, node: this.cur.nodeId, choice: idx });
     if (c.inner) { UI.flashDark(); Sfx.play("evil"); }
+    Memory.lastChoice = c.t;
     const notes = Effects.apply(c.fx || []);
+    Memory.lastChoice = null;
     if (notes.length) UI.toast(notes.join("　"), c.inner ? "dark" : "");
     if (c.special && SpecialNodes[c.special]) SpecialNodes[c.special](c);
     if (c.end) return this.finish();
@@ -2000,7 +2152,7 @@ const Story = {
   },
   checkStoryConditions(cond) { return Effects.check(cond); },
   finish() {
-    const cb = this.cur && this.cur.onDone; this.cur = null; State.get().story.currentNode = null;
+    const cb = this.cur && this.cur.onDone; this.cur = null; State.get().story.currentNode = null; Memory.ctx = null;
     UI.hideDialogue(); cb && cb();
   }
 };
@@ -2013,6 +2165,8 @@ const SpecialNodes = {
     ["lin", "gu", "chen", "xu"].forEach(id => {
       const r = s.npcRelations[id]; let forMe = r.favor >= 50 && r.trust >= 40 && r.suspicion < 60;
       if (id === "gu") forMe = (r.trust >= 45 && r.suspicion < 50) || !!f.debate_perfect;
+      // 感情穩定時，予辰會站在女友那邊，除非他非常喜歡妳
+      if (id === "lin" && Relations.couple() >= 60 && r.favor < 70) forMe = false;
       if (id === "chen" && f.promise_chen) forMe = true;
       if (id === "xu" && (f.trusted_xu_mucheng || f.xu_blackmailed)) forMe = true;
       if (forMe) { mine += 2; voters.push(NPCS[id].name); } else theirs += 2;
@@ -2047,7 +2201,13 @@ const SpecialNodes = {
     if (s.status.clubReputation >= 15) { Effects.apply([["trust", "gu", 5]]); return { notes: ["妳流暢地報告了負責的工作。知夏信任 +5"] }; }
     Effects.apply([["sus", "gu", 5]]); return { notes: ["妳支支吾吾說不出幾件事。知夏懷疑 +5"] };
   },
-  ending() { Ending.queueAfterJudgment = true; return null; }
+  ending() { Ending.queueAfterJudgment = true; return null; },
+  breakup_branch() {
+    const s = State.get(), f = s.story.flags;
+    const blame = s.npcRelations.shen.suspicion >= 45 || f.fanned_leak || f.group_chat_backstab || f.lin_walked_home;
+    return { redirect: blame ? "cb2a" : "cb2b" };
+  },
+  makeup_branch() { return { redirect: State.get().story.flags.mediated_couple ? "cm2a" : "cm2b" }; }
 };
 
 /* ---------- EventManager ---------- */
@@ -2117,7 +2277,7 @@ const Events = {
       ] },
       e4: { sp: "inner", t: `${n.name}這條線……已經回不去了。`, end: true }
     } };
-    Story.playDynamic(story, done);
+    Story.playDynamic(story, done, "expose_" + id, `${n.name}當面對質`, [id]);
   },
   triggerShuraba(ids, done) {
     const s = State.get(); s.story.shurabaLog["w" + s.calendar.week] = true;
@@ -2133,7 +2293,7 @@ const Events = {
       s5: { sp: "inner", t: "勉強過關，但付出了代價。", fx: [["aura", -8], ...ids.map(i => ["sus", i, -8])], end: true },
       s6: { sp: "inner", t: "完了，話越說越亂……", fx: [["global", 10], ["support", -6], ...ids.map(i => ["trust", i, -10])], end: true }
     } };
-    Story.playDynamic(story, done);
+    Story.playDynamic(story, done, "shuraba", "社辦的修羅場", ids);
   }
 };
 
@@ -2171,11 +2331,11 @@ const Actions = {
         UI.result("社團活動", Utils.pick(["幫忙佈置攤位，被學長姊稱讚手很巧。", "參加幹部會議，認真做筆記。", "跟大家一起排練迎新晚會的開場。", "協助宣傳組發傳單，發完了一整疊！"]), notes, fin);
         GameLog.add("參加社團活動"); break;
       }
-      case "chat": Battle.startBattle({ title: `與${NPCS[target].name}聊天`, participants: [target], context: "small", rounds: 1, type: "chat", goal: 0 }, () => { Status.addTrust(target, 2); s.npcRelations[target].lastChatDay = s.calendar.day; fin(); }); break;
-      case "date": Battle.startBattle({ title: `與${NPCS[target].name}私下約會`, participants: [target], context: "private", rounds: 2, type: "date", goal: 55 }, key => {
+      case "chat": Battle.startBattle({ memLabel: `和${NPCS[target].name}聊天的時候`, title: `與${NPCS[target].name}聊天`, participants: [target], context: "small", rounds: 1, type: "chat", goal: 0 }, () => { Status.addTrust(target, 2); s.npcRelations[target].lastChatDay = s.calendar.day; fin(); }); break;
+      case "date": Battle.startBattle({ memLabel: `和${NPCS[target].name}私下約會那次`, title: `與${NPCS[target].name}私下約會`, participants: [target], context: "private", rounds: 2, type: "date", goal: 55 }, key => {
           const notes = [];
           if (key !== "fail") { notes.push(...Effects.apply([["favor", target, 6], ["trust", target, 5], ["emo", target, 15]])); }
-          if (target === "lin" && Utils.chance(0.5)) notes.push(...Effects.apply([["sus", "shen", 5], ["global", 1]]));
+          if (target === "lin") { Status.addRelation("lin", "shen", -3); Status.addRelation("shen", "lin", -2); if (Utils.chance(0.5)) notes.push(...Effects.apply([["sus", "shen", 5], ["global", 1]])); }
           if (notes.length) UI.toast(notes.join("　")); fin();
         }); break;
       case "intel": {
@@ -2210,6 +2370,9 @@ const Schedule = {
       s.player.talentPoints += 1; UI.toast(`第 ${s.calendar.week} 週開始：${WEEK_THEMES[s.calendar.week]}（天賦點 +1）`, "gold");
       Save.checkpoint();
     }
+    const cs = Relations.coupleState();
+    if (s.story.coupleLast && s.story.coupleLast !== cs.k) { const msg = `予辰與若晴的感情：${COUPLE_STATES.find(c => c.k === s.story.coupleLast).n} → ${cs.n}`; GameLog.add(msg, "event"); UI.toast(msg, cs.min < 60 ? "dark" : ""); }
+    s.story.coupleLast = cs.k;
     UI.refresh(); UI.setBackground(s.calendar.day % 7 === 0 ? "courtyard" : "clubroom");
     this.runDayEvents();
   },
@@ -2263,13 +2426,15 @@ const Battle = {
   active: null,
   startBattle(def, onEnd) {
     const s = State.get();
+    const prevCtx = Memory.ctx;
+    Memory.ctx = { src: (prevCtx && prevCtx.src) || "battle", label: def.memLabel || (prevCtx && prevCtx.label) || def.title, involved: [...new Set([...(def.participants || []), ...(def.witnesses || [])])] };
     const deck = Cards.getDeck().filter(id => CARD_MAP[id]);
     const b = this.active = {
       def, type: def.type || "normal", participants: def.participants.filter(id => NPCS[id]), witnesses: def.witnesses || [], context: def.context || "small",
       rounds: def.rounds || 3, round: 0, goal: def.goal ?? 60, mood: def.type === "shuraba" ? 45 : 48,
       draw: Cards.shuffleDeck(deck), discard: [], hand: [], log: [], intents: {}, speaker: null, target: def.participants[0],
       firstSus: true, firstScheme: true, usedAdmit: false, usedCounter: false, counterOk: false, manipUsed: 0, onEnd, ended: false, cleanStreak: 0,
-      startSus: Object.fromEntries(NPC_IDS.map(id => [id, s.npcRelations[id].suspicion]))
+      startSus: Object.fromEntries(NPC_IDS.map(id => [id, s.npcRelations[id].suspicion])), prevCtx
     };
     if (b.type === "boss") this.initBoss(b);
     Cards.drawCards(b, CONFIG.handStart);
@@ -2336,16 +2501,21 @@ const Battle = {
     if (r.susInc > 0 && b.context !== "private") this.observers(b).filter(id => id !== targetId).forEach(id => {
       const ws = Utils.round(r.susInc * 0.25 * NPCS[id].attributes.sensitivity / 100); if (ws > 0) { Status.addSuspicion(id, ws); witnessSus += ws; }
     });
-    if (card.tags.includes("WEAKNESS") && b.context === "public") this.observers(b).filter(id => NPCS[id].attributes.sensitivity >= 60).forEach(id => Memory.addMemory(id, { type: "public_weak" }));
-    if (card.tags.includes("CRISIS")) Memory.addMemory(targetId, { type: "protected_self" });
+    const said = `妳對${npc.name}說了「${card.name}」`;
+    if (card.tags.includes("WEAKNESS") && b.context === "public") this.observers(b).filter(id => NPCS[id].attributes.sensitivity >= 60).forEach(id => Memory.addMemory(id, { type: "public_weak", detail: said }));
+    if (card.tags.includes("CRISIS")) Memory.addMemory(targetId, { type: "protected_self", detail: said });
     // 信任、情緒
     if (r.susInc > 8) Status.addTrust(targetId, -2); else Status.addTrust(targetId, Utils.round(r.favor * 0.25));
     Status.addEmotion(targetId, Utils.round(r.favor * 0.5) - (r.intent.bad ? 6 : 0));
+    // 對予辰示好：若晴在場會直接受傷，不在場也會從別人口中聽說
+    if (targetId === "lin" && card.tags.includes("FLIRT") && !s.story.flags.lin_shen_broke_up) { const hit = this.observers(b).includes("shen") ? 4 : 2; Status.addRelation("shen", "lin", -hit); Status.addRelation("lin", "shen", -Math.ceil(hit / 2)); }
     // 挑撥：傷害目標與其最親近者的關係
     if (card.tags.includes("MANIPULATE")) {
-      const victim = Relations.closest(targetId, [targetId]);
-      if (victim) { Status.addRelation(targetId, victim, -4); }
-      Memory.addMemory(targetId, { type: "manipulated" }); b.manipUsed++;
+      // 被挑撥的對象：優先選在場、且和目標最親近的人
+      const present = this.observers(b).filter(x => x !== targetId).sort((x, y) => Relations.getRelationship(targetId, y) - Relations.getRelationship(targetId, x));
+      const victim = present[0] || Relations.closest(targetId, [targetId]);
+      if (victim) { const couple = (targetId === "lin" && victim === "shen") || (targetId === "shen" && victim === "lin"); Status.addRelation(targetId, victim, couple ? -7 : -4); }
+      Memory.addMemory(targetId, { type: "manipulated", detail: said + (victim ? `，話裡帶著${NPCS[victim].name}` : ""), severity: card.cost >= 2 ? 2 : 1 }); b.manipUsed++;
     }
     b.mood = Utils.clamp(b.mood + r.mood, 0, 100);
     if (r.susInc > 0 || witnessSus > 0) b.cleanStreak = 0; else { b.cleanStreak++; if (b.cleanStreak >= 3) Achievements.unlock("a_clean3"); }
@@ -2365,9 +2535,11 @@ const Battle = {
     const b = this.active, s = State.get(); if (!b) return;
     const it = INTENTS[b.intent]; const countered = card && card.tags.some(t => it.good.includes(t));
     if (!countered && b.type !== "chat") {
-      const dmg = Math.round(it.dmg * (b.type === "shuraba" ? 1 : 0.8)) + (s.npcRelations[b.speaker].suspicion >= 60 ? 3 : 0);
+      let dmg = Math.round(it.dmg * (b.type === "shuraba" ? 1 : 0.8)) + (s.npcRelations[b.speaker].suspicion >= 60 ? 3 : 0);
+      const backed = b.speaker === "shen" && b.participants.includes("lin") && Relations.couple() >= 60;
+      if (backed) dmg += 2;
       b.mood = Utils.clamp(b.mood - dmg, 0, 100);
-      b.log.push({ t: `${NPCS[b.speaker].name}：「${this.npcLine(b.speaker, b.intent)}」（氣氛 -${dmg}）`, k: "bad" });
+      b.log.push({ t: `${NPCS[b.speaker].name}：「${this.npcLine(b.speaker, b.intent)}」（氣氛 -${dmg}）${backed ? "　予辰站在若晴那邊。" : ""}`, k: "bad" });
     } else {
       b.log.push({ t: `${NPCS[b.speaker].name}：「${NPCManager.getNPCReaction(b.speaker)}」`, k: "npc" });
     }
@@ -2429,14 +2601,14 @@ const Battle = {
     const notes = [];
     if (b.type !== "chat" && b.type !== "boss") {
       if (key === "perfect" || key === "win" || key === "counter") { s.statistics.successfulBattles++; notes.push(...Effects.apply([["gold", key === "perfect" ? 60 : 40], ["frag", key === "perfect" ? 2 : 1]])); }
-      else if (key === "fail") { s.statistics.failedBattles++; notes.push(...Effects.apply([["global", 6]])); b.participants.forEach(id => Memory.addMemory(id, { type: "lied", major: b.type === "shuraba" })); }
+      else if (key === "fail") { s.statistics.failedBattles++; notes.push(...Effects.apply([["global", 6]])); b.participants.forEach(id => Memory.addMemory(id, { type: "lied", major: b.type === "shuraba", detail: "妳的說法前後對不上", severity: b.type === "shuraba" ? 3 : 2 })); }
       if (key === "counter") Story.setFlag("counter_any");
     }
     // 懷疑度總變化
     const dsus = b.participants.map(id => { const d = s.npcRelations[id].suspicion - b.startSus[id]; return d ? `${NPCS[id].name} 懷疑 ${d > 0 ? "+" : ""}${d}` : ""; }).filter(Boolean);
     HiddenGoals.check();
     UI.showBattleResult(b, key, labels[key] || key, [...dsus, ...notes], () => {
-      UI.closeBattle(); this.active = null; b.onEnd && b.onEnd(key);
+      UI.closeBattle(); this.active = null; Memory.ctx = b.prevCtx; b.onEnd && b.onEnd(key);
     });
   },
 
@@ -2454,7 +2626,7 @@ const Battle = {
     };
     let p1 = pick(1, 2); if (p1.length < 2) p1 = p1.concat(BOSS_ACCUSATIONS.filter(a => a.id === "acc_history")).slice(0, 2);
     const p2 = pick(2, 2), p3 = pick(3, 2);
-    b.boss = { cred: Utils.clamp(cred, 10, 60), accs: [...p1, ...p2, ...p3].slice(0, 6), usedIntel: [], usedAllies: [], current: null, phase: 1, liedMem: Memory.findMemory("gu", "lied").length };
+    b.boss = { cred: Utils.clamp(cred, 10, 60), accs: [...p1, ...p2, ...p3].slice(0, 6), usedIntel: [], usedAllies: [], usedMem: [], current: null, evidence: null, phase: 1, liedMem: Memory.findMemory("gu", "lied").length };
     while (b.boss.accs.length < 6) b.boss.accs.push(BOSS_ACCUSATIONS.find(a => a.id === "acc_history"));
     b.rounds = 6; b.mood = b.boss.cred;
   },
@@ -2467,6 +2639,21 @@ const Battle = {
     if (phase !== b.boss.phase || b.round === 1) { b.boss.phase = phase; b.log.push({ t: ["", "【第一階段：觀察與提問】", "【第二階段：過往情報揭露】", "【第三階段：公開審判】"][phase], k: "phase" }); UI.flashDark(); }
     if (b.boss.liedMem >= 2 && b.round > 1) { b.boss.cred = Utils.clamp(b.boss.cred - 2, 0, 100); b.log.push({ t: "（她記得妳說過的每一個謊。可信度 -2）", k: "bad" }); }
     b.log.push({ t: `顧知夏：「${Utils.fmt(acc.t)}」`, k: "boss" });
+    // 讀取六週紀錄：引用一筆具體記憶當作證據
+    b.boss.evidence = null;
+    if (acc.mem && b.round > 1) {
+      const m = Memory.evidence(acc.mem, b.boss.usedMem);
+      if (m) {
+        b.boss.usedMem.push(m.id); const d = Memory.describe(m);
+        b.boss.evidence = `${d.when}${d.detail ? "，" + d.detail : ""}${d.who}。${NPCS[m.npc].name}到現在都還記得。`;
+        b.boss.cred = Utils.clamp(b.boss.cred - 3, 0, 100);
+        b.log.push({ t: `顧知夏翻開筆記本：「${b.boss.evidence}」（證據攤在桌上，可信度 -3）`, k: "boss" });
+      }
+    }
+    // 予辰與若晴分手、若晴懷恨：公開審判時她會站出來指證
+    if (b.round === 5 && State.get().story.flags.lin_shen_broke_up && Status.rel("shen").suspicion >= 40 && !Status.rel("shen").exposed) {
+      b.boss.cred = Utils.clamp(b.boss.cred - 5, 0, 100); b.log.push({ t: "沈若晴站了起來：「她就是讓我們分手的人。」（可信度 -5）", k: "bad" });
+    }
     b.mood = b.boss.cred;
   },
   bossOptionState(key) {
@@ -2482,9 +2669,9 @@ const Battle = {
     const s = State.get(), acc = b.boss.current, phase = b.boss.phase;
     let d = acc.weak.includes(key) ? 12 : acc.strong.includes(key) ? -14 : 2, text = "";
     switch (key) {
-      case "admit": Status.addPureAura(-4); if (phase === 3) d += 6; text = "妳深吸一口氣：「……有些事，我確實做得不對。」"; break;
+      case "admit": Status.addPureAura(-4); if (phase === 3) d += 6; if (b.boss.evidence) d += 5; text = "妳深吸一口氣：「……有些事，我確實做得不對。」"; break;
       case "explain": text = "妳把當時的來龍去脈，一件一件說清楚。"; break;
-      case "deflect": if (phase === 3) d -= 8; if (d < 0) Status.addGlobalSuspicion(2); text = "「學姊，比起我，大家是不是更該關心……」"; break;
+      case "deflect": if (phase === 3) d -= 8; if (b.boss.evidence) d -= 5; if (d < 0) Status.addGlobalSuspicion(2); text = "「學姊，比起我，大家是不是更該關心……」"; break;
       case "intel": {
         const left = Intel.owned().filter(k => !b.boss.usedIntel.includes(k));
         const rel = { acc_vote: "intel_shen_rival", acc_leak: "intel_xu_account", acc_history: "intel_gu_project", acc_motive: "intel_gu_past", acc_public: "intel_gu_project", acc_groupchat: "intel_chen_broken" }[acc.id];
@@ -2496,7 +2683,11 @@ const Battle = {
       case "ally": {
         const left = this.allies().filter(a => !b.boss.usedAllies.includes(a)).sort((x, y) => s.npcRelations[y].favor - s.npcRelations[x].favor);
         const a = left[0]; b.boss.usedAllies.push(a); d += Math.round((s.npcRelations[a].favor - 60) / 5);
-        text = `${NPCS[a].name}站了出來：「${{ lin: "知夏，小茶不是那種人。我可以作證。", shen: "……我跟她吵過，但這件事我站她這邊。", chen: "小茶幫過我很多次，我相信她！", xu: "我、我也可以作證啦！" }[a]}」`; break;
+        text = `${NPCS[a].name}站了出來：「${{ lin: "知夏，小茶不是那種人。我可以作證。", shen: "……我跟她吵過，但這件事我站她這邊。", chen: "小茶幫過我很多次，我相信她！", xu: "我、我也可以作證啦！" }[a]}」`;
+        // 感情穩定的情侶會一起表態
+        const partner = a === "lin" ? "shen" : a === "shen" ? "lin" : null;
+        if (partner && Relations.couple() >= 60 && left.includes(partner)) { b.boss.usedAllies.push(partner); d += 4; text += `　${NPCS[partner].name}也跟著點頭。`; }
+        break;
       }
     }
     b.boss.cred = Utils.clamp(b.boss.cred + d, 0, 100); b.mood = b.boss.cred;
@@ -2541,6 +2732,7 @@ const Ending = {
     if (ok.length) return ok[0][0];
     // 都未達門檻：社團支持 50 以上歸社交女王，否則取分數最高者
     if (s.status.clubSupport >= 50) return "queen";
+    if (s.statistics.schemeUsed >= 15 && s.story.hiddenGoals.length >= 2) return "schemer";
     return cands.sort((a, b) => b[1] - a[1])[0][0];
   },
   getEndingResult() { return State.get().ending; },
@@ -2589,11 +2781,16 @@ const UI = {
     const svg = `<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 200 300'><defs><linearGradient id='g' x1='0' y1='0' x2='0' y2='1'><stop offset='0' stop-color='${color}' stop-opacity='.9'/><stop offset='1' stop-color='#fff' stop-opacity='.2'/></linearGradient></defs><circle cx='100' cy='80' r='46' fill='url(#g)'/><path d='M20 300 Q30 150 100 140 Q170 150 180 300Z' fill='url(#g)'/><text x='100' y='92' font-size='30' text-anchor='middle' fill='#fff' font-family='sans-serif' font-weight='bold'>${ch}</text></svg>`;
     return "data:image/svg+xml;charset=utf-8," + encodeURIComponent(svg).replace(/'/g, "%27");
   },
-  imgTag(id, cls = "", extra = "") {
+  imgTag(id, cls = "", extra = "", ex = null) {
     const n = id === "player" ? { name: State.get()?.player.name || "小茶", color: "#f48fb1", img: PLAYER_IMG } : NPCS[id];
     if (!n) return "";
+    // 表情立繪：生氣／懷疑（暗黑表情沿用懷疑圖＋濾鏡）；主角私下模式用腹黑立繪
+    let src = n.img;
+    if (id === "player" && ex === "dark") src = PLAYER_DARK_IMG;
+    else if (ex && n.exImg) { const k = ex === "dark" ? "suspect" : ex; if (n.exImg[k]) src = n.exImg[k]; }
     const fb = this.fallbackSVG(n.name, n.color);
-    return `<img class="${cls}" src="${n.img}" alt="${Utils.esc(n.name)}" ${extra} onerror="this.onerror=null;this.src='${fb}'">`;
+    const onerr = src !== n.img ? `this.onerror=function(){this.onerror=null;this.src='${fb}'};this.src='${n.img}'` : `this.onerror=null;this.src='${fb}'`;
+    return `<img class="${cls}${src !== n.img ? " real-ex" : ""}" src="${src}" alt="${Utils.esc(n.name)}" ${extra} onerror="${onerr}">`;
   },
   ava(id) { const c = id === "player" ? "#f48fb1" : NPCS[id].color; return `<span class="ava" style="--c:${c}">${this.imgTag(id)}</span>`; },
   setBackground(key) {
@@ -2613,7 +2810,8 @@ const UI = {
   flashDark() { document.body.classList.add("flash"); setTimeout(() => document.body.classList.remove("flash"), 420); },
   showInner(text, dark = true) {
     if (!text) return; $$(".inner-pop").forEach(e => e.remove());
-    const d = document.createElement("div"); d.className = "inner-pop" + (dark ? "" : " lotus"); d.textContent = text; document.body.appendChild(d);
+    const d = document.createElement("div"); d.className = "inner-pop" + (dark ? "" : " lotus");
+    d.innerHTML = `${dark ? this.imgTag("player", "inner-ava", "", "dark") : ""}<span>${Utils.esc(text)}</span>`; document.body.appendChild(d);
     if (dark) this.flashDark(); setTimeout(() => d.remove(), 2200);
   },
   modal(title, body, opts = {}) {
@@ -2726,7 +2924,8 @@ const UI = {
       const sch = Schedule.getWeeklySchedule();
       body = `<div class="quest"><b>主線目標</b><p style="margin:4px 0 8px">第六週結束前，在顧知夏的審判中取得社團核心位置。</p><ul style="padding-left:18px;margin:0">${sch.map(([w, n, d]) => `<li class="${s.calendar.day > d ? "done" : ""}">${w}：${n}（Day ${d}）</li>`).join("")}</ul>
         <p style="margin:10px 0 4px"><b>隱藏目標</b>（腹黑路線）</p><ul style="padding-left:18px;margin:0">${HIDDEN_GOALS.map(h => s.story.hiddenGoals.includes(h.id) ? `<li style="color:var(--violet)">✔ ${h.name}：${h.desc}</li>` : `<li style="color:#bba">？？？</li>`).join("")}</ul>
-        <p style="margin:10px 0 0;font-size:calc(12px * var(--fs));color:var(--ink-l)">社群影響力 ${s.status.socialInfluence}・社團聲望 ${s.status.clubReputation}・天賦點 ${s.player.talentPoints}・卡牌碎片 ${s.player.cardFragments}</p></div>`;
+        <p style="margin:10px 0 0">人際動態：予辰 ♥ 若晴 <b style="color:${Relations.coupleState().c}">${State.get().story.flags.lin_shen_broke_up ? "已分手" : Relations.coupleState().n}</b></p>
+        <p style="margin:6px 0 0;font-size:calc(12px * var(--fs));color:var(--ink-l)">社群影響力 ${s.status.socialInfluence}・社團聲望 ${s.status.clubReputation}・天賦點 ${s.player.talentPoints}・卡牌碎片 ${s.player.cardFragments}</p></div>`;
     } else if (tab === "intel") {
       const own = Intel.owned();
       body = own.length ? own.map(k => `<div class="log-item intel"><b>${INTEL[k].name}</b><br>${INTEL[k].desc}</div>`).join("") : `<p class="quest">還沒有掌握任何情報。試試「蒐集情報」或和大家多聊聊。</p>`;
@@ -2769,7 +2968,8 @@ const UI = {
       this._vnLast = showId;
       const ex = isNpc ? (node.ex || Status.emotionExpr(sp)) : inner ? "dark" : "normal";
       const changed = stage.dataset.who !== showId; stage.dataset.who = showId;
-      stage.innerHTML = this.imgTag(showId, `vn-portrait ex-${ex} ${changed ? "enter" : ""}`) + (ex !== "normal" ? `<div class="emote">${{ angry: "怒", sad: "…", suspect: "？", shy: "♡", smile: "♪", dark: "♠" }[ex] || ""}</div>` : "");
+      const exChanged = stage.dataset.ex !== ex; stage.dataset.ex = ex;
+      stage.innerHTML = this.imgTag(showId, `vn-portrait ex-${ex} ${changed || exChanged ? "enter" : ""}`, "", ex) + (ex !== "normal" ? `<div class="emote">${{ angry: "怒", sad: "…", suspect: "？", shy: "♡", smile: "♪", dark: "♠" }[ex] || ""}</div>` : "");
     } else if (sp === "narr" && node.bg) { stage.innerHTML = ""; stage.dataset.who = ""; this._vnLast = null; }
     const box = $("#vnBox");
     box.className = "vn-box" + (inner ? " inner" : "") + (sp === "narr" ? " narr" : "");
@@ -2840,14 +3040,14 @@ const UI = {
     $("#bMood").innerHTML = b.type === "chat" ? "" : `<div class="lbl"><span>${isBoss ? "可信度" : "氣氛值"} ${val}</span><span>${isBoss ? "通過 50／完美 80" : `目標 ${goal}`}</span></div><div class="track"><div class="fill" style="width:${val}%"></div><div class="goal" style="left:${goal}%"></div></div>`;
     $("#bFoes").innerHTML = b.participants.map(id => {
       const r = s.npcRelations[id];
-      return `<div class="foe ${id === b.target ? "tgt" : ""} ${id === b.speaker ? "speaker" : ""}" data-id="${id}">${this.imgTag(id, `ex-${isBoss ? "dark" : Status.emotionExpr(id)}`)}
+      return `<div class="foe ${id === b.target ? "tgt" : ""} ${id === b.speaker ? "speaker" : ""}" data-id="${id}">${(() => { const ex = isBoss ? "dark" : Status.emotionExpr(id); return this.imgTag(id, `ex-${ex}`, "", ex); })()}
         <div class="foe-card"><div class="n"><span>${NPCS[id].name}</span><span>${Status.emotionLabel(r.emotion)}</span></div>
         <div class="fbar"><span>好感</span><div class="t"><b style="width:${r.favor}%;background:#ff9ec3"></b></div>${r.favor}</div>
         <div class="fbar"><span>懷疑</span><div class="t"><b style="width:${r.suspicion}%;background:${r.suspicion >= 60 ? "#e0476b" : "#ffb347"}"></b></div>${r.suspicion}</div></div></div>`;
     }).join("");
     $$("#bFoes .foe").forEach(f => f.onclick = () => { if (isBoss) return; b.target = f.dataset.id; this.renderBattle(b); });
     // 意圖 / 指控
-    if (isBoss) $("#bIntent").innerHTML = b.boss.current ? `<div class="boss-acc">「${Utils.esc(Utils.fmt(b.boss.current.t))}」</div>` : "";
+    if (isBoss) $("#bIntent").innerHTML = b.boss.current ? `<div class="boss-acc">「${Utils.esc(Utils.fmt(b.boss.current.t))}」${b.boss.evidence ? `<div class="evidence">證據：${Utils.esc(b.boss.evidence)}</div>` : ""}</div>` : "";
     else $("#bIntent").innerHTML = b.intent ? `<div class="intent"><b>${NPCS[b.speaker].name}的意圖：${INTENTS[b.intent].name}</b>　${INTENTS[b.intent].desc}<br><small>有效標籤：${INTENTS[b.intent].good.map(t => TAG_NAMES[t]).join("、")}　｜　不利標籤：${INTENTS[b.intent].bad.map(t => TAG_NAMES[t]).join("、")}　｜　目前目標：${NPCS[b.target].name}</small></div>` : "";
     $("#bLog").innerHTML = b.log.slice(-40).map(l => `<p class="${l.k}">${Utils.esc(l.t)}</p>`).join(""); $("#bLog").scrollTop = 1e6;
     // 額外行動
@@ -2963,14 +3163,21 @@ const UI = {
         <div class="box">${meter("好感度", r.favor, "linear-gradient(90deg,#ffc1d8,#f48fb1)")}${meter("信任度", r.trust, "linear-gradient(90deg,#c9e7ff,#7aa7e8)")}
           ${meter("懷疑度　" + Status.suspicionLabel(r.suspicion), r.suspicion, "linear-gradient(90deg,#ffd28a,#e0476b)", showSus)}
           <p style="font-size:calc(12px * var(--fs));margin:4px 0 0">情緒：${Status.emotionLabel(r.emotion)}${r.exposed ? `　<b style="color:var(--bad)">已拆穿妳</b>` : ""}${!showSus ? "　（信任 50 以上或掌握其情報才能看清懷疑度）" : ""}</p></div>
+        ${id === "lin" || id === "shen" ? this.coupleBox() : ""}
         <div class="box"><h4>人際網</h4>${rels}</div>
         <div class="box"><h4>已解鎖情報</h4>${intel.length ? `<ul class="intel-list">${intel.map(k => `<li><b>${INTEL[k].name}</b>：${INTEL[k].desc}</li>`).join("")}</ul>` : `<span style="font-size:calc(13px * var(--fs));color:var(--ink-l)">尚無</span>`}</div>
-        <div class="box"><h4>最近互動紀錄（她/他記得的事）</h4>${mems.length ? `<ul class="mem-list">${mems.map(m => `<li>D${m.day}：${Memory.labels[m.type] || m.type}${m.major ? "（深刻）" : ""}</li>`).join("")}</ul>` : `<span style="font-size:calc(13px * var(--fs));color:var(--ink-l)">還沒有特別的回憶</span>`}</div>
+        <div class="box"><h4>最近互動紀錄（她/他記得的事）</h4>${mems.length ? `<ul class="mem-list">${mems.map(m => `<li>D${m.day}${m.label ? "・" + Utils.esc(m.label) : ""}：${Memory.labels[m.type] || m.type}${m.major ? "（深刻）" : ""}${m.detail ? `<br><span style="color:var(--ink-l)">${Utils.esc(m.detail)}${m.involved && m.involved.length ? `（${m.involved.map(i => NPCS[i]?.name).join("、")}在場）` : ""}</span>` : ""}</li>`).join("")}</ul>` : `<span style="font-size:calc(13px * var(--fs));color:var(--ink-l)">還沒有特別的回憶</span>`}</div>
         <div class="box"><h4>送禮</h4>${giftInv.length ? giftInv.map(g => `<button class="btn sm" data-g="${g}">${GIFTS[g].name} ×${s.player.items[g]}</button>`).join(" ") : `<span style="font-size:calc(13px * var(--fs));color:var(--ink-l)">沒有禮物，可在商店購買（喜歡的禮物：${GIFTS[n.gift].name}）</span>`}<p style="font-size:calc(12px * var(--fs));margin:4px 0 0;color:var(--ink-l)">每人每週一次，送錯禮物效果較低。</p></div>
       </div></div>`;
     const m = this.modal("人際關係", html, {});
     $$("[data-n]", m).forEach(b => b.onclick = () => this.openNPC(b.dataset.n));
     $$("[data-g]", m).forEach(b => b.onclick = () => { if (Economy.giveGift(id, b.dataset.g)) { this.refresh(); this.openNPC(id); } });
+  },
+
+  coupleBox() {
+    const v = Relations.couple(), cs = Relations.coupleState(v), f = State.get().story.flags;
+    return `<div class="box"><h4>予辰 ♥ 若晴</h4><div class="meter"><div class="l"><span>${f.lin_shen_broke_up ? "已分手" : cs.n}</span><b>${v}</b></div><div class="t"><b style="width:${v}%;background:${cs.c}"></b></div></div>
+      <p style="margin:4px 0 0;font-size:calc(12px * var(--fs));color:var(--ink-l)">${{ stable: "兩人會一起行動、互相幫忙，在若晴面前對予辰示好效果打折，投票時予辰會挺女友。", friction: "偶爾鬧彆扭，但仍會站在彼此那邊。", tense: "開始在人前爭吵，誰都不讓誰。", cold: "群組裡互不回應，此時對予辰示好效果提高。", broken: "感情已經破裂，若晴可能會把帳算在妳頭上。" }[cs.k]}</p></div>`;
   },
 
   /* ---------- 卡牌收藏 ---------- */
