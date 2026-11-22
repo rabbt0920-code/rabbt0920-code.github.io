@@ -10,7 +10,7 @@
 <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><circle cx='50' cy='55' r='40' fill='%23f48fb1'/><path d='M50 15 q20 10 0 30 q-20 -20 0 -30' fill='%237cc48f'/></svg>">
 <style>
 /* ===== theme ===== */
-:root{
+:root{--fs:1;
   --pink:#f48fb1;--pink-d:#d9608f;--pink-l:#ffe3ee;--cream:#fff8f0;--lav:#d9c8f5;--lav-d:#8e6cc9;
   --ink:#4a3550;--ink-l:#8a7390;--card:#fffdfb;--line:#f1d6e3;--good:#3fae7a;--bad:#e0476b;--gold:#e8a93a;
   --dark:#140b16;--dark-2:#2a0f22;--crimson:#c2185b;--blood:#e53961;--violet:#5b2a86;
@@ -20,7 +20,7 @@
 }
 *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
 html,body{margin:0;height:100%;overflow:hidden}
-body{font-family:var(--sans);font-feature-settings:"palt" 0;color:var(--ink);background:var(--cream);font-size:15px;line-height:1.6}
+body{font-family:var(--sans);font-feature-settings:"palt" 0;color:var(--ink);background:var(--cream);font-size:calc(15px * var(--fs));line-height:1.6}
 button{font-family:inherit;cursor:pointer;border:none;color:inherit}
 button:disabled{cursor:not-allowed;opacity:.45}
 .hidden{display:none!important}
@@ -35,8 +35,8 @@ body.flash::before{opacity:1}
 .btn.primary{background:linear-gradient(135deg,#f6a5c4,#d9608f);color:#fff;border-color:transparent;box-shadow:0 3px 0 #b84676}
 .btn.dark{background:linear-gradient(135deg,#3b0f2c,#14060f);color:#ff9ec3;border-color:#6d1f48;box-shadow:0 3px 0 #000}
 .btn.ghost{background:transparent;box-shadow:none}
-.btn.sm{padding:5px 12px;font-size:13px}
-.chip{display:inline-flex;align-items:center;gap:4px;padding:2px 9px;border-radius:999px;font-size:12px;background:var(--pink-l);color:var(--pink-d);font-weight:600}
+.btn.sm{padding:5px 12px;font-size:calc(13px * var(--fs))}
+.chip{display:inline-flex;align-items:center;gap:4px;padding:2px 9px;border-radius:999px;font-size:calc(12px * var(--fs));background:var(--pink-l);color:var(--pink-d);font-weight:600}
 .chip.dark{background:#2b0d20;color:#ff8db5}
 .chip.lav{background:#efe6ff;color:var(--lav-d)}
 
@@ -47,13 +47,13 @@ body.flash::before{opacity:1}
 .title-wrap{position:relative;z-index:2;display:flex;align-items:center;gap:40px;max-width:1100px;padding:20px}
 .title-hero{width:min(42vw,420px);filter:drop-shadow(0 20px 30px rgba(180,80,130,.3));animation:floaty 5s ease-in-out infinite}
 @keyframes floaty{50%{transform:translateY(-10px)}}
-.logo{font-family:var(--serif);font-size:clamp(40px,7vw,76px);font-weight:900;letter-spacing:.08em;color:#fff;-webkit-text-stroke:2px var(--pink-d);text-shadow:4px 4px 0 #f6b7cf,8px 8px 0 rgba(142,108,201,.35);line-height:1.1}
+.logo{font-family:var(--serif);font-size:calc(clamp(40px,7vw,76px) * var(--fs));font-weight:900;letter-spacing:.08em;color:#fff;-webkit-text-stroke:2px var(--pink-d);text-shadow:4px 4px 0 #f6b7cf,8px 8px 0 rgba(142,108,201,.35);line-height:1.1}
 .logo small{display:block;font-size:.3em;-webkit-text-stroke:0;color:var(--lav-d);letter-spacing:.4em;text-shadow:none;margin-top:6px}
 .tagline{font-family:var(--serif);color:var(--ink-l);margin:14px 0 22px}
 .tagline b{color:var(--crimson)}
 .menu{display:flex;flex-direction:column;gap:10px;max-width:280px}
 .menu .btn{text-align:left;padding:11px 22px}
-.ver{position:absolute;bottom:10px;right:16px;font-size:12px;color:var(--ink-l)}
+.ver{position:absolute;bottom:10px;right:16px;font-size:calc(12px * var(--fs));color:var(--ink-l)}
 
 /* ===== create ===== */
 #create{background:linear-gradient(160deg,#fff4f8,#f1eaff);overflow:auto}
@@ -61,13 +61,13 @@ body.flash::before{opacity:1}
 .create-box h2{font-family:var(--serif);color:var(--pink-d);margin:0 0 14px}
 .field{margin-bottom:14px}
 .field label{display:block;font-weight:700;margin-bottom:6px}
-.field input{width:100%;max-width:320px;padding:10px 14px;border-radius:12px;border:1.5px solid var(--line);font-size:15px;background:#fff;color:var(--ink)}
+.field input{width:100%;max-width:320px;padding:10px 14px;border-radius:12px;border:1.5px solid var(--line);font-size:calc(15px * var(--fs));background:#fff;color:var(--ink)}
 .pick-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:12px}
 .pick{background:#fff;border:2px solid var(--line);border-radius:var(--r);padding:14px;text-align:left;transition:.15s}
 .pick.on{border-color:var(--pink-d);box-shadow:0 0 0 4px rgba(244,143,177,.25);background:#fff7fa}
 .pick h4{margin:0 0 4px;font-family:var(--serif);color:var(--pink-d)}
-.pick p{margin:0;font-size:13px;color:var(--ink-l)}
-.pick .stats{margin-top:8px;font-size:12px;display:flex;flex-wrap:wrap;gap:4px}
+.pick p{margin:0;font-size:calc(13px * var(--fs));color:var(--ink-l)}
+.pick .stats{margin-top:8px;font-size:calc(12px * var(--fs));display:flex;flex-wrap:wrap;gap:4px}
 
 /* ===== game layout ===== */
 #game{background:var(--cream)}
@@ -75,8 +75,8 @@ body.flash::before{opacity:1}
 .date{font-family:var(--serif);font-weight:800;color:var(--pink-d);white-space:nowrap}
 .date small{font-family:var(--sans);font-weight:500;color:var(--ink-l);margin-left:6px}
 .stats-row{display:flex;gap:8px;flex-wrap:wrap;flex:1;justify-content:flex-end}
-.stat{display:flex;align-items:center;gap:6px;background:#fff;border:1px solid var(--line);border-radius:999px;padding:3px 10px 3px 4px;font-size:13px;white-space:nowrap}
-.stat i{width:22px;height:22px;border-radius:50%;display:grid;place-items:center;font-style:normal;font-size:12px;color:#fff;font-weight:800}
+.stat{display:flex;align-items:center;gap:6px;background:#fff;border:1px solid var(--line);border-radius:999px;padding:3px 10px 3px 4px;font-size:calc(13px * var(--fs));white-space:nowrap}
+.stat i{width:22px;height:22px;border-radius:50%;display:grid;place-items:center;font-style:normal;font-size:calc(12px * var(--fs));color:#fff;font-weight:800}
 .stat .bar{width:54px;height:6px;border-radius:9px;background:#f3e6ee;overflow:hidden}
 .stat .bar b{display:block;height:100%;border-radius:9px}
 .stat.alert i{background:var(--bad)} .stat.alert .bar b{background:linear-gradient(90deg,#ffb199,#e0476b)}
@@ -89,39 +89,39 @@ body.flash::before{opacity:1}
 
 .main{flex:1;display:grid;grid-template-columns:260px 1fr 300px;gap:12px;padding:12px;min-height:0}
 .panel{background:var(--card);border:1.5px solid var(--line);border-radius:var(--r);box-shadow:var(--shadow);overflow:auto;min-height:0}
-.panel h3{margin:0;padding:10px 14px;font-family:var(--serif);font-size:15px;color:var(--pink-d);border-bottom:1px dashed var(--line);position:sticky;top:0;background:var(--card);z-index:1}
+.panel h3{margin:0;padding:10px 14px;font-family:var(--serif);font-size:calc(15px * var(--fs));color:var(--pink-d);border-bottom:1px dashed var(--line);position:sticky;top:0;background:var(--card);z-index:1}
 .npc-mini{display:flex;gap:10px;padding:8px 12px;border-bottom:1px solid #f7e9f0;align-items:center;cursor:pointer}
 .npc-mini:hover{background:#fff5f9}
 .ava{width:44px;height:44px;border-radius:50%;overflow:hidden;flex:none;border:2px solid #fff;box-shadow:0 0 0 2px var(--c,#f48fb1);background:var(--c,#f48fb1)}
 .ava img{width:100%;height:auto;object-position:top;transform:scale(1.9) translateY(18%)}
-.npc-mini .nm{font-weight:700;font-size:14px}
-.npc-mini .rl{font-size:11px;color:var(--ink-l)}
-.mini-bars{display:flex;gap:6px;font-size:11px;margin-top:2px;color:var(--ink-l)}
+.npc-mini .nm{font-weight:700;font-size:calc(14px * var(--fs))}
+.npc-mini .rl{font-size:calc(11px * var(--fs));color:var(--ink-l)}
+.mini-bars{display:flex;gap:6px;font-size:calc(11px * var(--fs));margin-top:2px;color:var(--ink-l)}
 .mini-bars span b{color:var(--ink)}
-.susp{font-size:11px;padding:0 6px;border-radius:6px;background:#f4eef6}
+.susp{font-size:calc(11px * var(--fs));padding:0 6px;border-radius:6px;background:#f4eef6}
 .susp.l2{background:#fff1d6;color:#a86a00}.susp.l3{background:#ffe0e6;color:var(--bad)}.susp.l4{background:var(--bad);color:#fff}
 
 .scene{position:relative;border-radius:var(--r);overflow:hidden;box-shadow:var(--shadow);background:#eee;min-height:300px;display:flex;flex-direction:column}
 .bg{position:absolute;inset:0;background-size:cover;background-position:center;transition:background .5s,filter .5s}
 .scene .portrait{position:absolute;bottom:0;left:50%;transform:translateX(-50%);height:92%;max-width:70%;object-fit:contain;filter:drop-shadow(0 10px 20px rgba(0,0,0,.2));transition:opacity .3s}
 .scene-info{position:relative;z-index:2;margin-top:auto;padding:14px;background:linear-gradient(transparent,rgba(255,248,252,.95) 30%)}
-.brief{font-size:14px}
-.brief .title{font-family:var(--serif);font-weight:800;color:var(--pink-d);font-size:17px}
+.brief{font-size:calc(14px * var(--fs))}
+.brief .title{font-family:var(--serif);font-weight:800;color:var(--pink-d);font-size:calc(17px * var(--fs))}
 .actions{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-top:10px}
 .act{background:#fff;border:1.5px solid var(--line);border-radius:14px;padding:8px 6px;text-align:center;transition:.15s;min-height:62px}
 .act:hover:not(:disabled){border-color:var(--pink);transform:translateY(-2px);box-shadow:0 6px 14px rgba(244,143,177,.25)}
-.act b{display:block;font-size:14px}
-.act small{font-size:11px;color:var(--ink-l)}
+.act b{display:block;font-size:calc(14px * var(--fs))}
+.act small{font-size:calc(11px * var(--fs));color:var(--ink-l)}
 .act.night{background:linear-gradient(135deg,#2b0d20,#140b16);color:#ff9ec3;border-color:#6d1f48}
 .act.night small{color:#d78aa9}
 .side-tabs{display:flex;gap:4px;padding:8px;border-bottom:1px dashed var(--line);position:sticky;top:0;background:var(--card);z-index:1;flex-wrap:wrap}
-.side-tabs button{background:#fff3f8;border-radius:999px;padding:4px 10px;font-size:12px;font-weight:700;color:var(--pink-d)}
+.side-tabs button{background:#fff3f8;border-radius:999px;padding:4px 10px;font-size:calc(12px * var(--fs));font-weight:700;color:var(--pink-d)}
 .side-tabs button.on{background:var(--pink-d);color:#fff}
-.quest{padding:10px 14px;font-size:13px}
+.quest{padding:10px 14px;font-size:calc(13px * var(--fs))}
 .quest li{margin-bottom:6px}
 .quest .done{color:var(--ink-l);text-decoration:line-through}
-.log-item{padding:6px 14px;font-size:12.5px;border-bottom:1px solid #f9eef3}
-.log-item .d{color:var(--ink-l);font-size:11px;margin-right:4px}
+.log-item{padding:6px 14px;font-size:calc(12.5px * var(--fs));border-bottom:1px solid #f9eef3}
+.log-item .d{color:var(--ink-l);font-size:calc(11px * var(--fs));margin-right:4px}
 .log-item.bad{color:var(--bad)} .log-item.intel{color:var(--violet)} .log-item.good{color:var(--good)}
 
 .bottom-nav{display:none}
@@ -133,7 +133,7 @@ body.flash::before{opacity:1}
 .vn-portrait{height:88vh;max-height:900px;max-width:90vw;object-fit:contain;filter:drop-shadow(0 12px 30px rgba(0,0,0,.35));transition:all .35s}
 .vn-portrait.enter{animation:slideUp .4s ease}
 @keyframes slideUp{from{opacity:0;transform:translateY(30px)}}
-.emote{position:absolute;top:16%;left:58%;font-family:var(--serif);font-size:30px;font-weight:900;color:var(--bad);text-shadow:0 2px 0 #fff;animation:pop .4s}
+.emote{position:absolute;top:16%;left:58%;font-family:var(--serif);font-size:calc(30px * var(--fs));font-weight:900;color:var(--bad);text-shadow:0 2px 0 #fff;animation:pop .4s}
 @keyframes pop{from{transform:scale(0)}}
 .ex-angry{animation:shake .4s;filter:drop-shadow(0 0 18px rgba(224,71,107,.6))!important}
 @keyframes shake{25%{transform:translateX(-6px)}75%{transform:translateX(6px)}}
@@ -145,14 +145,14 @@ body.flash::before{opacity:1}
 .ex-dark{filter:brightness(.55) saturate(1.3) drop-shadow(0 0 24px rgba(160,0,60,.9))!important}
 .vn-box{position:relative;z-index:3;margin:0 auto 18px;width:min(980px,96vw);background:rgba(255,252,254,.95);border:2px solid #fff;border-radius:22px;box-shadow:0 0 0 3px var(--pink),0 18px 40px rgba(0,0,0,.25);padding:18px 24px 16px;min-height:150px}
 .vn-name{position:absolute;top:-18px;left:24px;background:linear-gradient(135deg,var(--c,#f48fb1),#fff 220%);color:#fff;padding:4px 18px;border-radius:999px;font-family:var(--serif);font-weight:900;letter-spacing:.1em;box-shadow:0 3px 0 rgba(0,0,0,.1)}
-.vn-text{font-size:17px;line-height:1.85;white-space:pre-wrap;min-height:60px}
+.vn-text{font-size:calc(17px * var(--fs));line-height:1.85;white-space:pre-wrap;min-height:60px}
 .vn-notes{margin-top:6px;display:flex;flex-wrap:wrap;gap:6px}
-.vn-next{position:absolute;right:20px;bottom:10px;font-size:12px;color:var(--pink-d);animation:blink 1.2s infinite}
+.vn-next{position:absolute;right:20px;bottom:10px;font-size:calc(12px * var(--fs));color:var(--pink-d);animation:blink 1.2s infinite}
 @keyframes blink{50%{opacity:.3}}
 .vn-choices{display:flex;flex-direction:column;gap:8px;margin-top:10px}
-.choice{text-align:left;background:#fff;border:1.5px solid var(--line);border-radius:14px;padding:10px 14px;font-size:15px;transition:.15s}
+.choice{text-align:left;background:#fff;border:1.5px solid var(--line);border-radius:14px;padding:10px 14px;font-size:calc(15px * var(--fs));transition:.15s}
 .choice:hover:not(:disabled){border-color:var(--pink-d);background:#fff5f9;transform:translateX(4px)}
-.choice .hint{display:block;font-size:12px;color:var(--ink-l)}
+.choice .hint{display:block;font-size:calc(12px * var(--fs));color:var(--ink-l)}
 .choice.inner{background:linear-gradient(90deg,#2b0d20,#3d1030);color:#ffd0e2;border-color:#7a1f50}
 .choice.inner .hint{color:#ff8db5}
 .choice:disabled .hint::before{content:"🔒 "}
@@ -168,10 +168,10 @@ body.flash::before{opacity:1}
 #battle{position:fixed;inset:0;z-index:60;display:flex;flex-direction:column;background:#1a0c18;color:#fff}
 #battle .bg{filter:brightness(.55) saturate(1.1)}
 .b-head{position:relative;z-index:2;display:flex;align-items:center;justify-content:space-between;padding:10px 16px;background:linear-gradient(90deg,rgba(40,8,30,.85),rgba(70,20,60,.6));gap:10px;flex-wrap:wrap}
-.b-title{font-family:var(--serif);font-size:20px;font-weight:900;letter-spacing:.08em;color:#ffc1d8}
-.b-title small{font-family:var(--sans);font-size:12px;color:#e7b9cf;margin-left:8px;letter-spacing:0}
+.b-title{font-family:var(--serif);font-size:calc(20px * var(--fs));font-weight:900;letter-spacing:.08em;color:#ffc1d8}
+.b-title small{font-family:var(--sans);font-size:calc(12px * var(--fs));color:#e7b9cf;margin-left:8px;letter-spacing:0}
 .mood{flex:1;max-width:420px;min-width:180px}
-.mood .lbl{display:flex;justify-content:space-between;font-size:12px;color:#ffd6e6}
+.mood .lbl{display:flex;justify-content:space-between;font-size:calc(12px * var(--fs));color:#ffd6e6}
 .mood .track{position:relative;height:14px;border-radius:9px;background:rgba(255,255,255,.15);overflow:visible}
 .mood .fill{height:100%;border-radius:9px;background:linear-gradient(90deg,#ff9ec3,#f6d365);transition:width .4s}
 .mood .goal{position:absolute;top:-4px;bottom:-4px;width:3px;background:#fff;border-radius:2px;box-shadow:0 0 6px #fff}
@@ -181,18 +181,18 @@ body.flash::before{opacity:1}
 .foe{position:relative;flex:1;max-width:260px;display:flex;flex-direction:column;align-items:center;cursor:pointer;min-height:0;height:100%}
 .foe img{width:100%;flex:1;min-height:0;object-fit:contain;object-position:bottom;transition:.3s}
 .foe.tgt img{filter:drop-shadow(0 0 14px #ff6fa3)}
-.foe.speaker::after{content:"發言中";position:absolute;top:4px;left:50%;transform:translateX(-50%);background:var(--crimson);font-size:11px;padding:2px 8px;border-radius:999px}
-.foe-card{width:100%;background:rgba(20,6,16,.85);border:1.5px solid #6d1f48;border-radius:12px;padding:6px 8px;font-size:12px}
+.foe.speaker::after{content:"發言中";position:absolute;top:4px;left:50%;transform:translateX(-50%);background:var(--crimson);font-size:calc(11px * var(--fs));padding:2px 8px;border-radius:999px}
+.foe-card{width:100%;background:rgba(20,6,16,.85);border:1.5px solid #6d1f48;border-radius:12px;padding:6px 8px;font-size:calc(12px * var(--fs))}
 .foe.tgt .foe-card{border-color:#ff6fa3;box-shadow:0 0 0 2px rgba(255,111,163,.4)}
 .foe-card .n{font-weight:800;color:#ffc1d8;display:flex;justify-content:space-between}
 .fbar{display:flex;align-items:center;gap:4px;margin-top:3px}
 .fbar span{width:30px;color:#e9bcd0}
 .fbar .t{flex:1;height:6px;background:rgba(255,255,255,.15);border-radius:6px;overflow:hidden}
 .fbar .t b{display:block;height:100%}
-.intent{margin-top:8px;background:rgba(194,24,91,.25);border:1px solid #c2185b;border-radius:12px;padding:8px 12px;font-size:13px}
+.intent{margin-top:8px;background:rgba(194,24,91,.25);border:1px solid #c2185b;border-radius:12px;padding:8px 12px;font-size:calc(13px * var(--fs))}
 .intent b{color:#ffb3cf}
 .b-side{display:flex;flex-direction:column;gap:8px;min-height:0}
-.b-log{flex:1;overflow:auto;background:rgba(20,6,16,.8);border:1px solid #4d1838;border-radius:12px;padding:8px 10px;font-size:13px;min-height:120px}
+.b-log{flex:1;overflow:auto;background:rgba(20,6,16,.8);border:1px solid #4d1838;border-radius:12px;padding:8px 10px;font-size:calc(13px * var(--fs));min-height:120px}
 .b-log p{margin:0 0 6px}
 .b-log .good{color:#8ff0bd}.b-log .bad{color:#ff8fa8}.b-log .warn{color:#ffd28a}.b-log .sys{color:#c8a8d8}.b-log .npc{color:#ffe0ee}.b-log .dark{color:#ff6fa3}.b-log .boss{color:#d8c2ff;font-family:var(--serif)}.b-log .phase{color:#fff;font-weight:900;text-align:center;letter-spacing:.2em}
 .b-extra{display:flex;gap:6px;flex-wrap:wrap}
@@ -202,25 +202,25 @@ body.flash::before{opacity:1}
 .card.BACKSTAB{background:linear-gradient(170deg,#fff,#efe3ff)}
 .card.TEA_TALK{background:linear-gradient(170deg,#fff4e0,#ffd9e6)}
 .card.SPECIAL{background:linear-gradient(170deg,#2b0d20,#5b1640);color:#ffd6e6;border-color:#ff6fa3}
-.card .cn{font-family:var(--serif);font-weight:900;font-size:15px;line-height:1.3}
-.card .ct{display:flex;justify-content:space-between;font-size:11px}
-.card .cost{position:absolute;top:-8px;right:-8px;width:28px;height:28px;border-radius:50%;background:linear-gradient(135deg,#5b2a86,#14060f);color:#ff9ec3;font-weight:900;display:grid;place-items:center;border:2px solid #fff;font-size:13px}
+.card .cn{font-family:var(--serif);font-weight:900;font-size:calc(15px * var(--fs));line-height:1.3}
+.card .ct{display:flex;justify-content:space-between;font-size:calc(11px * var(--fs))}
+.card .cost{position:absolute;top:-8px;right:-8px;width:28px;height:28px;border-radius:50%;background:linear-gradient(135deg,#5b2a86,#14060f);color:#ff9ec3;font-weight:900;display:grid;place-items:center;border:2px solid #fff;font-size:calc(13px * var(--fs))}
 .card .tags{display:flex;flex-wrap:wrap;gap:3px}
-.card .tags span{font-size:10px;background:rgba(217,96,143,.15);color:var(--pink-d);padding:0 5px;border-radius:5px}
+.card .tags span{font-size:calc(10px * var(--fs));background:rgba(217,96,143,.15);color:var(--pink-d);padding:0 5px;border-radius:5px}
 .card .tags span.hit{background:#3fae7a;color:#fff}.card .tags span.miss{background:#e0476b;color:#fff}
-.card .fx{font-size:11.5px;margin-top:auto;line-height:1.5}
+.card .fx{font-size:calc(11.5px * var(--fs));margin-top:auto;line-height:1.5}
 .card .fx .up{color:var(--good)}.card .fx .dn{color:var(--bad)}
 .card.SPECIAL .tags span{background:rgba(255,111,163,.2);color:#ff9ec3}
-.card .lv{font-size:10px;color:var(--gold);font-weight:900}
-.card-detail{position:relative;z-index:3;margin:0 12px;background:rgba(20,6,16,.92);border:1px solid #7a1f50;border-radius:12px;padding:8px 12px;font-size:13px;min-height:44px}
-.inner-pop{position:fixed;left:50%;top:22%;transform:translateX(-50%);z-index:90;background:linear-gradient(135deg,#14060f,#3d1030);color:#ffd0e2;border:2px solid var(--crimson);border-radius:16px;padding:12px 20px;font-family:var(--serif);font-size:16px;box-shadow:0 0 40px rgba(194,24,91,.6);max-width:90vw;animation:innerIn .3s;pointer-events:none}
-.inner-pop::before{content:"內心OS";display:block;font-size:11px;letter-spacing:.3em;color:#ff6fa3;font-family:var(--sans)}
+.card .lv{font-size:calc(10px * var(--fs));color:var(--gold);font-weight:900}
+.card-detail{position:relative;z-index:3;margin:0 12px;background:rgba(20,6,16,.92);border:1px solid #7a1f50;border-radius:12px;padding:8px 12px;font-size:calc(13px * var(--fs));min-height:44px}
+.inner-pop{position:fixed;left:50%;top:22%;transform:translateX(-50%);z-index:90;background:linear-gradient(135deg,#14060f,#3d1030);color:#ffd0e2;border:2px solid var(--crimson);border-radius:16px;padding:12px 20px;font-family:var(--serif);font-size:calc(16px * var(--fs));box-shadow:0 0 40px rgba(194,24,91,.6);max-width:90vw;animation:innerIn .3s;pointer-events:none}
+.inner-pop::before{content:"內心OS";display:block;font-size:calc(11px * var(--fs));letter-spacing:.3em;color:#ff6fa3;font-family:var(--sans)}
 .inner-pop.lotus{background:linear-gradient(135deg,#fff,#ffe3ee);color:var(--ink);border-color:var(--pink)}
 @keyframes innerIn{from{opacity:0;transform:translate(-50%,10px) scale(.95)}}
 .boss-opts{display:grid;grid-template-columns:1fr 1fr;gap:6px}
-.boss-opts .btn{font-size:13px;padding:8px 10px;text-align:left;border-radius:12px}
-.boss-opts .btn small{display:block;font-weight:400;font-size:11px;opacity:.8}
-.boss-acc{font-family:var(--serif);font-size:18px;color:#e6d6ff;text-align:center;padding:10px;background:rgba(40,10,60,.7);border:1px solid #8e6cc9;border-radius:12px;margin-top:8px}
+.boss-opts .btn{font-size:calc(13px * var(--fs));padding:8px 10px;text-align:left;border-radius:12px}
+.boss-opts .btn small{display:block;font-weight:400;font-size:calc(11px * var(--fs));opacity:.8}
+.boss-acc{font-family:var(--serif);font-size:calc(18px * var(--fs));color:#e6d6ff;text-align:center;padding:10px;background:rgba(40,10,60,.7);border:1px solid #8e6cc9;border-radius:12px;margin-top:8px}
 #battle.boss .bg{filter:brightness(.35) saturate(1.3) hue-rotate(-30deg)}
 #battle.boss .b-title{color:#d8c2ff}
 
@@ -229,15 +229,15 @@ body.flash::before{opacity:1}
 .modal-box{background:var(--card);border-radius:20px;width:min(940px,100%);max-height:92vh;display:flex;flex-direction:column;box-shadow:0 20px 60px rgba(60,20,50,.4);border:2px solid #fff;overflow:hidden}
 .modal-box.small{width:min(480px,100%)}
 .modal-head{display:flex;justify-content:space-between;align-items:center;padding:12px 18px;background:linear-gradient(90deg,#ffeaf2,#f3ebff);border-bottom:1.5px solid var(--line)}
-.modal-head h2{margin:0;font-family:var(--serif);font-size:19px;color:var(--pink-d)}
+.modal-head h2{margin:0;font-family:var(--serif);font-size:calc(19px * var(--fs));color:var(--pink-d)}
 .modal-body{padding:16px 18px;overflow:auto}
 .modal-foot{padding:10px 18px;border-top:1px solid var(--line);display:flex;gap:8px;justify-content:flex-end;flex-wrap:wrap}
 .modal.dark .modal-box{background:#1a0a16;color:#ffd6e6;border-color:#5b1640}
 .modal.dark .modal-head{background:linear-gradient(90deg,#2b0d20,#140b16);border-color:#5b1640}
 .modal.dark .modal-head h2{color:#ff9ec3}
-.close{background:none;font-size:22px;color:var(--ink-l);width:36px;height:36px;border-radius:50%}
+.close{background:none;font-size:calc(22px * var(--fs));color:var(--ink-l);width:36px;height:36px;border-radius:50%}
 .tabs{display:flex;gap:6px;margin-bottom:12px;flex-wrap:wrap}
-.tabs button{padding:6px 14px;border-radius:999px;background:#fff3f8;color:var(--pink-d);font-weight:700;font-size:13px}
+.tabs button{padding:6px 14px;border-radius:999px;background:#fff3f8;color:var(--pink-d);font-weight:700;font-size:calc(13px * var(--fs))}
 .tabs button.on{background:var(--pink-d);color:#fff}
 .grid-cards{display:flex;flex-wrap:wrap;gap:12px;justify-content:center}
 .grid-cards .card{cursor:pointer}
@@ -247,51 +247,51 @@ body.flash::before{opacity:1}
 .npc-detail{display:grid;grid-template-columns:220px 1fr;gap:16px}
 .npc-detail img{width:100%;max-height:420px;object-fit:contain;background:linear-gradient(180deg,#fff0f6,#f0e8ff);border-radius:16px}
 .npc-tabs{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:12px}
-.npc-tabs button{display:flex;align-items:center;gap:6px;padding:4px 10px 4px 4px;border-radius:999px;background:#fff;border:1.5px solid var(--line);font-weight:700;font-size:13px}
+.npc-tabs button{display:flex;align-items:center;gap:6px;padding:4px 10px 4px 4px;border-radius:999px;background:#fff;border:1.5px solid var(--line);font-weight:700;font-size:calc(13px * var(--fs))}
 .npc-tabs button.on{border-color:var(--pink-d);background:#fff3f8}
 .npc-tabs .ava{width:28px;height:28px}
 .meter{margin:6px 0}
-.meter .l{display:flex;justify-content:space-between;font-size:13px}
+.meter .l{display:flex;justify-content:space-between;font-size:calc(13px * var(--fs))}
 .meter .t{height:9px;background:#f6e7ef;border-radius:9px;overflow:hidden}
 .meter .t b{display:block;height:100%;border-radius:9px}
-.mem-list,.intel-list{font-size:13px;padding-left:18px;margin:4px 0}
+.mem-list,.intel-list{font-size:calc(13px * var(--fs));padding-left:18px;margin:4px 0}
 .box{background:#fff;border:1.5px solid var(--line);border-radius:14px;padding:10px 12px;margin-bottom:10px}
-.box h4{margin:0 0 6px;font-family:var(--serif);color:var(--pink-d);font-size:15px}
-.kv{display:grid;grid-template-columns:auto 1fr;gap:3px 12px;font-size:13px}
+.box h4{margin:0 0 6px;font-family:var(--serif);color:var(--pink-d);font-size:calc(15px * var(--fs))}
+.kv{display:grid;grid-template-columns:auto 1fr;gap:3px 12px;font-size:calc(13px * var(--fs))}
 
 /* talents */
 .tal-tree{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
 .tal-col h4{text-align:center;font-family:var(--serif);margin:0 0 8px}
 .tal{background:#fff;border:2px solid var(--line);border-radius:14px;padding:10px;margin-bottom:8px;text-align:left;width:100%;position:relative}
 .tal.on{border-color:var(--gold);background:#fffaf0}
-.tal.on::after{content:"已習得";position:absolute;top:6px;right:8px;font-size:11px;color:var(--gold);font-weight:900}
+.tal.on::after{content:"已習得";position:absolute;top:6px;right:8px;font-size:calc(11px * var(--fs));color:var(--gold);font-weight:900}
 .tal b{font-family:var(--serif)}
-.tal p{margin:2px 0 0;font-size:12px;color:var(--ink-l)}
+.tal p{margin:2px 0 0;font-size:calc(12px * var(--fs));color:var(--ink-l)}
 
 /* phone (social) */
 .phone{width:min(420px,100%);margin:0 auto;background:#fff;border-radius:34px;border:10px solid #2b2230;box-shadow:0 20px 40px rgba(0,0,0,.25);overflow:hidden;display:flex;flex-direction:column;height:min(78vh,720px)}
 .phone-top{background:linear-gradient(90deg,#ffd1e3,#e3d4ff);padding:10px 14px;display:flex;justify-content:space-between;align-items:center;font-weight:800;color:var(--pink-d)}
 .phone-tabs{display:flex;border-bottom:1px solid #f0dce6}
-.phone-tabs button{flex:1;padding:8px;background:#fff;font-weight:700;font-size:13px;color:var(--ink-l)}
+.phone-tabs button{flex:1;padding:8px;background:#fff;font-weight:700;font-size:calc(13px * var(--fs));color:var(--ink-l)}
 .phone-tabs button.on{color:var(--pink-d);box-shadow:inset 0 -3px 0 var(--pink-d)}
 .phone-body{flex:1;overflow:auto;background:#fdf7fa}
 .post{background:#fff;margin:8px;border-radius:14px;padding:10px 12px;box-shadow:0 2px 6px rgba(0,0,0,.05)}
-.post .who{display:flex;align-items:center;gap:8px;font-weight:700;font-size:13px}
+.post .who{display:flex;align-items:center;gap:8px;font-weight:700;font-size:calc(13px * var(--fs))}
 .post .who .ava{width:32px;height:32px}
-.post .txt{margin:8px 0;font-size:14px}
-.post .meta{font-size:12px;color:var(--ink-l);display:flex;gap:10px;flex-wrap:wrap}
-.post .cm{font-size:12.5px;margin-top:4px;padding:4px 8px;background:#fdf1f6;border-radius:8px}
+.post .txt{margin:8px 0;font-size:calc(14px * var(--fs))}
+.post .meta{font-size:calc(12px * var(--fs));color:var(--ink-l);display:flex;gap:10px;flex-wrap:wrap}
+.post .cm{font-size:calc(12.5px * var(--fs));margin-top:4px;padding:4px 8px;background:#fdf1f6;border-radius:8px}
 .leaked{color:var(--bad);font-weight:800}
 .dm-row{display:flex;align-items:center;gap:10px;padding:10px 12px;border-bottom:1px solid #f4e6ec;cursor:pointer;background:#fff}
-.bubble{max-width:80%;padding:7px 12px;border-radius:14px;margin:6px 10px;font-size:13.5px}
+.bubble{max-width:80%;padding:7px 12px;border-radius:14px;margin:6px 10px;font-size:calc(13.5px * var(--fs))}
 .bubble.me{margin-left:auto;background:var(--pink);color:#fff;border-bottom-right-radius:4px}
 .bubble.them{background:#fff;border:1px solid #f0dce6;border-bottom-left-radius:4px}
-.composer select,.composer textarea{width:100%;padding:8px;border-radius:10px;border:1.5px solid var(--line);font-family:inherit;font-size:14px;margin-bottom:8px;background:#fff;color:var(--ink)}
+.composer select,.composer textarea{width:100%;padding:8px;border-radius:10px;border:1.5px solid var(--line);font-family:inherit;font-size:calc(14px * var(--fs));margin-bottom:8px;background:#fff;color:var(--ink)}
 .opt-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin-bottom:8px}
-.opt-grid button{padding:8px 6px;border-radius:10px;background:#fff;border:1.5px solid var(--line);font-size:13px;font-weight:600}
+.opt-grid button{padding:8px 6px;border-radius:10px;background:#fff;border:1.5px solid var(--line);font-size:calc(13px * var(--fs));font-weight:600}
 .opt-grid button.on{border-color:var(--pink-d);background:#fff3f8;color:var(--pink-d)}
 .npc-pick{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:8px}
-.npc-pick button{display:flex;align-items:center;gap:4px;padding:3px 10px 3px 3px;border-radius:999px;border:1.5px solid var(--line);background:#fff;font-size:12px;font-weight:700}
+.npc-pick button{display:flex;align-items:center;gap:4px;padding:3px 10px 3px 3px;border-radius:999px;border:1.5px solid var(--line);background:#fff;font-size:calc(12px * var(--fs));font-weight:700}
 .npc-pick button.on{border-color:var(--pink-d);background:#ffe3ee}
 .npc-pick .ava{width:24px;height:24px}
 
@@ -300,17 +300,17 @@ body.flash::before{opacity:1}
 .target{background:#fff;border:2px solid var(--line);border-radius:14px;padding:8px;text-align:center}
 .target:hover:not(:disabled){border-color:var(--pink-d)}
 .target img{width:100%;height:120px;object-fit:cover;object-position:top;border-radius:10px;background:linear-gradient(#fff0f6,#efe6ff)}
-.target b{display:block;font-size:14px}
-.target small{font-size:11px;color:var(--ink-l)}
-.res-title{font-family:var(--serif);font-size:34px;font-weight:900;text-align:center;letter-spacing:.15em;margin:6px 0}
+.target b{display:block;font-size:calc(14px * var(--fs))}
+.target small{font-size:calc(11px * var(--fs));color:var(--ink-l)}
+.res-title{font-family:var(--serif);font-size:calc(34px * var(--fs));font-weight:900;text-align:center;letter-spacing:.15em;margin:6px 0}
 .res-title.good{color:var(--pink-d)}.res-title.bad{color:var(--bad)}
 .notes{display:flex;flex-wrap:wrap;gap:6px;justify-content:center}
-.notes span{font-size:12.5px;background:#fff3f8;color:var(--pink-d);padding:3px 10px;border-radius:999px;font-weight:600}
+.notes span{font-size:calc(12.5px * var(--fs));background:#fff3f8;color:var(--pink-d);padding:3px 10px;border-radius:999px;font-weight:600}
 .modal.dark .notes span{background:#2b0d20;color:#ff9ec3}
 
 /* toast */
 #toasts{position:fixed;top:64px;right:14px;z-index:200;display:flex;flex-direction:column;gap:6px;align-items:flex-end;pointer-events:none}
-.toast{background:#fff;border:1.5px solid var(--line);border-left:5px solid var(--pink);padding:8px 14px;border-radius:12px;font-size:13.5px;box-shadow:0 6px 16px rgba(0,0,0,.12);max-width:340px;animation:tin .25s}
+.toast{background:#fff;border:1.5px solid var(--line);border-left:5px solid var(--pink);padding:8px 14px;border-radius:12px;font-size:calc(13.5px * var(--fs));box-shadow:0 6px 16px rgba(0,0,0,.12);max-width:340px;animation:tin .25s}
 .toast.bad{border-left-color:var(--bad)}.toast.gold{border-left-color:var(--gold)}
 .toast.dark{background:#1a0a16;color:#ffd6e6;border-color:#5b1640;border-left-color:var(--crimson)}
 @keyframes tin{from{opacity:0;transform:translateX(20px)}}
@@ -319,13 +319,13 @@ body.flash::before{opacity:1}
 #ending{position:fixed;inset:0;z-index:120;background:#000;color:#fff;overflow:auto}
 #ending .cg{position:fixed;inset:0;background-size:cover;background-position:center;opacity:.55}
 .end-wrap{position:relative;max-width:760px;margin:0 auto;padding:8vh 22px 40px;text-align:center}
-.end-sub{letter-spacing:.5em;font-size:13px;color:#ffb3cf}
-.end-name{font-family:var(--serif);font-size:clamp(40px,8vw,72px);font-weight:900;letter-spacing:.15em;text-shadow:0 0 30px rgba(255,111,163,.8)}
-.end-text{font-family:var(--serif);font-size:17px;line-height:2.1;white-space:pre-wrap;background:rgba(0,0,0,.45);padding:18px;border-radius:16px;text-align:left}
-.end-epi{text-align:left;font-size:14px;line-height:1.9;margin-top:12px;background:rgba(40,10,30,.6);padding:12px 16px;border-radius:12px}
+.end-sub{letter-spacing:.5em;font-size:calc(13px * var(--fs));color:#ffb3cf}
+.end-name{font-family:var(--serif);font-size:calc(clamp(40px,8vw,72px) * var(--fs));font-weight:900;letter-spacing:.15em;text-shadow:0 0 30px rgba(255,111,163,.8)}
+.end-text{font-family:var(--serif);font-size:calc(17px * var(--fs));line-height:2.1;white-space:pre-wrap;background:rgba(0,0,0,.45);padding:18px;border-radius:16px;text-align:left}
+.end-epi{text-align:left;font-size:calc(14px * var(--fs));line-height:1.9;margin-top:12px;background:rgba(40,10,30,.6);padding:12px 16px;border-radius:12px}
 .end-stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:8px;margin:16px 0}
-.end-stats div{background:rgba(255,255,255,.08);border-radius:10px;padding:8px;font-size:13px}
-.end-stats b{display:block;font-size:20px;color:#ffc1d8}
+.end-stats div{background:rgba(255,255,255,.08);border-radius:10px;padding:8px;font-size:calc(13px * var(--fs))}
+.end-stats b{display:block;font-size:calc(20px * var(--fs));color:#ffc1d8}
 
 /* gallery */
 .gal{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:12px}
@@ -340,45 +340,45 @@ body.flash::before{opacity:1}
   .b-body{grid-template-columns:1fr 280px}
 }
 @media (max-width:767px){
-  body{font-size:14px}
+  body{font-size:calc(14px * var(--fs))}
   .topbar{padding:6px 8px;gap:4px}
-  .date{font-size:14px;width:100%;display:flex;justify-content:space-between}
+  .date{font-size:calc(14px * var(--fs));width:100%;display:flex;justify-content:space-between}
   .stats-row{justify-content:flex-start;gap:4px;flex-wrap:nowrap;overflow-x:auto}
-  .stat{padding:2px 7px 2px 2px;font-size:11.5px}
+  .stat{padding:2px 7px 2px 2px;font-size:calc(11.5px * var(--fs))}
   .stat .bar{display:none}
-  .stat i{width:18px;height:18px;font-size:10px}
+  .stat i{width:18px;height:18px;font-size:calc(10px * var(--fs))}
   .main{grid-template-columns:1fr;padding:6px;gap:6px;overflow:auto}
   .main .left{display:none}
   .scene{min-height:calc(100vh - 160px)}
   .scene .portrait{height:62%;max-width:90%}
   .actions{grid-template-columns:repeat(4,1fr);gap:5px}
   .act{min-height:54px;padding:6px 2px}
-  .act b{font-size:12.5px}.act small{display:none}
+  .act b{font-size:calc(12.5px * var(--fs))}.act small{display:none}
   .bottom-nav{display:flex;border-top:1.5px solid var(--line);background:#fff;padding-bottom:env(safe-area-inset-bottom)}
-  .bottom-nav button{flex:1;padding:8px 0 6px;background:none;font-size:11.5px;font-weight:700;color:var(--ink-l);display:flex;flex-direction:column;align-items:center;gap:2px}
-  .bottom-nav button i{font-style:normal;font-size:17px;font-family:var(--serif);color:var(--pink-d)}
+  .bottom-nav button{flex:1;padding:8px 0 6px;background:none;font-size:calc(11.5px * var(--fs));font-weight:700;color:var(--ink-l);display:flex;flex-direction:column;align-items:center;gap:2px}
+  .bottom-nav button i{font-style:normal;font-size:calc(17px * var(--fs));font-family:var(--serif);color:var(--pink-d)}
   .title-wrap{flex-direction:column;gap:10px;text-align:center}
   .title-hero{width:56vw;max-height:40vh;object-fit:contain}
   .menu{margin:0 auto;width:100%}
   .vn-portrait{height:70vh}
   .vn-box{padding:16px 14px 14px;margin-bottom:8px;min-height:130px}
-  .vn-text{font-size:15px}
+  .vn-text{font-size:calc(15px * var(--fs))}
   .b-body{grid-template-columns:1fr;padding:6px;gap:6px;overflow:auto}
   .foes{min-height:200px;max-height:34vh}
-  .foe-card{font-size:11px;padding:4px 6px}
+  .foe-card{font-size:calc(11px * var(--fs));padding:4px 6px}
   .b-log{max-height:22vh;min-height:90px}
   .hand{justify-content:flex-start;padding:8px;scroll-snap-type:x mandatory}
   .card{width:128px;min-height:172px;scroll-snap-align:start}
-  .card .cn{font-size:13.5px}
+  .card .cn{font-size:calc(13.5px * var(--fs))}
   .npc-detail{grid-template-columns:1fr}
   .npc-detail img{max-height:240px}
   .tal-tree{grid-template-columns:1fr}
   .phone{border-width:6px;border-radius:24px;height:72vh}
-  .boss-acc{font-size:15px}
+  .boss-acc{font-size:calc(15px * var(--fs))}
   .modal{padding:0}
   .modal-box{max-height:100vh;height:100%;border-radius:0}
   .modal-box.small{height:auto;border-radius:20px;margin:12px}
-  .b-title{font-size:16px}
+  .b-title{font-size:calc(16px * var(--fs))}
 }
 #battle .btn.ghost{color:#e9bcd0;border-color:#6d1f48}
 @media (max-width:767px){
@@ -389,6 +389,26 @@ body.flash::before{opacity:1}
 #toasts{top:64px;right:auto;left:50%;transform:translateX(-50%);align-items:center}
 @media (max-width:767px){ .desk-nav{display:none!important} #toasts{top:auto;bottom:70px;width:92vw} .toast{max-width:92vw} }
 @media (max-width:767px){ #battle:not(.hidden) ~ #toasts{top:56px;bottom:auto} }
+
+.tablet-only{display:none}
+@media (max-width:1199px){ .tablet-only{display:inline-block} }
+@media (max-width:767px){ .bottom-nav button{font-size:calc(10.5px * var(--fs))} }
+/* v1.0.2 版面修正 */
+@media (max-width:1199px) and (min-width:768px){
+  .topbar{flex-wrap:wrap}
+  .stats-row{order:3;flex:1 1 100%;justify-content:flex-start}
+  .desk-nav{margin-left:auto}
+}
+@media (max-width:767px){
+  .foes{height:auto;max-height:none;min-height:0;align-items:flex-start}
+  .foe{height:auto}
+  .foe img{flex:none;height:20vh;width:100%}
+}
+.fbar span{width:auto;white-space:nowrap}
+@media (max-width:767px){
+  .b-body{display:flex;flex-direction:column}
+  .b-stage,.b-side{min-height:auto;flex:none}
+}
 
 </style>
 </head>
@@ -413,7 +433,7 @@ body.flash::before{opacity:1}
       </div>
     </div>
   </div>
-  <div class="ver">GDD V1.0・v1.0.0</div>
+  <div class="ver"></div>
 </section>
 
 <!-- 角色建立 -->
@@ -425,7 +445,7 @@ body.flash::before{opacity:1}
     <div class="date" id="date"></div>
     <div class="stats-row" id="stats"></div>
     <div class="desk-nav" style="display:flex;gap:4px">
-      <button class="btn sm" data-nav="social">社群</button><button class="btn sm" data-nav="cards">卡牌</button><button class="btn sm" data-nav="tal">天賦</button><button class="btn sm" data-nav="shop">商店</button><button class="btn sm" data-nav="save">存檔</button><button class="btn sm ghost" data-nav="menu">☰</button>
+      <button class="btn sm tablet-only" data-nav="journal">日誌</button><button class="btn sm" data-nav="social">社群</button><button class="btn sm" data-nav="cards">卡牌</button><button class="btn sm" data-nav="tal">天賦</button><button class="btn sm" data-nav="shop">商店</button><button class="btn sm" data-nav="save">存檔</button><button class="btn sm ghost" data-nav="menu">☰</button>
     </div>
   </header>
   <div class="main">
@@ -441,7 +461,7 @@ body.flash::before{opacity:1}
     <aside class="panel right" id="side"></aside>
   </div>
   <nav class="bottom-nav">
-    <button data-nav="npc"><i>♡</i>人際</button><button data-nav="social"><i>✉</i>社群</button><button data-nav="cards"><i>♠</i>卡牌</button><button data-nav="tal"><i>✦</i>天賦</button><button data-nav="menu"><i>☰</i>更多</button>
+    <button data-nav="journal"><i>✎</i>日誌</button><button data-nav="npc"><i>♡</i>人際</button><button data-nav="social"><i>✉</i>社群</button><button data-nav="cards"><i>♠</i>卡牌</button><button data-nav="tal"><i>✦</i>天賦</button><button data-nav="menu"><i>☰</i>更多</button>
   </nav>
 </section>
 
@@ -481,7 +501,7 @@ body.flash::before{opacity:1}
  * ============================================================ */
 const CONFIG = {
   schemaVersion: 1,
-  gameVersion: "1.0.0",
+  gameVersion: "1.0.2",
   totalDays: 42,
   actionsPerDay: 2,
   dailyEnergyRegen: 30,
@@ -505,7 +525,10 @@ const CONFIG = {
   investigateAt: 80,
   exposeAt: 100,
   shurabaAt: 60,
-  randomEventChance: 0.28,
+  randomEventChance: 0.25,   // 每天判定一次
+  randomCooldown: 5,         // 同一隨機事件冷卻天數
+  dmPerDay: 2,               // 每日私訊次數
+  fontScales: { small: 0.9, normal: 1, large: 1.15, xlarge: 1.3 },
   autoSaveKey: "gts_auto",
   slotKeys: ["gts_slot1", "gts_slot2", "gts_slot3"],
   checkpointKey: "gts_checkpoint",
@@ -710,6 +733,8 @@ const ACHIEVEMENTS = {
   a_innocent: { name: "第一次成功裝無辜", desc: "用白蓮卡讓懷疑下降" },
   a_manip: { name: "第一次成功挑撥", desc: "讓兩名 NPC 關係下降" },
   a_shuraba: { name: "第一次觸發修羅場", desc: "風暴中心就是我" },
+  a_exposed_one: { name: "第一次被單獨拆穿", desc: "有人把截圖攤在妳面前" },
+  a_public: { name: "第一次公開曝光", desc: "八卦帳號寫的，好像就是妳" },
   a_clean3: { name: "滴水不漏", desc: "連續三回合沒有增加懷疑" },
   a_triple: { name: "海王的自覺", desc: "同時維持三名 NPC 好感 70 以上" },
   a_boss: { name: "通過審判", desc: "成功通過顧知夏的審判" },
@@ -766,6 +791,17 @@ const EVENTS = [
   { id: "ev_chen_hope", type: "NPC", minDay: 14, story: "chen_hope", trigger: { minFavor: { chen: 70 } } }
 ];
 
+/* 支線（NPC 專屬／條件事件）在日誌中的名稱與提示 */
+const EVENT_INFO = {
+  ev_chen_help: ["器材室的請求", "陳柏宇好感 40 以上（第 5 天起）"],
+  ev_lin_worry: ["副社長的煩惱", "林予辰好感 55 以上（第 8 天起）"],
+  ev_xu_trust: ["茶水間的秘密", "許沐橙信任 45 以上（第 12 天起）"],
+  ev_chen_hope: ["一杯奶茶", "陳柏宇好感 70 以上（第 14 天起）"],
+  ev_gu_tea: ["社長的茶", "顧知夏信任 45 以上（第 15 天起）"],
+  ev_shen_confront: ["走廊對峙", "？？？（小心沈若晴的懷疑）"],
+  ev_gu_investigate: ["白板上的「茶」", "？？？（小心顧知夏的懷疑）"]
+};
+
 const RANDOM_EVENTS = [
   { id: "r_store", story: "r_store" },
   { id: "r_library", story: "r_library" },
@@ -774,8 +810,8 @@ const RANDOM_EVENTS = [
   { id: "r_spill", story: "r_spill" },
   { id: "r_notes", story: "r_notes" },
   { id: "r_anon", story: "r_anon", cond: { minFavor: { lin: 35 } } },
-  { id: "r_scholar", story: "r_scholar", once: true },
-  { id: "r_blackout", story: "r_blackout" },
+  { id: "r_scholar", story: "r_scholar", once: true, w: 0.6 },
+  { id: "r_blackout", story: "r_blackout", w: 0.6 },
   { id: "r_audit", story: "r_audit", cond: { minDay: 8 } },
   { id: "r_photo", story: "r_photo", cond: { minFavor: { lin: 50 } } }
 ];
@@ -922,7 +958,7 @@ const STORIES = {
     start: "l0", nodes: {
       l0: { bg: "dorm", sp: "narr", t: "第五週・早上七點。校園八卦帳號「星光茶水間」發了一篇新貼文。", special: "leak_branch" },
       // 爆料對象是玩家
-      lp1: { sp: "narr", t: "「某社團新生學妹，表面清純，私下專挑有女友的學長示好。眼淚收放自如，建議大家小心。」", n: "lp2" },
+      lp1: { sp: "narr", fx: [["achieve", "a_public"]], t: "「某社團新生學妹，表面清純，私下專挑有女友的學長示好。眼淚收放自如，建議大家小心。」", n: "lp2" },
       lp2: { bg: "clubroom", sp: "shen", ex: "angry", t: "（把手機摔在桌上）小茶，這是不是在說妳？", n: "lp3" },
       lp3: { sp: "xu", ex: "suspect", t: "大、大家先冷靜嘛……", n: "lp4" },
       lp4: { sp: "narr", t: "危機。要怎麼處理？", ch: [
@@ -1193,11 +1229,18 @@ const EPILOGUES = [
 const Utils = {
   clamp(v, min, max) { v = Number(v); if (!Number.isFinite(v)) v = min; return Math.max(min, Math.min(max, v)); },
   round(v) { return Math.round(Number(v) || 0); },
-  rand(n) { return Math.floor(Math.random() * n); },
-  pick(arr) { return arr[Math.floor(Math.random() * arr.length)]; },
-  chance(p) { return Math.random() < p; },
-  shuffle(a) { a = a.slice(); for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; } return a; },
-  weighted(list) { const tot = list.reduce((s, x) => s + (x.w || 1), 0); let r = Math.random() * tot; for (const x of list) { r -= (x.w || 1); if (r <= 0) return x; } return list[list.length - 1]; },
+  // 可設定種子的亂數（mulberry32）；狀態存在存檔裡，讀檔後亂數序列可延續、測試可重現
+  random() {
+    const s = State.get(); if (!s || typeof s.meta.rng !== "number") return Math.random();
+    let t = (s.meta.rng = (s.meta.rng + 0x6D2B79F5) | 0);
+    t = Math.imul(t ^ (t >>> 15), t | 1); t ^= t + Math.imul(t ^ (t >>> 7), t | 61);
+    return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+  },
+  rand(n) { return Math.floor(Utils.random() * n); },
+  pick(arr) { return arr[Math.floor(Utils.random() * arr.length)]; },
+  chance(p) { return Utils.random() < p; },
+  shuffle(a) { a = a.slice(); for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(Utils.random() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; } return a; },
+  weighted(list) { const tot = list.reduce((s, x) => s + (x.w ?? 1), 0); let r = Utils.random() * tot; for (const x of list) { r -= (x.w ?? 1); if (r <= 0) return x; } return list[list.length - 1]; },
   deepClone(o) { return JSON.parse(JSON.stringify(o)); },
   deepMerge(base, over) {
     if (Array.isArray(base)) return Array.isArray(over) ? over : base;
@@ -1229,16 +1272,16 @@ function createDefaultState() {
     relationships[id] = { ...RELATIONSHIPS[id] };
   });
   return {
-    meta: { schemaVersion: CONFIG.schemaVersion, gameVersion: CONFIG.gameVersion, createdAt: new Date().toISOString(), updatedAt: null, ngPlus: 0 },
+    meta: { schemaVersion: CONFIG.schemaVersion, gameVersion: CONFIG.gameVersion, createdAt: new Date().toISOString(), updatedAt: null, ngPlus: 0, seed: 0, rng: 0 },
     player: { name: "小茶", nickname: "", persona: "good_newcomer", direction: "lotus", level: 1, exp: 0, energy: 100, gold: 500, schemePoints: 3, talentPoints: 0, cardFragments: 0, items: {} },
-    calendar: { day: 1, week: 1, weekday: 1, remainingActions: CONFIG.actionsPerDay, weather: "晴" },
+    calendar: { day: 1, week: 1, weekday: 1, remainingActions: CONFIG.actionsPerDay, weather: "晴", dmCount: 0, randomRolled: false, suspicious: false },
     status: { pureAura: 70, globalSuspicion: 0, clubSupport: 0, clubReputation: 0, socialInfluence: 0 },
     npcRelations, npcMemories, relationships,
     deck: { collection: INITIAL_COLLECTION.slice(), activeDeck: INITIAL_DECK.slice(), cardLevels: {} },
     social: { posts: [], messages: [], followers: [], nextId: 1 },
     talents: { unlocked: [], selected: [] },
     intel: {},
-    story: { currentChapter: "university", currentNode: null, flags: {}, choices: [], completedEvents: [], shurabaLog: {}, hiddenGoals: [] },
+    story: { currentChapter: "university", currentNode: null, flags: {}, choices: [], completedEvents: [], shurabaLog: {}, hiddenGoals: [], randomLog: {} },
     weekly: { week: 1, freeChat: 0, clubBonusUsed: false },
     log: [],
     achievements: { unlocked: [], progress: {} },
@@ -1304,6 +1347,7 @@ const Status = {
     const s = State.get().status, b = s.globalSuspicion;
     s.globalSuspicion = Utils.clamp(Utils.round(b + n), 0, 100);
     const d = s.globalSuspicion - b;
+    if (d > 0) State.get().calendar.suspicious = true; // 今天做了可疑的事 → 晚上不會自然平息
     if (d) EventBus.emit("stat:global", { d, value: s.globalSuspicion });
     if (s.globalSuspicion >= 100) EventBus.emit("game:exposed");
     return d;
@@ -1397,6 +1441,7 @@ const Effects = {
 
 /* ---------- SaveManager ---------- */
 const Save = {
+  keyOf(slot) { return slot === "auto" ? CONFIG.autoSaveKey : slot === "prev" ? CONFIG.autoSaveKey + "_prev" : slot === "checkpoint" ? CONFIG.checkpointKey : CONFIG.slotKeys[slot]; },
   _write(key, data) {
     try { localStorage.setItem(key, JSON.stringify(data)); return true; }
     catch (e) { console.error("存檔失敗", e); UI.toast("存檔失敗：瀏覽器儲存空間不足或被停用", "bad"); return false; }
@@ -1406,36 +1451,74 @@ const Save = {
     catch (e) { console.error("讀檔失敗", e); return null; }
   },
   pack() {
-    const s = State.get(); s.meta.updatedAt = new Date().toISOString();
+    const s = State.get(); s.meta.updatedAt = new Date().toISOString(); s.meta.gameVersion = CONFIG.gameVersion;
     return { schemaVersion: CONFIG.schemaVersion, gameVersion: CONFIG.gameVersion, savedAt: new Date().toISOString(), payload: Utils.deepClone(s) };
   },
-  validate(data) { return data && typeof data === "object" && data.payload && data.payload.player && data.payload.calendar && typeof data.schemaVersion === "number"; },
+  // 逐欄檢查型態；回傳錯誤清單（空陣列代表通過）
+  deepValidate(p) {
+    const errs = [];
+    const num = (v, path) => { if (typeof v !== "number" || !Number.isFinite(v)) errs.push(path); };
+    const obj = (v, path) => { if (!v || typeof v !== "object" || Array.isArray(v)) { errs.push(path); return false; } return true; };
+    const arr = (v, path) => { if (!Array.isArray(v)) errs.push(path); };
+    if (!obj(p, "payload")) return errs;
+    if (obj(p.player, "player")) {
+      ["energy", "gold", "schemePoints"].forEach(k => num(p.player[k], "player." + k));
+      if (typeof p.player.name !== "string") errs.push("player.name");
+      if (!PERSONAS[p.player.persona]) errs.push("player.persona");
+    }
+    if (obj(p.calendar, "calendar")) { num(p.calendar.day, "calendar.day"); if (p.calendar.day < 1 || p.calendar.day > CONFIG.totalDays) errs.push("calendar.day（超出範圍）"); }
+    if (obj(p.status, "status")) ["pureAura", "globalSuspicion", "clubSupport"].forEach(k => num(p.status[k], "status." + k));
+    if (obj(p.npcRelations, "npcRelations")) NPC_IDS.forEach(id => { const r = p.npcRelations[id]; if (obj(r, "npcRelations." + id)) ["favor", "trust", "suspicion", "emotion"].forEach(k => num(r[k], `npcRelations.${id}.${k}`)); });
+    if (p.npcMemories !== undefined && obj(p.npcMemories, "npcMemories")) NPC_IDS.forEach(id => { if (p.npcMemories[id] !== undefined) arr(p.npcMemories[id], "npcMemories." + id); });
+    if (p.relationships !== undefined && obj(p.relationships, "relationships")) NPC_IDS.forEach(id => { if (p.relationships[id] !== undefined) obj(p.relationships[id], "relationships." + id); });
+    if (obj(p.deck, "deck")) { arr(p.deck.collection, "deck.collection"); arr(p.deck.activeDeck, "deck.activeDeck"); }
+    if (obj(p.story, "story")) { obj(p.story.flags, "story.flags"); arr(p.story.completedEvents, "story.completedEvents"); }
+    if (p.social !== undefined && obj(p.social, "social")) arr(p.social.posts, "social.posts");
+    if (p.intel !== undefined) obj(p.intel, "intel");
+    return errs;
+  },
+  validate(data) {
+    if (!(data && typeof data === "object" && typeof data.schemaVersion === "number" && data.payload)) return false;
+    if (data.schemaVersion > CONFIG.schemaVersion) return false; // 來自更新版本的存檔
+    return this.deepValidate(data.payload).length === 0;
+  },
   saveGame(slotId) {
     if (!State.get() || Battle.active) { UI.toast("戰鬥或劇情中無法存檔", "bad"); return false; }
     const data = this.pack();
     if (!this.validate(data)) { UI.toast("存檔資料異常，已取消以免覆蓋", "bad"); return false; }
-    const key = slotId === "auto" ? CONFIG.autoSaveKey : CONFIG.slotKeys[slotId];
+    const key = this.keyOf(slotId);
+    // 自動存檔覆蓋前，先把上一份成功的存檔留作備份
+    if (slotId === "auto") { const old = this._read(key); if (old && this.validate(old)) this._write(this.keyOf("prev"), old); }
     return this._write(key, data);
   },
   loadGame(slotId) {
-    const key = slotId === "auto" ? CONFIG.autoSaveKey : slotId === "checkpoint" ? CONFIG.checkpointKey : CONFIG.slotKeys[slotId];
-    const data = this._read(key);
+    const data = this._read(this.keyOf(slotId));
     if (!data) { UI.toast("存檔不存在或已損壞", "bad"); return false; }
     return this.applyData(data);
   },
   applyData(data) {
-    if (!this.validate(data)) { UI.toast("存檔格式錯誤", "bad"); return false; }
-    const migrated = this.migrateSave(data);
-    State.set(migrated.payload); State.validateState();
-    return true;
+    if (!data || typeof data !== "object" || !data.payload) { UI.toast("存檔格式錯誤", "bad"); return false; }
+    if (typeof data.schemaVersion === "number" && data.schemaVersion > CONFIG.schemaVersion) { UI.toast("這是較新版本的存檔，目前版本無法讀取", "bad"); return false; }
+    const errs = this.deepValidate(data.payload);
+    if (errs.length) { UI.toast("存檔內容不完整或已損壞（" + errs.slice(0, 3).join("、") + "），已保留目前進度", "bad"); return false; }
+    const prev = State.get();
+    try {
+      const migrated = this.migrateSave(Utils.deepClone(data));
+      State.set(migrated.payload); State.validateState();
+      // 試跑主要系統，任何例外都視為壞檔並還原
+      Status.clampAllStats(); Ending.calculateEndingScore(); Events.checkEventConditions(); Cards.validateDeck();
+      return true;
+    } catch (e) {
+      console.error("讀檔試跑失敗", e); State.set(prev);
+      UI.toast("存檔無法載入，已保留目前進度", "bad"); return false;
+    }
   },
-  deleteSave(slotId) { try { localStorage.removeItem(slotId === "auto" ? CONFIG.autoSaveKey : CONFIG.slotKeys[slotId]); } catch (e) { } },
+  deleteSave(slotId) { try { localStorage.removeItem(this.keyOf(slotId)); } catch (e) { } },
   autoSave() { if (State.get() && !State.get().gameOver) this.saveGame("auto"); },
   checkpoint() { const d = this.pack(); if (this.validate(d)) this._write(CONFIG.checkpointKey, d); },
   info(slotId) {
-    const key = slotId === "auto" ? CONFIG.autoSaveKey : slotId === "checkpoint" ? CONFIG.checkpointKey : CONFIG.slotKeys[slotId];
-    const d = this._read(key); if (!this.validate(d)) return null;
-    const p = d.payload; return { name: p.player.name, day: p.calendar.day, week: p.calendar.week, savedAt: d.savedAt, persona: PERSONAS[p.player.persona]?.name || "" };
+    const d = this._read(this.keyOf(slotId)); if (!d || !d.payload || this.deepValidate(d.payload).length) return null;
+    const p = d.payload; return { name: p.player.name, day: p.calendar.day, week: Math.min(6, Math.floor((p.calendar.day - 1) / 7) + 1), savedAt: d.savedAt, persona: PERSONAS[p.player.persona]?.name || "", ver: d.gameVersion || "" };
   },
   exportSave() {
     if (!State.get()) { UI.toast("目前沒有進行中的遊戲", "bad"); return; }
@@ -1448,22 +1531,22 @@ const Save = {
   importSave(file, cb) {
     const reader = new FileReader();
     reader.onload = () => {
-      try { const data = JSON.parse(reader.result); if (this.applyData(data)) { UI.toast("匯入成功"); cb && cb(true); } else cb && cb(false); }
-      catch (e) { UI.toast("JSON 解析錯誤，匯入失敗", "bad"); cb && cb(false); }
+      let data; try { data = JSON.parse(reader.result); } catch (e) { UI.toast("JSON 解析錯誤，匯入失敗（目前進度未受影響）", "bad"); cb && cb(false); return; }
+      if (this.applyData(data)) { UI.toast("匯入成功"); cb && cb(true); } else cb && cb(false);
     };
     reader.onerror = () => UI.toast("檔案讀取失敗", "bad");
     reader.readAsText(file);
   },
   migrateSave(data) {
-    // schemaVersion 1 為首版；未來版本在此逐步升級
-    if (data.schemaVersion < CONFIG.schemaVersion) { /* 預留：v1 → v2 */ }
+    // schemaVersion 1：v1.0.0～v1.0.2 共用。缺少的新欄位（rng、randomLog、dmCount…）由 validateState 以預設值補齊
+    if (data.payload.meta && typeof data.payload.meta.rng !== "number") { data.payload.meta.seed = (Date.now() & 0x7fffffff); data.payload.meta.rng = data.payload.meta.seed; }
     data.schemaVersion = CONFIG.schemaVersion;
     return data;
   },
-  // 跨周目資料（NG+、圖鑑、成就）
-  meta() { return this._read(CONFIG.metaKey) || { endings: [], achievements: [], cardLevels: {}, collection: [], clears: 0 }; },
+  // 跨周目資料（NG+、圖鑑、成就）與本周目存檔分開存放
+  meta() { const m = this._read(CONFIG.metaKey); return Object.assign({ endings: [], achievements: [], cardLevels: {}, collection: [], clears: 0 }, m && typeof m === "object" ? m : {}); },
   saveMeta(m) { this._write(CONFIG.metaKey, m); },
-  settings() { return Object.assign({ sound: true, textSpeed: 1, fx: true }, this._read(CONFIG.settingsKey) || {}); },
+  settings() { return Object.assign({ sound: true, fontScale: "normal" }, this._read(CONFIG.settingsKey) || {}); },
   saveSettings(st) { this._write(CONFIG.settingsKey, st); }
 };
 
@@ -1760,9 +1843,11 @@ const NPCManager = {
     const s = State.get(), news = [];
     NPC_IDS.forEach(id => {
       const r = s.npcRelations[id];
-      // 情緒回歸、懷疑自然下降（高度警戒時不下降）
+      // 情緒回歸。懷疑度：0～49 每天 -1；50～79 不自然下降，但信任 60 以上可每天修復 -1；80 以上（調查中）不下降
       r.emotion = Utils.round(r.emotion * 0.8);
-      if (r.suspicion < CONFIG.investigateAt && !(id === "gu" && s.story.flags.gu_zhixia_investigating)) r.suspicion = Math.max(0, r.suspicion - (r.suspicion < 50 ? 1 : 0));
+      const investigating = id === "gu" && s.story.flags.gu_zhixia_investigating;
+      if (!investigating && r.suspicion < 50) r.suspicion = Math.max(0, r.suspicion - 1);
+      else if (!investigating && r.suspicion < CONFIG.investigateAt && r.trust >= 60) r.suspicion -= 1;
       // 久未互動的好感會慢慢淡化
       if (r.favor > 60) r.favor -= 1; if (r.favor > 40 && s.calendar.day - (r.lastChatDay || 0) > 3) r.favor -= 1;
       const t = this.executeNPCAction(id); if (t) news.push({ id, t });
@@ -1851,8 +1936,9 @@ const Social = {
   sendMessage(npcId, optId) {
     const s = State.get(), r = s.npcRelations[npcId], opt = DM_OPTIONS.find(o => o.id === optId);
     if (!opt) return null;
-    if (r.dmDay === s.calendar.day) { UI.toast("今天已經私訊過了", "bad"); return null; }
-    r.dmDay = s.calendar.day;
+    if (r.dmDay === s.calendar.day) { UI.toast("今天已經私訊過他／她了", "bad"); return null; }
+    if (this.dmLeft() <= 0) { UI.toast("今天的私訊次數用完了", "bad"); return null; }
+    r.dmDay = s.calendar.day; s.calendar.dmCount = (s.calendar.dmCount || 0) + 1;
     const aff = Math.max(...opt.tags.map(t => NPCS[npcId].cardAffinity[t] ?? 1));
     Status.addFavor(npcId, Utils.round(opt.fx.favor * aff)); Status.addTrust(npcId, opt.fx.trust || 0);
     if (opt.fx.sus) Status.addSuspicion(npcId, Utils.round(opt.fx.sus * (0.5 + NPCS[npcId].attributes.sensitivity / 100)));
@@ -1861,6 +1947,8 @@ const Social = {
     s.social.messages.push({ npc: npcId, day: s.calendar.day, out: opt.text, reply });
     return reply;
   },
+  dmLimit() { return CONFIG.dmPerDay + (Talents.has("t_social2") ? 1 : 0); },
+  dmLeft() { return this.dmLimit() - (State.get().calendar.dmCount || 0); },
   followers() { return 20 + State.get().status.socialInfluence * 3 + State.get().social.posts.length * 2; }
 };
 
@@ -1992,17 +2080,32 @@ const Events = {
   triggerEvent(eventId, done) { const ev = EVENTS.find(e => e.id === eventId); if (!ev) return done && done(); this.markDone(ev.id); Story.play(ev.story, done); },
   resolveEventChoice(idx) { Story.resolveStoryChoice(idx); },
   updateEventFlags(flag, value) { Story.setFlag(flag, value); },
+  // 隨機事件：每天最多判定一次、同事件冷卻、依目前局勢調整權重
+  randomWeight(r) {
+    const s = State.get(), R = s.npcRelations; let w = r.w ?? 1;
+    if (r.id === "r_audit" && R.gu.suspicion >= 40) w += 2;
+    if ((r.id === "r_rain" || r.id === "r_photo") && R.lin.favor >= 55) w += 1;
+    if (r.id === "r_gossip" && R.xu.trust >= 40) w += 1;
+    if (r.id === "r_anon" && s.status.globalSuspicion >= 30) w += 1;
+    if (r.id === "r_notes" && R.shen.trust >= 40) w += 0.5;
+    return w;
+  },
   maybeRandom(done) {
     const s = State.get();
+    if (s.calendar.randomRolled) return done();
+    s.calendar.randomRolled = true;
     if (!Utils.chance(CONFIG.randomEventChance)) return done();
-    const pool = RANDOM_EVENTS.filter(r => Effects.check(r.cond) && !(r.once && this.completed(r.id)));
+    const log = s.story.randomLog;
+    const pool = RANDOM_EVENTS.filter(r => Effects.check(r.cond) && !(r.once && this.completed(r.id)) && !(log[r.id] && s.calendar.day - log[r.id] < CONFIG.randomCooldown))
+      .map(r => ({ ...r, w: this.randomWeight(r) }));
     if (!pool.length) return done();
-    const r = Utils.pick(pool); if (r.once) this.markDone(r.id);
+    const r = Utils.weighted(pool); if (r.once) this.markDone(r.id);
+    log[r.id] = s.calendar.day;
     Story.play(r.story, done);
   },
   triggerExpose(id, done) {
     const s = State.get(), r = s.npcRelations[id], n = NPCS[id]; r.exposed = true;
-    Story.setFlag("exposed_by_" + id); Achievements.unlock("a_shuraba");
+    Story.setFlag("exposed_by_" + id); Achievements.unlock("a_exposed_one");
     const hasIntel = Intel.aboutNPC(id).length > 0;
     const story = { start: "e1", nodes: {
       e1: { bg: "corridor", sp: id, ex: "dark", t: `${n.name}把妳叫到沒人的地方，把手機螢幕轉向妳——上面是妳這段時間所有的訊息截圖。`, n: "e2" },
@@ -2101,6 +2204,7 @@ const Schedule = {
   syncCalendar() { const c = State.get().calendar; c.week = Math.min(6, Math.floor((c.day - 1) / 7) + 1); c.weekday = ((c.day - 1) % 7) + 1; },
   startDay() {
     const s = State.get(); this.syncCalendar(); s.calendar.remainingActions = CONFIG.actionsPerDay; s.calendar.weather = Utils.pick(WEATHERS);
+    s.calendar.dmCount = 0; s.calendar.randomRolled = false; s.calendar.suspicious = false;
     if (s.weekly.week !== s.calendar.week) {
       s.weekly = { week: s.calendar.week, freeChat: 0, clubBonusUsed: false };
       s.player.talentPoints += 1; UI.toast(`第 ${s.calendar.week} 週開始：${WEEK_THEMES[s.calendar.week]}（天賦點 +1）`, "gold");
@@ -2139,12 +2243,12 @@ const Schedule = {
   endDay() {
     const s = State.get(); if (s.gameOver) return;
     UI.lock(true);
+    // 風聲平息：被正式調查時不恢復；今天沒做可疑的事 -1，且純潔氣場 85 以上再 -1
+    if (!s.story.flags.gu_zhixia_investigating) { let rec = 0; if (!s.calendar.suspicious) { rec += 1; if (s.status.pureAura >= 85) rec += 1; } if (rec) Status.addGlobalSuspicion(-rec); }
     const news = NPCManager.dailyUpdate();
     Relations.calculateRelationshipEffects();
     Memory.decayMemories();
     Status.addEnergy(CONFIG.dailyEnergyRegen); Economy.addGold(CONFIG.dailyAllowance);
-    // 風聲會隨時間平息（被調查時不會）
-    if (!s.story.flags.gu_zhixia_investigating && s.status.pureAura >= 70) Status.addGlobalSuspicion(-1);
     if (s.status.pureAura > 80) Status.addPureAura(-1);
     HiddenGoals.check(); Achievements.checkPassive();
     s.lastNews = news;
@@ -2225,6 +2329,8 @@ const Battle = {
     if (r.susInc > 0) { sus = Status.addSuspicion(targetId, r.susInc); b.firstSus = false; }
     if (r.susRed < 0) { sus = Status.addSuspicion(targetId, r.susRed); if (sus < 0) Achievements.unlock("a_innocent"); }
     if (r.globalInc) Status.addGlobalSuspicion(r.globalInc);
+    let lotusCalm = 0;
+    if (card.type === "WHITE_LOTUS" && r.level >= 3 && !b.lotusCalmUsed) { b.lotusCalmUsed = true; lotusCalm = -Status.addGlobalSuspicion(-2); }
     // 目擊者：其他在場且敏銳的 NPC 也會起疑
     let witnessSus = 0;
     if (r.susInc > 0 && b.context !== "private") this.observers(b).filter(id => id !== targetId).forEach(id => {
@@ -2248,6 +2354,7 @@ const Battle = {
     if (sus) parts.push(`懷疑 ${sus > 0 ? "+" : ""}${sus}`);
     if (witnessSus) parts.push(`旁人懷疑 +${witnessSus}`);
     if (r.globalInc) parts.push(`警報 +${r.globalInc}`);
+    if (lotusCalm) parts.push(`警報 -${lotusCalm}`);
     parts.push(`氣氛 ${r.mood >= 0 ? "+" : ""}${r.mood}`);
     b.log.push({ t: `妳對${npc.name}使出「${card.name}」${r.intent.good ? "（正中下懷！）" : r.intent.bad ? "（不合時宜…）" : ""}${r.resist ? "（對方抗拒）" : ""}：${parts.join("、")}`, k: r.susInc > 0 ? "warn" : "good" });
     b.lastInner = card.inner;
@@ -2422,7 +2529,7 @@ const Ending = {
       schemer: Math.min(60, s.statistics.schemeUsed * 1.5) + s.story.hiddenGoals.length * 12 + Object.keys(s.intel).length * 2,
       reqLotus: st.pureAura >= 70 && st.globalSuspicion < 40 && st.clubSupport >= 40 && s.statistics.schemeUsed <= 10,
       reqQueen: st.clubSupport >= 55 && (s.story.flags.won_club_support_vote || st.clubSupport >= 75) && good >= 2,
-      reqSchemer: s.statistics.schemeUsed >= 12 && s.story.hiddenGoals.length >= 2
+      reqSchemer: s.statistics.schemeUsed >= 25 && s.story.hiddenGoals.length >= 3
     };
   },
   evaluateEnding() {
@@ -2432,6 +2539,8 @@ const Ending = {
     const cands = [["lotus", sc.lotus, sc.reqLotus], ["queen", sc.queen, sc.reqQueen], ["schemer", sc.schemer, sc.reqSchemer]];
     const ok = cands.filter(c => c[2]).sort((a, b) => b[1] - a[1]);
     if (ok.length) return ok[0][0];
+    // 都未達門檻：社團支持 50 以上歸社交女王，否則取分數最高者
+    if (s.status.clubSupport >= 50) return "queen";
     return cands.sort((a, b) => b[1] - a[1])[0][0];
   },
   getEndingResult() { return State.get().ending; },
@@ -2587,24 +2696,47 @@ const UI = {
   onAction(k) {
     if (this.isLocked()) return;
     Sfx.play("click");
-    if (k === "end") { const s = State.get(); if (s.calendar.remainingActions > 0 && !confirmInline()) return; return Schedule.endDay(); }
+    if (k === "end") {
+      const s = State.get();
+      if (s.calendar.remainingActions <= 0) return Schedule.endDay();
+      return this.modal("提早結束今天？", `<p>今天還有 <b>${s.calendar.remainingActions}</b> 次行動沒有使用，結束後就會直接進入夜晚。</p>`, { small: true, foot: [{ t: "取消", fn: m => m.remove() }, { t: "結束今天", cls: "primary", fn: m => { m.remove(); Schedule.endDay(); } }] });
+    }
     if (ACTIONS[k].needTarget) return this.openTargetPicker(k);
     Schedule.executeDailyAction(k);
-    function confirmInline() { return true; }
   },
-  renderSide() {
-    const s = State.get(), el = $("#side"); if (!el) return;
-    const tabs = [["quest", "任務"], ["intel", "情報"], ["log", "紀錄"]];
-    let body = "";
-    if (this.sideTab === "quest") {
+  journalTabs: [["quest", "主線"], ["side", "支線"], ["intel", "情報"], ["log", "紀錄"], ["hidden", "隱藏目標"]],
+  journalBody(tab) {
+    const s = State.get();
+    if (tab === "side") {
+      return `<div class="quest"><p style="margin:0 0 6px">NPC 專屬與條件事件。條件達成後，會在隔天早上觸發。</p><ul style="padding-left:18px;margin:0">${Object.entries(EVENT_INFO).map(([id, [n, h]]) => Events.completed(id) ? `<li class="done">${n}（已完成）</li>` : `<li><b>${n}</b>　<span style="color:var(--ink-l)">${h}</span></li>`).join("")}</ul></div>`;
+    }
+    if (tab === "hidden") {
+      return `<div class="quest"><p style="margin:0 0 6px">腹黑操盤手結局需要完成至少 2 個隱藏目標。</p><ul style="padding-left:18px;margin:0">${HIDDEN_GOALS.map(h => s.story.hiddenGoals.includes(h.id) ? `<li style="color:var(--violet)">✔ ${h.name}：${h.desc}</li>` : `<li style="color:#bba">？？？</li>`).join("")}</ul></div>`;
+    }
+    return this.sideBody(tab);
+  },
+  openJournal(tab = "quest") {
+    const html = `<div class="tabs">${this.journalTabs.map(([k, n]) => `<button data-j="${k}" class="${tab === k ? "on" : ""}">${n}</button>`).join("")}</div><div class="panel" style="box-shadow:none">${this.journalBody(tab)}</div>`;
+    const m = this.modal("日誌", html, {});
+    $$("[data-j]", m).forEach(b => b.onclick = () => this.openJournal(b.dataset.j));
+  },
+  sideBody(tab) {
+    const s = State.get(); let body = "";
+    if (tab === "quest") {
       const sch = Schedule.getWeeklySchedule();
       body = `<div class="quest"><b>主線目標</b><p style="margin:4px 0 8px">第六週結束前，在顧知夏的審判中取得社團核心位置。</p><ul style="padding-left:18px;margin:0">${sch.map(([w, n, d]) => `<li class="${s.calendar.day > d ? "done" : ""}">${w}：${n}（Day ${d}）</li>`).join("")}</ul>
         <p style="margin:10px 0 4px"><b>隱藏目標</b>（腹黑路線）</p><ul style="padding-left:18px;margin:0">${HIDDEN_GOALS.map(h => s.story.hiddenGoals.includes(h.id) ? `<li style="color:var(--violet)">✔ ${h.name}：${h.desc}</li>` : `<li style="color:#bba">？？？</li>`).join("")}</ul>
-        <p style="margin:10px 0 0;font-size:12px;color:var(--ink-l)">社群影響力 ${s.status.socialInfluence}・社團聲望 ${s.status.clubReputation}・天賦點 ${s.player.talentPoints}・卡牌碎片 ${s.player.cardFragments}</p></div>`;
-    } else if (this.sideTab === "intel") {
+        <p style="margin:10px 0 0;font-size:calc(12px * var(--fs));color:var(--ink-l)">社群影響力 ${s.status.socialInfluence}・社團聲望 ${s.status.clubReputation}・天賦點 ${s.player.talentPoints}・卡牌碎片 ${s.player.cardFragments}</p></div>`;
+    } else if (tab === "intel") {
       const own = Intel.owned();
       body = own.length ? own.map(k => `<div class="log-item intel"><b>${INTEL[k].name}</b><br>${INTEL[k].desc}</div>`).join("") : `<p class="quest">還沒有掌握任何情報。試試「蒐集情報」或和大家多聊聊。</p>`;
     } else body = s.log.slice(0, 60).map(l => `<div class="log-item ${l.kind}"><span class="d">D${l.day}</span>${Utils.esc(l.text)}</div>`).join("") || `<p class="quest">尚無紀錄</p>`;
+    return body;
+  },
+  renderSide() {
+    const s = State.get(), el = $("#side"); if (!el) return;
+    const tabs = [["quest", "任務"], ["side", "支線"], ["intel", "情報"], ["log", "紀錄"]];
+    const body = this.sideTab === "side" ? this.journalBody("side") : this.sideBody(this.sideTab);
     el.innerHTML = `<div class="side-tabs">${tabs.map(([k, n]) => `<button class="${this.sideTab === k ? "on" : ""}" data-t="${k}">${n}</button>`).join("")}</div>${body}`;
     $$("#side .side-tabs button").forEach(b => b.onclick = () => { this.sideTab = b.dataset.t; this.renderSide(); });
   },
@@ -2614,7 +2746,7 @@ const UI = {
     const next = Schedule.getWeeklySchedule().find(([, , d]) => d >= s.calendar.day);
     $("#brief").innerHTML = `<div class="title">第 ${s.calendar.week} 週・${WEEK_THEMES[s.calendar.week]}</div>
       ${next ? `<div>下一個主線：<b>${next[1]}</b>（${next[2] === s.calendar.day ? "今天" : `還有 ${next[2] - s.calendar.day} 天`}）</div>` : ""}
-      ${news.length ? `<div style="font-size:13px;color:var(--ink-l);margin-top:4px">昨日動態：${news.map(n => Utils.esc(n.t)).join("／")}</div>` : ""}`;
+      ${news.length ? `<div style="font-size:calc(13px * var(--fs));color:var(--ink-l);margin-top:4px">昨日動態：${news.map(n => Utils.esc(n.t)).join("／")}</div>` : ""}`;
     const who = Utils.pick(NPC_IDS);
     $("#scenePortrait").outerHTML = this.imgTag(who, "portrait", `id="scenePortrait"`);
   },
@@ -2769,7 +2901,7 @@ const UI = {
         <div style="display:flex;gap:6px;margin-bottom:8px;flex-wrap:wrap">${t.samples.map(x => `<button class="btn sm" data-s="${Utils.esc(x)}">${Utils.esc(x.slice(0, 12))}…</button>`).join("")}</div>
         <b>誰可以看到</b><div class="opt-grid">${Object.entries(VISIBILITY).map(([k, v]) => `<button data-v="${k}" class="${st.vis === k ? "on" : ""}">${v}</button>`).join("")}</div>
         ${st.vis === "only" || st.vis === "exclude" ? `<div class="npc-pick">${NPC_IDS.map(id => `<button data-n="${id}" class="${st.targets.includes(id) ? "on" : ""}">${this.ava(id)}${NPCS[id].name}</button>`).join("")}</div>` : ""}
-        <p style="font-size:12px;color:var(--ink-l)">提示：敏銳的人比較容易察覺可疑動態；被排除的人仍可能透過朋友截圖看到。${st.vis === "friends" ? "（好感 30 以上才算好友）" : ""}</p></div>`;
+        <p style="font-size:calc(12px * var(--fs));color:var(--ink-l)">提示：敏銳的人比較容易察覺可疑動態；被排除的人仍可能透過朋友截圖看到。${st.vis === "friends" ? "（好感 30 以上才算好友）" : ""}</p></div>`;
     };
     const m = this.modal("發布動態", draw(), { small: true, foot: [{ t: "取消", fn: mm => { mm.remove(); State.get().player.energy += 0; cb(false); } }, { t: "發布", cls: "primary", fn: mm => {
       if ((st.vis === "only" || st.vis === "exclude") && !st.targets.length) { this.toast("請選擇指定的 NPC", "bad"); return; }
@@ -2792,13 +2924,13 @@ const UI = {
   },
   openSocial(tab = "feed") {
     const s = State.get();
-    const feed = () => s.social.posts.length ? s.social.posts.map(p => `<div class="post"><div class="who">${this.ava("player")}${Utils.esc(s.player.nickname || s.player.name)}<span class="chip">${POST_TYPES[p.type].name}</span><span style="margin-left:auto;font-size:11px;color:var(--ink-l)">Day ${p.day}</span></div>
+    const feed = () => s.social.posts.length ? s.social.posts.map(p => `<div class="post"><div class="who">${this.ava("player")}${Utils.esc(s.player.nickname || s.player.name)}<span class="chip">${POST_TYPES[p.type].name}</span><span style="margin-left:auto;font-size:calc(11px * var(--fs));color:var(--ink-l)">Day ${p.day}</span></div>
       <div class="txt">${Utils.esc(p.text)}</div><div class="meta"><span>♡ ${p.likes.length}${p.likes.length ? "（" + p.likes.map(i => NPCS[i].name).join("、") + "）" : ""}</span><span>${VISIBILITY[p.visibility]}${p.targets.length ? "：" + p.targets.map(i => NPCS[i].name).join("、") : ""}</span>${p.leaked ? `<span class="leaked">截圖外流</span>` : ""}</div>
       ${p.comments.map(c => `<div class="cm"><b>${NPCS[c.id].name}</b>：${Utils.esc(c.t)}</div>`).join("")}</div>`).join("") : `<p style="padding:20px;text-align:center;color:var(--ink-l)">還沒有發過動態。使用「經營社群」行動來發文吧！</p>`;
-    const dms = () => NPC_IDS.map(id => { const last = [...s.social.messages].reverse().find(m => m.npc === id); return `<div class="dm-row" data-dm="${id}">${this.ava(id)}<div><b>${NPCS[id].name}</b><div style="font-size:12px;color:var(--ink-l)">${last ? Utils.esc(last.reply) : "傳個訊息吧"}</div></div>${s.npcRelations[id].dmDay === s.calendar.day ? `<span class="chip" style="margin-left:auto">今日已聊</span>` : ""}</div>`; }).join("");
-    const friends = () => `<div style="padding:12px"><p>追蹤者：<b>${Social.followers()}</b>　社群影響力：<b>${s.status.socialInfluence}</b></p>${NPC_IDS.map(id => `<div class="dm-row">${this.ava(id)}<div><b>${NPCS[id].name}</b><div style="font-size:12px;color:var(--ink-l)">${s.npcRelations[id].favor >= 30 ? "好友" : "追蹤中（非好友）"}・${NPCS[id].role}</div></div></div>`).join("")}</div>`;
-    const html = `<div class="phone"><div class="phone-top"><span>Starlit</span><span style="font-size:12px">@${Utils.esc(s.player.nickname || s.player.name)}</span></div>
-      <div class="phone-tabs"><button data-pt="feed" class="${tab === "feed" ? "on" : ""}">動態</button><button data-pt="dm" class="${tab === "dm" ? "on" : ""}">私訊</button><button data-pt="friends" class="${tab === "friends" ? "on" : ""}">好友</button></div>
+    const dms = () => NPC_IDS.map(id => { const last = [...s.social.messages].reverse().find(m => m.npc === id); return `<div class="dm-row" data-dm="${id}">${this.ava(id)}<div><b>${NPCS[id].name}</b><div style="font-size:calc(12px * var(--fs));color:var(--ink-l)">${last ? Utils.esc(last.reply) : "傳個訊息吧"}</div></div>${s.npcRelations[id].dmDay === s.calendar.day ? `<span class="chip" style="margin-left:auto">今日已聊</span>` : ""}</div>`; }).join("");
+    const friends = () => `<div style="padding:12px"><p>追蹤者：<b>${Social.followers()}</b>　社群影響力：<b>${s.status.socialInfluence}</b></p>${NPC_IDS.map(id => `<div class="dm-row">${this.ava(id)}<div><b>${NPCS[id].name}</b><div style="font-size:calc(12px * var(--fs));color:var(--ink-l)">${s.npcRelations[id].favor >= 30 ? "好友" : "追蹤中（非好友）"}・${NPCS[id].role}</div></div></div>`).join("")}</div>`;
+    const html = `<div class="phone"><div class="phone-top"><span>Starlit</span><span style="font-size:calc(12px * var(--fs))">@${Utils.esc(s.player.nickname || s.player.name)}</span></div>
+      <div class="phone-tabs" data-left="${Math.max(0, Social.dmLeft())}"><button data-pt="feed" class="${tab === "feed" ? "on" : ""}">動態</button><button data-pt="dm" class="${tab === "dm" ? "on" : ""}">私訊（剩 ${Math.max(0, Social.dmLeft())}）</button><button data-pt="friends" class="${tab === "friends" ? "on" : ""}">好友</button></div>
       <div class="phone-body">${tab === "feed" ? feed() : tab === "dm" ? dms() : friends()}</div></div>`;
     const m = this.modal("社群", html, {});
     $$("[data-pt]", m).forEach(b => b.onclick = () => this.openSocial(b.dataset.pt));
@@ -2806,9 +2938,9 @@ const UI = {
   },
   openDM(id) {
     const s = State.get(), msgs = s.social.messages.filter(m => m.npc === id).slice(-8);
-    const done = s.npcRelations[id].dmDay === s.calendar.day;
+    const done = s.npcRelations[id].dmDay === s.calendar.day || Social.dmLeft() <= 0;
     const html = `<div class="phone"><div class="phone-top"><button class="btn sm ghost" id="dmBack">‹</button><span>${NPCS[id].name}</span><span></span></div>
-      <div class="phone-body">${msgs.map(m => `<div class="bubble me">${Utils.esc(m.out)}</div><div class="bubble them">${Utils.esc(m.reply)}</div>`).join("") || `<p style="text-align:center;color:var(--ink-l);padding:20px">（私訊不消耗行動，每人每天一次）</p>`}</div>
+      <div class="phone-body">${msgs.map(m => `<div class="bubble me">${Utils.esc(m.out)}</div><div class="bubble them">${Utils.esc(m.reply)}</div>`).join("") || `<p style="text-align:center;color:var(--ink-l);padding:20px">（私訊不消耗行動。每天可私訊 ${Social.dmLimit()} 人，每人一次）</p>`}<p style="text-align:center;font-size:calc(12px * var(--fs));color:var(--ink-l)">今天剩餘私訊：${Math.max(0, Social.dmLeft())} 次</p></div>
       <div style="padding:8px;display:flex;flex-direction:column;gap:6px;border-top:1px solid #f0dce6">${DM_OPTIONS.map(o => `<button class="btn sm" data-o="${o.id}" ${done ? "disabled" : ""}>${o.text}</button>`).join("")}</div></div>`;
     const m = this.modal("私訊", html, {});
     $("#dmBack", m).onclick = () => this.openSocial("dm");
@@ -2827,14 +2959,14 @@ const UI = {
     const giftInv = Object.keys(GIFTS).filter(g => s.player.items[g] > 0);
     const html = `<div class="npc-tabs">${NPC_IDS.map(k => `<button data-n="${k}" class="${k === id ? "on" : ""}">${this.ava(k)}${NPCS[k].name}</button>`).join("")}</div>
       <div class="npc-detail"><div>${this.imgTag(id)}</div><div>
-        <div class="box"><h4>${n.name}（${n.age}）・${n.role}</h4><p style="margin:0 0 6px;font-size:13px">${n.traits}</p><p style="margin:0;font-size:13px;color:var(--ink-l)">${n.bio}</p></div>
+        <div class="box"><h4>${n.name}（${n.age}）・${n.role}</h4><p style="margin:0 0 6px;font-size:calc(13px * var(--fs))">${n.traits}</p><p style="margin:0;font-size:calc(13px * var(--fs));color:var(--ink-l)">${n.bio}</p></div>
         <div class="box">${meter("好感度", r.favor, "linear-gradient(90deg,#ffc1d8,#f48fb1)")}${meter("信任度", r.trust, "linear-gradient(90deg,#c9e7ff,#7aa7e8)")}
           ${meter("懷疑度　" + Status.suspicionLabel(r.suspicion), r.suspicion, "linear-gradient(90deg,#ffd28a,#e0476b)", showSus)}
-          <p style="font-size:12px;margin:4px 0 0">情緒：${Status.emotionLabel(r.emotion)}${r.exposed ? `　<b style="color:var(--bad)">已拆穿妳</b>` : ""}${!showSus ? "　（信任 50 以上或掌握其情報才能看清懷疑度）" : ""}</p></div>
+          <p style="font-size:calc(12px * var(--fs));margin:4px 0 0">情緒：${Status.emotionLabel(r.emotion)}${r.exposed ? `　<b style="color:var(--bad)">已拆穿妳</b>` : ""}${!showSus ? "　（信任 50 以上或掌握其情報才能看清懷疑度）" : ""}</p></div>
         <div class="box"><h4>人際網</h4>${rels}</div>
-        <div class="box"><h4>已解鎖情報</h4>${intel.length ? `<ul class="intel-list">${intel.map(k => `<li><b>${INTEL[k].name}</b>：${INTEL[k].desc}</li>`).join("")}</ul>` : `<span style="font-size:13px;color:var(--ink-l)">尚無</span>`}</div>
-        <div class="box"><h4>最近互動紀錄（她/他記得的事）</h4>${mems.length ? `<ul class="mem-list">${mems.map(m => `<li>D${m.day}：${Memory.labels[m.type] || m.type}${m.major ? "（深刻）" : ""}</li>`).join("")}</ul>` : `<span style="font-size:13px;color:var(--ink-l)">還沒有特別的回憶</span>`}</div>
-        <div class="box"><h4>送禮</h4>${giftInv.length ? giftInv.map(g => `<button class="btn sm" data-g="${g}">${GIFTS[g].name} ×${s.player.items[g]}</button>`).join(" ") : `<span style="font-size:13px;color:var(--ink-l)">沒有禮物，可在商店購買（喜歡的禮物：${GIFTS[n.gift].name}）</span>`}<p style="font-size:12px;margin:4px 0 0;color:var(--ink-l)">每人每週一次，送錯禮物效果較低。</p></div>
+        <div class="box"><h4>已解鎖情報</h4>${intel.length ? `<ul class="intel-list">${intel.map(k => `<li><b>${INTEL[k].name}</b>：${INTEL[k].desc}</li>`).join("")}</ul>` : `<span style="font-size:calc(13px * var(--fs));color:var(--ink-l)">尚無</span>`}</div>
+        <div class="box"><h4>最近互動紀錄（她/他記得的事）</h4>${mems.length ? `<ul class="mem-list">${mems.map(m => `<li>D${m.day}：${Memory.labels[m.type] || m.type}${m.major ? "（深刻）" : ""}</li>`).join("")}</ul>` : `<span style="font-size:calc(13px * var(--fs));color:var(--ink-l)">還沒有特別的回憶</span>`}</div>
+        <div class="box"><h4>送禮</h4>${giftInv.length ? giftInv.map(g => `<button class="btn sm" data-g="${g}">${GIFTS[g].name} ×${s.player.items[g]}</button>`).join(" ") : `<span style="font-size:calc(13px * var(--fs));color:var(--ink-l)">沒有禮物，可在商店購買（喜歡的禮物：${GIFTS[n.gift].name}）</span>`}<p style="font-size:calc(12px * var(--fs));margin:4px 0 0;color:var(--ink-l)">每人每週一次，送錯禮物效果較低。</p></div>
       </div></div>`;
     const m = this.modal("人際關係", html, {});
     $$("[data-n]", m).forEach(b => b.onclick = () => this.openNPC(b.dataset.n));
@@ -2848,14 +2980,14 @@ const UI = {
     const deck = inGame ? s.deck.activeDeck : [];
     const list = CARDS.filter(c => filter === "ALL" || c.type === filter || c.rarity === filter);
     const html = `<div class="tabs">${[["ALL", "全部"], ["WHITE_LOTUS", "白蓮"], ["BACKSTAB", "背刺"], ["TEA_TALK", "茶語"], ["SPECIAL", "禁術"], ["SR", "SR"], ["SSR", "SSR"]].map(([k, n]) => `<button data-f="${k}" class="${filter === k ? "on" : ""}">${n}</button>`).join("")}</div>
-      ${inGame ? `<p style="margin:0 0 10px;font-size:13px">牌組 <b>${deck.length}</b> / ${CONFIG.deckMax}（至少 ${CONFIG.deckMin}）　卡牌碎片 <b>${s.player.cardFragments}</b>　金幣 <b>${s.player.gold}</b>　｜　綠框 = 在牌組中。點卡片查看詳情、升級、加入／移出牌組。</p>` : ""}
+      ${inGame ? `<p style="margin:0 0 10px;font-size:calc(13px * var(--fs))">牌組 <b>${deck.length}</b> / ${CONFIG.deckMax}（至少 ${CONFIG.deckMin}）　卡牌碎片 <b>${s.player.cardFragments}</b>　金幣 <b>${s.player.gold}</b>　｜　綠框 = 在牌組中。點卡片查看詳情、升級、加入／移出牌組。</p>` : ""}
       <div class="grid-cards">${list.map(c => this.cardHTML(c.id, { cls: (deck.includes(c.id) ? "indeck " : "") + (coll.includes(c.id) ? "" : "locked") })).join("")}</div><div id="cardInfo" style="margin-top:12px"></div>`;
     const m = this.modal("卡牌收藏", html, {});
     $$("[data-f]", m).forEach(b => b.onclick = () => this.openCards(b.dataset.f));
     $$(".grid-cards .card", m).forEach(el => el.onclick = () => {
       const id = el.dataset.card, c = CARD_MAP[id], owned = coll.includes(id), lv = inGame ? Cards.level(id) : 1, nx = CONFIG.upgradeCost[lv + 1];
       $("#cardInfo", m).innerHTML = `<div class="box"><h4>${c.name}（${CARD_TYPES[c.type]}・${c.rarity}・Lv.${lv}）</h4><p style="margin:0">${c.desc}</p><p style="margin:4px 0;color:var(--crimson)">內心：${c.inner}</p>
-        <p style="font-size:12px;margin:0">標籤：${c.tags.map(t => TAG_NAMES[t]).join("、")}　心機消耗：${Cards.costOf ? (inGame ? Cards.costOf(id) : c.cost) : c.cost}　Lv.2 效果 +20%／Lv.3 效果 +40% 並解鎖特殊效果（白蓮卡額外 -5 懷疑；其他卡心機消耗 -1）</p>
+        <p style="font-size:calc(12px * var(--fs));margin:0">標籤：${c.tags.map(t => TAG_NAMES[t]).join("、")}　心機消耗：${Cards.costOf ? (inGame ? Cards.costOf(id) : c.cost) : c.cost}　Lv.2 效果 +20%／Lv.3 效果 +40% 並解鎖特殊效果（白蓮卡額外 -5 懷疑，且每場戰鬥第一次使用時鑑茶警報 -2；其他卡心機消耗 -1）</p>
         ${!owned ? `<p style="color:var(--bad)">尚未取得${c.special ? "（需要天賦「雙面人生」）" : ""}</p>` : inGame ? `<div style="display:flex;gap:8px;margin-top:8px;flex-wrap:wrap"><button class="btn sm" id="tgl">${deck.includes(id) ? "移出牌組" : "加入牌組"}</button>${lv < 3 ? `<button class="btn sm primary" id="upg">升級至 Lv.${lv + 1}（碎片 ${nx.frag}・金幣 ${nx.gold}）</button>` : `<span class="chip">已滿級</span>`}</div>` : ""}</div>`;
       const t = $("#tgl", m); if (t) t.onclick = () => { Cards.toggleInDeck(id); this.openCards(filter); };
       const u = $("#upg", m); if (u) u.onclick = () => { if (Cards.upgradeCard(id)) { this.refresh(); this.openCards(filter); } };
@@ -2874,7 +3006,7 @@ const UI = {
   /* ---------- 商店 ---------- */
   openShop() {
     const s = State.get(), inv = s.player.items;
-    const row = (k, it, gift) => `<div class="box" style="display:flex;align-items:center;gap:10px"><div style="flex:1"><b>${it.name}</b>　<span style="font-size:12px;color:var(--ink-l)">${gift ? `${NPCS[it.npc].name}最愛・${Object.entries(it.fx).map(([a, b]) => (a === "favor" ? "好感" : "信任") + "+" + b).join(" ")}` : it.desc}</span><br><small>持有 ${inv[k] || 0}</small></div>
+    const row = (k, it, gift) => `<div class="box" style="display:flex;align-items:center;gap:10px"><div style="flex:1"><b>${it.name}</b>　<span style="font-size:calc(12px * var(--fs));color:var(--ink-l)">${gift ? `${NPCS[it.npc].name}最愛・${Object.entries(it.fx).map(([a, b]) => (a === "favor" ? "好感" : "信任") + "+" + b).join(" ")}` : it.desc}</span><br><small>持有 ${inv[k] || 0}</small></div>
       <button class="btn sm" data-b="${k}">${it.price} 金幣</button>${!gift && inv[k] ? `<button class="btn sm primary" data-u="${k}">使用</button>` : ""}</div>`;
     const html = `<p style="margin-top:0">金幣：<b>${s.player.gold}</b></p><h4 style="font-family:var(--serif);color:var(--pink-d)">禮物（到「人際」介面送出）</h4>${Object.entries(GIFTS).map(([k, g]) => row(k, g, true)).join("")}
       <h4 style="font-family:var(--serif);color:var(--pink-d)">道具</h4>${Object.entries(SHOP_ITEMS).map(([k, g]) => row(k, g, false)).join("")}`;
@@ -2886,9 +3018,9 @@ const UI = {
   /* ---------- 存檔 ---------- */
   openSaves(mode = "save") {
     const inGame = !!State.get() && !$("#game").classList.contains("hidden");
-    const slot = (k, label) => { const i = Save.info(k); return `<div class="box" style="display:flex;align-items:center;gap:10px"><div style="flex:1"><b>${label}</b><br><small>${i ? `${Utils.esc(i.name)}・${i.persona}・第 ${i.week} 週 Day ${i.day}・${new Date(i.savedAt).toLocaleString()}` : "空"}</small></div>
-      ${mode === "save" && k !== "auto" && k !== "checkpoint" ? `<button class="btn sm primary" data-s="${k}">存檔</button>` : ""}${i ? `<button class="btn sm" data-l="${k}">讀取</button>` : ""}${i && k !== "checkpoint" && k !== "auto" ? `<button class="btn sm ghost" data-d="${k}">刪除</button>` : ""}</div>`; };
-    const html = `${slot("auto", "自動存檔")}${slot("checkpoint", "章節節點備份（每週開始）")}${[0, 1, 2].map(i => slot(i, "手動存檔 " + (i + 1))).join("")}
+    const slot = (k, label) => { const i = Save.info(k); return `<div class="box" style="display:flex;align-items:center;gap:10px"><div style="flex:1"><b>${label}</b><br><small>${i ? `${Utils.esc(i.name)}・${i.persona}・第 ${i.week} 週 Day ${i.day}・${new Date(i.savedAt).toLocaleString()}${i.ver ? "・v" + i.ver : ""}` : "空"}</small></div>
+      ${mode === "save" && k !== "auto" && k !== "checkpoint" ? `<button class="btn sm primary" data-s="${k}">存檔</button>` : ""}${i ? `<button class="btn sm" data-l="${k}">讀取</button>` : ""}${i && k !== "checkpoint" && k !== "auto" && k !== "prev" ? `<button class="btn sm ghost" data-d="${k}">刪除</button>` : ""}</div>`; };
+    const html = `${slot("auto", "自動存檔")}${slot("prev", "上一份自動存檔（備份）")}${slot("checkpoint", "章節節點備份（每週開始）")}${[0, 1, 2].map(i => slot(i, "手動存檔 " + (i + 1))).join("")}
       <div style="display:flex;gap:8px;flex-wrap:wrap">${inGame ? `<button class="btn sm" id="exp">匯出 JSON 備份</button>` : ""}<label class="btn sm" style="cursor:pointer">匯入 JSON 備份<input type="file" id="imp" accept=".json,application/json" hidden></label></div>`;
     const m = this.modal(mode === "save" ? "存檔／讀檔" : "讀取存檔", html, {});
     $$("[data-s]", m).forEach(b => b.onclick = () => { if (Save.saveGame(+b.dataset.s)) { this.toast("存檔成功"); this.openSaves(mode); } });
@@ -2912,18 +3044,25 @@ const UI = {
   },
   openSettings() {
     const st = Save.settings();
-    const m = this.modal("設定", `<label class="box" style="display:flex;justify-content:space-between;align-items:center">音效 <input type="checkbox" id="sSnd" ${st.sound ? "checked" : ""}></label>
-      <div class="box"><b>遊戲說明</b><p style="font-size:13px;margin:6px 0 0">每天兩次行動。好感與信任分開計算；「個別懷疑」是每個人對妳的戒心（80 開始調查、100 拆穿），「鑑茶警報」是整個社交圈的風聲（100 直接 Game Over）。戰鬥中看清 NPC 的意圖，用對標籤的卡牌提升氣氛。私下行動比公開行動安全，顧知夏在場時一切可疑行為都會被放大。</p></div>
+    const fsOpts = [["small", "小"], ["normal", "標準"], ["large", "大"], ["xlarge", "特大"]];
+    const m = this.modal("設定", `<div class="box"><b>字體大小</b><div class="opt-grid" style="grid-template-columns:repeat(4,1fr);margin:8px 0 6px">${fsOpts.map(([k, n]) => `<button data-fs="${k}" class="${st.fontScale === k ? "on" : ""}">${n}</button>`).join("")}</div><p style="margin:0;color:var(--ink-l)">預覽：「我只是想幫忙而已嘛……」</p></div>
+      <label class="box" style="display:flex;justify-content:space-between;align-items:center">音效 <input type="checkbox" id="sSnd" ${st.sound ? "checked" : ""}></label>
+      <div class="box"><b>遊戲說明</b><p style="font-size:calc(13px * var(--fs));margin:6px 0 0">每天兩次行動。好感與信任分開計算；「個別懷疑」是每個人對妳的戒心（80 開始調查、100 拆穿），「鑑茶警報」是整個社交圈的風聲（100 直接 Game Over）。戰鬥中看清 NPC 的意圖，用對標籤的卡牌提升氣氛。私下行動比公開行動安全，顧知夏在場時一切可疑行為都會被放大。</p></div>
       <button class="btn sm ghost" id="sReset">清除所有資料（存檔、成就、圖鑑）</button>`, { small: true });
     $("#sSnd", m).onchange = e => { st.sound = e.target.checked; Save.saveSettings(st); };
+    $$("[data-fs]", m).forEach(b => b.onclick = () => { st.fontScale = b.dataset.fs; Save.saveSettings(st); this.applyFontScale(); this.openSettings(); });
     $("#sReset", m).onclick = () => { if ($("#sReset", m).dataset.c) { try { Object.keys(localStorage).filter(k => k.startsWith("gts_")).forEach(k => localStorage.removeItem(k)); } catch (e) { } this.toast("已清除所有資料"); m.remove(); this.showTitle(); } else { $("#sReset", m).dataset.c = 1; $("#sReset", m).textContent = "再按一次確認清除"; } };
+  },
+  applyFontScale() {
+    const k = Save.settings().fontScale, v = CONFIG.fontScales[k] || 1;
+    document.documentElement.style.setProperty("--fs", v);
   },
   openMenu() {
     const m = this.modal("選單", `<div class="menu" style="max-width:none">
-      <button class="btn" data-m="npc">人際關係</button><button class="btn" data-m="cards">卡牌收藏／牌組</button><button class="btn" data-m="tal">天賦</button>
+      <button class="btn" data-m="journal">日誌（任務／情報／紀錄）</button><button class="btn" data-m="npc">人際關係</button><button class="btn" data-m="cards">卡牌收藏／牌組</button><button class="btn" data-m="tal">天賦</button>
       <button class="btn" data-m="social">社群</button><button class="btn" data-m="shop">商店</button><button class="btn" data-m="save">存檔／讀檔</button>
       <button class="btn" data-m="ach">成就</button><button class="btn" data-m="set">設定</button><button class="btn ghost" data-m="title">回到主選單</button></div>`, { small: true });
-    $$("[data-m]", m).forEach(b => b.onclick = () => { m.remove(); ({ npc: () => this.openNPC(), cards: () => this.openCards(), tal: () => this.openTalents(), social: () => this.openSocial(), shop: () => this.openShop(), save: () => this.openSaves(), ach: () => this.openAchievements(), set: () => this.openSettings(), title: () => { Save.autoSave(); this.showTitle(); } })[b.dataset.m](); });
+    $$("[data-m]", m).forEach(b => b.onclick = () => { m.remove(); ({ journal: () => this.openJournal(), npc: () => this.openNPC(), cards: () => this.openCards(), tal: () => this.openTalents(), social: () => this.openSocial(), shop: () => this.openShop(), save: () => this.openSaves(), ach: () => this.openAchievements(), set: () => this.openSettings(), title: () => { Save.autoSave(); this.showTitle(); } })[b.dataset.m](); });
   },
 
   /* ---------- 結局 ---------- */
@@ -2957,6 +3096,8 @@ const Game = {
       s.deck.collection = [...new Set([...s.deck.collection, ...(m.collection || [])])].filter(id => CARD_MAP[id]);
       s.deck.cardLevels = { ...(m.cardLevels || {}) }; s.player.talentPoints += 1;
     }
+    const seed = Number.isFinite(opt.seed) ? opt.seed : Number.isFinite(window.__GTS_SEED) ? window.__GTS_SEED : (Date.now() ^ (Math.random() * 1e9)) & 0x7fffffff;
+    s.meta.seed = seed; s.meta.rng = seed;
     s.log = []; GameLog.add(`${s.player.name}（${p.name}）踏入了星光公關社。`);
     UI.showGame(); UI.setBackground("campus"); Schedule.startDay();
   },
@@ -2992,9 +3133,11 @@ document.addEventListener("DOMContentLoaded", () => {
   $("#btnSet").onclick = () => UI.openSettings();
   $("#vn").addEventListener("click", () => UI.vnClick());
   document.addEventListener("keydown", e => { if ((e.key === " " || e.key === "Enter") && !$("#vn").classList.contains("hidden") && !$(".modal")) { e.preventDefault(); UI.vnClick(); } });
-  $$("[data-nav]").forEach(b => b.onclick = () => { if (UI.isLocked() && b.dataset.nav !== "menu") return; ({ npc: () => UI.openNPC(), cards: () => UI.openCards(), tal: () => UI.openTalents(), social: () => UI.openSocial(), shop: () => UI.openShop(), save: () => UI.openSaves(), menu: () => UI.openMenu() })[b.dataset.nav](); });
+  $$("[data-nav]").forEach(b => b.onclick = () => { if (UI.isLocked() && b.dataset.nav !== "menu") return; ({ npc: () => UI.openNPC(), cards: () => UI.openCards(), tal: () => UI.openTalents(), social: () => UI.openSocial(), shop: () => UI.openShop(), save: () => UI.openSaves(), journal: () => UI.openJournal(), menu: () => UI.openMenu() })[b.dataset.nav](); });
   $("#vnSkipLog").onclick = e => { e.stopPropagation(); UI.openNPC(); };
   window.addEventListener("beforeunload", () => { try { if (State.get() && !Battle.active && !Story.cur) Save.autoSave(); } catch (e) { } });
+  $(".ver").textContent = `GDD V1.0・v${CONFIG.gameVersion}`;
+  UI.applyFontScale();
   UI.showTitle();
 });
 
