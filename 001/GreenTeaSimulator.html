@@ -509,6 +509,44 @@ body.flash::before{opacity:1}
 #toasts.anchored{top:auto!important;transform:translateX(-50%);align-items:center}
 @media (max-width:767px){#battle .card{min-height:0}#battle .hand{padding-bottom:12px}}
 
+/* ===== v1.1.3 主選單：有主視覺時的排版、手機橫直向最佳化 ===== */
+#title.has-kv .t-pol{width:clamp(80px,8.2vw,138px)}
+#title.has-kv .t-note{bottom:3%;left:1.5%;width:clamp(160px,13vw,210px)}
+#title.has-kv .t-bg::after{display:none}
+/* 手機橫向（高度不足）：隱藏拍立得與便條，選單改兩欄 */
+@media (max-height:520px) and (orientation:landscape){
+  .t-polaroids,.t-note{display:none!important}
+  .t-hero{height:100%;left:6%}
+  .t-side{top:2.5%;bottom:auto;right:2%;width:46vw;gap:6px}
+  .t-logo-text{font-size:calc(30px * var(--fs));-webkit-text-stroke:1.2px #c2446f}
+  .t-logo img{max-height:22vh}
+  .t-ribbon{font-size:calc(13px * var(--fs));padding:2px 22px;margin-top:2px}
+  .t-menu{display:grid;grid-template-columns:1fr 1fr;gap:6px;width:100%}
+  .t-btn{width:100%;padding:6px 8px;font-size:calc(13px * var(--fs));gap:6px;letter-spacing:.06em}
+  .t-btn.main{grid-column:1 / -1;width:100%;padding:8px;font-size:calc(17px * var(--fs))}
+  .t-bar{right:2%;bottom:2.5%;width:46vw;gap:4px;padding:4px}
+  .t-bar button{flex:1;justify-content:center;padding:5px 2px;font-size:calc(11.5px * var(--fs));gap:4px}
+  .t-top{top:6px;right:auto;left:58px}
+  .t-icon,.t-pill{height:30px;font-size:calc(12px * var(--fs))}
+  .t-icon{width:30px}
+  .t-ver{top:6px}
+  #title .t-bg{background-position:30% center}
+}
+/* 手機直向：主角的臉留在上半部，選單集中在下半部 */
+@media (max-width:767px) and (orientation:portrait){
+  #title.has-kv .t-bg{background-size:auto 62vh,cover;background-position:34% top,center;background-color:#3a1c3c}
+  #title.has-kv .t-bg::before{background:linear-gradient(180deg,transparent 30%,rgba(58,28,60,.55) 50%,#3a1c3c 62%,#2e1430)}
+  .t-side{bottom:10.5%;gap:.9vh}
+  .t-logo-text{font-size:calc(34px * var(--fs))}
+  .t-ribbon{font-size:calc(14px * var(--fs));padding:3px 24px}
+  .t-menu{gap:.8vh}
+  .t-btn{padding:.85vh 12px;font-size:calc(15px * var(--fs))}
+  .t-btn.main{padding:1.2vh 12px;font-size:calc(19px * var(--fs))}
+}
+#scorecard{z-index:140}
+#eScore{animation:scPulse 1.6s ease-in-out infinite}
+@keyframes scPulse{0%,100%{box-shadow:0 0 0 0 rgba(255,140,190,.7)}50%{box-shadow:0 0 0 10px rgba(255,140,190,0)}}
+
 </style>
 </head>
 <body>
@@ -607,7 +645,7 @@ body.flash::before{opacity:1}
  * ============================================================ */
 const CONFIG = {
   schemaVersion: 1,
-  gameVersion: "1.1.2",
+  gameVersion: "1.1.3",
   totalDays: 42,
   actionsPerDay: 2,
   dailyEnergyRegen: 30,
@@ -3029,8 +3067,11 @@ const UI = {
     $("#btnSound").classList.toggle("off", !Save.settings().sound);
     $("#achDot").classList.toggle("hidden", !(m.achievements.length > (m.achSeen || 0)));
     // 主視覺：有 title_bg.jpg 就隱藏備援立繪
-    if (!this._kvChecked) { this._kvChecked = true; const im = new Image(); im.onload = () => $("#title").classList.add("has-kv"); im.src = "assets/title_bg.jpg"; }
-    const pos = [["lin", "6%", "4%", -8], ["xu", "1.5%", "33%", 6], ["chen", "33%", "3%", 7], ["gu", "38%", "33%", -5], ["shen", "24%", "62%", 4]];
+    if (!this._kvChecked) { this._kvChecked = true; const im = new Image(); im.onload = () => { $("#title").classList.add("has-kv"); if (!$("#title").classList.contains("hidden")) this.showTitle(); }; im.src = "assets/title_bg.jpg"; }
+    // 有主視覺時，拍立得縮小靠左排列，不遮住主角的臉
+    const kv = $("#title").classList.contains("has-kv");
+    const pos = kv ? [["lin", "1%", "3%", -7], ["chen", "10%", "7%", 6], ["xu", "1%", "29%", 5], ["gu", "10%", "33%", -5], ["shen", "4.5%", "55%", 3]]
+      : [["lin", "6%", "4%", -8], ["xu", "1.5%", "33%", 6], ["chen", "33%", "3%", 7], ["gu", "38%", "33%", -5], ["shen", "24%", "62%", 4]];
     $("#tPolaroids").innerHTML = pos.map(([id, l, tp, rot]) => `<div class="t-pol" data-npc="${id}" style="left:${l};top:${tp};transform:rotate(${rot}deg)"><div class="ph">${this.imgTag(id)}</div><span>${NPCS[id].name}</span></div>`).join("");
     $$("#tPolaroids .t-pol").forEach(e => e.onclick = () => this.openCharacter(e.dataset.npc));
   },
@@ -3062,7 +3103,7 @@ const UI = {
     const avg = k => h.length ? Math.round(h.reduce((s, x) => s + (x[k] || 0), 0) / h.length) : 0;
     const names = { lotus: "白蓮花女神", queen: "社交女王", schemer: "腹黑操盤手", exposed: "全員鑑茶" };
     const html = `<div class="end-stats" style="color:var(--ink)">${[["通關次數", m.clears || 0], ["已解鎖結局", m.endings.length + "/4"], ["成就", m.achievements.length + "/" + Object.keys(ACHIEVEMENTS).length], ["收藏卡牌", (m.collection || []).length + "/" + CARDS.length], ["平均純潔", avg("aura")], ["平均警報", avg("global")]].map(([a, b]) => `<div style="background:#fff3f8"><b style="color:var(--pink-d)">${b}</b>${a}</div>`).join("")}</div>
-      <div class="box"><h4>最近的通關紀錄</h4>${h.length ? `<table style="width:100%;font-size:calc(13px * var(--fs));border-collapse:collapse">${["<tr><th align=left>日期</th><th align=left>結局</th><th>純潔</th><th>警報</th><th>支持</th><th>心機</th></tr>", ...h.slice().reverse().map(x => `<tr><td>${x.date}</td><td>${names[x.ending]}</td><td align=center>${x.aura}</td><td align=center>${x.global}</td><td align=center>${x.support}</td><td align=center>${x.scheme}</td></tr>`)].join("")}</table>` : "<p style='margin:0'>完成一次結局後，這裡會出現紀錄。</p>"}</div>`;
+      <div class="box"><h4>最近的通關紀錄</h4>${h.length ? `<table style="width:100%;font-size:calc(13px * var(--fs));border-collapse:collapse">${["<tr><th align=left>日期</th><th align=left>結局</th><th>評分</th><th>純潔</th><th>警報</th><th>支持</th><th>心機</th></tr>", ...h.slice().reverse().map(x => `<tr><td>${x.date}</td><td>${names[x.ending]}</td><td align=center><b>${x.grade || "-"}</b></td><td align=center>${x.aura}</td><td align=center>${x.global}</td><td align=center>${x.support}</td><td align=center>${x.scheme}</td></tr>`)].join("")}</table>` : "<p style='margin:0'>完成一次結局後，這裡會出現紀錄。</p>"}</div>`;
     this.modal("數據總覽", html, {});
   },
   openExtras() {
@@ -3522,6 +3563,92 @@ const UI = {
     $$("[data-m]", m).forEach(b => b.onclick = () => { m.remove(); ({ journal: () => this.openJournal(), npc: () => this.openNPC(), cards: () => this.openCards(), tal: () => this.openTalents(), social: () => this.openSocial(), shop: () => this.openShop(), save: () => this.openSaves(), ach: () => this.openAchievements(), set: () => this.openSettings(), title: () => { Save.autoSave(); this.showTitle(); } })[b.dataset.m](); });
   },
 
+  /* ---------- 茶藝評分表 ---------- */
+  teaScore(endingId) {
+    const s = State.get(), st = s.status, R = s.npcRelations, hid = s.story.hiddenGoals.length;
+    const avgFavor = NPC_IDS.reduce((a, id) => a + R[id].favor, 0) / NPC_IDS.length;
+    const exposedCnt = NPC_IDS.filter(id => R[id].exposed).length;
+    const axes = [
+      ["純潔演技", Math.round(st.pureAura)],
+      ["心機手腕", Math.min(100, Math.round(s.statistics.schemeUsed * 2.2 + hid * 8 + Object.keys(s.intel).length * 2))],
+      ["人氣經營", Math.round(st.clubSupport * 0.6 + avgFavor * 0.4)],
+      ["隱匿程度", Math.max(0, Math.round(100 - st.globalSuspicion - exposedCnt * 10))]
+    ];
+    let total = axes.reduce((a, x) => a + x[1], 0) / 4;
+    if (s.story.flags.judgment_perfect) total += 8; else if (s.story.flags.passed_judgment) total += 3;
+    if (endingId === "exposed") total = Math.min(total, 50);
+    total = Math.round(Math.min(100, total));
+    const grade = total >= 90 ? "SS" : total >= 80 ? "S" : total >= 70 ? "A" : total >= 55 ? "B" : total >= 40 ? "C" : "D";
+    const top = axes.slice().sort((a, b) => b[1] - a[1])[0][0];
+    const titles = { "純潔演技": ["人間白蓮花", "清純本純"], "心機手腕": ["茶藝宗師", "暗黑操盤手"], "人氣經營": ["社交天后", "萬人迷本迷"], "隱匿程度": ["無影無蹤", "完美隱形茶"] };
+    const title = endingId === "exposed" ? (total >= 35 ? "差一點就成功的茶" : "翻車現行犯") : titles[top][grade === "SS" || grade === "S" ? 0 : 1];
+    const comments = { SS: "教科書等級的茶藝，連鑑茶女王都只能點頭。", S: "滴水不漏，社團的空氣都在妳的掌握之中。", A: "表現亮眼，只差一點點就能封神。", B: "有模有樣，但破綻還是被人記住了。", C: "茶有點苦，下次記得泡淡一點。", D: "全員鑑茶。綠茶終究會涼。" };
+    const keys = (s.story.choices || []).map(c => STORIES[c.story]?.nodes?.[c.node]?.ch?.[c.choice]).filter(c => c && c.inner).map(c => c.t.replace(/（[^）]*）/g, "").replace(/^【[^】]*】/, "").replace(/^「|」$/g, ""));
+    return { axes, total, grade, title, comment: comments[grade], keys: keys.slice(-3), endingId };
+  },
+  drawScoreCard(sc, withImg = true) {
+    const s = State.get(), W = 1080, H = 1350, cv = document.createElement("canvas"); cv.width = W; cv.height = H;
+    const g = cv.getContext("2d"), F = '"Source Han Sans TC","Noto Sans TC","PingFang TC","Microsoft JhengHei",sans-serif';
+    const bg = g.createLinearGradient(0, 0, W, H); bg.addColorStop(0, "#ffe3ef"); bg.addColorStop(.55, "#e9d6ff"); bg.addColorStop(1, "#5a2a6a");
+    g.fillStyle = bg; g.fillRect(0, 0, W, H);
+    for (let i = 0; i < 26; i++) { g.fillStyle = `rgba(255,255,255,${.15 + Math.random() * .3})`; g.beginPath(); g.ellipse(Math.random() * W, Math.random() * H * .6, 6 + Math.random() * 8, 4 + Math.random() * 5, Math.random() * 3, 0, 7); g.fill(); }
+    const round = (x, y, w, h, r, fill) => { g.beginPath(); g.roundRect(x, y, w, h, r); g.fillStyle = fill; g.fill(); };
+    round(50, 50, W - 100, H - 100, 36, "rgba(255,255,255,.82)");
+    g.textAlign = "center"; g.fillStyle = "#c2446f"; g.font = `900 64px ${F}`; g.fillText("綠茶模擬器・茶藝評分表", W / 2, 150);
+    g.fillStyle = "#8a6a90"; g.font = `500 30px ${F}`; g.fillText(`大學社團篇｜${s.player.name}${s.player.nickname ? "（@" + s.player.nickname + "）" : ""}｜${PERSONAS[s.player.persona].name}`, W / 2, 200);
+    // 等級
+    g.save(); g.translate(250, 390); g.rotate(-.08);
+    round(-150, -130, 300, 260, 40, sc.grade === "D" || sc.grade === "C" ? "#7a6f86" : "#c2446f");
+    g.fillStyle = "#fff"; g.font = `900 ${sc.grade.length > 1 ? 150 : 190}px ${F}`; g.fillText(sc.grade, 0, 65); g.restore();
+    g.textAlign = "left"; g.fillStyle = "#4a3550"; g.font = `900 54px ${F}`; g.fillText(`「${sc.title}」`, 450, 330);
+    g.font = `700 34px ${F}`; g.fillStyle = "#8e3c6a"; g.fillText(`結局：${ENDINGS[sc.endingId].name}`, 460, 395);
+    g.font = `500 30px ${F}`; g.fillStyle = "#5a4a60"; this._wrap(g, sc.comment, 460, 450, 540, 42);
+    g.font = `700 30px ${F}`; g.fillStyle = "#c2446f"; g.fillText(`總分 ${sc.total}`, 460, 560);
+    // 四項能力
+    let y = 640;
+    sc.axes.forEach(([n, v], i) => {
+      g.fillStyle = "#4a3550"; g.font = `700 34px ${F}`; g.textAlign = "left"; g.fillText(n, 110, y + 30);
+      round(290, y + 4, 600, 34, 17, "#f2e4ef"); const gr = g.createLinearGradient(290, 0, 890, 0); gr.addColorStop(0, ["#ffb3cf", "#b388e0", "#ffcf7a", "#8fd3c0"][i]); gr.addColorStop(1, ["#c2446f", "#5b2a86", "#e08a2e", "#3a9a86"][i]);
+      round(290, y + 4, Math.max(34, 600 * v / 100), 34, 17, gr);
+      g.textAlign = "right"; g.fillStyle = "#4a3550"; g.font = `900 34px ${F}`; g.fillText(v, 970, y + 32); y += 64;
+    });
+    // 數據
+    g.textAlign = "center"; const stats = [["到達", "Day " + s.calendar.day], ["鑑茶警報", s.status.globalSuspicion], ["社團支持", s.status.clubSupport], ["隱藏目標", s.story.hiddenGoals.length + "/5"], ["情報", Object.keys(s.intel).length], ["予辰♥若晴", s.story.flags.lin_shen_broke_up ? "分手" : Relations.coupleState().n]];
+    stats.forEach(([k, v], i) => { const x = 110 + (i % 3) * 287, yy = 930 + Math.floor(i / 3) * 110; round(x, yy, 270, 92, 18, "#fff3f8"); g.fillStyle = "#c2446f"; g.font = `900 36px ${F}`; g.fillText(v, x + 135, yy + 46); g.fillStyle = "#8a6a90"; g.font = `500 24px ${F}`; g.fillText(k, x + 135, yy + 78); });
+    // 關鍵抉擇
+    g.textAlign = "left"; g.fillStyle = "#4a3550"; g.font = `900 30px ${F}`; g.fillText("本局最茶的一刻", 110, 1185);
+    g.font = `500 26px ${F}`; g.fillStyle = "#6a4a6a";
+    const k = sc.keys.length ? sc.keys[sc.keys.length - 1] : "這局妳出奇地清白……真的嗎？"; this._wrap(g, "「" + k + "」", 110, 1225, 860, 34, 2);
+    g.textAlign = "center"; g.fillStyle = "#fff"; g.font = `700 26px ${F}`; g.fillText(`#綠茶模擬器　${new Date().toLocaleDateString()}`, W / 2, H - 14);
+    return cv;
+  },
+  _wrap(g, text, x, y, maxW, lh, maxLines = 3) {
+    let line = "", lines = 0;
+    for (const ch of String(text)) { if (g.measureText(line + ch).width > maxW) { g.fillText(line, x, y); y += lh; line = ch; if (++lines >= maxLines - 1) { line = line; } } else line += ch; if (lines >= maxLines) break; }
+    if (line && lines < maxLines) g.fillText(line, x, y);
+  },
+  _recordGrade(sc) { const m = Save.meta(); if (m.history && m.history.length && !m.history[m.history.length - 1].grade) { m.history[m.history.length - 1].grade = sc.grade; Save.saveMeta(m); } },
+  async openScoreCard(endingId) {
+    const sc = this.teaScore(endingId);
+    this._recordGrade(sc);
+    const cv = this.drawScoreCard(sc);
+    let url = ""; try { url = cv.toDataURL("image/png"); } catch (e) { }
+    const text = `我在《綠茶模擬器》大學社團篇拿到「${ENDINGS[endingId].name}」結局，茶藝評分 ${sc.grade}（${sc.total} 分）——稱號「${sc.title}」！純潔 ${sc.axes[0][1]}／心機 ${sc.axes[1][1]}／人氣 ${sc.axes[2][1]}／隱匿 ${sc.axes[3][1]} #綠茶模擬器`;
+    const md = this.modal("茶藝評分表", `<div style="text-align:center"><img src="${url}" style="width:100%;max-width:440px;max-height:68vh;object-fit:contain;border-radius:14px;box-shadow:0 8px 24px rgba(0,0,0,.25)"></div>
+      <div class="modal-foot" style="justify-content:center;border:none"><button class="btn primary" id="scShare">分享</button><button class="btn" id="scSave">下載圖片</button><button class="btn" id="scCopy">複製文字</button></div>`, { id: "scorecard" });
+    const blob = () => new Promise(res => cv.toBlob(res, "image/png"));
+    $("#scSave", md).onclick = () => { const a = document.createElement("a"); a.href = url; a.download = `綠茶模擬器_茶藝評分_${sc.grade}.png`; document.body.appendChild(a); a.click(); a.remove(); this.toast("已下載評分表圖片"); };
+    $("#scCopy", md).onclick = async () => { try { await navigator.clipboard.writeText(text); this.toast("已複製分享文字"); } catch (e) { prompt("複製以下文字：", text); } };
+    $("#scShare", md).onclick = async () => {
+      try {
+        const b = await blob(); const file = new File([b], `tea_score_${sc.grade}.png`, { type: "image/png" });
+        if (navigator.canShare && navigator.canShare({ files: [file] })) await navigator.share({ files: [file], text, title: "綠茶模擬器 茶藝評分表" });
+        else if (navigator.share) await navigator.share({ text, title: "綠茶模擬器 茶藝評分表" });
+        else { $("#scSave", md).click(); this.toast("此瀏覽器不支援直接分享，已改為下載圖片"); }
+      } catch (e) { if (e && e.name !== "AbortError") this.toast("分享失敗，可改用下載圖片", "bad"); }
+    };
+  },
+
   /* ---------- 結局 ---------- */
   showEnding(id) {
     const e = ENDINGS[id], s = State.get(); this.hideDialogue(); this.closeBattle(); this.closeModal();
@@ -3531,9 +3658,11 @@ const UI = {
       <div class="end-sub">ENDING・${e.sub}</div><div class="end-name">${e.name}</div><div class="end-text">${Utils.esc(Utils.fmt(e.t))}</div>
       ${epi.length ? `<div class="end-epi">${epi.map(Utils.esc).join("<br>")}</div>` : ""}
       <div class="end-stats"><div><b>${s.status.pureAura}</b>純潔氣場</div><div><b>${s.status.globalSuspicion}</b>鑑茶警報</div><div><b>${s.status.clubSupport}</b>社團支持</div><div><b>${s.statistics.cardsPlayed}</b>出牌數</div><div><b>${s.statistics.schemeUsed}</b>心機用量</div><div><b>${s.story.hiddenGoals.length}/5</b>隱藏目標</div><div><b>${Object.keys(s.intel).length}</b>情報</div><div><b>Day ${s.calendar.day}</b>到達日</div></div>
-      <div style="display:flex;gap:10px;justify-content:center;flex-wrap:wrap"><button class="btn primary" id="eNG">NG+ 重玩</button><button class="btn" id="eTitle">回到主選單</button></div></div>`;
+      <div style="display:flex;gap:10px;justify-content:center;flex-wrap:wrap"><button class="btn primary" id="eScore">🍵 茶藝評分表</button><button class="btn" id="eNG">NG+ 重玩</button><button class="btn" id="eTitle">回到主選單</button></div></div>`;
     Sfx.play(id === "exposed" ? "bad" : "good");
     $("#eNG").onclick = () => { el.classList.add("hidden"); this.showCreate(true); };
+    $("#eScore").onclick = () => this.openScoreCard(id);
+    this._recordGrade(this.teaScore(id));
     $("#eTitle").onclick = () => { el.classList.add("hidden"); this.showTitle(); };
   }
 };
