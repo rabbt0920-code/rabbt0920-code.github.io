@@ -548,6 +548,18 @@ body.flash::before{opacity:1}
 #eScore{animation:scPulse 1.6s ease-in-out infinite}
 @keyframes scPulse{0%,100%{box-shadow:0 0 0 0 rgba(255,140,190,.7)}50%{box-shadow:0 0 0 10px rgba(255,140,190,0)}}
 .vn-name{z-index:4;white-space:nowrap;line-height:1.5}
+/* v1.1.5 圖片 Logo（含副標緞帶）尺寸 */
+.t-logo.has-img img{max-height:24vh;filter:drop-shadow(0 6px 14px rgba(60,10,40,.35))}
+@media (max-width:767px) and (orientation:portrait){.t-logo.has-img img{max-height:21vh}}
+@media (max-height:520px) and (orientation:landscape){.t-logo.has-img img{max-height:30vh}}
+@media (min-width:768px) and (max-height:900px) and (orientation:landscape){
+  .t-side{top:5%;bottom:13%;gap:1.4vh}
+  .t-menu{gap:.9vh}
+  .t-btn{padding:.95vh 20px}
+  .t-btn.main{padding:1.5vh 20px}
+  .t-logo.has-img img{max-height:21vh}
+}
+@media (max-height:520px) and (orientation:landscape){.t-logo.has-img img{max-height:27vh}}
 
 </style>
 </head>
@@ -649,7 +661,7 @@ body.flash::before{opacity:1}
  * ============================================================ */
 const CONFIG = {
   schemaVersion: 1,
-  gameVersion: "1.1.4",
+  gameVersion: "1.1.5",
   totalDays: 42,
   actionsPerDay: 2,
   dailyEnergyRegen: 30,
@@ -1782,7 +1794,7 @@ const Save = {
   // 跨周目資料（NG+、圖鑑、成就）與本周目存檔分開存放
   meta() { const m = this._read(CONFIG.metaKey); return Object.assign({ endings: [], achievements: [], cardLevels: {}, collection: [], clears: 0 }, m && typeof m === "object" ? m : {}); },
   saveMeta(m) { this._write(CONFIG.metaKey, m); },
-  settings() { return Object.assign({ sound: true, fontScale: "normal" }, this._read(CONFIG.settingsKey) || {}); },
+  settings() { return Object.assign({ sound: true, bgm: true, bgmVol: 50, fontScale: "normal" }, this._read(CONFIG.settingsKey) || {}); },
   saveSettings(st) { this._write(CONFIG.settingsKey, st); }
 };
 
@@ -1812,6 +1824,33 @@ const Sfx = {
       });
     } catch (e) { /* 音效失敗忽略 */ }
   }
+};
+
+/* ---------- 背景音樂（assets/bgm_main.mp3；瀏覽器規定需第一次點擊後才能播放） ---------- */
+const Bgm = {
+  el: null, fadeT: null,
+  init() {
+    try {
+      this.el = new Audio("assets/bgm_main.mp3"); this.el.loop = true; this.el.preload = "auto"; this.el.volume = 0;
+      this.el.addEventListener("error", () => { this.el = null; });
+      const unlock = () => { this.apply(); if (this.el && !this.el.paused) { ["pointerdown", "keydown", "touchend"].forEach(t => document.removeEventListener(t, unlock, true)); } };
+      ["pointerdown", "keydown", "touchend"].forEach(t => document.addEventListener(t, unlock, true));
+      document.addEventListener("visibilitychange", () => { if (!this.el) return; if (document.hidden) this.el.pause(); else this.apply(); });
+    } catch (e) { this.el = null; }
+  },
+  target() { const st = Save.settings(); return Math.max(0, Math.min(1, (st.bgmVol ?? 50) / 100)) * 0.7; },
+  fade(to, ms, done) {
+    clearInterval(this.fadeT); const el = this.el; if (!el) return; const from = el.volume, steps = Math.max(1, Math.round(ms / 50)); let i = 0;
+    this.fadeT = setInterval(() => { i++; el.volume = Math.max(0, Math.min(1, from + (to - from) * i / steps)); if (i >= steps) { clearInterval(this.fadeT); done && done(); } }, 50);
+  },
+  apply() {
+    const el = this.el; if (!el) return;
+    if (Save.settings().bgm && !document.hidden) {
+      if (el.paused) { const p = el.play(); if (p && p.catch) p.catch(() => { }); }
+      this.fade(this.target(), 1200);
+    } else if (!el.paused) this.fade(0, 400, () => el.pause());
+  },
+  setVolume() { if (this.el && !this.el.paused) { clearInterval(this.fadeT); this.el.volume = this.target(); } }
 };
 
 /* ---------- 日誌 ---------- */
@@ -3068,7 +3107,7 @@ const UI = {
     const hasAuto = !!Save.info("auto"); $("#btnContinue").disabled = !hasAuto;
     const m = Save.meta(); $("#btnNGPlus").classList.toggle("hidden", !(m.clears > 0));
     $("#tVer").textContent = "v" + CONFIG.gameVersion;
-    $("#btnSound").classList.toggle("off", !Save.settings().sound);
+    $("#btnSound").classList.toggle("off", !(Save.settings().sound || Save.settings().bgm));
     $("#achDot").classList.toggle("hidden", !(m.achievements.length > (m.achSeen || 0)));
     // 主視覺：有 title_bg.jpg 就隱藏備援立繪
     if (!this._kvChecked) { this._kvChecked = true; const im = new Image(); im.onload = () => { $("#title").classList.add("has-kv"); if (!$("#title").classList.contains("hidden")) this.showTitle(); }; im.src = "assets/title_bg.jpg"; }
@@ -3548,10 +3587,14 @@ const UI = {
     const st = Save.settings();
     const fsOpts = [["small", "小"], ["normal", "標準"], ["large", "大"], ["xlarge", "特大"]];
     const m = this.modal("設定", `<div class="box"><b>字體大小</b><div class="opt-grid" style="grid-template-columns:repeat(4,1fr);margin:8px 0 6px">${fsOpts.map(([k, n]) => `<button data-fs="${k}" class="${st.fontScale === k ? "on" : ""}">${n}</button>`).join("")}</div><p style="margin:0;color:var(--ink-l)">預覽：「我只是想幫忙而已嘛……」</p></div>
+      <div class="box"><label style="display:flex;justify-content:space-between;align-items:center">背景音樂 <input type="checkbox" id="sBgm" ${st.bgm ? "checked" : ""}></label>
+        <div style="display:flex;align-items:center;gap:10px;margin-top:8px"><span style="white-space:nowrap">音量</span><input type="range" id="sBgmVol" min="0" max="100" step="5" value="${st.bgmVol ?? 50}" style="flex:1;accent-color:#c2446f"><b id="sBgmVolN" style="width:2.5em;text-align:right">${st.bgmVol ?? 50}</b></div></div>
       <label class="box" style="display:flex;justify-content:space-between;align-items:center">音效 <input type="checkbox" id="sSnd" ${st.sound ? "checked" : ""}></label>
       <div class="box"><b>遊戲說明</b><p style="font-size:calc(13px * var(--fs));margin:6px 0 0">每天兩次行動。好感與信任分開計算；「個別懷疑」是每個人對妳的戒心（80 開始調查、100 拆穿），「鑑茶警報」是整個社交圈的風聲（100 直接 Game Over）。戰鬥中看清 NPC 的意圖，用對標籤的卡牌提升氣氛。私下行動比公開行動安全，顧知夏在場時一切可疑行為都會被放大。</p></div>
       <button class="btn sm ghost" id="sReset">清除所有資料（存檔、成就、圖鑑）</button>`, { small: true });
     $("#sSnd", m).onchange = e => { st.sound = e.target.checked; Save.saveSettings(st); };
+    $("#sBgm", m).onchange = e => { st.bgm = e.target.checked; Save.saveSettings(st); Bgm.apply(); };
+    $("#sBgmVol", m).oninput = e => { st.bgmVol = +e.target.value; $("#sBgmVolN", m).textContent = st.bgmVol; Save.saveSettings(st); Bgm.setVolume(); };
     $$("[data-fs]", m).forEach(b => b.onclick = () => { st.fontScale = b.dataset.fs; Save.saveSettings(st); this.applyFontScale(); this.openSettings(); });
     $("#sReset", m).onclick = () => { if ($("#sReset", m).dataset.c) { try { Object.keys(localStorage).filter(k => k.startsWith("gts_")).forEach(k => localStorage.removeItem(k)); } catch (e) { } this.toast("已清除所有資料"); m.remove(); this.showTitle(); } else { $("#sReset", m).dataset.c = 1; $("#sReset", m).textContent = "再按一次確認清除"; } };
   },
@@ -3722,7 +3765,8 @@ document.addEventListener("DOMContentLoaded", () => {
   $("#btnStats").onclick = () => UI.openStats();
   $("#btnExtra").onclick = () => UI.openExtras();
   $("#btnHelp").onclick = () => UI.openHelp();
-  $("#btnSound").onclick = () => { const st = Save.settings(); st.sound = !st.sound; Save.saveSettings(st); $("#btnSound").classList.toggle("off", !st.sound); };
+  $("#btnSound").onclick = () => { const st = Save.settings(); const on = !(st.sound || st.bgm); st.sound = st.bgm = on; Save.saveSettings(st); $("#btnSound").classList.toggle("off", !on); Bgm.apply(); };
+  Bgm.init();
   $("#btnCards").onclick = () => UI.openCards();
   $("#btnAch").onclick = () => { const m = Save.meta(); m.achSeen = m.achievements.length; Save.saveMeta(m); $("#achDot").classList.add("hidden"); UI.openAchievements(); };
   $("#btnSet").onclick = () => UI.openSettings();
