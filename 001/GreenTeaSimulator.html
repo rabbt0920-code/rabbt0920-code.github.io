@@ -420,30 +420,126 @@ body.flash::before{opacity:1}
 .inner-pop{padding-top:22px}.inner-pop::before{position:absolute;top:5px;left:20px}
 #battle.boss .foe img{visibility:hidden;flex:1}
 
+/* ===== v1.1.2 主選單 ===== */
+#title{background:#2a1530;display:block;overflow:hidden}
+#title .t-bg{position:absolute;inset:0;background:url('assets/title_bg.jpg') center/cover no-repeat,url('assets/bg_clubroom.jpg') center/cover no-repeat;filter:saturate(1.05)}
+#title.has-kv .t-hero{display:none}
+#title:not(.has-kv) .t-bg::after{content:"";position:absolute;inset:0;background:linear-gradient(90deg,rgba(255,220,235,.35),rgba(60,20,70,.15) 55%,rgba(40,10,50,.55))}
+#title .t-bg::before{content:"";position:absolute;inset:0;background:linear-gradient(90deg,transparent 45%,rgba(40,12,48,.45) 70%,rgba(30,8,38,.65));z-index:1}
+.t-hero{position:absolute;left:14%;bottom:0;height:96%;max-width:46vw;object-fit:contain;object-position:bottom;filter:drop-shadow(0 20px 40px rgba(120,40,90,.45));animation:floaty 6s ease-in-out infinite;z-index:2}
+.t-polaroids{position:absolute;inset:0;pointer-events:none;z-index:3}
+.t-pol{position:absolute;width:clamp(96px,10.5vw,170px);background:#fff;padding:7px 7px 22px;box-shadow:0 8px 22px rgba(0,0,0,.35);border-radius:3px;pointer-events:auto;transition:transform .25s;cursor:pointer}
+.t-pol:hover{transform:rotate(0deg) scale(1.08)!important;z-index:5}
+.t-pol .ph{aspect-ratio:1/1;overflow:hidden;background:#f3e6f0}
+.t-pol img{width:100%;height:auto;transform:scale(1.9) translateY(19%)}
+.t-pol span{position:absolute;left:0;right:0;bottom:3px;text-align:center;font-size:calc(11px * var(--fs));color:#8a5a7a;font-weight:700}
+.t-pol::before{content:"";position:absolute;top:-9px;left:50%;width:44px;height:16px;transform:translateX(-50%) rotate(-3deg);background:rgba(255,190,215,.75)}
+.t-note{position:absolute;left:2.5%;bottom:13%;z-index:4;width:clamp(170px,15vw,230px);background:#fff8e6;padding:12px 14px;transform:rotate(-4deg);box-shadow:0 8px 20px rgba(0,0,0,.3);font-size:calc(13.5px * var(--fs));color:#5a3a4a}
+.t-note b{font-size:calc(16px * var(--fs));color:#c2446f}
+.t-note ul{list-style:none;padding:0;margin:6px 0 0}
+.t-note li{margin:4px 0;padding-left:20px;position:relative}
+.t-note li::before{content:"☑";position:absolute;left:0;color:#c2446f}
+.t-note u{text-decoration-color:#e86a92;text-decoration-thickness:2px}
+.t-ver{position:absolute;top:12px;left:16px;z-index:5;color:#fff;font-weight:700;text-shadow:0 1px 4px rgba(0,0,0,.5);font-size:calc(14px * var(--fs))}
+.t-top{position:absolute;top:12px;right:16px;z-index:6;display:flex;gap:8px}
+.t-icon,.t-pill{background:rgba(30,10,36,.55);border:1px solid rgba(255,220,240,.6);color:#fff;border-radius:999px;height:36px;padding:0 14px;font-weight:700;backdrop-filter:blur(4px)}
+.t-icon{width:36px;padding:0}
+.t-icon.off{opacity:.45;text-decoration:line-through}
+.t-side{position:absolute;right:4%;top:7%;bottom:15%;width:min(42vw,560px);z-index:5;display:flex;flex-direction:column;align-items:center;gap:2.2vh}
+.t-logo{position:relative;text-align:center;width:100%}
+.t-logo img{max-width:100%;max-height:26vh;filter:drop-shadow(0 4px 12px rgba(0,0,0,.35))}
+.t-logo.has-img .t-logo-text,.t-logo.has-img .t-ribbon{display:none}
+.t-logo-text{font-family:var(--serif);font-weight:900;font-size:calc(clamp(42px,6vw,88px) * var(--fs));line-height:1.05;color:#fff;letter-spacing:.06em;-webkit-text-stroke:2px #c2446f;text-shadow:0 0 18px rgba(255,150,200,.8),4px 4px 0 #8e3c6a}
+.t-logo-text span{display:block;font-family:"Brush Script MT","Segoe Script",cursive;font-weight:400;font-size:.38em;-webkit-text-stroke:0;color:#ffe3f0;letter-spacing:.04em;text-shadow:0 2px 8px rgba(194,68,111,.9)}
+.t-ribbon{display:inline-block;margin-top:6px;padding:4px 30px;background:linear-gradient(180deg,#fff4e6,#f6d8c6);color:#6b2f4f;font-family:var(--serif);font-weight:900;font-size:calc(clamp(16px,1.7vw,24px) * var(--fs));clip-path:polygon(0 0,100% 0,94% 50%,100% 100%,0 100%,6% 50%);box-shadow:0 3px 8px rgba(0,0,0,.25)}
+.t-menu{display:flex;flex-direction:column;align-items:center;gap:1.3vh;width:100%}
+.t-btn{position:relative;width:min(100%,400px);padding:1.25vh 20px;border-radius:999px;background:linear-gradient(180deg,rgba(84,40,92,.92),rgba(52,22,62,.92));border:1.5px solid #d8a96a;box-shadow:inset 0 0 0 3px rgba(255,220,180,.12),0 4px 12px rgba(0,0,0,.35);color:#fff3f8;font-family:var(--serif);font-weight:700;font-size:calc(clamp(16px,1.55vw,22px) * var(--fs));letter-spacing:.12em;transition:.15s;display:flex;align-items:center;justify-content:center;gap:16px}
+.t-btn i{font-style:normal;width:1.4em;text-align:center;color:#f6c9db}
+.t-btn:hover:not(:disabled){transform:translateY(-2px) scale(1.02);border-color:#ffd59a;box-shadow:0 0 18px rgba(255,170,210,.6)}
+.t-btn:disabled{opacity:.5}
+.t-btn.main{width:min(100%,460px);padding:1.9vh 20px;font-size:calc(clamp(20px,2.1vw,30px) * var(--fs));background:linear-gradient(180deg,#e98ab4,#b84478);border:2px solid #ffd9e8;box-shadow:0 0 0 4px rgba(233,138,180,.35),0 8px 22px rgba(120,20,70,.5)}
+.t-bar{position:absolute;right:2%;bottom:3%;z-index:6;display:flex;gap:10px;background:rgba(40,14,48,.6);padding:8px;border-radius:18px;border:1px solid rgba(216,169,106,.6);backdrop-filter:blur(4px)}
+.t-bar button{position:relative;background:linear-gradient(180deg,rgba(84,40,92,.95),rgba(52,22,62,.95));color:#fff3f8;border:1px solid #b88a5a;border-radius:14px;padding:8px 16px;font-weight:700;font-size:calc(14px * var(--fs));display:flex;align-items:center;gap:8px}
+.t-bar button i{font-style:normal}
+.t-bar button:hover{border-color:#ffd59a}
+.t-dot{position:absolute;top:-6px;right:-4px;background:#e0476b;color:#fff;border-radius:50%;width:18px;height:18px;font-style:normal;font-size:12px;display:grid;place-items:center}
+#title .petals{position:absolute;inset:0;z-index:4;pointer-events:none}
+.cg-thumb{cursor:zoom-in}
+.cg-full{position:fixed;inset:0;z-index:300;background:rgba(0,0,0,.88);display:grid;place-items:center;cursor:zoom-out}
+.cg-full img{max-width:94vw;max-height:90vh;border-radius:10px}
+@media (max-width:1199px){
+  .t-hero{left:2%;max-width:56vw}
+  .t-side{width:48vw;right:2%}
+  .t-note{display:none}
+}
+@media (max-width:767px){
+  #title .t-bg{background-position:30% center}
+  #title .t-bg::before{background:linear-gradient(180deg,rgba(40,12,48,.15) 20%,rgba(30,8,38,.75) 60%)}
+  .t-hero{left:50%;transform:translateX(-50%);height:60%;max-width:none;bottom:auto;top:8%;animation:none}
+  .t-polaroids,.t-note{display:none}
+  .t-side{left:4%;right:4%;width:auto;top:auto;bottom:11%;gap:1.2vh}
+  .t-logo-text{font-size:calc(40px * var(--fs))}
+  .t-logo img{max-height:16vh}
+  .t-btn{padding:1vh 14px;font-size:calc(16px * var(--fs))}
+  .t-btn.main{padding:1.4vh 14px;font-size:calc(20px * var(--fs))}
+  .t-bar{left:3%;right:3%;bottom:1.5%;justify-content:space-between;gap:4px;padding:5px}
+  .t-bar button{flex:1;flex-direction:column;gap:2px;padding:5px 2px;font-size:calc(11px * var(--fs))}
+}
+
+/* ===== v1.1.2 大字體版面修正 ===== */
+.vn-box{max-height:min(62vh,calc(100vh - 90px));overflow-y:auto;overscroll-behavior:contain}
+.vn-next{position:sticky;bottom:-6px;float:right;background:inherit}
+.card{min-height:calc(178px * var(--fs));width:calc(138px * var(--fs));max-width:46vw}
+.hand{flex:none}
+.b-body{min-height:0;overflow:hidden}
+.b-extra .btn{white-space:nowrap}
+.b-side{min-width:0}
+#battle .card-detail{max-height:22vh;overflow:auto;flex:none}
+.side-tabs button,.npc-tabs button{white-space:nowrap}
+@media (max-width:767px){
+  .vn-box{max-height:72vh}
+  .vn-portrait{height:min(70vh,calc(100vh - 260px))}
+  #battle .card{min-height:calc(140px * var(--fs));width:calc(116px * var(--fs))}
+  #battle .card .fx{font-size:calc(10.5px * var(--fs))}
+  .b-body{overflow:auto}
+  #battle .card-detail{max-height:16vh;font-size:calc(12px * var(--fs))}
+  .act b{white-space:nowrap;font-size:calc(12px * var(--fs))}
+}
+/* 提示訊息：有對話框或戰鬥時，浮在對話框／卡牌上方 */
+#toasts.anchored{top:auto!important;transform:translateX(-50%);align-items:center}
+@media (max-width:767px){#battle .card{min-height:0}#battle .hand{padding-bottom:12px}}
+
 </style>
 </head>
 <body>
 <!-- 主選單 -->
 <section id="title" class="screen">
+  <div class="t-bg"></div>
   <div class="petals"></div>
-  <div class="title-wrap">
-    <img class="title-hero" src="assets/char_player.png" alt="" onerror="this.style.display='none'">
-    <div>
-      <div class="logo">綠茶模擬器<small>GREEN TEA SIMULATOR</small></div>
-      <p class="tagline">第一章・大學社團篇——在<b>純潔</b>的偽裝下，拿下社團的核心。</p>
-      <div class="menu">
-        <button class="btn primary" id="btnNew">開始新遊戲</button>
-        <button class="btn hidden" id="btnNGPlus">NG+ 新周目</button>
-        <button class="btn" id="btnContinue">繼續遊戲</button>
-        <button class="btn" id="btnLoad">讀取存檔</button>
-        <button class="btn" id="btnGallery">人物圖鑑</button>
-        <button class="btn" id="btnCards">卡牌收藏</button>
-        <button class="btn" id="btnAch">成就</button>
-        <button class="btn" id="btnSet">設定</button>
-      </div>
+  <img class="t-hero" id="tHero" src="assets/char_player.png" alt="" onerror="this.style.display='none'">
+  <div class="t-polaroids" id="tPolaroids"></div>
+  <div class="t-note"><b>本篇目標 ♡</b><ul><li>成為社團人氣王</li><li>拿下核心企劃位置</li><li>讓競爭對手邊緣化</li><li>在 6 週內<u>不被看穿</u>！</li></ul></div>
+  <div class="t-ver" id="tVer"></div>
+  <div class="t-top"><button class="t-icon" id="btnSound" title="音效開關">♪</button><button class="t-pill" id="btnLoad">存檔讀取 ⟳</button></div>
+  <div class="t-side">
+    <div class="t-logo" id="tLogo"><img id="tLogoImg" src="assets/title_logo.png" alt="綠茶模擬器" onload="document.getElementById('tLogo').classList.add('has-img')" onerror="this.remove()">
+      <div class="t-logo-text">綠茶模擬器<span>Green Tea Simulator</span></div><div class="t-ribbon">大學社團篇 🎓</div></div>
+    <div class="t-menu">
+      <button class="t-btn main" id="btnNew"><i>▶</i>開始遊戲</button>
+      <button class="t-btn hidden" id="btnNGPlus"><i>✦</i>NG+ 新周目</button>
+      <button class="t-btn" id="btnContinue"><i>❐</i>繼續遊戲</button>
+      <button class="t-btn" id="btnStory"><i>❏</i>劇情回顧</button>
+      <button class="t-btn" id="btnCards"><i>♠</i>卡牌圖鑑</button>
+      <button class="t-btn" id="btnGallery"><i>♡</i>角色關係</button>
+      <button class="t-btn" id="btnSet"><i>⚙</i>遊戲設定</button>
     </div>
   </div>
-  <div class="ver"></div>
+  <div class="t-bar">
+    <button id="btnAch"><i>🏆</i>成就<em class="t-dot hidden" id="achDot">!</em></button>
+    <button id="btnStats"><i>▥</i>數據總覽</button>
+    <button id="btnExtra"><i>🎁</i>特典解鎖</button>
+    <button id="btnHelp"><i>?</i>遊戲說明</button>
+  </div>
 </section>
 
 <!-- 角色建立 -->
@@ -511,7 +607,7 @@ body.flash::before{opacity:1}
  * ============================================================ */
 const CONFIG = {
   schemaVersion: 1,
-  gameVersion: "1.1.1",
+  gameVersion: "1.1.2",
   totalDays: 42,
   actionsPerDay: 2,
   dailyEnergyRegen: 30,
@@ -2823,6 +2919,9 @@ const Ending = {
     const m = Save.meta(); if (!m.endings.includes(id)) m.endings.push(id); m.clears++;
     m.collection = [...new Set([...(m.collection || []), ...s.deck.collection])];
     Object.entries(s.deck.cardLevels).forEach(([k, v]) => m.cardLevels[k] = Math.max(m.cardLevels[k] || 1, v));
+    if (s.story.flags.gala_done) m.judgmentSeen = true;
+    (m.history = m.history || []).push({ date: new Date().toLocaleDateString(), ending: id, aura: s.status.pureAura, global: s.status.globalSuspicion, support: s.status.clubSupport, scheme: s.statistics.schemeUsed });
+    if (m.history.length > 20) m.history.shift();
     Save.saveMeta(m);
     try { localStorage.removeItem(CONFIG.autoSaveKey); } catch (e) { }
   },
@@ -2882,8 +2981,18 @@ const UI = {
   },
 
   /* ---------- 共用 ---------- */
+  // 提示訊息定位：對話框或戰鬥畫面出現時，貼在它們上方，不遮住文字與選項
+  placeToasts() {
+    const box = $("#toasts"); if (!box) return;
+    let anchor = null;
+    if (!$("#vn").classList.contains("hidden")) anchor = $("#vnBox");
+    else if (!$("#battle").classList.contains("hidden")) anchor = $("#bDetail");
+    if (anchor) { const r = anchor.getBoundingClientRect(); box.classList.add("anchored"); box.style.bottom = Math.max(8, window.innerHeight - r.top + 10) + "px"; box.style.left = "50%"; }
+    else { box.classList.remove("anchored"); box.style.bottom = ""; box.style.left = ""; }
+  },
   toast(msg, kind = "") {
     if (!msg) return; const box = $("#toasts"); if (!box) return;
+    this.placeToasts();
     const t = document.createElement("div"); t.className = "toast " + kind; t.textContent = msg; box.appendChild(t);
     setTimeout(() => t.remove(), 3600); while (box.children.length > 5) box.firstChild.remove();
   },
@@ -2916,6 +3025,59 @@ const UI = {
     this.show("title"); $("#ending").classList.add("hidden");
     const hasAuto = !!Save.info("auto"); $("#btnContinue").disabled = !hasAuto;
     const m = Save.meta(); $("#btnNGPlus").classList.toggle("hidden", !(m.clears > 0));
+    $("#tVer").textContent = "v" + CONFIG.gameVersion;
+    $("#btnSound").classList.toggle("off", !Save.settings().sound);
+    $("#achDot").classList.toggle("hidden", !(m.achievements.length > (m.achSeen || 0)));
+    // 主視覺：有 title_bg.jpg 就隱藏備援立繪
+    if (!this._kvChecked) { this._kvChecked = true; const im = new Image(); im.onload = () => $("#title").classList.add("has-kv"); im.src = "assets/title_bg.jpg"; }
+    const pos = [["lin", "6%", "4%", -8], ["xu", "1.5%", "33%", 6], ["chen", "33%", "3%", 7], ["gu", "38%", "33%", -5], ["shen", "24%", "62%", 4]];
+    $("#tPolaroids").innerHTML = pos.map(([id, l, tp, rot]) => `<div class="t-pol" data-npc="${id}" style="left:${l};top:${tp};transform:rotate(${rot}deg)"><div class="ph">${this.imgTag(id)}</div><span>${NPCS[id].name}</span></div>`).join("");
+    $$("#tPolaroids .t-pol").forEach(e => e.onclick = () => this.openCharacter(e.dataset.npc));
+  },
+  openCharacter(id) {
+    const n = NPCS[id];
+    const rels = Object.entries(RELATIONSHIPS[id]).map(([k, v]) => `<span class="chip lav">→${NPCS[k].name} ${RELATION_LABELS[id + "-" + k] || RELATION_LABELS[k + "-" + id] || (v >= 70 ? "親近" : v >= 50 ? "普通" : "疏遠")}</span>`).join(" ");
+    this.modal(n.name, `<div class="npc-detail"><div>${this.imgTag(id)}</div><div><div class="box"><h4>${n.name}（${n.age}）・${n.role}</h4><p style="margin:0 0 6px">${n.traits}</p><p style="margin:0;color:var(--ink-l)">${n.bio}</p></div><div class="box"><h4>人際網</h4>${rels}</div>
+      <div class="box"><h4>表情</h4><div style="display:flex;gap:8px">${["normal", "angry", "suspect"].map(ex => `<div style="width:30%;text-align:center">${this.imgTag(id, "", 'style="width:100%;height:150px;object-fit:cover;object-position:top;border-radius:10px;background:#f6ecf4"', ex === "normal" ? null : ex)}<small>${{ normal: "平常", angry: "生氣", suspect: "懷疑" }[ex]}</small></div>`).join("")}</div></div></div></div>`, {});
+  },
+  openRelations() {
+    const html = `<div class="gal">${NPC_IDS.map(id => `<div class="g" style="cursor:pointer" data-c="${id}">${this.imgTag(id)}<b>${NPCS[id].name}</b><br><small>${NPCS[id].role}</small></div>`).join("")}</div>
+      <div class="box" style="margin-top:12px"><h4>人物關係</h4><ul class="mem-list">${Object.entries(RELATION_LABELS).map(([k, v]) => { const [a, b] = k.split("-"); return `<li>${NPCS[a].name} ⇄ ${NPCS[b].name}：${v}</li>`; }).join("")}</ul></div>`;
+    const m = this.modal("角色關係", html, {});
+    $$("[data-c]", m).forEach(e => e.onclick = () => this.openCharacter(e.dataset.c));
+  },
+  openStoryReview() {
+    const d = Save._read(CONFIG.autoSaveKey) || Save._read(CONFIG.slotKeys[0]); const meta = Save.meta();
+    let body = "";
+    if (d && d.payload && d.payload.story) {
+      const p = d.payload, ch = p.story.choices || [];
+      const rows = ch.map(c => { const node = STORIES[c.story]?.nodes?.[c.node]; const t = node?.ch?.[c.choice]?.t; return t ? `<li><b>D${c.day}・${STORY_LABELS[c.story] || ""}</b>　${Utils.esc(t)}</li>` : ""; }).filter(Boolean);
+      body += `<div class="box"><h4>目前進度：${Utils.esc(p.player.name)}・第 ${Math.min(6, Math.floor((p.calendar.day - 1) / 7) + 1)} 週 Day ${p.calendar.day}</h4>${rows.length ? `<ol class="mem-list">${rows.join("")}</ol>` : "<p>還沒有做出重要選擇。</p>"}</div>`;
+    } else body += `<div class="box"><p style="margin:0">目前沒有進行中的存檔。開始遊戲後，妳做過的每個關鍵選擇都會記在這裡。</p></div>`;
+    body += `<div class="box"><h4>已看過的結局（${meta.endings.length}/4）</h4>${meta.endings.length ? meta.endings.map(e => `<details style="margin:6px 0"><summary><b>${ENDINGS[e].name}</b></summary><p style="white-space:pre-wrap;margin:6px 0">${Utils.esc(ENDINGS[e].t.replace(/\{name\}/g, "小茶"))}</p></details>`).join("") : "<p style='margin:0'>還沒有看過任何結局。</p>"}</div>`;
+    this.modal("劇情回顧", body, {});
+  },
+  openStats() {
+    const m = Save.meta(), h = m.history || [];
+    const avg = k => h.length ? Math.round(h.reduce((s, x) => s + (x[k] || 0), 0) / h.length) : 0;
+    const names = { lotus: "白蓮花女神", queen: "社交女王", schemer: "腹黑操盤手", exposed: "全員鑑茶" };
+    const html = `<div class="end-stats" style="color:var(--ink)">${[["通關次數", m.clears || 0], ["已解鎖結局", m.endings.length + "/4"], ["成就", m.achievements.length + "/" + Object.keys(ACHIEVEMENTS).length], ["收藏卡牌", (m.collection || []).length + "/" + CARDS.length], ["平均純潔", avg("aura")], ["平均警報", avg("global")]].map(([a, b]) => `<div style="background:#fff3f8"><b style="color:var(--pink-d)">${b}</b>${a}</div>`).join("")}</div>
+      <div class="box"><h4>最近的通關紀錄</h4>${h.length ? `<table style="width:100%;font-size:calc(13px * var(--fs));border-collapse:collapse">${["<tr><th align=left>日期</th><th align=left>結局</th><th>純潔</th><th>警報</th><th>支持</th><th>心機</th></tr>", ...h.slice().reverse().map(x => `<tr><td>${x.date}</td><td>${names[x.ending]}</td><td align=center>${x.aura}</td><td align=center>${x.global}</td><td align=center>${x.support}</td><td align=center>${x.scheme}</td></tr>`)].join("")}</table>` : "<p style='margin:0'>完成一次結局後，這裡會出現紀錄。</p>"}</div>`;
+    this.modal("數據總覽", html, {});
+  },
+  openExtras() {
+    const m = Save.meta();
+    const items = [["cg_light.jpg", "白蓮花女神", m.endings.includes("lotus")], ["cg_queen.jpg", "社交女王", m.endings.includes("queen")], ["cg_dark.jpg", "腹黑操盤手", m.endings.includes("schemer")], ["cg_exposed.jpg", "全員鑑茶", m.endings.includes("exposed")], ["cg_boss.jpg", "鑑茶女王的審判", !!m.judgmentSeen], ["char_player_dark.png", "小茶的另一面", (m.clears || 0) > 0]];
+    const html = `<p style="margin-top:0">達成結局與里程碑後解鎖。點圖片可放大。</p><div class="gal">${items.map(([f, n, ok]) => `<div class="g ${ok ? "" : "lock"}"><img class="${ok ? "cg-thumb" : ""}" data-src="assets/${f}" src="assets/${f}" onerror="this.style.background='linear-gradient(135deg,#3a1f4d,#c9558b)';this.removeAttribute('src')"><b>${ok ? n : "？？？"}</b></div>`).join("")}</div>`;
+    const md = this.modal("特典解鎖", html, {});
+    $$(".cg-thumb", md).forEach(i => i.onclick = () => { const f = document.createElement("div"); f.className = "cg-full"; f.innerHTML = `<img src="${i.dataset.src}">`; f.onclick = () => f.remove(); document.body.appendChild(f); });
+  },
+  openHelp() {
+    this.modal("遊戲說明", `<div class="box"><h4>目標</h4><p style="margin:0">六週內在星光公關社站穩腳步，通過社長顧知夏的審判，取得核心位置。</p></div>
+      <div class="box"><h4>每天</h4><p style="margin:0">兩次行動（社團活動、聊天、約會、蒐集情報、經營社群、練習話術、休息）。精力每晚恢復 30，私訊每天 2 次、每次 5 精力。</p></div>
+      <div class="box"><h4>三種數值要分開看</h4><p style="margin:0">好感＝喜不喜歡妳；信任＝相不相信妳；個別懷疑＝對妳的戒心（80 開始調查、100 當面拆穿）。<b>鑑茶警報</b>是整個社交圈的風聲，100 直接 Game Over。</p></div>
+      <div class="box"><h4>社交戰鬥</h4><p style="margin:0">看清 NPC 的「意圖」，打出有效標籤的卡牌提升氣氛。顧知夏在場時，所有可疑行為都會被放大。點一下卡牌看效果，再點一次打出。</p></div>
+      <div class="box"><h4>記憶與證據</h4><p style="margin:0">NPC 會記住妳做過的事、當時誰在場。消息會被轉述，最後都可能變成顧知夏手上的證據。</p></div>`, {});
   },
   showCreate(ngPlus = false) {
     this.show("create"); this._create = { persona: "good_newcomer", direction: "lotus", ngPlus };
@@ -3074,8 +3236,10 @@ const UI = {
     } else $("#vnNext").classList.remove("hidden");
     $("#vnNext").textContent = node.battle ? "▶ 進入社交戰鬥" : node.end ? "▶ 結束" : "▶ 點擊繼續";
     if (inner) Sfx.play("evil");
+    requestAnimationFrame(() => this.placeToasts());
   },
-  hideDialogue() { $("#vn").classList.add("hidden"); $("#vnStage").innerHTML = ""; $("#vnStage").dataset.who = ""; },
+  hideDialogue(_) { this._hideDialogue(); this.placeToasts(); },
+  _hideDialogue() { $("#vn").classList.add("hidden"); $("#vnStage").innerHTML = ""; $("#vnStage").dataset.who = ""; },
   vnClick() {
     if (!Story.cur) return; const node = Story.getStoryNode(Story.cur.nodeId); if (!node || node.ch) return;
     if (this._vnBusy) return; this._vnBusy = true; setTimeout(() => this._vnBusy = false, 250);
@@ -3110,8 +3274,9 @@ const UI = {
   openBattle(b) {
     const el = $("#battle"); el.classList.remove("hidden"); el.classList.toggle("boss", b.type === "boss");
     this.setBackground(this._bg || "clubroom"); this._selCard = null;
+    requestAnimationFrame(() => this.placeToasts());
   },
-  closeBattle() { $("#battle").classList.add("hidden"); this.closeModal("bres"); },
+  closeBattle() { $("#battle").classList.add("hidden"); this.closeModal("bres"); this.placeToasts(); },
   renderBattle(b) {
     if (!b) return; const s = State.get();
     const typeName = { normal: "社交戰鬥", shuraba: "修羅場", boss: "首領戰", chat: "交流", date: "約會" }[b.type];
@@ -3419,16 +3584,21 @@ document.addEventListener("DOMContentLoaded", () => {
   $("#btnNGPlus").onclick = () => UI.showCreate(true);
   $("#btnContinue").onclick = () => Game.continueGame();
   $("#btnLoad").onclick = () => UI.openSaves("load");
-  $("#btnGallery").onclick = () => UI.openGallery();
+  $("#btnGallery").onclick = () => UI.openRelations();
+  $("#btnStory").onclick = () => UI.openStoryReview();
+  $("#btnStats").onclick = () => UI.openStats();
+  $("#btnExtra").onclick = () => UI.openExtras();
+  $("#btnHelp").onclick = () => UI.openHelp();
+  $("#btnSound").onclick = () => { const st = Save.settings(); st.sound = !st.sound; Save.saveSettings(st); $("#btnSound").classList.toggle("off", !st.sound); };
   $("#btnCards").onclick = () => UI.openCards();
-  $("#btnAch").onclick = () => UI.openAchievements();
+  $("#btnAch").onclick = () => { const m = Save.meta(); m.achSeen = m.achievements.length; Save.saveMeta(m); $("#achDot").classList.add("hidden"); UI.openAchievements(); };
   $("#btnSet").onclick = () => UI.openSettings();
   $("#vn").addEventListener("click", () => UI.vnClick());
   document.addEventListener("keydown", e => { if ((e.key === " " || e.key === "Enter") && !$("#vn").classList.contains("hidden") && !$(".modal")) { e.preventDefault(); UI.vnClick(); } });
   $$("[data-nav]").forEach(b => b.onclick = () => { if (UI.isLocked() && b.dataset.nav !== "menu") return; ({ npc: () => UI.openNPC(), cards: () => UI.openCards(), tal: () => UI.openTalents(), social: () => UI.openSocial(), shop: () => UI.openShop(), save: () => UI.openSaves(), journal: () => UI.openJournal(), menu: () => UI.openMenu() })[b.dataset.nav](); });
   $("#vnSkipLog").onclick = e => { e.stopPropagation(); UI.openNPC(); };
   window.addEventListener("beforeunload", () => { try { if (State.get() && !Battle.active && !Story.cur) Save.autoSave(); } catch (e) { } });
-  $(".ver").textContent = `GDD V1.0・v${CONFIG.gameVersion}`;
+
   UI.applyFontScale();
   UI.showTitle();
 });
