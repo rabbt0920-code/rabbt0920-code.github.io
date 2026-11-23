@@ -487,7 +487,8 @@ body.flash::before{opacity:1}
 }
 
 /* ===== v1.1.2 大字體版面修正 ===== */
-.vn-box{max-height:min(62vh,calc(100vh - 90px));overflow-y:auto;overscroll-behavior:contain}
+.vn-box{max-height:min(62vh,calc(100vh - 90px));overflow:visible;display:flex;flex-direction:column}
+.vn-scroll{flex:1 1 auto;min-height:0;overflow-y:auto;overscroll-behavior:contain;padding-top:6px}
 .vn-next{position:sticky;bottom:-6px;float:right;background:inherit}
 .card{min-height:calc(178px * var(--fs));width:calc(138px * var(--fs));max-width:46vw}
 .hand{flex:none}
@@ -546,6 +547,7 @@ body.flash::before{opacity:1}
 #scorecard{z-index:140}
 #eScore{animation:scPulse 1.6s ease-in-out infinite}
 @keyframes scPulse{0%,100%{box-shadow:0 0 0 0 rgba(255,140,190,.7)}50%{box-shadow:0 0 0 10px rgba(255,140,190,0)}}
+.vn-name{z-index:4;white-space:nowrap;line-height:1.5}
 
 </style>
 </head>
@@ -616,10 +618,12 @@ body.flash::before{opacity:1}
   <div class="vn-tools"><button class="btn sm" id="vnSkipLog">人際</button></div>
   <div class="vn-box" id="vnBox">
     <div class="vn-name" id="vnName"></div>
+    <div class="vn-scroll" id="vnScroll">
     <div class="vn-text" id="vnText"></div>
     <div class="vn-notes" id="vnNotes"></div>
     <div class="vn-choices" id="vnChoices"></div>
     <div class="vn-next" id="vnNext">▶ 點擊繼續</div>
+    </div>
   </div>
 </section>
 
@@ -645,7 +649,7 @@ body.flash::before{opacity:1}
  * ============================================================ */
 const CONFIG = {
   schemaVersion: 1,
-  gameVersion: "1.1.3",
+  gameVersion: "1.1.4",
   totalDays: 42,
   actionsPerDay: 2,
   dailyEnergyRegen: 30,
