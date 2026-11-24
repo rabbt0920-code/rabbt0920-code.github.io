@@ -561,6 +561,17 @@ body.flash::before{opacity:1}
 }
 @media (max-height:520px) and (orientation:landscape){.t-logo.has-img img{max-height:27vh}}
 
+/* v1.2.0 新手提示 */
+.tip-bg{position:fixed;inset:0;z-index:300;background:rgba(30,10,40,.28);display:flex;align-items:flex-start;justify-content:center;padding-top:14vh;animation:tipIn .25s ease}
+.tip{width:min(88vw,380px);background:#fff;border-radius:18px;border:2px solid #f6b6d0;box-shadow:0 12px 32px rgba(80,20,60,.35);padding:16px 18px 14px;text-align:center;color:var(--ink)}
+.tip-t{font-family:var(--serif);font-weight:900;font-size:calc(18px * var(--fs));color:#c2446f;margin-bottom:6px}
+.tip-x{font-size:calc(14.5px * var(--fs));line-height:1.65;margin-bottom:12px}
+@keyframes tipIn{from{opacity:0;transform:translateY(-8px)}to{opacity:1;transform:none}}
+/* CG 場景：讓圖完整呈現 */
+#vn.cg-mode .stage{display:none}
+#vn.cg-mode.dark .bg{filter:brightness(.7) saturate(1.1)!important}
+.album-tabs{margin-bottom:12px}
+
 </style>
 </head>
 <body>
@@ -580,7 +591,7 @@ body.flash::before{opacity:1}
       <button class="t-btn main" id="btnNew"><i>▶</i>開始遊戲</button>
       <button class="t-btn hidden" id="btnNGPlus"><i>✦</i>NG+ 新周目</button>
       <button class="t-btn" id="btnContinue"><i>❐</i>繼續遊戲</button>
-      <button class="t-btn" id="btnStory"><i>❏</i>劇情回顧</button>
+      <button class="t-btn" id="btnStory"><i>❀</i>回憶相簿</button>
       <button class="t-btn" id="btnCards"><i>♠</i>卡牌圖鑑</button>
       <button class="t-btn" id="btnGallery"><i>♡</i>角色關係</button>
       <button class="t-btn" id="btnSet"><i>⚙</i>遊戲設定</button>
@@ -588,8 +599,6 @@ body.flash::before{opacity:1}
   </div>
   <div class="t-bar">
     <button id="btnAch"><i>🏆</i>成就<em class="t-dot hidden" id="achDot">!</em></button>
-    <button id="btnStats"><i>▥</i>數據總覽</button>
-    <button id="btnExtra"><i>🎁</i>特典解鎖</button>
     <button id="btnHelp"><i>?</i>遊戲說明</button>
   </div>
 </section>
@@ -661,7 +670,7 @@ body.flash::before{opacity:1}
  * ============================================================ */
 const CONFIG = {
   schemaVersion: 1,
-  gameVersion: "1.1.5",
+  gameVersion: "1.2.0",
   totalDays: 42,
   actionsPerDay: 2,
   dailyEnergyRegen: 30,
@@ -873,6 +882,7 @@ const INTEL = {
   intel_xu_account: { name: "匿名八卦帳號", about: "xu", desc: "校園八卦帳號「星光茶水間」的小編，就是許沐橙。", power: 3 },
   intel_gu_past: { name: "知夏的過去", about: "gu", desc: "顧知夏高中時被好朋友背刺過，所以特別討厭「綠茶」。", power: 2 },
   intel_shen_rival: { name: "若晴的企劃", about: "shen", desc: "沈若晴打算在企劃投票中推自己的方案，而且已經私下拉票。", power: 2 },
+  intel_shen_rec: { name: "若晴的抱怨錄音", about: "shen", desc: "深夜社辦，沈若晴親口說：「其實我最討厭的就是顧知夏。」", power: 3 },
   intel_lin_doubt: { name: "予辰的迷惘", about: "lin", desc: "林予辰私下跟陳柏宇說，最近和若晴相處很累。", power: 2 }
 };
 
@@ -916,7 +926,13 @@ const ACHIEVEMENTS = {
   a_end_lotus: { name: "白蓮花女神", desc: "達成白蓮花女神結局" },
   a_end_schemer: { name: "腹黑操盤手", desc: "達成腹黑操盤手結局" },
   a_end_queen: { name: "社交女王", desc: "達成社交女王結局" },
-  a_end_exposed: { name: "全員鑑茶", desc: "被所有人看穿了" }
+  a_end_exposed: { name: "全員鑑茶", desc: "被所有人看穿了" },
+  a_end_unmask: { name: "卸下面具", desc: "達成隱藏結局「卸下面具」" },
+  a_bond_lin: { name: "雨天只有一把傘", desc: "林予辰好感 100 的專屬事件" },
+  a_bond_shen: { name: "被比下去的那個人", desc: "沈若晴好感 100 的專屬事件" },
+  a_bond_gu: { name: "去年的迎新", desc: "顧知夏好感 100 的專屬事件" },
+  a_bond_chen: { name: "器材室的黑鍋", desc: "陳柏宇好感 100 的專屬事件" },
+  a_bond_xu: { name: "她的私人帳號", desc: "許沐橙好感 100 的專屬事件" }
 };
 
 /* ============================================================
@@ -944,7 +960,13 @@ const BACKGROUNDS = {
   courtyard: { img: "assets/bg_courtyard.jpg", name: "校園中庭", grad: "linear-gradient(160deg,#e3ffe9,#ffe9f4)" },
   store: { img: "assets/bg_store.jpg", name: "便利商店", grad: "linear-gradient(160deg,#e8fff6,#fff)" },
   gala: { img: "assets/bg_gala.jpg", name: "迎新晚會會場", grad: "linear-gradient(160deg,#3a1f4d,#c9558b)" },
-  night: { img: "assets/bg_night.jpg", name: "夜間校園", grad: "linear-gradient(160deg,#1c1530,#3d2b5c)" }
+  night: { img: "assets/bg_night.jpg", name: "夜間校園", grad: "linear-gradient(160deg,#1c1530,#3d2b5c)" },
+  cg_lin: { pos: "48% center", img: "assets/cg_ev_lin.jpg", name: "雨天只有一把傘", cg: true, grad: "linear-gradient(160deg,#4a4470,#9a8ab8)" },
+  cg_shen: { pos: "58% center", img: "assets/cg_ev_shen.jpg", name: "被比下去的那個人", cg: true, grad: "linear-gradient(160deg,#2b1a20,#6a3a40)" },
+  cg_gu: { pos: "62% center", img: "assets/cg_ev_gu.jpg", name: "去年的迎新", cg: true, grad: "linear-gradient(160deg,#6a3a6a,#e89a6a)" },
+  cg_chen: { pos: "52% center", img: "assets/cg_ev_chen.jpg", name: "器材室的黑鍋", cg: true, grad: "linear-gradient(160deg,#2a2a3a,#6a6a8a)" },
+  cg_xu: { pos: "50% center", img: "assets/cg_ev_xu.jpg", name: "她的私人帳號", cg: true, grad: "linear-gradient(160deg,#4a2a4a,#c97a8a)" },
+  cg_unmask: { pos: "60% center", img: "assets/cg_end_unmask.jpg", name: "卸下面具", cg: true, grad: "linear-gradient(160deg,#ffe4ef,#e6d6ff)" }
 };
 
 /* ---------- 主線與條件事件 ---------- */
@@ -965,6 +987,15 @@ const EVENTS = [
   { id: "ev_shen_confront", type: "COND", minDay: 4, story: "shen_confront", trigger: { minSus: { shen: 80 } } },
   { id: "ev_gu_investigate", type: "COND", minDay: 4, story: "gu_investigate", trigger: { minSus: { gu: 80 } } },
   { id: "ev_chen_hope", type: "NPC", minDay: 14, story: "chen_hope", trigger: { minFavor: { chen: 70 } } },
+  // 好感 100＋信任 50：角色專屬事件（每輪一次）
+  { id: "ev_bond_lin", type: "BOND", minDay: 1, story: "bond_lin", trigger: { minFavor: { lin: 100 }, minTrust: { lin: 50 }, notFlags: ["exposed_by_lin"] } },
+  { id: "ev_bond_shen", type: "BOND", minDay: 1, story: "bond_shen", trigger: { minFavor: { shen: 100 }, minTrust: { shen: 50 }, notFlags: ["exposed_by_shen"] } },
+  { id: "ev_bond_gu", type: "BOND", minDay: 1, story: "bond_gu", trigger: { minFavor: { gu: 100 }, minTrust: { gu: 50 }, notFlags: ["exposed_by_gu", "gala_done"] } },
+  { id: "ev_bond_chen", type: "BOND", minDay: 1, story: "bond_chen", trigger: { minFavor: { chen: 100 }, minTrust: { chen: 50 }, notFlags: ["exposed_by_chen"] } },
+  { id: "ev_bond_xu", type: "BOND", minDay: 1, story: "bond_xu", trigger: { minFavor: { xu: 100 }, minTrust: { xu: 50 }, notFlags: ["exposed_by_xu"] } },
+  { id: "ev_umbrella", type: "COND", minDay: 1, story: "umbrella", trigger: { flags: ["umbrella_seen"], notFlags: ["lin_shen_broke_up"] } },
+  // 第五週：評選季（後期事件權重提高）
+  { id: "ev_season", type: "MAIN", minDay: 29, story: "season", trigger: { flags: ["joined_starlight_club"] } },
   // 予辰 ♥ 若晴 感情事件鏈
   { id: "ev_couple_fight", type: "COND", minDay: 9, story: "couple_fight", trigger: { coupleMax: 59 } },
   { id: "ev_couple_cold", type: "COND", minDay: 13, story: "couple_cold", trigger: { coupleMax: 39 } },
@@ -984,7 +1015,13 @@ const EVENT_INFO = {
   ev_couple_fight: ["走廊上的爭吵", "予辰與若晴的感情降到「關係緊張」"],
   ev_couple_cold: ["沉默的群組", "予辰與若晴陷入「嚴重冷戰」"],
   ev_couple_breakup: ["分手", "予辰與若晴「感情破裂」"],
-  ev_couple_makeup: ["雨過天晴", "吵過架的兩人重新變得穩定"]
+  ev_couple_makeup: ["雨過天晴", "吵過架的兩人重新變得穩定"],
+  ev_bond_lin: ["雨天只有一把傘", "林予辰好感 100、信任 50 以上"],
+  ev_bond_shen: ["被比下去的那個人", "沈若晴好感 100、信任 50 以上"],
+  ev_bond_gu: ["去年的迎新", "顧知夏好感 100、信任 50 以上（審判前）"],
+  ev_bond_chen: ["器材室的黑鍋", "陳柏宇好感 100、信任 50 以上"],
+  ev_bond_xu: ["她的私人帳號", "許沐橙好感 100、信任 50 以上"],
+  ev_umbrella: ["那把傘", "？？？（雨天的曖昧被人看見了）"]
 };
 
 const RANDOM_EVENTS = [
@@ -1006,6 +1043,105 @@ const RANDOM_EVENTS = [
  * choice: {t, cond, fx, n, inner, hint}
  */
 const STORIES = {
+  /* ===== 好感 100 專屬事件 ===== */
+  bond_lin: {
+    start: "b1", nodes: {
+      b1: { bg: "night", sp: "narr", t: "社團結束時下起了大雨。妳翻遍包包，才發現早上忘了帶傘。", n: "b2" },
+      b2: { sp: "lin", ex: "smile", t: "我送妳吧，反正順路。", n: "b3" },
+      b3: { bg: "cg_lin", sp: "narr", t: "透明的傘面上滿是雨珠。走到一半，妳才發現——傘一直往妳這邊傾，他的半邊肩膀早就濕透了。", n: "b4" },
+      b4: { sp: "lin", t: "……跟妳說話的時候，好輕鬆。跟若晴在一起，我常常覺得自己做什麼都不對。", n: "b5" },
+      b5: { sp: "narr", t: "他停下腳步，看著妳。好像還有話，沒有說完。", ch: [
+        { t: "「學長，這些話……你應該跟若晴說。」", fx: [["rel", "lin", "shen", 25], ["trust", "lin", 15], ["sus", "shen", -10], ["favor", "shen", 4], ["aura", 5], ["flag", "bond_lin_true"], ["achieve", "a_bond_lin"]], n: "b6t", hint: "真心：把他推回若晴身邊" },
+        { t: "什麼都不說，只是往傘下再靠近一點。", inner: true, fx: [["emo", "lin", 30], ["rel", "lin", "shen", -35], ["su", 4], ["flag", "bond_lin_tea"], ["achieve", "a_bond_lin"]], special: "umbrella_roll", n: "b6d", hint: "綠茶：讓沉默變成曖昧" }
+      ] },
+      b6t: { bg: "night", sp: "lin", ex: "smile", t: "……妳說得對。我現在就打給她。", n: "b7t" },
+      b7t: { sp: "narr", t: "雨聲裡，妳聽見他說：「若晴，妳在哪？我去接妳。」", end: true },
+      b6d: { sp: "lin", ex: "shy", t: "（傘下的距離，近得能聽見彼此的呼吸。他沒有把話說完——但也不需要了。）", n: "b7d" },
+      b7d: { bg: "night", sp: "inner", t: "……這把傘，會不會被誰看見呢？", end: true }
+    }
+  },
+  umbrella: {
+    start: "u1", nodes: {
+      u1: { bg: "corridor", sp: "shen", ex: "angry", t: "沐橙給我看了一張照片。下雨那天，予辰的傘下，是妳。", n: "u2" },
+      u2: { sp: "lin", ex: "sad", t: "若晴，妳聽我說——", n: "u3" },
+      u3: { sp: "narr", t: "【特別修羅場：那把傘】若晴要一個解釋。", battle: { title: "那把傘", participants: ["shen", "lin"], context: "small", rounds: 4, goal: 60, type: "shuraba", result: { perfect: "u4w", win: "u4w", fail: "u4f" } } },
+      u4w: { sp: "shen", ex: "suspect", t: "……好，這次我先信妳。但我會一直看著。", fx: [["sus", "shen", 5]], end: true },
+      u4f: { sp: "shen", ex: "angry", t: "妳不用再說了。從今天起，離他遠一點。", fx: [["global", 12], ["rel", "lin", "shen", -20], ["sus", "shen", 20], ["mem", "shen", "manipulated", true]], end: true }
+    }
+  },
+  bond_shen: {
+    start: "s1", nodes: {
+      s1: { bg: "office", sp: "narr", t: "晚上十點，社辦的燈還亮著。妳推門進去，看見沈若晴一個人坐在桌前。", n: "s2" },
+      s2: { bg: "cg_shen", sp: "narr", t: "她手裡捏著那份被退件的企劃書，上面寫滿了顧知夏的紅字。", n: "s3" },
+      s3: { sp: "shen", ex: "sad", t: "……看什麼看。想笑就笑啊。", n: "s4" },
+      s4: { sp: "shen", ex: "sad", t: "從妳加入以後，大家都在看妳。予辰、沐橙，連知夏都……我好怕，自己變成多餘的那個。", n: "s5" },
+      s5: { sp: "narr", t: "她別過臉，不想讓妳看見眼淚。", ch: [
+        { t: "「我陪妳改。明天開會，這是妳一個人的企劃。」", fx: [["trust", "shen", 15], ["sus", "shen", -20], ["support", 3], ["aura", 4], ["flag", "bond_shen_true"], ["achieve", "a_bond_shen"]], n: "s6t", hint: "真心：把功勞全部讓給她" },
+        { t: "一邊輕拍她的背，一邊悄悄按下手機錄音。", inner: true, fx: [["intel", "intel_shen_rec"], ["su", 4], ["flag", "bond_shen_tea"], ["achieve", "a_bond_shen"]], n: "s6d", hint: "綠茶：錄下她的真心話" }
+      ] },
+      s6t: { sp: "shen", ex: "smile", t: "……妳這人，真的很煩。（她的聲音在發抖）……謝謝。", n: "s7t" },
+      s7t: { bg: "office", sp: "narr", t: "天亮時，企劃書終於改好了。隔天開會，顧知夏只說了一句：「這次做得很好，若晴。」", end: true },
+      s6d: { sp: "shen", ex: "sad", t: "其實我最討厭的就是顧知夏……每次都用那種眼神看人。", n: "s7d" },
+      s7d: { bg: "office", sp: "inner", t: "錄到了。謝謝妳的真心話，學姊。", end: true }
+    }
+  },
+  bond_gu: {
+    start: "g1", nodes: {
+      g1: { bg: "office", sp: "gu", t: "放學後，到頂樓來一下。", n: "g2" },
+      g2: { bg: "cg_gu", sp: "narr", t: "夕陽把整座城市染成橘紫色。顧知夏靠著欄杆，手裡拿著一本很舊的筆記本。", n: "g3" },
+      g3: { sp: "gu", t: "去年迎新，我把場地申請交給一個很會做人的學妹。她每天幫我買咖啡，記得我所有的喜好。", n: "g4" },
+      g4: { sp: "gu", t: "申請沒有寄出去。她跟所有人說，是我忘了。……而我，連解釋都懶得解釋。", n: "g5" },
+      g5: { sp: "gu", ex: "suspect", t: "我知道妳在演，小茶。我只是想知道——妳為什麼要演？", n: "g6" },
+      g6: { sp: "narr", t: "風吹亂了兩個人的頭髮。她在等妳的答案。", ch: [
+        { t: "「……因為我怕。不演的話，沒有人會喜歡真正的我。」", fx: [["trust", "gu", 20], ["aura", -3], ["flag", "bond_gu_true"], ["achieve", "a_bond_gu"]], special: "gu_halve", n: "g7t", hint: "真心：坦白一部分的自己" },
+        { t: "眼眶一紅：「學姊，我真的不懂妳在說什麼……」", inner: true, fx: [["su", 4], ["flag", "bond_gu_tea"], ["achieve", "a_bond_gu"]], n: "g7d", hint: "綠茶：演到底（需要很高的純潔光環）" }
+      ] },
+      g7t: { sp: "gu", ex: "smile", t: "……第一次聽妳說真話。評選那天，我們好好談一次吧。不是審判，是談話。", n: "g8t" },
+      g8t: { bg: "night", sp: "inner", t: "面具好像鬆了一點。奇怪的是——並不可怕。", end: true },
+      g7d: { cond: { minAura: 70 }, else: "g7f", sp: "gu", t: "……是嗎。（她沉默了很久）那我就相信妳一次。別讓我後悔。", fx: [["flag", "gu_endorse"], ["sus", "gu", -15], ["trust", "gu", 10]], n: "g8d" },
+      g8d: { bg: "night", sp: "inner", t: "鑑茶女王的背書，到手了。（之後鑑茶警報上升減少 30%——但被她拆穿的話……）", end: true },
+      g7f: { sp: "gu", ex: "dark", t: "眼淚很漂亮。可惜，我看過更好的。", fx: [["sus", "gu", 20], ["global", 5], ["mem", "gu", "lied", true]], n: "g8f" },
+      g8f: { bg: "night", sp: "inner", t: "……失手了。她的筆記本上，大概又多了一行字。", end: true }
+    }
+  },
+  bond_chen: {
+    start: "c1", nodes: {
+      c1: { bg: "clubroom", sp: "narr", t: "晚會前一週，社辦的投影機突然壞了。柏宇說今晚一定要修好。", n: "c2" },
+      c2: { bg: "cg_chen", sp: "narr", t: "器材室只剩一盞燈。妳拿著手電筒，看他一顆一顆拆螺絲，窗外的天空慢慢泛白。", n: "c3" },
+      c3: { sp: "chen", ex: "smile", t: "好了！……對了，知夏問起來，我就說是我搬的時候摔的。", n: "c4" },
+      c4: { sp: "inner", t: "明明不是他弄壞的。他知道是誰，卻寧願自己扛。", n: "c5" },
+      c5: { sp: "narr", t: "柏宇拍拍手上的灰，像是一點都不在意。", ch: [
+        { t: "「我們一起去跟學姊說清楚。不是你的錯，就不用你扛。」", fx: [["trust", "chen", 15], ["support", 2], ["aura", 3], ["flag", "bond_chen_true"], ["achieve", "a_bond_chen"]], n: "c6t", hint: "真心：陪他一起面對" },
+        { t: "「嗯……那就麻煩你了。」——老實人說的話，大家最相信。", inner: true, fx: [["su", 4], ["flag", "bond_chen_tea"], ["flag", "chen_testimony"], ["achieve", "a_bond_chen"]], n: "c6d", hint: "綠茶：讓他扛下黑鍋" }
+      ] },
+      c6t: { bg: "clubroom", sp: "chen", ex: "smile", t: "謝啦，小茶。以後有什麼要跑腿的，交給我！（每週第一天，柏宇會幫妳多跑一次腿）", end: true },
+      c6d: { bg: "clubroom", sp: "chen", ex: "smile", t: "放心啦，我扛得住！", n: "c7d" },
+      c7d: { sp: "inner", t: "以後，也要麻煩你了喔。（審判時，他的證詞可以抵銷一條證據）", end: true }
+    }
+  },
+  bond_xu: {
+    start: "x1", nodes: {
+      x1: { bg: "dorm", sp: "narr", t: "深夜，手機跳出許沐橙的訊息：「妳可以來我房間嗎……拜託。」", n: "x2" },
+      x2: { bg: "cg_xu", sp: "xu", ex: "sad", t: "有人開了假帳號，說我就是「星光茶水間」的小編……還把大家的私事貼出來，說都是我寫的。", n: "x3" },
+      x3: { sp: "xu", ex: "sad", t: "我、我是有記一些東西啦。可是那些貼文真的不是我發的！", n: "x4" },
+      x4: { sp: "inner", t: "她把手機遞給我。備忘錄裡，密密麻麻記著社團每個人的秘密——其中幾條，寫的是我。", n: "x5" },
+      x5: { sp: "narr", t: "沐橙抱著膝蓋，等妳開口。", ch: [
+        { t: "「我幫妳把假帳號揪出來。妳的備忘錄，我什麼都沒看到。」", fx: [["trust", "xu", 15], ["sus", "xu", -15], ["aura", 3], ["flag", "bond_xu_true"], ["achieve", "a_bond_xu"]], n: "x6t", hint: "真心：替她保守秘密" },
+        { t: "一邊抱著她，一邊用自己的手機，把備忘錄一頁一頁拍下來。", inner: true, fx: [["su", 4], ["flag", "bond_xu_tea"], ["flag", "xu_mutual"], ["achieve", "a_bond_xu"]], special: "xu_notes", n: "x6d", hint: "綠茶：拍下她的備忘錄" }
+      ] },
+      x6t: { bg: "dorm", sp: "xu", ex: "smile", t: "嗚……小茶最好了！以後妳想知道什麼，我第一個告訴妳！（每週會送妳一條情報，也不會再傳妳的閒話）", end: true },
+      x6d: { bg: "dorm", sp: "inner", t: "現在，我們都握著對方的秘密了呢，沐橙。", end: true }
+    }
+  },
+  /* ===== 第五週：評選季 ===== */
+  season: {
+    start: "se1", nodes: {
+      se1: { bg: "office", sp: "gu", t: "從今天起進入評選季。最後兩週的表現，會是決定核心位置的關鍵。", n: "se2" },
+      se2: { sp: "narr", t: "【評選季】接下來的兩週：鑑茶警報與社團支持的變化放大 1.25 倍，NPC 記住的事也會更深刻。", fx: [["flag", "late_season"]], n: "se3" },
+      se3: { sp: "inner", t: "前面的帳，大家或許會忘。但接下來的每一步——都會被記得。", end: true }
+    }
+  },
+
   /* ===== 序章 ===== */
   intro: {
     start: "i1", nodes: {
@@ -1195,7 +1331,9 @@ const STORIES = {
   judgment: {
     start: "j1", nodes: {
       j1: { bg: "office", sp: "narr", t: "第六週・評選日。社辦的窗簾被拉上，所有幹部都到齊了。", n: "j2" },
-      j2: { bg: "judgment", sp: "gu", ex: "dark", t: "在決定核心位置之前，我想先確認一件事。小茶，妳這六週，究竟是怎麼走到這裡的？", n: "j3" },
+      j2: { cond: { notFlags: ["bond_gu_true"] }, else: "j2t", bg: "judgment", sp: "gu", ex: "dark", t: "在決定核心位置之前，我想先確認一件事。小茶，妳這六週，究竟是怎麼走到這裡的？", n: "j3" },
+      j2t: { bg: "judgment", sp: "gu", ex: "smile", t: "說好的。今天不是審判，是談話。……不過大家都在看，規則還是規則。", n: "j3t" },
+      j3t: { sp: "inner", t: "她的筆記本是闔上的。這一次，我不用演。（審判起始可信度大幅提升）", n: "j4" },
       j3: { sp: "inner", t: "《鑑茶女王的審判》——六回合，三個階段。她手上有我過去六週的每一筆紀錄。", n: "j4" },
       j4: { sp: "narr", t: "審判開始。", battle: { title: "鑑茶女王的審判", participants: ["gu"], context: "public", rounds: 6, type: "boss",
         result: { perfect: "j5p", win: "j5w", fail: "j5f" } } },
@@ -1447,16 +1585,26 @@ const ENDINGS = {
     t: "核心企劃的名單上，妳的名字寫在第一行。\n妳記得每個人的生日、每個人喜歡的飲料、每個人不想被提起的事。\n社團的每條線，最後都牽在妳手上。\n「下一屆社長，應該就是她了吧。」走廊上，有人這麼說。" },
   schemer: { name: "腹黑操盤手", cg: "assets/cg_dark.jpg", sub: "THE MASTERMIND",
     t: "鑑茶女王的審判結束了。妳贏了——不是因為妳無辜，而是因為妳比她更早看透這盤棋。\n秘密、情報、裂痕、同盟。每一步都是妳親手佈下的。\n妳拿起顧知夏留在桌上的企劃書，輕輕翻開第一頁。\n「接下來，就換我來寫劇本了。」" },
+  unmask: { name: "卸下面具", cg: "assets/cg_end_unmask.jpg", sub: "NO MORE MASKS", hidden: true,
+    t: "評選結果公布前，顧知夏把妳叫進社辦。\n她把一本全新的筆記本推到妳面前：「明年的迎新，交給妳籌備。條件只有一個——以後在我面前，不用演。」\n妳把那張看不見的面具，輕輕放在桌上。\n原來不泡茶的自己，也有人願意喜歡。" },
   exposed: { name: "全員鑑茶", cg: "assets/cg_exposed.jpg", sub: "GAME OVER",
     t: "截圖、對話紀錄、證人。一件一件攤在所有人面前。\n「原來她一直都是這樣。」\n社團群組裡，妳被默默移除了。\n綠茶終究會涼。下一次——也許，要泡得更小心一點。" }
 };
 const EPILOGUES = [
+  { cond: s => s.story.flags.bond_lin_true, t: "【尾聲・予辰】下雨天，予辰的傘下總是若晴。他們偶爾會邀妳一起吃飯——「那天，謝謝妳。」" },
+  { cond: s => s.story.flags.bond_shen_true, t: "【尾聲・若晴】若晴的企劃拿下了年度最佳。致詞時，她看了妳一眼，嘴型說了兩個字：謝謝。" },
+  { cond: s => s.story.flags.bond_shen_tea, t: "【尾聲・若晴】那段錄音一直存在妳的手機裡。妳偶爾會想：要是哪天它被播出來……" },
+  { cond: s => s.story.flags.bond_chen_true, t: "【尾聲・柏宇】器材室的牆上多了一張便利貼：「投影機維修紀錄——柏宇＆小茶」。" },
+  { cond: s => s.story.flags.bond_chen_tea, t: "【尾聲・柏宇】畢業前，柏宇終於想通了那天的事。他沒有生氣，只是再也沒有在社辦放奶茶。" },
+  { cond: s => s.story.flags.bond_xu_true, t: "【尾聲・沐橙】假帳號被揪出來了。沐橙的備忘錄裡，關於妳的那幾條，被她親手刪掉。" },
+  { cond: s => s.story.flags.xu_mutual, t: "【尾聲・沐橙】妳們還是會一起喝飲料、一起拍照。只是兩個人的手機，都再也不會放在桌上。" },
+  { cond: s => s.story.flags.bond_gu_true && s.ending !== "unmask", t: "【尾聲・知夏】頂樓的那次談話，知夏沒有跟任何人提起。只是後來，她看妳的眼神溫和了許多。" },
   { cond: s => s.story.flags.couple_reconciled && s.story.flags.mediated_couple, t: "【尾聲・予辰與若晴】和好後的兩人比以前更穩定。若晴偷偷跟妳說：「那時候，還好有妳。」" },
   { cond: s => s.story.flags.lin_shen_broke_up && s.npcRelations.shen.suspicion >= 50, t: "【尾聲・若晴】沈若晴退出了星光公關社。離開前，她只看了妳一眼。" },
   { cond: s => s.npcRelations.lin.favor >= 75 && Relations.couple() < 40, t: "【尾聲・予辰】幾週後，林予辰和沈若晴分手了。他約妳去看海，說有話想對妳說。" },
   { cond: s => s.npcRelations.lin.favor >= 75 && Relations.couple() >= 40, t: "【尾聲・予辰】林予辰仍然對妳很好——像對一個重要的學妹。也許，這樣就夠了。" },
   { cond: s => s.npcRelations.shen.trust >= 60, t: "【尾聲・若晴】沈若晴成了妳最可靠的戰友。她到現在都不知道，有些事情的真相。" },
-  { cond: s => s.npcRelations.chen.favor >= 70, t: "【尾聲・柏宇】陳柏宇每天都會在社辦放一杯奶茶，旁邊附一張寫著「加油」的便利貼。" },
+  { cond: s => s.npcRelations.chen.favor >= 70 && !s.story.flags.bond_chen_tea && !s.story.flags.bond_chen_true, t: "【尾聲・柏宇】陳柏宇每天都會在社辦放一杯奶茶，旁邊附一張寫著「加油」的便利貼。" },
   { cond: s => s.story.flags.trusted_xu_mucheng || s.story.flags.xu_blackmailed, t: "【尾聲・沐橙】「星光茶水間」從此再也沒有發過關於妳的貼文。" },
   { cond: s => s.npcRelations.gu.trust >= 60, t: "【尾聲・知夏】顧知夏畢業前，把社長的鑰匙交到妳手上：「別讓我後悔。」" },
   { cond: s => s.npcRelations.gu.suspicion >= 70 && s.story.flags.passed_judgment, t: "【尾聲・知夏】顧知夏的筆記本最後一頁，寫著妳的名字，後面畫了一個問號。" }
@@ -1577,23 +1725,31 @@ const Status = {
   addFavor(id, n) { if (n > 0 && this.rel(id)) this.rel(id).lastChatDay = State.get().calendar.day; return this._npcStat(id, "favor", n); },
   addTrust(id, n) { return this._npcStat(id, "trust", n); },
   addSuspicion(id, n) {
+    const f = State.get().story.flags;
+    if (n > 0 && f.late_season) n = n * 1.25;
+    // 若晴的專屬事件選了真心：她對妳的懷疑不會超過 50
+    if (id === "shen" && f.bond_shen_true && n > 0) n = Math.min(n, Math.max(0, 50 - this.rel("shen").suspicion));
     const d = this._npcStat(id, "suspicion", n);
     if (d > 0) State.get().statistics.totalSuspicionGenerated += d;
     return d;
   },
   addEmotion(id, n) { return this._npcStat(id, "emotion", n, -100, 100); },
   addGlobalSuspicion(n) {
+    const f = State.get().story.flags;
+    if (n > 0 && f.late_season) n = n * 1.25;      // 評選季：風聲放大
+    if (n > 0 && f.gu_endorse && !f.exposed_by_gu) n = n * 0.7; // 鑑茶女王的背書
     const s = State.get().status, b = s.globalSuspicion;
     s.globalSuspicion = Utils.clamp(Utils.round(b + n), 0, 100);
     const d = s.globalSuspicion - b;
     if (d > 0) State.get().calendar.suspicious = true; // 今天做了可疑的事 → 晚上不會自然平息
     if (d) EventBus.emit("stat:global", { d, value: s.globalSuspicion });
+    if (d > 0 && typeof Tips !== "undefined") setTimeout(() => Tips.show("t_alert"), 500);
     if (s.globalSuspicion >= 100) EventBus.emit("game:exposed");
     return d;
   },
   _g(key, n) { const s = State.get().status, b = s[key]; if (n > 0 && key === "pureAura") n = Math.max(1, n * Math.max(0.15, 1 - b / 110)); s[key] = Utils.clamp(Utils.round(b + n), 0, 100); const d = s[key] - b; if (d) EventBus.emit("stat:status", { key, d }); return d; },
   addPureAura(n) { return this._g("pureAura", n); },
-  addClubSupport(n) { return this._g("clubSupport", n); },
+  addClubSupport(n) { if (State.get().story.flags.late_season) n = n * 1.25; return this._g("clubSupport", n); },
   addReputation(n) { if (n > 0 && Talents.has("t_social1")) n = n * 1.1; return this._g("clubReputation", n); },
   addInfluence(n) { return this._g("socialInfluence", n); },
   addSchemePoints(n) { const p = State.get().player, b = p.schemePoints; p.schemePoints = Utils.clamp(Utils.round(b + n), 0, CONFIG.maxScheme); return p.schemePoints - b; },
@@ -1650,6 +1806,7 @@ const Effects = {
           case "rel": { const d = Status.addRelation(a, b, c); Status.addRelation(b, a, Math.round(c * 0.6)); if (d) notes.push(`${NPCS[a].name}→${NPCS[b].name} 關係 ${d > 0 ? "+" : ""}${d}`); break; }
           case "intel": if (Intel.gain(a)) notes.push("獲得情報：" + INTEL[a].name); break;
           case "achieve": Achievements.unlock(a); break;
+          case "su": State.get().statistics.schemeUsed += a; break; // 直接計入心機使用量（結局判定用）
           default: console.warn("未知效果", op);
         }
       } catch (err) { console.error("效果執行失敗", e, err); }
@@ -1860,7 +2017,7 @@ const GameLog = {
 
 /* ---------- 情報 ---------- */
 const Intel = {
-  gain(id) { const s = State.get(); if (!INTEL[id] || s.intel[id]) return false; s.intel[id] = { day: s.calendar.day, used: false }; GameLog.add("取得情報：" + INTEL[id].name, "intel"); return true; },
+  gain(id) { const s = State.get(); if (!INTEL[id] || s.intel[id]) return false; s.intel[id] = { day: s.calendar.day, used: false }; if (typeof Tips !== "undefined") setTimeout(() => Tips.show("t_intel"), 600); GameLog.add("取得情報：" + INTEL[id].name, "intel"); return true; },
   owned() { return Object.keys(State.get().intel); },
   unknown() { return Object.keys(INTEL).filter(k => !State.get().intel[k]); },
   aboutNPC(npcId) { return this.owned().filter(k => INTEL[k].about === npcId); }
@@ -1879,6 +2036,7 @@ const STORY_LABELS = {
   gala: "迎新晚會", judgment: "評選會議", chen_help: "器材室", lin_worry: "中庭談心", xu_trust: "茶水間的秘密", gu_tea: "社長的茶會",
   shen_confront: "走廊對峙", gu_investigate: "社辦", chen_hope: "便利商店", couple_fight: "走廊上的爭吵", couple_cold: "沉默的群組",
   couple_breakup: "分手的那晚", couple_makeup: "和好之後",
+  bond_lin: "下雨天的傘下", bond_shen: "深夜的社辦", bond_gu: "頂樓", bond_chen: "器材室的那晚", bond_xu: "沐橙的宿舍", umbrella: "那把傘", season: "評選季",
   r_store: "便利商店", r_library: "圖書館", r_gossip: "中庭閒聊", r_rain: "下雨天", r_spill: "社辦打翻飲料那次", r_notes: "借筆記那次",
   r_anon: "匿名私訊", r_scholar: "那天", r_blackout: "停電那晚", r_audit: "社長抽查", r_photo: "被沐橙拍照那次"
 };
@@ -1899,7 +2057,9 @@ const Memory = {
     const s = State.get(), ctx = this.ctx || {};
     const detail = data.detail !== undefined ? data.detail : (this.lastChoice ? this.choiceDetail(this.lastChoice) : ctx.detail || null);
     s.story.memSeq = (s.story.memSeq || 0) + 1;
-    const severity = data.severity || (data.major ? 3 : 1);
+    let severity = data.severity || (data.major ? 3 : 1);
+    // 評選季（第五週起）發生的事，大家記得更清楚
+    if (!data.severity && s.story.flags.late_season && EVIDENCE_TYPES.includes(data.type)) severity += 1;
     const how = data.how || "witness";
     const entry = {
       id: "m" + s.story.memSeq, origin: data.origin || "m" + s.story.memSeq, type: data.type, major: !!data.major, day: data.day || s.calendar.day, weight: data.major ? 999 : 3,
@@ -1911,6 +2071,7 @@ const Memory = {
     };
     if (list.some(m => m.origin === entry.origin)) return; // 同一件事不重複記
     list.push(entry);
+    if (entry.evidence && typeof Tips !== "undefined") setTimeout(() => Tips.show("t_memory"), 600);
     if (list.length > 60) { const i = list.findIndex(m => !m.major && !m.evidence); if (i >= 0) list.splice(i, 1); }
     // NPC 取得新證據（非親眼）：當天標記，調查者懷疑上升
     if (how !== "witness" && entry.evidence) { s.calendar.npcEvidence = true; if (npcId === "gu") Status.addSuspicion("gu", 2); }
@@ -1934,7 +2095,9 @@ const Memory = {
   // 只從「知道這件事的人」的記憶裡找證據（預設：顧知夏本人）
   evidence(types, used = [], knower = "gu") {
     const all = this.getMemories(knower).map(m => ({ ...m, npc: knower })).filter(m => types.includes(m.type) && (m.label || m.detail) && !used.includes(m.origin));
-    all.sort((a, b) => (b.severity * b.cred - a.severity * a.cred) || (b.day - a.day));
+    // 越接近評選的事越有分量：第 1 週 ×1.0 … 第 5 週 ×2.2、第 6 週 ×2.5
+    const w = m => m.severity * m.cred * (1 + 0.3 * (Math.min(6, Math.floor((m.day - 1) / 7) + 1) - 1));
+    all.sort((a, b) => (w(b) - w(a)) || (b.day - a.day));
     return all[0] || null;
   },
   getMemories(npcId) { return State.get().npcMemories[npcId] || []; },
@@ -2205,7 +2368,7 @@ const NPCManager = {
       // 許沐橙散播：若玩家曾挑撥他人，相關記憶會被傳開
       // 許沐橙把她知道的事傳出去（被妳收服時不會）
       const s = State.get();
-      if (!s.story.flags.trusted_xu_mucheng && !s.story.flags.xu_blackmailed) {
+      if (!s.story.flags.trusted_xu_mucheng && !s.story.flags.xu_blackmailed && !s.story.flags.bond_xu_true) {
         const pool = Memory.getMemories("xu").filter(m => m.evidence);
         if (pool.length && Utils.chance(0.4)) {
           const m = Utils.pick(pool), to = Utils.pick(["shen", "gu", "lin"]);
@@ -2358,7 +2521,7 @@ const Story = {
       return nx ? this.enterNode(nx) : this.finish();
     }
     this.cur.nodeId = nodeId; State.get().story.currentNode = this.cur.id + ":" + nodeId;
-    if (node.bg) UI.setBackground(node.bg);
+    if (node.bg) { UI.setBackground(node.bg); if (BACKGROUNDS[node.bg]?.cg) { const m = Save.meta(); m.cgSeen = m.cgSeen || []; if (!m.cgSeen.includes(node.bg)) { m.cgSeen.push(node.bg); Save.saveMeta(m); } } }
     const notes = node.fx ? Effects.apply(node.fx) : [];
     if (node.special && SpecialNodes[node.special]) { const res = SpecialNodes[node.special](node); if (res && res.redirect) return this.enterNode(res.redirect); if (res && res.notes) notes.push(...res.notes); if (res && res.stop) return; }
     UI.showNode(node, notes);
@@ -2386,12 +2549,23 @@ const Story = {
   checkStoryConditions(cond) { return Effects.check(cond); },
   finish() {
     const cb = this.cur && this.cur.onDone; this.cur = null; State.get().story.currentNode = null; Memory.ctx = null;
+    if (BACKGROUNDS[UI._bg]?.cg) UI.setBackground("clubroom"); // CG 只在劇情中出現
     UI.hideDialogue(); cb && cb();
   }
 };
 
 /* 特殊節點（需要程式運算的劇情點） */
 const SpecialNodes = {
+  // 傘下的曖昧：有一半機率被沐橙拍到，之後傳到若晴耳裡
+  umbrella_roll() {
+    if (Utils.chance(0.5)) { Story.setFlag("umbrella_seen"); Status.addSuspicion("shen", 10); Memory.addMemory("xu", { type: "sus_post", major: false, label: "下雨天的傘下", detail: "她和予辰撐同一把傘，靠得很近" }); }
+    Romance.log("umbrella", false);
+  },
+  gu_halve() { const r = Status.rel("gu"); Status.addSuspicion("gu", -Math.ceil(r.suspicion / 2)); },
+  xu_notes() {
+    const got = Utils.shuffle(Intel.unknown()).slice(0, 5).filter(k => Intel.gain(k));
+    if (got.length) UI.toast("📸 拍下備忘錄：獲得情報 " + got.map(k => INTEL[k].name).join("、"), "dark");
+  },
   vote_tally() {
     const s = State.get(), f = s.story.flags; let mine = Math.round(s.status.clubSupport / 10), theirs = 5;
     const voters = [];
@@ -2451,7 +2625,8 @@ const Events = {
     const s = State.get(), due = [];
     EVENTS.forEach(ev => { if (!this.completed(ev.id) && s.calendar.day >= ev.minDay && Effects.check(ev.trigger)) due.push({ kind: "event", ev }); });
     // 主線優先，其次條件、NPC 事件；每天最多一個非主線事件
-    const main = due.filter(d => d.ev.type === "MAIN"), other = due.filter(d => d.ev.type !== "MAIN").slice(0, 1);
+    const pri = { BOND: 0, COND: 1, NPC: 2 };
+    const main = due.filter(d => d.ev.type === "MAIN"), other = due.filter(d => d.ev.type !== "MAIN").sort((a, b) => (pri[a.ev.type] ?? 3) - (pri[b.ev.type] ?? 3)).slice(0, 1);
     const list = [...main, ...other];
     // 個別拆穿事件
     NPC_IDS.forEach(id => { const r = s.npcRelations[id]; if (r.suspicion >= CONFIG.exposeAt && !r.exposed) list.push({ kind: "expose", id }); });
@@ -2500,6 +2675,8 @@ const Events = {
   triggerExpose(id, done) {
     const s = State.get(), r = s.npcRelations[id], n = NPCS[id]; r.exposed = true;
     Story.setFlag("exposed_by_" + id); Achievements.unlock("a_exposed_one");
+    if (id === "shen" && s.story.flags.bond_shen_tea) { Status.addGlobalSuspicion(15); UI.toast("若晴發現了那段錄音……鑑茶警報 +15", "bad"); }
+    if (id === "xu" && s.story.flags.xu_mutual) { Status.addGlobalSuspicion(12); Memory.getMemories("xu").filter(m => m.evidence).forEach(m => Memory.spread("xu", "gu", m, "screenshot")); UI.toast("沐橙把她知道的一切都貼了出來……", "bad"); }
     const hasIntel = Intel.aboutNPC(id).length > 0;
     const story = { start: "e1", nodes: {
       e1: { bg: "corridor", sp: id, ex: "dark", t: `${n.name}把妳叫到沒人的地方，把手機螢幕轉向妳——上面是妳這段時間所有的訊息截圖。`, n: "e2" },
@@ -2615,6 +2792,8 @@ const Schedule = {
     if (s.weekly.week !== s.calendar.week) {
       s.weekly = { week: s.calendar.week, freeChat: 0, clubBonusUsed: false };
       s.player.talentPoints += 1; UI.toast(`第 ${s.calendar.week} 週開始：${WEEK_THEMES[s.calendar.week]}（天賦點 +1）`, "gold");
+      if (s.story.flags.bond_chen_true) { s.calendar.remainingActions += 1; GameLog.add("柏宇幫妳跑腿：今天多一次行動", "event"); setTimeout(() => UI.toast("🔧 柏宇幫妳跑腿：今天多一次行動"), 900); }
+      if (s.story.flags.bond_xu_true) { const k = Utils.pick(Intel.unknown()); if (k && Intel.gain(k)) setTimeout(() => UI.toast(`📱 沐橙偷偷告訴妳：${INTEL[k].name}`, "gold"), 1500); }
       Save.checkpoint();
     }
     const cs = Relations.coupleState();
@@ -2873,6 +3052,13 @@ const Battle = {
     let cred = 35 + Math.round((s.status.clubSupport - 50) / 5) + allies * 2 - Math.round((g.suspicion - 30) / 3) - Math.round(s.status.globalSuspicion / 4) + Math.round((g.trust - 40) / 6);
     if (g.exposed) cred -= 10;
     if (s.story.flags.won_club_support_vote || s.story.flags.vote_ally_shen) cred += 4;
+    const pre = [];
+    if (s.story.flags.bond_gu_true) { cred += 20; pre.push("（頂樓的那次談話：起始可信度 +20）"); }
+    if (s.story.flags.gu_endorse && g.exposed) { cred -= 20; pre.push("（她曾經相信過妳一次。這是第二次背叛。起始可信度 -20）"); }
+    // 評選季的表現：最後兩週被記下的把柄，會直接影響她的第一印象
+    const late = Memory.getMemories("gu").filter(m => m.evidence && m.day >= 29).length;
+    if (late) { const p = Math.min(12, late * 3); cred -= p; pre.push(`（評選季期間，她記下了 ${late} 件事。起始可信度 -${p}）`); }
+    else if (s.story.flags.late_season) { cred += 5; pre.push("（評選季的兩週，妳滴水不漏。起始可信度 +5）"); }
     const pick = (phase, n) => {
       const pool = BOSS_ACCUSATIONS.filter(a => a.phase === phase && (a.always || (a.cond && a.cond(s))));
       const cond = Utils.shuffle(pool.filter(a => !a.always)), alw = pool.filter(a => a.always);
@@ -2883,9 +3069,11 @@ const Battle = {
     b.boss = { cred: Utils.clamp(cred, 10, 60), accs: [...p1, ...p2, ...p3].slice(0, 6), usedIntel: [], usedAllies: [], usedMem: [], current: null, evidence: null, phase: 1, liedMem: Memory.findMemory("gu", "lied").length };
     while (b.boss.accs.length < 6) b.boss.accs.push(BOSS_ACCUSATIONS.find(a => a.id === "acc_history"));
     b.rounds = 6; b.mood = b.boss.cred;
+    pre.forEach(t => b.log.push({ t, k: /-\d/.test(t) ? "bad" : "good" }));
+    if (s.story.flags.chen_testimony && !s.npcRelations.chen.exposed) b.boss.chenShield = true;
   },
   allies() {
-    const s = State.get(); return ["lin", "shen", "chen", "xu"].filter(id => { const r = s.npcRelations[id]; return !r.exposed && r.suspicion < 60 && ((r.favor >= 60 && r.trust >= 45) || (id === "xu" && s.story.flags.xu_blackmailed)); });
+    const s = State.get(); return ["lin", "shen", "chen", "xu"].filter(id => { const r = s.npcRelations[id]; if (r.exposed) return false; if (s.story.flags["bond_" + id + "_true"]) return true; return r.suspicion < 60 && ((r.favor >= 60 && r.trust >= 45) || (id === "xu" && s.story.flags.xu_blackmailed)); });
   },
   bossTurn(b) {
     const acc = b.boss.accs[b.round - 1]; b.boss.current = acc; b.speaker = "gu";
@@ -2900,11 +3088,15 @@ const Battle = {
       if (m) {
         b.boss.usedMem.push(m.origin); const d = Memory.describe(m);
         const src = m.how === "witness" ? "我親眼看到的" : m.how === "screenshot" ? "我看過截圖" : `這是${NPCS[m.from]?.name || "有人"}告訴我的`;
-        const hit = m.cred >= 90 ? 4 : m.cred >= 70 ? 3 : 2;
+        const hit = (m.cred >= 90 ? 4 : m.cred >= 70 ? 3 : 2) + (m.day >= 29 ? 2 : 0); // 評選季的事證據力更強
         b.boss.evidence = `${d.when}${d.detail ? "，" + d.detail : ""}${d.who}。——${src}。`;
         b.boss.evidenceCred = m.cred; (b.boss.cited = b.boss.cited || []).push({ day: m.day, how: m.how, cred: m.cred });
         b.boss.cred = Utils.clamp(b.boss.cred - hit, 0, 100);
         b.log.push({ t: `顧知夏翻開筆記本：「${b.boss.evidence}」（證據可信度 ${m.cred}，可信度 -${hit}）`, k: "boss" });
+        if (b.boss.chenShield) {
+          b.boss.chenShield = false; b.boss.evidence = null; b.boss.cred = Utils.clamp(b.boss.cred + hit, 0, 100);
+          b.log.push({ t: `陳柏宇站了起來：「那件事我可以作證，跟小茶沒有關係。」——老實人的證詞，讓這條證據失效了。（可信度 +${hit}）`, k: "good" });
+        }
       }
     }
     // 予辰與若晴分手、若晴懷恨：公開審判時她會站出來指證
@@ -2983,6 +3175,8 @@ const Ending = {
   evaluateEnding() {
     const s = State.get();
     if (s.status.globalSuspicion >= 100 || s.story.flags.failed_judgment || !s.story.flags.passed_judgment) return "exposed";
+    // 隱藏結局：頂樓坦白＋通過審判＋風聲平穩
+    if (s.story.flags.bond_gu_true && s.status.globalSuspicion < 50) return "unmask";
     const sc = this.calculateEndingScore();
     const cands = [["lotus", sc.lotus, sc.reqLotus], ["queen", sc.queen, sc.reqQueen], ["schemer", sc.schemer, sc.reqSchemer]];
     const ok = cands.filter(c => c[2]).sort((a, b) => b[1] - a[1]);
@@ -2996,7 +3190,7 @@ const Ending = {
   unlockEnding(id) {
     const s = State.get(); s.ending = id; s.gameOver = true;
     if (!s.statistics.endingsUnlocked.includes(id)) s.statistics.endingsUnlocked.push(id);
-    Achievements.unlock({ lotus: "a_end_lotus", schemer: "a_end_schemer", queen: "a_end_queen", exposed: "a_end_exposed" }[id]);
+    Achievements.unlock({ lotus: "a_end_lotus", schemer: "a_end_schemer", queen: "a_end_queen", exposed: "a_end_exposed", unmask: "a_end_unmask" }[id]);
     const m = Save.meta(); if (!m.endings.includes(id)) m.endings.push(id); m.clears++;
     m.collection = [...new Set([...(m.collection || []), ...s.deck.collection])];
     Object.entries(s.deck.cardLevels).forEach(([k, v]) => m.cardLevels[k] = Math.max(m.cardLevels[k] || 1, v));
@@ -3056,7 +3250,7 @@ const UI = {
   setBackground(key) {
     const bg = BACKGROUNDS[key] || BACKGROUNDS.campus; this._bg = key;
     $$(".bg").forEach(el => {
-      el.style.background = `url('${bg.img}') center/cover, ${bg.grad}`;
+      el.style.background = `url('${bg.img}') ${bg.pos || "center"}/cover, ${bg.grad}`;
       el.style.filter = bg.filter || "";
     });
   },
@@ -3138,30 +3332,40 @@ const UI = {
       const rows = ch.map(c => { const node = STORIES[c.story]?.nodes?.[c.node]; const t = node?.ch?.[c.choice]?.t; return t ? `<li><b>D${c.day}・${STORY_LABELS[c.story] || ""}</b>　${Utils.esc(t)}</li>` : ""; }).filter(Boolean);
       body += `<div class="box"><h4>目前進度：${Utils.esc(p.player.name)}・第 ${Math.min(6, Math.floor((p.calendar.day - 1) / 7) + 1)} 週 Day ${p.calendar.day}</h4>${rows.length ? `<ol class="mem-list">${rows.join("")}</ol>` : "<p>還沒有做出重要選擇。</p>"}</div>`;
     } else body += `<div class="box"><p style="margin:0">目前沒有進行中的存檔。開始遊戲後，妳做過的每個關鍵選擇都會記在這裡。</p></div>`;
-    body += `<div class="box"><h4>已看過的結局（${meta.endings.length}/4）</h4>${meta.endings.length ? meta.endings.map(e => `<details style="margin:6px 0"><summary><b>${ENDINGS[e].name}</b></summary><p style="white-space:pre-wrap;margin:6px 0">${Utils.esc(ENDINGS[e].t.replace(/\{name\}/g, "小茶"))}</p></details>`).join("") : "<p style='margin:0'>還沒有看過任何結局。</p>"}</div>`;
-    this.modal("劇情回顧", body, {});
+    body += `<div class="box"><h4>已看過的結局（${meta.endings.length}/${Object.keys(ENDINGS).length}）</h4>${meta.endings.length ? meta.endings.map(e => `<details style="margin:6px 0"><summary><b>${ENDINGS[e].name}</b></summary><p style="white-space:pre-wrap;margin:6px 0">${Utils.esc(ENDINGS[e].t.replace(/\{name\}/g, "小茶"))}</p></details>`).join("") : "<p style='margin:0'>還沒有看過任何結局。</p>"}</div>`;
+    this.albumModal("story", body);
   },
   openStats() {
     const m = Save.meta(), h = m.history || [];
     const avg = k => h.length ? Math.round(h.reduce((s, x) => s + (x[k] || 0), 0) / h.length) : 0;
-    const names = { lotus: "白蓮花女神", queen: "社交女王", schemer: "腹黑操盤手", exposed: "全員鑑茶" };
-    const html = `<div class="end-stats" style="color:var(--ink)">${[["通關次數", m.clears || 0], ["已解鎖結局", m.endings.length + "/4"], ["成就", m.achievements.length + "/" + Object.keys(ACHIEVEMENTS).length], ["收藏卡牌", (m.collection || []).length + "/" + CARDS.length], ["平均純潔", avg("aura")], ["平均警報", avg("global")]].map(([a, b]) => `<div style="background:#fff3f8"><b style="color:var(--pink-d)">${b}</b>${a}</div>`).join("")}</div>
+    const names = Object.fromEntries(Object.entries(ENDINGS).map(([k, e]) => [k, e.name]));
+    const html = `<div class="end-stats" style="color:var(--ink)">${[["通關次數", m.clears || 0], ["已解鎖結局", m.endings.length + "/" + Object.keys(ENDINGS).length], ["成就", m.achievements.length + "/" + Object.keys(ACHIEVEMENTS).length], ["收藏卡牌", (m.collection || []).length + "/" + CARDS.length], ["平均純潔", avg("aura")], ["平均警報", avg("global")]].map(([a, b]) => `<div style="background:#fff3f8"><b style="color:var(--pink-d)">${b}</b>${a}</div>`).join("")}</div>
       <div class="box"><h4>最近的通關紀錄</h4>${h.length ? `<table style="width:100%;font-size:calc(13px * var(--fs));border-collapse:collapse">${["<tr><th align=left>日期</th><th align=left>結局</th><th>評分</th><th>純潔</th><th>警報</th><th>支持</th><th>心機</th></tr>", ...h.slice().reverse().map(x => `<tr><td>${x.date}</td><td>${names[x.ending]}</td><td align=center><b>${x.grade || "-"}</b></td><td align=center>${x.aura}</td><td align=center>${x.global}</td><td align=center>${x.support}</td><td align=center>${x.scheme}</td></tr>`)].join("")}</table>` : "<p style='margin:0'>完成一次結局後，這裡會出現紀錄。</p>"}</div>`;
-    this.modal("數據總覽", html, {});
+    this.albumModal("stats", html);
   },
   openExtras() {
     const m = Save.meta();
-    const items = [["cg_light.jpg", "白蓮花女神", m.endings.includes("lotus")], ["cg_queen.jpg", "社交女王", m.endings.includes("queen")], ["cg_dark.jpg", "腹黑操盤手", m.endings.includes("schemer")], ["cg_exposed.jpg", "全員鑑茶", m.endings.includes("exposed")], ["cg_boss.jpg", "鑑茶女王的審判", !!m.judgmentSeen], ["char_player_dark.png", "小茶的另一面", (m.clears || 0) > 0]];
+    const items = [["cg_light.jpg", "白蓮花女神", m.endings.includes("lotus")], ["cg_queen.jpg", "社交女王", m.endings.includes("queen")], ["cg_dark.jpg", "腹黑操盤手", m.endings.includes("schemer")], ["cg_exposed.jpg", "全員鑑茶", m.endings.includes("exposed")], ["cg_end_unmask.jpg", "卸下面具", m.endings.includes("unmask")], ["cg_boss.jpg", "鑑茶女王的審判", !!m.judgmentSeen], ["char_player_dark.png", "小茶的另一面", (m.clears || 0) > 0],
+      ...["lin", "shen", "gu", "chen", "xu"].map(id => [`cg_ev_${id}.jpg`, BACKGROUNDS["cg_" + id].name, (m.cgSeen || []).includes("cg_" + id)])];
     const html = `<p style="margin-top:0">達成結局與里程碑後解鎖。點圖片可放大。</p><div class="gal">${items.map(([f, n, ok]) => `<div class="g ${ok ? "" : "lock"}"><img class="${ok ? "cg-thumb" : ""}" data-src="assets/${f}" src="assets/${f}" onerror="this.style.background='linear-gradient(135deg,#3a1f4d,#c9558b)';this.removeAttribute('src')"><b>${ok ? n : "？？？"}</b></div>`).join("")}</div>`;
-    const md = this.modal("特典解鎖", html, {});
+    const md = this.albumModal("cg", html);
     $$(".cg-thumb", md).forEach(i => i.onclick = () => { const f = document.createElement("div"); f.className = "cg-full"; f.innerHTML = `<img src="${i.dataset.src}">`; f.onclick = () => f.remove(); document.body.appendChild(f); });
+  },
+  // 回憶相簿：劇情回顧、CG 收藏、通關紀錄合在同一個視窗，用分頁切換
+  openAlbum(tab = "story") { ({ story: () => this.openStoryReview(), cg: () => this.openExtras(), stats: () => this.openStats() })[tab](); },
+  albumModal(active, body) {
+    const tabs = [["story", "📖 劇情回顧"], ["cg", "🖼 CG 收藏"], ["stats", "📊 通關紀錄"]];
+    const m = this.modal("回憶相簿", `<div class="tabs album-tabs">${tabs.map(([k, n]) => `<button data-at="${k}" class="${k === active ? "on" : ""}">${n}</button>`).join("")}</div>` + body, { id: "album" });
+    $$("[data-at]", m).forEach(b => b.onclick = () => { if (b.dataset.at !== active) this.openAlbum(b.dataset.at); });
+    return m;
   },
   openHelp() {
     this.modal("遊戲說明", `<div class="box"><h4>目標</h4><p style="margin:0">六週內在星光公關社站穩腳步，通過社長顧知夏的審判，取得核心位置。</p></div>
       <div class="box"><h4>每天</h4><p style="margin:0">兩次行動（社團活動、聊天、約會、蒐集情報、經營社群、練習話術、休息）。精力每晚恢復 30，私訊每天 2 次、每次 5 精力。</p></div>
       <div class="box"><h4>三種數值要分開看</h4><p style="margin:0">好感＝喜不喜歡妳；信任＝相不相信妳；個別懷疑＝對妳的戒心（80 開始調查、100 當面拆穿）。<b>鑑茶警報</b>是整個社交圈的風聲，100 直接 Game Over。</p></div>
       <div class="box"><h4>社交戰鬥</h4><p style="margin:0">看清 NPC 的「意圖」，打出有效標籤的卡牌提升氣氛。顧知夏在場時，所有可疑行為都會被放大。點一下卡牌看效果，再點一次打出。</p></div>
-      <div class="box"><h4>記憶與證據</h4><p style="margin:0">NPC 會記住妳做過的事、當時誰在場。消息會被轉述，最後都可能變成顧知夏手上的證據。</p></div>`, {});
+      <div class="box"><h4>記憶與證據</h4><p style="margin:0">NPC 會記住妳做過的事、當時誰在場。消息會被轉述，最後都可能變成顧知夏手上的證據。</p></div>
+      <div class="box"><h4>音樂來源</h4><p style="margin:0">Song：샛별 - 너를 좋아하는 이유 (Piano ver.)<br>推廣：J&amp;B無版權音樂庫</p></div>`, {});
   },
   showCreate(ngPlus = false) {
     this.show("create"); this._create = { persona: "good_newcomer", direction: "lotus", ngPlus };
@@ -3188,6 +3392,7 @@ const UI = {
 
   /* ---------- 主畫面刷新 ---------- */
   refresh() {
+    if (State.get() && !Story.cur && !Battle.active && !$("#game").classList.contains("hidden")) setTimeout(() => { if (!Story.cur && !Battle.active) Tips.show("t_actions"); }, 300);
     const s = State.get(); if (!s || $("#game").classList.contains("hidden")) return;
     const c = s.calendar, st = s.status, p = s.player;
     $("#date").innerHTML = `第 ${c.week} 週・Day ${c.day}<small>星期${WEEKDAYS[c.weekday]}・${c.weather}・剩餘行動 ${c.remainingActions}${Actions.freeChatAvailable() ? "（+免費聊天）" : ""}</small>`;
@@ -3290,7 +3495,10 @@ const UI = {
     vn.classList.toggle("dark", inner || node.ex === "dark");
     const stage = $("#vnStage");
     const showId = isNpc ? sp : isPlayer || inner ? "player" : this._vnLast;
-    if (showId && (isNpc || isPlayer || inner)) {
+    const cgMode = !!BACKGROUNDS[this._bg]?.cg; // CG 場景：角色已畫在圖裡，不另外顯示立繪
+    $("#vn").classList.toggle("cg-mode", cgMode);
+    if (cgMode) { stage.innerHTML = ""; stage.dataset.who = ""; this._vnLast = null; }
+    else if (showId && (isNpc || isPlayer || inner)) {
       this._vnLast = showId;
       const ex = isNpc ? (node.ex || Status.emotionExpr(sp)) : inner ? "dark" : "normal";
       const changed = stage.dataset.who !== showId; stage.dataset.who = showId;
@@ -3356,6 +3564,7 @@ const UI = {
 
   /* ---------- 戰鬥 ---------- */
   openBattle(b) {
+    setTimeout(() => { if (b.type === "boss") Tips.show("t_boss"); else if (b.type !== "chat") { Tips.show("t_battle"); if (b.participants.length > 1) Tips.show("t_shuraba"); if (b.participants.includes("gu") || (b.def.observers || []).includes("gu")) Tips.show("t_gu"); } }, 400);
     const el = $("#battle"); el.classList.remove("hidden"); el.classList.toggle("boss", b.type === "boss");
     this.setBackground(this._bg || "clubroom"); this._selCard = null;
     requestAnimationFrame(() => this.placeToasts());
@@ -3401,7 +3610,7 @@ const UI = {
       c.onclick = () => {
         if (b.ended) return; const id = c.dataset.card;
         if (this._selCard === id) { this._selCard = null; Battle.playCard(id); return; }
-        this._selCard = id; this.renderBattle(b); this.cardDetail(id, b);
+        this._selCard = id; this.renderBattle(b); this.cardDetail(id, b); Tips.show("t_card");
       };
       c.onmouseenter = () => { if (matchMedia("(hover:hover)").matches) this.cardDetail(c.dataset.card, b); };
     });
@@ -3452,6 +3661,7 @@ const UI = {
     const cancel = $(".modal-foot .btn", m); cancel.onclick = () => { m.remove(); Status.addEnergy(ACTIONS.social.energy); cb(false); };
   },
   openSocial(tab = "feed") {
+    Tips.show("t_social");
     const s = State.get();
     const feed = () => s.social.posts.length ? s.social.posts.map(p => `<div class="post"><div class="who">${this.ava("player")}${Utils.esc(s.player.nickname || s.player.name)}<span class="chip">${POST_TYPES[p.type].name}</span><span style="margin-left:auto;font-size:calc(11px * var(--fs));color:var(--ink-l)">Day ${p.day}</span></div>
       <div class="txt">${Utils.esc(p.text)}</div><div class="meta"><span>♡ ${p.likes.length}${p.likes.length ? "（" + p.likes.map(i => NPCS[i].name).join("、") + "）" : ""}</span><span>${VISIBILITY[p.visibility]}${p.targets.length ? "：" + p.targets.map(i => NPCS[i].name).join("、") : ""}</span>${p.leaked ? `<span class="leaked">截圖外流</span>` : ""}</div>
@@ -3466,6 +3676,7 @@ const UI = {
     $$("[data-dm]", m).forEach(b => b.onclick = () => this.openDM(b.dataset.dm));
   },
   openDM(id) {
+    Tips.show("t_dm");
     const s = State.get(), msgs = s.social.messages.filter(m => m.npc === id).slice(-8);
     const done = s.npcRelations[id].dmDay === s.calendar.day || Social.dmLeft() <= 0;
     const html = `<div class="phone"><div class="phone-top"><button class="btn sm ghost" id="dmBack">‹</button><span>${NPCS[id].name}</span><span></span></div>
@@ -3478,6 +3689,7 @@ const UI = {
 
   /* ---------- 人際 ---------- */
   openNPC(id = "lin") {
+    Tips.show("t_npc"); if (Relations.coupleState().min < 80) Tips.show("t_couple");
     const s = State.get(), n = NPCS[id], r = s.npcRelations[id];
     const meter = (l, v, c, shown = true) => `<div class="meter"><div class="l"><span>${l}</span><b>${shown ? v : "？？"}</b></div><div class="t"><b style="width:${shown ? v : 0}%;background:${c}"></b></div></div>`;
     const mems = Memory.getMemories(id).slice(-8).reverse();
@@ -3516,6 +3728,7 @@ const UI = {
 
   /* ---------- 卡牌收藏 ---------- */
   openCards(filter = "ALL") {
+    if (State.get()) Tips.show("t_cards");
     const s = State.get(), meta = Save.meta();
     const inGame = !!s, coll = inGame ? s.deck.collection : [...new Set([...INITIAL_COLLECTION, ...(meta.collection || [])])];
     const deck = inGame ? s.deck.activeDeck : [];
@@ -3537,6 +3750,7 @@ const UI = {
 
   /* ---------- 天賦 ---------- */
   openTalents() {
+    Tips.show("t_talent");
     const s = State.get();
     const html = `<p style="margin-top:0">剩餘天賦點：<b>${s.player.talentPoints}</b>（每週開始 +1；同一路線需依序解鎖）</p><div class="tal-tree">${Object.entries(TALENT_DIRECTIONS).map(([k, d]) => `<div class="tal-col"><h4 style="color:${k === "lotus" ? "var(--pink-d)" : k === "scheme" ? "var(--violet)" : "var(--gold)"}">${d.name}路線</h4>
       ${TALENTS.filter(t => t.branch === k).map(t => `<button class="tal ${Talents.has(t.id) ? "on" : ""}" data-t="${t.id}" ${Talents.canUnlockTalent(t.id) ? "" : "disabled"}><b>${t.name}</b><p>${t.desc}</p>${t.req && !Talents.has(t.req) ? `<p style="color:var(--bad)">前置：${TALENT_MAP[t.req].name}</p>` : ""}</button>`).join("")}</div>`).join("")}</div>`;
@@ -3546,6 +3760,7 @@ const UI = {
 
   /* ---------- 商店 ---------- */
   openShop() {
+    Tips.show("t_shop");
     const s = State.get(), inv = s.player.items;
     const row = (k, it, gift) => `<div class="box" style="display:flex;align-items:center;gap:10px"><div style="flex:1"><b>${it.name}</b>　<span style="font-size:calc(12px * var(--fs));color:var(--ink-l)">${gift ? `${NPCS[it.npc].name}最愛・${Object.entries(it.fx).map(([a, b]) => (a === "favor" ? "好感" : "信任") + "+" + b).join(" ")}` : it.desc}</span><br><small>持有 ${inv[k] || 0}</small></div>
       <button class="btn sm" data-b="${k}">${it.price} 金幣</button>${!gift && inv[k] ? `<button class="btn sm primary" data-u="${k}">使用</button>` : ""}</div>`;
@@ -3575,7 +3790,7 @@ const UI = {
   openGallery() {
     const meta = Save.meta();
     const html = `<h4 style="font-family:var(--serif);color:var(--pink-d);margin-top:0">人物圖鑑</h4><div class="gal">${NPC_IDS.map(id => `<div class="g">${this.imgTag(id)}<b>${NPCS[id].name}</b><br><small>${NPCS[id].role}・${NPCS[id].traits}</small></div>`).join("")}</div>
-      <h4 style="font-family:var(--serif);color:var(--pink-d)">結局圖鑑（${meta.endings.length}/4）</h4><div class="gal">${Object.entries(ENDINGS).map(([k, e]) => `<div class="g ${meta.endings.includes(k) ? "" : "lock"}"><img src="${e.cg}" onerror="this.style.background='linear-gradient(135deg,#3a1f4d,#c9558b)';this.removeAttribute('src')"><b>${meta.endings.includes(k) ? e.name : "？？？"}</b></div>`).join("")}</div>`;
+      <h4 style="font-family:var(--serif);color:var(--pink-d)">結局圖鑑（${meta.endings.length}/${Object.keys(ENDINGS).length}）</h4><div class="gal">${Object.entries(ENDINGS).map(([k, e]) => `<div class="g ${meta.endings.includes(k) ? "" : "lock"}"><img src="${e.cg}" onerror="this.style.background='linear-gradient(135deg,#3a1f4d,#c9558b)';this.removeAttribute('src')"><b>${meta.endings.includes(k) ? e.name : "？？？"}</b></div>`).join("")}</div>`;
     this.modal("圖鑑", html, {});
   },
   openAchievements() {
@@ -3588,11 +3803,14 @@ const UI = {
     const fsOpts = [["small", "小"], ["normal", "標準"], ["large", "大"], ["xlarge", "特大"]];
     const m = this.modal("設定", `<div class="box"><b>字體大小</b><div class="opt-grid" style="grid-template-columns:repeat(4,1fr);margin:8px 0 6px">${fsOpts.map(([k, n]) => `<button data-fs="${k}" class="${st.fontScale === k ? "on" : ""}">${n}</button>`).join("")}</div><p style="margin:0;color:var(--ink-l)">預覽：「我只是想幫忙而已嘛……」</p></div>
       <div class="box"><label style="display:flex;justify-content:space-between;align-items:center">背景音樂 <input type="checkbox" id="sBgm" ${st.bgm ? "checked" : ""}></label>
-        <div style="display:flex;align-items:center;gap:10px;margin-top:8px"><span style="white-space:nowrap">音量</span><input type="range" id="sBgmVol" min="0" max="100" step="5" value="${st.bgmVol ?? 50}" style="flex:1;accent-color:#c2446f"><b id="sBgmVolN" style="width:2.5em;text-align:right">${st.bgmVol ?? 50}</b></div></div>
+        <div style="display:flex;align-items:center;gap:10px;margin-top:8px"><span style="white-space:nowrap">音量</span><input type="range" id="sBgmVol" min="0" max="100" step="5" value="${st.bgmVol ?? 50}" style="flex:1;accent-color:#c2446f"><b id="sBgmVolN" style="width:2.5em;text-align:right">${st.bgmVol ?? 50}</b></div><small style="display:block;margin-top:6px;color:var(--ink-l)">♪ 샛별 - 너를 좋아하는 이유 (Piano ver.)｜推廣：J&amp;B無版權音樂庫</small></div>
       <label class="box" style="display:flex;justify-content:space-between;align-items:center">音效 <input type="checkbox" id="sSnd" ${st.sound ? "checked" : ""}></label>
+      <div class="box"><label style="display:flex;justify-content:space-between;align-items:center">新手提示 <input type="checkbox" id="sTips" ${st.tips !== false ? "checked" : ""}></label><button class="btn sm ghost" id="sTipsReset" style="margin-top:8px">重新顯示所有提示</button></div>
       <div class="box"><b>遊戲說明</b><p style="font-size:calc(13px * var(--fs));margin:6px 0 0">每天兩次行動。好感與信任分開計算；「個別懷疑」是每個人對妳的戒心（80 開始調查、100 拆穿），「鑑茶警報」是整個社交圈的風聲（100 直接 Game Over）。戰鬥中看清 NPC 的意圖，用對標籤的卡牌提升氣氛。私下行動比公開行動安全，顧知夏在場時一切可疑行為都會被放大。</p></div>
       <button class="btn sm ghost" id="sReset">清除所有資料（存檔、成就、圖鑑）</button>`, { small: true });
     $("#sSnd", m).onchange = e => { st.sound = e.target.checked; Save.saveSettings(st); };
+    $("#sTips", m).onchange = e => { st.tips = e.target.checked; Save.saveSettings(st); };
+    $("#sTipsReset", m).onclick = () => { Tips.reset(); st.tips = true; Save.saveSettings(st); $("#sTips", m).checked = true; this.toast("新手提示會重新出現"); };
     $("#sBgm", m).onchange = e => { st.bgm = e.target.checked; Save.saveSettings(st); Bgm.apply(); };
     $("#sBgmVol", m).oninput = e => { st.bgmVol = +e.target.value; $("#sBgmVolN", m).textContent = st.bgmVol; Save.saveSettings(st); Bgm.setVolume(); };
     $$("[data-fs]", m).forEach(b => b.onclick = () => { st.fontScale = b.dataset.fs; Save.saveSettings(st); this.applyFontScale(); this.openSettings(); });
@@ -3628,10 +3846,10 @@ const UI = {
     const grade = total >= 90 ? "SS" : total >= 80 ? "S" : total >= 70 ? "A" : total >= 55 ? "B" : total >= 40 ? "C" : "D";
     const top = axes.slice().sort((a, b) => b[1] - a[1])[0][0];
     const titles = { "純潔演技": ["人間白蓮花", "清純本純"], "心機手腕": ["茶藝宗師", "暗黑操盤手"], "人氣經營": ["社交天后", "萬人迷本迷"], "隱匿程度": ["無影無蹤", "完美隱形茶"] };
-    const title = endingId === "exposed" ? (total >= 35 ? "差一點就成功的茶" : "翻車現行犯") : titles[top][grade === "SS" || grade === "S" ? 0 : 1];
-    const comments = { SS: "教科書等級的茶藝，連鑑茶女王都只能點頭。", S: "滴水不漏，社團的空氣都在妳的掌握之中。", A: "表現亮眼，只差一點點就能封神。", B: "有模有樣，但破綻還是被人記住了。", C: "茶有點苦，下次記得泡淡一點。", D: "全員鑑茶。綠茶終究會涼。" };
+    const title = endingId === "unmask" ? "不再泡茶的人" : endingId === "exposed" ? (total >= 35 ? "差一點就成功的茶" : "翻車現行犯") : titles[top][grade === "SS" || grade === "S" ? 0 : 1];
+    const comments0 = { SS: "教科書等級的茶藝，連鑑茶女王都只能點頭。", S: "滴水不漏，社團的空氣都在妳的掌握之中。", A: "表現亮眼，只差一點點就能封神。", B: "有模有樣，但破綻還是被人記住了。", C: "茶有點苦，下次記得泡淡一點。", D: "全員鑑茶。綠茶終究會涼。" };
     const keys = (s.story.choices || []).map(c => STORIES[c.story]?.nodes?.[c.node]?.ch?.[c.choice]).filter(c => c && c.inner).map(c => c.t.replace(/（[^）]*）/g, "").replace(/^【[^】]*】/, "").replace(/^「|」$/g, ""));
-    return { axes, total, grade, title, comment: comments[grade], keys: keys.slice(-3), endingId };
+    return { axes, total, grade, title, comment: endingId === "unmask" ? "妳把面具放下了。這一局，最高明的茶藝是不泡茶。" : comments0[grade], keys: keys.slice(-3), endingId };
   },
   drawScoreCard(sc, withImg = true) {
     const s = State.get(), W = 1080, H = 1350, cv = document.createElement("canvas"); cv.width = W; cv.height = H;
@@ -3714,6 +3932,44 @@ const UI = {
   }
 };
 
+/* ---------- 新手引導：每個功能第一次出現時，各自跳一則短提示（看過就不再出現） ---------- */
+const TIPS = {
+  t_actions: ["📅 每天的行動", "每天有兩次行動。點下方的行動按鈕，安排妳今天要做什麼。"],
+  t_alert: ["🚨 鑑茶警報", "這是整個社交圈對妳的風聲。做了可疑的事就會上升，到 100 直接 Game Over。"],
+  t_npc: ["💗 好感・信任・懷疑", "好感＝喜不喜歡妳，信任＝相不相信妳，懷疑＝對妳的戒心。懷疑到 100，會被當面拆穿。"],
+  t_battle: ["🃏 社交戰鬥", "看對方頭上的「意圖」，打出對應標籤的卡牌，把氣氛值推到目標。"],
+  t_card: ["👆 出牌", "點一下卡牌看效果，再點一次就會打出。"],
+  t_shuraba: ["⚡ 修羅場", "好幾個人同時在場。點上方的角色可以切換出牌對象。"],
+  t_gu: ["👓 顧知夏在場", "她在場時，所有可疑的行為都會被放大。說話小心一點。"],
+  t_social: ["📱 社群", "發文能拉近距離，也可能被誤會。發文前，注意這篇動態「誰看得到」。"],
+  t_dm: ["💬 私訊", "私訊每天 2 次，每次 5 精力。私下說的話，比公開場合安全。"],
+  t_memory: ["📝 有人記住了", "NPC 會記住妳做過的事，還有當時誰在場。這些紀錄，最後可能變成審判時的證據。"],
+  t_intel: ["🔍 情報", "情報能在關鍵時刻扭轉局面——被拆穿時反將一軍，或在最終審判中使用。"],
+  t_shop: ["🎁 商店", "禮物能快速提升好感。每個角色都有自己最喜歡的那一樣。"],
+  t_talent: ["✨ 天賦", "每週獲得 1 天賦點。專精一條路線，效果會越來越強。"],
+  t_cards: ["🎴 牌組", "在這裡調整帶上場的卡牌。卡牌升級後，效果會更強。"],
+  t_couple: ["💔 予辰與若晴", "妳的曖昧行為會影響他們的感情。人際面板可以看到兩人現在的狀態。"],
+  t_boss: ["⚖️ 最終審判", "顧知夏會一條一條提出質疑。選擇回應的方式，結束時可信度 50 以上就能通過。"]
+};
+const Tips = {
+  queue: [],
+  enabled() { if (navigator.webdriver && !window.__GTS_TIPS) return false; return Save.settings().tips !== false; },
+  seen(id) { return (Save.meta().tipsSeen || []).includes(id); },
+  show(id) {
+    if (!TIPS[id] || !this.enabled() || this.seen(id) || this.queue.includes(id)) return;
+    this.queue.push(id); if (this.queue.length === 1) this._render();
+  },
+  _render() {
+    const id = this.queue[0]; if (!id) return; const [title, text] = TIPS[id];
+    const el = document.createElement("div"); el.id = "tip"; el.className = "tip-bg";
+    el.innerHTML = `<div class="tip"><div class="tip-t">${title}</div><div class="tip-x">${text}</div><button class="btn primary sm" id="tipOk">知道了</button></div>`;
+    document.body.appendChild(el);
+    const close = e => { e && e.stopPropagation(); const m = Save.meta(); m.tipsSeen = [...new Set([...(m.tipsSeen || []), id])]; Save.saveMeta(m); el.remove(); this.queue.shift(); if (this.queue.length) setTimeout(() => this._render(), 180); };
+    $("#tipOk", el).onclick = close; el.addEventListener("click", e => e.stopPropagation());
+  },
+  reset() { const m = Save.meta(); m.tipsSeen = []; Save.saveMeta(m); }
+};
+
 /* ============================================================
  * GameManager：遊戲主流程
  * ============================================================ */
@@ -3761,9 +4017,7 @@ document.addEventListener("DOMContentLoaded", () => {
   $("#btnContinue").onclick = () => Game.continueGame();
   $("#btnLoad").onclick = () => UI.openSaves("load");
   $("#btnGallery").onclick = () => UI.openRelations();
-  $("#btnStory").onclick = () => UI.openStoryReview();
-  $("#btnStats").onclick = () => UI.openStats();
-  $("#btnExtra").onclick = () => UI.openExtras();
+  $("#btnStory").onclick = () => UI.openAlbum("story");
   $("#btnHelp").onclick = () => UI.openHelp();
   $("#btnSound").onclick = () => { const st = Save.settings(); const on = !(st.sound || st.bgm); st.sound = st.bgm = on; Save.saveSettings(st); $("#btnSound").classList.toggle("off", !on); Bgm.apply(); };
   Bgm.init();
