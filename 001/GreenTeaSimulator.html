@@ -572,6 +572,34 @@ body.flash::before{opacity:1}
 #vn.cg-mode.dark .bg{filter:brightness(.7) saturate(1.1)!important}
 .album-tabs{margin-bottom:12px}
 
+/* v1.3.0 序章〈高二那年〉 */
+#pro{z-index:5;background:#1d1026}
+#pro .bg{position:absolute;inset:0;background-size:cover}
+.pro-hud{position:absolute;top:12px;left:12px;display:flex;flex-direction:column;gap:8px;z-index:2;max-width:min(360px,62vw)}
+.pro-day{align-self:flex-start;background:rgba(194,68,111,.92);color:#fff;font-weight:900;padding:5px 14px;border-radius:999px;font-size:calc(14px * var(--fs))}
+.pro-who{display:flex;gap:10px;align-items:center;background:rgba(255,255,255,.9);border-radius:14px;padding:8px 12px;box-shadow:0 4px 14px rgba(0,0,0,.2)}
+.pro-who img{width:52px;height:52px;object-fit:cover;object-position:top;border-radius:50%;background:#f3e6f7}
+.pro-who b{font-size:calc(14px * var(--fs));color:#6a3a8a}
+.pro-st,.pro-alert{display:flex;align-items:center;gap:6px;font-size:calc(12px * var(--fs));color:#4a3550}
+.pro-alert{background:rgba(255,255,255,.9);border-radius:12px;padding:6px 12px}
+.pro-alert span{margin-left:auto;padding-left:8px;color:#8e3c6a;font-weight:700}
+.pro-bar{display:inline-block;width:90px;height:7px;background:#eadcef;border-radius:9px;overflow:hidden}
+.pro-bar i{display:block;height:100%;border-radius:9px;transition:width .4s}
+.pro-quit{position:absolute;top:12px;right:12px;z-index:2;background:rgba(255,255,255,.85);border:0;border-radius:999px;padding:6px 14px;font:inherit;font-size:calc(12px * var(--fs));color:#6a3a8a;cursor:pointer}
+.pro-acts{position:absolute;left:50%;bottom:6%;transform:translateX(-50%);display:flex;flex-wrap:wrap;gap:12px;justify-content:center;align-items:center;width:min(92vw,640px);z-index:2}
+.pro-left{align-self:center;margin:0 auto;background:rgba(40,16,48,.82);color:#fff;border-radius:999px;padding:4px 16px;font-size:calc(14px * var(--fs))}.pro-acts::before{content:"";width:100%;order:0}.pro-left{order:-1;flex-basis:auto}
+.pro-act{min-width:180px;flex:1;display:flex;flex-direction:column;gap:3px;padding:14px 16px;border-radius:16px;border:2px solid #f6b6d0;background:rgba(255,255,255,.95);font:inherit;cursor:pointer;animation:scPulse 1.8s ease-in-out infinite}
+.pro-act b{font-size:calc(17px * var(--fs));color:#c2446f}.pro-act small{color:#7a6a80;font-size:calc(12.5px * var(--fs))}
+.pro-act:disabled{animation:none;opacity:.55;cursor:default}
+.pro-daycard{position:fixed;inset:0;z-index:260;display:flex;align-items:center;justify-content:center;background:rgba(20,8,28,.82);animation:tipIn .3s ease;pointer-events:none}
+.pro-daycard div{text-align:center;color:#fff}.pro-daycard small{display:block;letter-spacing:.3em;opacity:.8;margin-bottom:6px}
+.pro-daycard b{font-family:var(--serif);font-size:calc(46px * var(--fs));letter-spacing:.15em}
+.pro-offer{text-align:center;line-height:1.8}.pro-offer .sub,.pro-score .sub{color:#8a6a90;font-size:calc(13px * var(--fs))}
+.pro-score{text-align:center}.ps-title{font-family:var(--serif);font-weight:900;font-size:calc(34px * var(--fs));color:#c2446f;margin:6px 0}
+.ps-stats{display:flex;justify-content:center;gap:12px;margin:10px 0}.ps-stats span{background:#fff3f8;border-radius:12px;padding:8px 12px;font-size:calc(12px * var(--fs));color:#8a6a90}
+.ps-stats b{display:block;font-size:calc(20px * var(--fs));color:#c2446f}
+@media (max-width:767px){.pro-hud{top:8px;left:8px}.pro-who img{width:40px;height:40px}.pro-bar{width:64px}.pro-act{min-width:140px;padding:12px}}
+
 </style>
 </head>
 <body>
@@ -607,6 +635,12 @@ body.flash::before{opacity:1}
 <section id="create" class="screen hidden"><div class="create-box"></div></section>
 
 <!-- 主遊戲 -->
+<section id="pro" class="screen hidden">
+  <div class="bg"></div>
+  <div class="pro-hud" id="proHud"></div>
+  <button class="pro-quit" id="proQuit">離開序章</button>
+  <div class="pro-acts" id="proActs"></div>
+</section>
 <section id="game" class="screen hidden">
   <header class="topbar">
     <div class="date" id="date"></div>
@@ -670,7 +704,7 @@ body.flash::before{opacity:1}
  * ============================================================ */
 const CONFIG = {
   schemaVersion: 1,
-  gameVersion: "1.2.0",
+  gameVersion: "1.3.0",
   totalDays: 42,
   actionsPerDay: 2,
   dailyEnergyRegen: 30,
@@ -775,7 +809,7 @@ const NPCS = {
 const NPC_IDS = ["lin", "shen", "gu", "chen", "xu"];
 // 表情立繪（缺圖時自動退回基本立繪）
 NPC_IDS.forEach(id => { NPCS[id].exImg = { angry: `assets/char_${id}_angry.png`, suspect: `assets/char_${id}_suspect.png` }; });
-const PLAYER_DARK_IMG = "assets/char_player_dark.png";
+let PLAYER_DARK_IMG = "assets/char_player_dark.png"; // 序章時會換成宋語柔
 
 /* 予辰 ♥ 若晴 的感情狀態（兩人互相關係值的平均） */
 const COUPLE_STATES = [
@@ -1611,6 +1645,235 @@ const EPILOGUES = [
 ];
 
 /* ============================================================
+ * 序章〈高二那年〉資料：角色、劇情、五天流程、三種背刺手法
+ * 玩家扮演宋語柔；背刺手法會影響大學篇的顧知夏
+ * ============================================================ */
+Object.assign(NPCS, {
+  gu_y: {
+    id: "gu_y", name: "顧知夏", age: 17, role: "廣播社社長（高二）", color: "#b388e0", prologue: true,
+    traits: "天真、愛笑、把朋友當全世界", personality: ["trusting", "warm"],
+    attributes: { sensitivity: 45, protectiveness: 60, rationality: 40, emotionalStability: 50, jealousy: 20, vanity: 30 },
+    initialRelationship: { favor: 70, trust: 80, suspicion: 0, emotion: 20 },
+    cardAffinity: { WEAKNESS: 1.3, CARE: 1.3, SECRET: 1.2, CRISIS: 1.1, MANIPULATE: 0.8 },
+    img: "assets/char_gu_young.png",
+    bio: "高二的顧知夏。剛當上廣播社社長，愛笑、怕上台，隨身帶著一本筆記本。"
+  },
+  senior: {
+    id: "senior", name: "徐學姊", age: 18, role: "廣播社前副社長（高三）", color: "#d9a066", prologue: true,
+    traits: "強勢、直接、看不起知夏", personality: ["direct", "strong"],
+    attributes: { sensitivity: 35, protectiveness: 20, rationality: 55, emotionalStability: 45, jealousy: 60, vanity: 70 },
+    initialRelationship: { favor: 20, trust: 15, suspicion: 15, emotion: 0 },
+    cardAffinity: { MANIPULATE: 1.3, SECRET: 1.3, CARE: 1.1, DEFLECT: 1.1, WEAKNESS: 0.8 },
+    img: "assets/char_npc_senior.png",
+    bio: "高三的前副社長。覺得自己的企劃比知夏好太多，不服氣老師的決定。"
+  },
+  kui: {
+    id: "kui", name: "小葵（群組）", age: 17, role: "廣播社社員", color: "#ffb74d", prologue: true, noPortrait: true,
+    traits: "大嘴巴", personality: ["gossip"],
+    attributes: { sensitivity: 30, protectiveness: 20, rationality: 30, emotionalStability: 50, jealousy: 30, vanity: 60 },
+    initialRelationship: { favor: 40, trust: 30, suspicion: 0, emotion: 0 }, cardAffinity: {}, img: "",
+    bio: "什麼事都會傳出去的社員。"
+  },
+  xc: {
+    id: "xc", name: "小茶", age: 18, role: "大學新生", color: "#f48fb1", prologue: true,
+    traits: "", personality: [], attributes: { sensitivity: 50, protectiveness: 50, rationality: 50, emotionalStability: 50, jealousy: 50, vanity: 50 },
+    initialRelationship: { favor: 0, trust: 0, suspicion: 0, emotion: 0 }, cardAffinity: {}, img: "assets/char_player.png", bio: ""
+  }
+});
+Object.assign(NPC_INTENT_POOL, { gu_y: ["chat", "probe"], senior: ["gossip", "question", "probe"] });
+Object.assign(BACKGROUNDS, {
+  hs_club: { img: "assets/bg_hs_club.jpg", name: "高中廣播社", grad: "linear-gradient(160deg,#f6d9b8,#c9a0c8)" },
+  pro_black: { img: "", name: "", grad: "linear-gradient(160deg,#0b0610,#1d1026)" },
+  cg_pro_friends: { img: "assets/cg_pro_friends.jpg", name: "最好的朋友", cg: true, pos: "45% center", grad: "linear-gradient(160deg,#f6d9b8,#c9a0c8)" },
+  cg_pro_betrayal: { img: "assets/cg_pro_betrayal.jpg", name: "改選", cg: true, pos: "30% center", grad: "linear-gradient(160deg,#3a2a50,#e8905a)" }
+});
+Object.assign(ACHIEVEMENTS, { a_prologue: { name: "高二那年", desc: "完成序章" } });
+
+/* 三種背刺手法：序章評分＋大學篇連動 */
+const PRO_METHODS = {
+  secret: {
+    name: "散播秘密", title: "耳語者", comment: "一則訊息，就讓全世界都知道了她的害怕。",
+    intel: "高中時，知夏只對一個人說過的心事，在改選當天被截圖傳遍全社。",
+    line: "我只對一個人說過心事。隔天，全社都看到了截圖。所以妳在群組裡說的每一句話，我都會記得。",
+    tags: ["PUBLIC", "SECRET"]
+  },
+  twoface: {
+    name: "兩面討好", title: "最溫柔的刀", comment: "她到最後，都牽著妳的手。",
+    intel: "高中時，知夏最好的朋友在台上牽著她的手，台下幫別人拉票。",
+    line: "她到最後都牽著我的手。所以妳對我越體貼，我就越想知道妳想換到什麼。",
+    tags: ["CARE", "FLIRT"]
+  },
+  frame: {
+    name: "讓她背黑鍋", title: "無聲的推手", comment: "她向全世界道歉，卻從沒懷疑過妳。",
+    intel: "高中時，知夏在全校廣播中出了大錯。多年後她才發現，稿子上的時間不是她寫的。",
+    line: "我曾經為一個不是我犯的錯，向全校道歉。所以妳說「不是我」的時候，我會先去查清楚。",
+    tags: ["DEFLECT"]
+  }
+};
+
+/* 五天流程：story＝播一段劇情；act＝行動階段（每個行動都要做一次）；score＝序章評分 */
+const PROLOGUE_DAYS = [
+  { day: 1, steps: [
+    { story: "pro_d1" },
+    { act: [["club", "社團活動", "幫知夏整理迎新稿件", "pro_d1_club"], ["chat", "聊天", "和徐學姊聊聊", "pro_d1_chat"]],
+      tip: ["📅 每天的行動", "每天有兩次行動。今天開放「社團活動」和「聊天」，兩個都試試看。"] }
+  ] },
+  { day: 2, steps: [
+    { story: "pro_d2" },
+    { act: [["date", "私下約會", "陪知夏去便利商店", "pro_d2_date"]], tip: ["💕 私下約會", "單獨相處能大幅拉近距離。今天的第二次行動，陪陪知夏吧。"] }
+  ] },
+  { day: 3, steps: [
+    { story: "pro_d3" },
+    { act: [["social", "社群", "看看社團群組", "pro_d3_social"], ["dm", "私訊", "私訊徐學姊", "pro_d3_dm"]], order: true },
+    { story: "pro_d3_end" }
+  ] },
+  { day: 4, steps: [{ story: "pro_d4" }] },
+  { day: 5, steps: [{ story: "pro_d5" }, { score: true }, { story: "pro_epi" }] }
+];
+
+const PRO_SHURABA_TIP = [["⚡ 修羅場", "好幾個人同時在場。點上方的角色，可以切換出牌對象。"]];
+Object.assign(STORIES, {
+  pro_d1: { start: "a0", nodes: {
+    a0: { bg: "pro_black", sp: "narr", t: "高二那年夏天。", n: "a1" },
+    a1: { bg: "cg_pro_friends", sp: "narr", t: "放學後的廣播社，陽光斜斜灑在調音台上。", n: "a2" },
+    a2: { sp: "gu_y", ex: "smile", t: "小柔！公告貼出來了——我當上社長了！", tip: ["💬 對話", "點擊畫面就能繼續對話。"], n: "a3" },
+    a3: { sp: "gu_y", t: "我會不會搞砸啊……不管了，有妳在我就不怕。", n: "a4" },
+    a4: { sp: "narr", t: "語柔從書包裡拿出一張手寫小卡，夾進知夏的筆記本。", n: "a5" },
+    a5: { sp: "player", t: "「知夏社長，加油！」——我一直都認為妳最適合。", n: "a6" },
+    a6: { sp: "gu_y", ex: "smile", t: "嗚……我要一輩子夾在這本筆記本裡！", n: "a7" },
+    a7: { bg: "hs_club", sp: "inner", t: "一輩子啊。", n: "a8" },
+    a8: { sp: "inner", t: "社長的競選，我也申請了。但老師說，知夏「比較有親和力」。", n: "a9" },
+    a9: { sp: "gu_y", ex: "smile", t: "小柔，妳會當我的副社長對不對？", ch: [
+      { t: "「當然。我會一直站在妳旁邊。」", fx: [["favor", "gu_y", 10], ["trust", "gu_y", 10]], n: "a10" },
+      { t: "「……妳問過徐學姊了嗎？」", fx: [["favor", "gu_y", 5], ["su", 1]], n: "a10", hint: "埋下一點懷疑的種子" }
+    ] },
+    a10: { sp: "inner", t: "做妳的副手。聽起來很安全。", tip: ["💗 好感與信任", "好感＝喜不喜歡妳，信任＝相不相信妳。知夏現在兩項都很高，畫面上方隨時看得到。"], end: true }
+  } },
+  pro_d1_club: { start: "c1", nodes: {
+    c1: { bg: "hs_club", sp: "narr", t: "妳幫知夏整理迎新稿件。她每改一行，就問一次「這樣可以嗎？」", fx: [["favor", "gu_y", 5]], n: "c2" },
+    c2: { sp: "gu_y", ex: "smile", t: "有妳真好～", end: true }
+  } },
+  pro_d1_chat: { start: "c1", nodes: {
+    c1: { bg: "hs_club", sp: "senior", t: "學妹，妳寫的企劃比知夏好太多了。真搞不懂老師到底在想什麼……", n: "c2" },
+    c2: { sp: "player", t: "學姊不要這樣說啦，知夏很努力的。", fx: [["favor", "senior", 8]], n: "c3" },
+    c3: { sp: "inner", t: "但她說的是實話。", end: true }
+  } },
+  pro_d2: { start: "b1", nodes: {
+    b1: { bg: "hs_club", sp: "narr", t: "第一次社課。知夏的開場白講到一半就卡住了，台下傳來幾聲笑。", n: "b2" },
+    b2: { sp: "gu_y", ex: "sad", t: "那、那個……今年的主題是……小柔，我稿子放哪了？", n: "b3" },
+    b3: { sp: "senior", t: "（小聲）看吧，我就說。", n: "b4" },
+    b4: { sp: "inner", t: "稿子在我手上。我慢了三秒才遞過去。", n: "b5" },
+    b5: { sp: "narr", t: "社課結束後，徐學姊在樓梯間叫住她。", n: "b6" },
+    b6: { sp: "senior", t: "學妹，妳自己說——這種社長，妳服嗎？", tip: ["🃏 卡牌對決", "社交不是打架，是讓對方「自己想通」。回合結束前，把氣氛值推到目標就贏了。"], n: "b7" },
+    b7: { sp: "narr", t: "【對決：樓梯間的學姊】", battle: { title: "樓梯間的學姊", participants: ["senior"], context: "private", rounds: 3, goal: 60, type: "normal",
+      script: [{ sp: "senior", intent: "probe" }, { sp: "senior", intent: "gossip" }, { sp: "senior", intent: "question" }],
+      tips: { 1: [["🎯 意圖", "看對方頭上的「意圖」，就知道她想聽什麼。打出對應標籤的卡，效果會變強。"], ["👆 出牌", "點一下卡牌看效果，再點一次就會打出。"]] },
+      result: { perfect: "b8", win: "b8", fail: "b8f" } } },
+    b8: { sp: "senior", t: "……妳比她會做人多了。下個月改選，我會記得妳。", fx: [["favor", "senior", 10], ["trust", "senior", 10]], n: "b9" },
+    b9: { sp: "inner", t: "改選。原來還有改選。", end: true },
+    b8f: { sp: "senior", t: "切，妳們果然是一夥的。", n: "b8r" },
+    b8r: { sp: "narr", t: "再試一次吧。（序章不會失敗）", n: "b7" }
+  } },
+  pro_d2_date: { start: "c1", nodes: {
+    c1: { bg: "hs_club", sp: "narr", t: "妳陪知夏去便利商店買布丁。", n: "c2" },
+    c2: { sp: "gu_y", ex: "smile", t: "今天忘稿的時候，我真的以為自己要哭了……還好妳在。", fx: [["favor", "gu_y", 5], ["trust", "gu_y", 5]], n: "c3" },
+    c3: { sp: "inner", t: "嗯，還好我在。", end: true }
+  } },
+  pro_d3: { start: "c1", nodes: {
+    c1: { bg: "hs_club", sp: "narr", t: "午休，知夏躺在社辦的沙發上。", n: "c2" },
+    c2: { sp: "gu_y", t: "小柔……跟妳說個秘密，不可以跟別人說。", n: "c3" },
+    c3: { sp: "gu_y", ex: "sad", t: "其實我好怕上台。每次拿麥克風，手都在抖。是不是很丟臉？", n: "c4" },
+    c4: { sp: "player", t: "不會啊。我會幫妳保密的。", fx: [["trust", "gu_y", 5]], n: "c5" },
+    c5: { sp: "inner", t: "廣播社社長，怕拿麥克風。", end: true }
+  } },
+  pro_d3_social: { start: "s1", nodes: {
+    s1: { bg: "hs_club", sp: "narr", t: "群組「廣播社八卦小屋 🎙️」跳出小葵的訊息。", tip: ["📱 社群", "發文和回覆能拉近距離，也可能被誤會。"], n: "s2" },
+    s2: { sp: "kui", t: "欸欸，今天社長開場卡住那段，到底怎麼了 😂", n: "s3" },
+    s3: { sp: "kui", t: "語柔妳最熟，快說快說！", ch: [
+      { t: "「她只是比較怕上台啦，大家別鬧她 😅」", fx: [["global", 5], ["trust", "gu_y", 5]], n: "s4", hint: "替她說話，卻順便說漏了嘴" },
+      { t: "「嗯……其實她好像有點怕上台，大家多體諒她啦」", fx: [["global", 15], ["su", 2]], n: "s4", hint: "用關心包裝爆料" }
+    ] },
+    s4: { sp: "inner", t: "不管怎麼說，消息都出去了。", n: "s5" },
+    s5: { sp: "kui", t: "哇靠真的假的！廣播社社長怕上台？？？", n: "s6" },
+    s6: { sp: "kui", t: "已截圖 📸", tip: ["🚨 鑑茶警報", "這是整個社交圈對妳的風聲。做了可疑的事就會上升，到 100 直接 Game Over。"], n: "s7" },
+    s7: { sp: "inner", t: "我只是「關心」她。大家都看到了。", end: true }
+  } },
+  pro_d3_dm: { start: "d1", nodes: {
+    d1: { bg: "hs_club", sp: "senior", t: "群組那件事是真的？", tip: ["💬 私訊", "私下說的話，比公開場合安全。"], n: "d2" },
+    d2: { sp: "player", t: "學姊不要說出去喔……我只是怕她難過。", n: "d3" },
+    d3: { sp: "senior", t: "放心。（已讀）", fx: [["favor", "senior", 5]], n: "d4" },
+    d4: { sp: "inner", t: "她一定會說出去。", end: true }
+  } },
+  pro_d3_end: { start: "e1", nodes: {
+    e1: { bg: "pro_black", sp: "narr", t: "當晚，知夏傳來一則訊息。", n: "e2" },
+    e2: { sp: "gu_y", ex: "sad", t: "小柔……為什麼大家都知道我怕上台？", fx: [["sus", "gu_y", 20]], end: true }
+  } },
+  pro_d4: { start: "e1", nodes: {
+    e1: { bg: "hs_club", sp: "narr", t: "知夏沒有像平常一樣衝過來抱她。她抱著筆記本，站得有點遠。", n: "e2" },
+    e2: { sp: "gu_y", ex: "sad", t: "小柔，那件事……我只跟妳說過。", fx: [["sus", "gu_y", 25]], tip: ["🔍 個別懷疑", "知夏的懷疑上升了。懷疑是她對妳的戒心，到 100 會當面拆穿妳。"], n: "e3" },
+    e3: { sp: "inner", t: "她開始懷疑了。不過她更想相信我。", n: "e4" },
+    e4: { sp: "senior", t: "（推門進來）喔，都在啊。那剛好——學妹，群組那件事，不就是妳說的嗎？", n: "e5" },
+    e5: { sp: "narr", t: "【修羅場：三個人的社辦】", battle: { title: "三個人的社辦", participants: ["gu_y", "senior"], context: "small", rounds: 3, goal: 55, type: "shuraba",
+      script: [{ sp: "senior", intent: "accuse" }, { sp: "gu_y", intent: "probe" }],
+      tips: { 1: PRO_SHURABA_TIP }, result: { perfect: "e6w", win: "e6w", fail: "e6f" } } },
+    e6w: { sp: "gu_y", ex: "sad", t: "……對不起，小柔。我不該懷疑妳的。", fx: [["flag", "pro_sh_win"]], special: "pro_trust_back", n: "e7w" },
+    e7w: { sp: "senior", t: "（冷笑）隨便妳們。", n: "e8" },
+    e6f: { sp: "gu_y", ex: "sad", t: "我知道了。……我先回家了。", n: "e8" },
+    e8: { bg: "pro_black", sp: "narr", t: "當晚，徐學姊傳來訊息。", n: "e9" },
+    e9: { sp: "senior", t: "明天改選，我推妳。但只要她還有一半的票，妳就沒機會。", n: "e10" },
+    e10: { sp: "inner", t: "只差一步。", n: "e11" },
+    e11: { sp: "inner", t: "知夏的筆記本裡，還夾著我給她的加油小卡。", n: "e12" },
+    e12: { sp: "narr", t: "【關鍵抉擇】妳要怎麼做？", tip: ["📝 這個選擇會被記住", "妳選的手法，會改變大學篇裡顧知夏的過去與防備。"], ch: [
+      { t: "散播秘密：把知夏傳給妳的那則訊息截圖，丟進小葵的群組。", inner: true, fx: [["flag", "pro_m_secret"], ["global", 10], ["su", 3]], n: "e13a" },
+      { t: "兩面討好：明天當眾站在知夏身邊，今晚先幫學姊一個一個私訊拉票。", inner: true, fx: [["flag", "pro_m_twoface"], ["su", 3]], n: "e13b" },
+      { t: "讓她背黑鍋：偷偷改掉廣播稿的上台時間，讓她在全校面前開天窗。", inner: true, fx: [["flag", "pro_m_frame"], ["su", 3]], n: "e13c" }
+    ] },
+    e13a: { sp: "inner", t: "大家應該知道，她有多沒有自信。", end: true },
+    e13b: { sp: "inner", t: "我不會說她一句壞話。我只會讓大家自己想通。", end: true },
+    e13c: { sp: "inner", t: "她只要自己出錯就好。不是我的錯。", end: true }
+  } },
+  pro_d5: { start: "f1", nodes: {
+    f1: { bg: "hs_club", sp: "narr", t: "改選當天。社辦擠滿了人。", n: "fA" },
+    fA: { cond: { flags: ["pro_m_secret"] }, else: "fB", sp: "narr", t: "早上七點，小葵的群組已經有 99+ 則未讀。最上面是一張截圖：「小柔，我真的不適合當社長吧……」", n: "fA2" },
+    fA2: { sp: "kui", t: "這個是社長自己說的欸 😳", n: "fA3" },
+    fA3: { sp: "gu_y", ex: "sad", t: "（拿著麥克風，手在抖）我……我想說……", n: "fA4" },
+    fA4: { sp: "narr", t: "台下沒有人在聽。大家都低頭看著手機。", n: "fA5" },
+    fA5: { sp: "gu_y", ex: "sad", t: "（投票後，輕聲）那則訊息……我只傳給妳。", n: "fV" },
+    fB: { cond: { flags: ["pro_m_twoface"] }, else: "fC", sp: "narr", t: "語柔從頭到尾都站在知夏身邊，牽著她的手。", n: "fB2" },
+    fB2: { sp: "player", t: "我支持知夏。不管結果怎樣，我都支持她。", n: "fB3" },
+    fB3: { sp: "gu_y", ex: "sad", t: "（紅了眼眶）小柔……謝謝妳。", n: "fB4" },
+    fB4: { sp: "narr", t: "開票。一張、兩張、三張……每一張都寫著「宋語柔」。", n: "fB5" },
+    fB5: { sp: "gu_y", ex: "sad", t: "妳一直站在我旁邊……可是票，都不在我這裡。", n: "fV" },
+    fC: { sp: "narr", t: "午間廣播，全校都在聽。知夏照著稿上的時間推上推桿——剛好切斷了校長的廣播。", n: "fC2" },
+    fC2: { sp: "narr", t: "十秒的靜默。廣播室外，傳來老師急促的腳步聲。", n: "fC3" },
+    fC3: { sp: "gu_y", ex: "sad", t: "我明明確認過三次時間的……一定是我太累了。對不起大家。", n: "fC4" },
+    fC4: { sp: "inner", t: "她道歉了。她甚至沒有懷疑任何人。", n: "fV" },
+    fV: { bg: "cg_pro_betrayal", sp: "narr", t: "公告欄貼出改選結果。人群圍著語柔歡呼。知夏的筆記本從手裡滑落，一張小卡飄到地上。", n: "fW" },
+    fW: { cond: { flags: ["pro_sh_win"] }, else: "fWf", sp: "gu_y", t: "恭喜妳，小柔。……妳會是很好的社長。", n: "fX" },
+    fWf: { sp: "gu_y", t: "恭喜。……我只是想不通，到底是從哪裡開始的。", n: "fX" },
+    fX: { sp: "inner", t: "我贏了。", n: "fY" },
+    fY: { sp: "inner", t: "這只是第一步。", n: "fZ" },
+    fZ: { sp: "narr", t: "知夏彎腰撿起那張加油小卡，看了很久，把它夾回筆記本。這是她第一次沒有笑。", end: true }
+  } },
+  pro_epi: { start: "g1", nodes: {
+    g1: { bg: "pro_black", sp: "narr", t: "隔年春天。", n: "g2" },
+    g2: { bg: "hs_club", sp: "narr", t: "語柔轉學了。沒有告別會，沒有人知道原因。", n: "g3" },
+    g3: { sp: "narr", t: "知夏的抽屜裡，多了一張手寫小卡。", n: "g4" },
+    g4: { sp: "narr", t: "「知夏，對不起。我只是怕妳難過。我們還會再見的。——語柔」", n: "g5" },
+    g5: { sp: "gu_y", ex: "sad", t: "……", n: "g6" },
+    g6: { sp: "narr", t: "她沒有哭。她翻開筆記本第一頁，在一個名字上，用力劃了一筆。", n: "g7" },
+    g7: { bg: "pro_black", sp: "narr", t: "幾年後。", n: "g8" },
+    g8: { bg: "clubroom", sp: "narr", t: "大學的社團招募日。一個穿著米白針織外套的新生，推開了星光公關社的門。", n: "g9" },
+    g9: { sp: "xc", t: "妳好～請問這裡是星光公關社嗎？", n: "g10" },
+    g10: { sp: "narr", t: "窗邊戴眼鏡的學姊抬起頭。她的手邊，放著一本很舊的筆記本。", n: "g11" },
+    g11: { sp: "gu", t: "……笑得真甜呢。", n: "g12" },
+    g12: { bg: "pro_black", sp: "narr", t: "第一章　大學社團篇", end: true }
+  } }
+});
+// 大學篇彩蛋：通關序章後，知夏的頂樓事件多一句旁白
+STORIES.bond_gu.nodes.g2e = { sp: "narr", t: "筆記本的第一頁，有一個被用力劃掉的名字。", n: "g3" };
+
+/* ============================================================
  * 核心：工具、EventBus、StateManager、StatusManager、SaveManager
  * ============================================================ */
 const Utils = {
@@ -1726,6 +1989,7 @@ const Status = {
   addTrust(id, n) { return this._npcStat(id, "trust", n); },
   addSuspicion(id, n) {
     const f = State.get().story.flags;
+    if (State.get().meta.prologue && n > 0) n = Math.min(n, Math.max(0, 90 - this.rel(id).suspicion)); // 序章不會被拆穿
     if (n > 0 && f.late_season) n = n * 1.25;
     // 若晴的專屬事件選了真心：她對妳的懷疑不會超過 50
     if (id === "shen" && f.bond_shen_true && n > 0) n = Math.min(n, Math.max(0, 50 - this.rel("shen").suspicion));
@@ -1739,6 +2003,7 @@ const Status = {
     if (n > 0 && f.late_season) n = n * 1.25;      // 評選季：風聲放大
     if (n > 0 && f.gu_endorse && !f.exposed_by_gu) n = n * 0.7; // 鑑茶女王的背書
     const s = State.get().status, b = s.globalSuspicion;
+    if (State.get().meta.prologue && n > 0) n = Math.min(n, Math.max(0, 60 - b)); // 序章警報上限 60
     s.globalSuspicion = Utils.clamp(Utils.round(b + n), 0, 100);
     const d = s.globalSuspicion - b;
     if (d > 0) State.get().calendar.suspicious = true; // 今天做了可疑的事 → 晚上不會自然平息
@@ -1886,6 +2151,7 @@ const Save = {
   },
   saveGame(slotId) {
     if (!State.get() || Battle.active) { UI.toast("戰鬥或劇情中無法存檔", "bad"); return false; }
+    if (State.get().meta.prologue) { UI.toast("序章不需要存檔", "bad"); return false; }
     const data = this.pack();
     if (!this.validate(data)) { UI.toast("存檔資料異常，已取消以免覆蓋", "bad"); return false; }
     const key = this.keyOf(slotId);
@@ -1916,7 +2182,7 @@ const Save = {
     }
   },
   deleteSave(slotId) { try { localStorage.removeItem(this.keyOf(slotId)); } catch (e) { } },
-  autoSave() { if (State.get() && !State.get().gameOver) this.saveGame("auto"); },
+  autoSave() { if (State.get() && !State.get().gameOver && !State.get().meta.prologue) this.saveGame("auto"); },
   checkpoint() { const d = this.pack(); if (this.validate(d)) this._write(CONFIG.checkpointKey, d); },
   info(slotId) {
     const d = this._read(this.keyOf(slotId)); if (!d || !d.payload || this.deepValidate(d.payload).length) return null;
@@ -2214,6 +2480,7 @@ const Economy = {
 const Achievements = {
   unlock(id) {
     const s = State.get(); if (!s || !ACHIEVEMENTS[id] || s.achievements.unlocked.includes(id)) return;
+    if (s.meta.prologue) return; // 序章不解鎖大學篇成就
     s.achievements.unlocked.push(id);
     const m = Save.meta(); if (!m.achievements.includes(id)) { m.achievements.push(id); Save.saveMeta(m); }
     UI.toast(`🏆 成就解鎖：${ACHIEVEMENTS[id].name}`, "gold"); Sfx.play("good");
@@ -2308,6 +2575,9 @@ const CardMath = {
     let aff = Math.max(...card.tags.map(t => npc.cardAffinity[t] ?? 1.0));
     const resist = rel.emotion < -20 || rel.suspicion >= 60 || mem.resist;
     if (resist) aff = Math.min(aff, CONFIG.affinityResist);
+    // 序章連動：知夏對當年被用過的那類招數特別防備
+    const proResist = targetId === "gu" && typeof ProLink !== "undefined" && card.tags.some(t => ProLink.resistTags().includes(t));
+    if (proResist) aff *= 0.6;
     const aura = card.type === "WHITE_LOTUS" ? this.auraMult() : 1;
     const im = this.intentMult(card, opt.intent);
     // 予辰 ♥ 若晴：感情好時，在若晴面前對予辰示好會打折；冷戰／分手後反而更容易趁虛而入
@@ -2522,6 +2792,7 @@ const Story = {
     }
     this.cur.nodeId = nodeId; State.get().story.currentNode = this.cur.id + ":" + nodeId;
     if (node.bg) { UI.setBackground(node.bg); if (BACKGROUNDS[node.bg]?.cg) { const m = Save.meta(); m.cgSeen = m.cgSeen || []; if (!m.cgSeen.includes(node.bg)) { m.cgSeen.push(node.bg); Save.saveMeta(m); } } }
+    if (node.tip && typeof Tips !== "undefined") setTimeout(() => Tips.say(node.tip[0], node.tip[1]), 350);
     const notes = node.fx ? Effects.apply(node.fx) : [];
     if (node.special && SpecialNodes[node.special]) { const res = SpecialNodes[node.special](node); if (res && res.redirect) return this.enterNode(res.redirect); if (res && res.notes) notes.push(...res.notes); if (res && res.stop) return; }
     UI.showNode(node, notes);
@@ -2882,6 +3153,10 @@ const Battle = {
     if (b.type === "chat" || b.type === "date") pool = ["chat", "chat", "probe"];
     if (s.npcRelations[b.speaker].suspicion >= 50 && b.type !== "chat") pool = pool.concat(["question", "question"]);
     b.intent = Utils.pick(pool);
+    // 序章教學：指定回合的發言者與意圖
+    const sc = b.def.script && b.def.script[b.round - 1];
+    if (sc) { if (b.participants.includes(sc.sp)) b.speaker = sc.sp; if (INTENTS[sc.intent]) b.intent = sc.intent; }
+    if (b.def.tips && b.def.tips[b.round]) setTimeout(() => b.def.tips[b.round].forEach(t => Tips.say(t[0], t[1])), 450);
     b.target = b.participants.includes(b.target) ? b.target : b.speaker;
     // 修羅場：NPC 互相交換情報
     if (b.type === "shuraba" && b.round === 2 && b.participants.length >= 2) {
@@ -3120,7 +3395,7 @@ const Battle = {
     switch (key) {
       case "admit": Status.addPureAura(-4); if (phase === 3) d += 6; if (b.boss.evidence) d += (b.boss.evidenceCred >= 70 ? 5 : 2); text = "妳深吸一口氣：「……有些事，我確實做得不對。」"; break;
       case "explain": text = "妳把當時的來龍去脈，一件一件說清楚。"; if (b.boss.evidence && b.boss.evidenceCred < 70) { d += 4; text += "（傳聞的證據，澄清起來容易得多）"; } break;
-      case "deflect": if (phase === 3) d -= 8; if (b.boss.evidence) d -= (b.boss.evidenceCred >= 70 ? 5 : 1); if (d < 0) Status.addGlobalSuspicion(2); text = "「學姊，比起我，大家是不是更該關心……」"; break;
+      case "deflect": if (phase === 3) d -= 8; if (typeof ProLink !== "undefined" && ProLink.method() === "frame") { d -= 4; b.log.push({ t: "（她曾經替別人背過黑鍋。轉移焦點對她更沒用了）", k: "bad" }); } if (b.boss.evidence) d -= (b.boss.evidenceCred >= 70 ? 5 : 1); if (d < 0) Status.addGlobalSuspicion(2); text = "「學姊，比起我，大家是不是更該關心……」"; break;
       case "intel": {
         const left = Intel.owned().filter(k => !b.boss.usedIntel.includes(k));
         const rel = { acc_vote: "intel_shen_rival", acc_leak: "intel_xu_account", acc_history: "intel_gu_project", acc_motive: "intel_gu_past", acc_public: "intel_gu_project", acc_groupchat: "intel_chen_broken" }[acc.id];
@@ -3222,7 +3497,7 @@ EventBus.on("game:exposed", () => Ending.gameOverExposed());
  * ============================================================ */
 const $ = (s, r = document) => r.querySelector(s);
 const $$ = (s, r = document) => [...r.querySelectorAll(s)];
-const PLAYER_IMG = "assets/char_player.png";
+let PLAYER_IMG = "assets/char_player.png"; // 序章時會換成宋語柔
 
 const UI = {
   _lock: false, sideTab: "quest",
@@ -3250,7 +3525,7 @@ const UI = {
   setBackground(key) {
     const bg = BACKGROUNDS[key] || BACKGROUNDS.campus; this._bg = key;
     $$(".bg").forEach(el => {
-      el.style.background = `url('${bg.img}') ${bg.pos || "center"}/cover, ${bg.grad}`;
+      el.style.background = bg.img ? `url('${bg.img}') ${bg.pos || "center"}/cover, ${bg.grad}` : bg.grad;
       el.style.filter = bg.filter || "";
     });
   },
@@ -3262,6 +3537,7 @@ const UI = {
     let anchor = null;
     if (!$("#vn").classList.contains("hidden")) anchor = $("#vnBox");
     else if (!$("#battle").classList.contains("hidden")) anchor = $("#bDetail");
+    else if (!$("#pro").classList.contains("hidden") && $("#proActs").children.length) anchor = $("#proActs"); // 序章行動階段：提示浮在行動按鈕上方
     if (anchor) { const r = anchor.getBoundingClientRect(); box.classList.add("anchored"); box.style.bottom = Math.max(8, window.innerHeight - r.top + 10) + "px"; box.style.left = "50%"; }
     else { box.classList.remove("anchored"); box.style.bottom = ""; box.style.left = ""; }
   },
@@ -3295,7 +3571,7 @@ const UI = {
   },
 
   /* ---------- 畫面切換 ---------- */
-  show(id) { ["title", "create", "game"].forEach(s => $("#" + s).classList.toggle("hidden", s !== id)); },
+  show(id) { ["title", "create", "game", "pro"].forEach(s => $("#" + s).classList.toggle("hidden", s !== id)); },
   showTitle() {
     this.show("title"); $("#ending").classList.add("hidden");
     const hasAuto = !!Save.info("auto"); $("#btnContinue").disabled = !hasAuto;
@@ -3333,7 +3609,8 @@ const UI = {
       body += `<div class="box"><h4>目前進度：${Utils.esc(p.player.name)}・第 ${Math.min(6, Math.floor((p.calendar.day - 1) / 7) + 1)} 週 Day ${p.calendar.day}</h4>${rows.length ? `<ol class="mem-list">${rows.join("")}</ol>` : "<p>還沒有做出重要選擇。</p>"}</div>`;
     } else body += `<div class="box"><p style="margin:0">目前沒有進行中的存檔。開始遊戲後，妳做過的每個關鍵選擇都會記在這裡。</p></div>`;
     body += `<div class="box"><h4>已看過的結局（${meta.endings.length}/${Object.keys(ENDINGS).length}）</h4>${meta.endings.length ? meta.endings.map(e => `<details style="margin:6px 0"><summary><b>${ENDINGS[e].name}</b></summary><p style="white-space:pre-wrap;margin:6px 0">${Utils.esc(ENDINGS[e].t.replace(/\{name\}/g, "小茶"))}</p></details>`).join("") : "<p style='margin:0'>還沒有看過任何結局。</p>"}</div>`;
-    this.albumModal("story", body);
+    const md = this.albumModal("story", (meta.prologueDone ? `<div class="box" style="display:flex;justify-content:space-between;align-items:center;gap:8px"><span>序章〈高二那年〉・已用手法：${(meta.prologueMethods || [meta.prologueMethod]).map(k => PRO_METHODS[k]?.name).filter(Boolean).join("、")}</span><button class="btn sm primary" id="proReplay">重玩序章</button></div>` : "") + body);
+    if (meta.prologueDone) $("#proReplay", md).onclick = () => { this.closeModal("album"); Prologue.start(true); };
   },
   openStats() {
     const m = Save.meta(), h = m.history || [];
@@ -3491,7 +3768,7 @@ const UI = {
   /* ---------- 劇情（VN） ---------- */
   showNode(node, notes = []) {
     const vn = $("#vn"); vn.classList.remove("hidden");
-    const sp = node.sp || "narr", isNpc = !!NPCS[sp], isPlayer = sp === "player", inner = sp === "inner";
+    const sp = node.sp || "narr", isNpc = !!NPCS[sp] && !NPCS[sp].noPortrait, isPlayer = sp === "player", inner = sp === "inner";
     vn.classList.toggle("dark", inner || node.ex === "dark");
     const stage = $("#vnStage");
     const showId = isNpc ? sp : isPlayer || inner ? "player" : this._vnLast;
@@ -3507,8 +3784,8 @@ const UI = {
     } else if (sp === "narr" && node.bg) { stage.innerHTML = ""; stage.dataset.who = ""; this._vnLast = null; }
     const box = $("#vnBox");
     box.className = "vn-box" + (inner ? " inner" : "") + (sp === "narr" ? " narr" : "");
-    const nm = isNpc ? NPCS[sp].name : isPlayer ? State.get().player.name : inner ? "內心OS" : "";
-    box.style.setProperty("--c", isNpc ? NPCS[sp].color : "#f48fb1");
+    const nm = NPCS[sp] ? NPCS[sp].name : isPlayer ? State.get().player.name : inner ? "內心OS" : "";
+    box.style.setProperty("--c", NPCS[sp] ? NPCS[sp].color : "#f48fb1");
     $("#vnName").textContent = nm;
     $("#vnText").textContent = Utils.fmt(node.t);
     $("#vnNotes").innerHTML = notes.map(n => `<span class="chip ${inner ? "dark" : ""}">${Utils.esc(n)}</span>`).join("");
@@ -3956,18 +4233,128 @@ const Tips = {
   enabled() { if (navigator.webdriver && !window.__GTS_TIPS) return false; return Save.settings().tips !== false; },
   seen(id) { return (Save.meta().tipsSeen || []).includes(id); },
   show(id) {
-    if (!TIPS[id] || !this.enabled() || this.seen(id) || this.queue.includes(id)) return;
+    if (!TIPS[id] || !this.enabled() || this.seen(id) || this.queue.includes(id) || (typeof Prologue !== "undefined" && Prologue.active)) return;
     this.queue.push(id); if (this.queue.length === 1) this._render();
   },
+  // 序章教學用：不論是否看過都顯示（測試環境預設略過）
+  say(title, text) { if (navigator.webdriver && !window.__GTS_TIPS) return; this.queue.push({ title, text }); if (this.queue.length === 1) this._render(); },
   _render() {
-    const id = this.queue[0]; if (!id) return; const [title, text] = TIPS[id];
+    const id = this.queue[0]; if (!id) return; const [title, text] = typeof id === "string" ? TIPS[id] : [id.title, id.text];
     const el = document.createElement("div"); el.id = "tip"; el.className = "tip-bg";
     el.innerHTML = `<div class="tip"><div class="tip-t">${title}</div><div class="tip-x">${text}</div><button class="btn primary sm" id="tipOk">知道了</button></div>`;
     document.body.appendChild(el);
-    const close = e => { e && e.stopPropagation(); const m = Save.meta(); m.tipsSeen = [...new Set([...(m.tipsSeen || []), id])]; Save.saveMeta(m); el.remove(); this.queue.shift(); if (this.queue.length) setTimeout(() => this._render(), 180); };
+    const close = e => { e && e.stopPropagation(); if (typeof id === "string") { const m = Save.meta(); m.tipsSeen = [...new Set([...(m.tipsSeen || []), id])]; Save.saveMeta(m); } el.remove(); this.queue.shift(); if (this.queue.length) setTimeout(() => this._render(), 180); };
     $("#tipOk", el).onclick = close; el.addEventListener("click", e => e.stopPropagation());
   },
   reset() { const m = Save.meta(); m.tipsSeen = []; Save.saveMeta(m); }
+};
+
+/* ============================================================
+ * 序章控制器〈高二那年〉：序章兼新手教學
+ * - 使用獨立的暫時狀態（meta.prologue），不寫入大學篇存檔
+ * - 沿用對話、卡牌對決、修羅場系統
+ * ============================================================ */
+const PRO_TIPS_COVERED = ["t_actions", "t_alert", "t_npc", "t_battle", "t_card", "t_shuraba", "t_social", "t_dm"];
+const Prologue = {
+  active: false, replay: false, d: 0, k: 0, done: [], timer: null,
+  // 開始新遊戲前的詢問：第一次會建議先玩序章
+  offer() {
+    const m = this.modalPick();
+    $("#proGo", m).onclick = () => { UI.closeModal("proOffer"); this.start(false); };
+    $("#proSkip", m).onclick = () => { UI.closeModal("proOffer"); const mm = Save.meta(); mm.prologueSeen = true; Save.saveMeta(mm); UI.showCreate(false); };
+  },
+  modalPick() {
+    return UI.modal("序章〈高二那年〉", `<div class="pro-offer"><p>在小茶踏進星光公關社之前——<br>顧知夏，曾經被她最好的朋友背叛過。</p>
+      <p class="sub">約 15 分鐘・包含新手教學・妳的選擇會影響大學篇的顧知夏</p></div>
+      <div class="modal-foot" style="justify-content:center;border:none"><button class="btn primary" id="proGo">開始序章</button><button class="btn" id="proSkip">跳過，直接進入大學篇</button></div>`, { id: "proOffer" });
+  },
+  start(replay = false) {
+    this.replay = replay; this.active = true; this.d = 0; this.k = 0; this.done = [];
+    State.resetState(); const s = State.get();
+    s.meta.prologue = true; s.player.name = "宋語柔"; s.player.nickname = ""; s.status.globalSuspicion = 0; s.status.pureAura = 60;
+    const seed = Number.isFinite(window.__GTS_SEED) ? window.__GTS_SEED : (Date.now() ^ (Math.random() * 1e9)) & 0x7fffffff; s.meta.seed = seed; s.meta.rng = seed;
+    ["gu_y", "senior", "kui", "xc"].forEach(id => { s.npcRelations[id] = Object.assign({}, s.npcRelations.lin, NPCS[id].initialRelationship, { exposed: false }); s.npcMemories[id] = []; });
+    PLAYER_IMG = "assets/char_pro.png"; PLAYER_DARK_IMG = "assets/char_pro_dark.png";
+    UI.show("pro"); UI.setBackground("hs_club");
+    clearInterval(this.timer); this.timer = setInterval(() => this.active && this.render(), 600);
+    this.dayCard();
+  },
+  dayCard() {
+    const day = PROLOGUE_DAYS[this.d]; this.k = 0; this.render();
+    const el = document.createElement("div"); el.className = "pro-daycard"; el.innerHTML = `<div><small>序章・高二那年</small><b>第 ${day.day} 天</b></div>`;
+    document.body.appendChild(el); setTimeout(() => { el.remove(); this.step(); }, window.__GTS_FAST ? 10 : 1400);
+  },
+  step() {
+    if (!this.active) return;
+    const day = PROLOGUE_DAYS[this.d], st = day.steps[this.k];
+    if (!st) { this.d++; if (this.d >= PROLOGUE_DAYS.length) return this.finish(); return this.dayCard(); }
+    this.render();
+    if (st.story) Story.play(st.story, () => { this.k++; this.render(); setTimeout(() => this.step(), 150); });
+    else if (st.act) { this.done = []; this.renderActs(st); if (st.tip) Tips.say(st.tip[0], st.tip[1]); }
+    else if (st.score) this.score();
+  },
+  renderActs(st) {
+    const box = $("#proActs"); const left = st.act.length - this.done.length;
+    box.innerHTML = `<div class="pro-left">剩餘行動 <b>${left}</b></div>` + st.act.map(([id, name, desc, story], i) => {
+      const used = this.done.includes(id), locked = st.order && i > 0 && !this.done.includes(st.act[i - 1][0]);
+      return `<button class="act pro-act ${used ? "used" : ""}" data-pa="${id}" ${used || locked ? "disabled" : ""}><b>${name}</b><small>${used ? "已完成" : locked ? "先完成上一個行動" : desc}</small></button>`;
+    }).join("");
+    UI.placeToasts();
+    $$("[data-pa]", box).forEach(b => b.onclick = () => {
+      const a = st.act.find(x => x[0] === b.dataset.pa); if (!a || this.done.includes(a[0])) return;
+      this.done.push(a[0]); box.innerHTML = "";
+      Story.play(a[3], () => { if (this.done.length >= st.act.length) { this.k++; box.innerHTML = ""; setTimeout(() => this.step(), 150); } else this.renderActs(st); });
+    });
+  },
+  render() {
+    const s = State.get(); if (!s || !this.active) return;
+    const g = s.npcRelations.gu_y, day = PROLOGUE_DAYS[Math.min(this.d, PROLOGUE_DAYS.length - 1)].day;
+    const bar = (v, c) => `<span class="pro-bar"><i style="width:${Math.max(0, Math.min(100, v))}%;background:${c}"></i></span>`;
+    $("#proHud").innerHTML = `<div class="pro-day">序章・第 ${day} 天</div>
+      <div class="pro-who"><img src="assets/char_gu_young.png" alt=""><div><b>顧知夏</b>
+        <div class="pro-st">好感 ${bar(g.favor, "#f48fb1")} ${Math.round(g.favor)}</div>
+        <div class="pro-st">信任 ${bar(g.trust, "#7aa7e8")} ${Math.round(g.trust)}</div>
+        <div class="pro-st">懷疑 ${bar(g.suspicion, "#9c6ade")} ${Math.round(g.suspicion)}</div></div></div>
+      <div class="pro-alert">🚨 鑑茶警報 ${bar(s.status.globalSuspicion, "#e5534b")} ${Math.round(s.status.globalSuspicion)}<span>心機 ${s.statistics.schemeUsed}</span></div>`;
+  },
+  method() { const f = State.get().story.flags; return f.pro_m_secret ? "secret" : f.pro_m_twoface ? "twoface" : "frame"; },
+  score() {
+    const s = State.get(), k = this.method(), M = PRO_METHODS[k], g = s.npcRelations.gu_y;
+    const m = UI.modal("序章評分", `<div class="pro-score"><small>妳的手法：${M.name}</small><div class="ps-title">「${M.title}」</div><p>${M.comment}</p>
+      <div class="ps-stats"><span>知夏信任<b>${Math.round(g.trust)}</b></span><span>鑑茶警報<b>${Math.round(s.status.globalSuspicion)}</b></span><span>心機<b>${s.statistics.schemeUsed}</b></span></div>
+      <p class="sub">這個選擇會影響大學篇裡顧知夏的過去，以及她對某些招數的防備。</p></div>
+      <div class="modal-foot" style="justify-content:center;border:none"><button class="btn primary" id="psGo">繼續</button></div>`, { id: "proScore" });
+    $("#psGo", m).onclick = () => { UI.closeModal("proScore"); this.k++; this.step(); };
+  },
+  finish() {
+    const s = State.get(), k = this.method();
+    const m = Save.meta(); m.prologueSeen = true; m.prologueDone = true; m.prologueMethod = k;
+    m.prologueMethods = [...new Set([...(m.prologueMethods || []), k])];
+    m.tipsSeen = [...new Set([...(m.tipsSeen || []), ...PRO_TIPS_COVERED])];
+    if (!m.achievements.includes("a_prologue")) { m.achievements.push("a_prologue"); UI.toast("🏆 成就解鎖：高二那年", "gold"); }
+    Save.saveMeta(m);
+    this.active = false; clearInterval(this.timer); $("#proActs").innerHTML = "";
+    PLAYER_IMG = "assets/char_player.png"; PLAYER_DARK_IMG = "assets/char_player_dark.png";
+    State.set(null); UI.hideDialogue();
+    if (this.replay) UI.showTitle(); else UI.showCreate(false);
+  },
+  quit() { // 中途離開（回主選單）
+    this.active = false; clearInterval(this.timer); PLAYER_IMG = "assets/char_player.png"; PLAYER_DARK_IMG = "assets/char_player_dark.png";
+    Story.cur = null; UI.hideDialogue(); UI.closeBattle(); Battle.active = null; State.set(null); UI.showTitle();
+  }
+};
+SpecialNodes.pro_trust_back = () => { const r = State.get().npcRelations.gu_y; r.suspicion = 20; };
+
+/* 序章的選擇 → 大學篇：知夏的過去、台詞、卡牌抗性、筆記本彩蛋 */
+const ProLink = {
+  method() { return Save.meta().prologueMethod || null; },
+  apply() {
+    const k = this.method(), M = k && PRO_METHODS[k];
+    INTEL.intel_gu_past.desc = M ? M.intel : "顧知夏高中時被好朋友背刺過，所以特別討厭「綠茶」。";
+    STORIES.gu_tea.nodes.gt2.t = M ? M.line : "高中的時候，我最好的朋友在我背後說了很多話。從那之後，我很難相信笑得太甜的人。";
+    STORIES.bond_gu.nodes.g2.n = Save.meta().prologueDone ? "g2e" : "g3";
+  },
+  resistTags() { const k = this.method(); return k ? PRO_METHODS[k].tags : []; }
 };
 
 /* ============================================================
@@ -3988,11 +4375,11 @@ const Game = {
     const seed = Number.isFinite(opt.seed) ? opt.seed : Number.isFinite(window.__GTS_SEED) ? window.__GTS_SEED : (Date.now() ^ (Math.random() * 1e9)) & 0x7fffffff;
     s.meta.seed = seed; s.meta.rng = seed;
     s.log = []; GameLog.add(`${s.player.name}（${p.name}）踏入了星光公關社。`);
-    UI.showGame(); UI.setBackground("campus"); Schedule.startDay();
+    ProLink.apply(); UI.showGame(); UI.setBackground("campus"); Schedule.startDay();
   },
   continueGame() { if (Save.loadGame("auto")) this.afterLoad(); },
   afterLoad() {
-    const s = State.get(); Battle.active = null; Story.cur = null; UI.hideDialogue(); UI.closeBattle();
+    ProLink.apply(); const s = State.get(); Battle.active = null; Story.cur = null; UI.hideDialogue(); UI.closeBattle();
     if (s.gameOver && s.ending) { UI.showEnding(s.ending); return; }
     UI.showGame(); UI.setBackground("clubroom"); UI.lock(false);
     // 若讀檔時有未完成的事件，重新檢查
@@ -4012,7 +4399,11 @@ window.addEventListener("unhandledrejection", e => { console.error(e.reason); tr
 document.addEventListener("DOMContentLoaded", () => {
   // 花瓣
   const pet = $("#title .petals"); for (let i = 0; i < 18; i++) { const sp = document.createElement("span"); sp.style.left = Math.random() * 100 + "%"; sp.style.animationDuration = 6 + Math.random() * 8 + "s"; sp.style.animationDelay = -Math.random() * 10 + "s"; pet.appendChild(sp); }
-  $("#btnNew").onclick = () => UI.showCreate(false);
+  // 第一次開始新遊戲：詢問是否先玩序章（自動化測試略過，除非指定）
+  $("#btnNew").onclick = () => { const m = Save.meta(); if (!m.prologueSeen && (!navigator.webdriver || window.__GTS_PRO)) Prologue.offer(); else UI.showCreate(false); };
+  $("#proQuit").onclick = () => { const m = UI.modal("離開序章？", `<p>離開後可以隨時從「回憶相簿」重新開始序章。</p><div class="modal-foot" style="justify-content:center;border:none"><button class="btn primary" id="pqY">離開，進入大學篇</button><button class="btn" id="pqN">繼續序章</button></div>`, { id: "proQuitM" });
+    $("#pqN", m).onclick = () => UI.closeModal("proQuitM");
+    $("#pqY", m).onclick = () => { UI.closeModal("proQuitM"); const r = Prologue.replay; const mm = Save.meta(); mm.prologueSeen = true; Save.saveMeta(mm); Prologue.quit(); if (!r) UI.showCreate(false); }; };
   $("#btnNGPlus").onclick = () => UI.showCreate(true);
   $("#btnContinue").onclick = () => Game.continueGame();
   $("#btnLoad").onclick = () => UI.openSaves("load");
