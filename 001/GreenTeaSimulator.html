@@ -600,6 +600,14 @@ body.flash::before{opacity:1}
 .ps-stats b{display:block;font-size:calc(20px * var(--fs));color:#c2446f}
 @media (max-width:767px){.pro-hud{top:8px;left:8px}.pro-who img{width:40px;height:40px}.pro-bar{width:64px}.pro-act{min-width:140px;padding:12px}}
 
+/* v1.4.0 魚塘 */
+.pond-head{padding:10px 12px;background:#f7eefc;border-bottom:1px solid #eadcef;font-size:calc(13px * var(--fs));line-height:1.6}
+.pond-head small{color:var(--ink-l)}
+.pond-row{cursor:pointer}.pond-row.gone{opacity:.45;cursor:default;filter:grayscale(.6)}
+.pond-bar{height:6px;background:#efe2f3;border-radius:9px;overflow:hidden;margin:4px 0 2px;max-width:220px}
+.pond-bar i{display:block;height:100%;background:linear-gradient(90deg,#9fd0ff,#b388e0,#f48fb1);border-radius:9px}
+.phone-tabs button{white-space:nowrap}
+
 </style>
 </head>
 <body>
@@ -704,7 +712,7 @@ body.flash::before{opacity:1}
  * ============================================================ */
 const CONFIG = {
   schemaVersion: 1,
-  gameVersion: "1.3.0",
+  gameVersion: "1.4.0",
   totalDays: 42,
   actionsPerDay: 2,
   dailyEnergyRegen: 30,
@@ -1989,7 +1997,7 @@ const Status = {
   addTrust(id, n) { return this._npcStat(id, "trust", n); },
   addSuspicion(id, n) {
     const f = State.get().story.flags;
-    if (State.get().meta.prologue && n > 0) n = Math.min(n, Math.max(0, 90 - this.rel(id).suspicion)); // 序章不會被拆穿
+    if ((State.get().meta.prologue || NPCS[id]?.fish) && n > 0) n = Math.min(n, Math.max(0, 90 - this.rel(id).suspicion)); // 序章、魚塘角色不會觸發拆穿
     if (n > 0 && f.late_season) n = n * 1.25;
     // 若晴的專屬事件選了真心：她對妳的懷疑不會超過 50
     if (id === "shen" && f.bond_shen_true && n > 0) n = Math.min(n, Math.max(0, 50 - this.rel("shen").suspicion));
@@ -2758,6 +2766,7 @@ const Social = {
     Status.addFavor(npcId, Utils.round(opt.fx.favor * aff)); Status.addTrust(npcId, opt.fx.trust || 0);
     if (opt.fx.sus) Status.addSuspicion(npcId, Utils.round(opt.fx.sus * (0.5 + NPCS[npcId].attributes.sensitivity / 100)));
     if (opt.night && npcId === "lin") { Romance.log("night_dm", false); Status.addSuspicion("shen", Utils.chance(0.3) ? 4 : 0); }
+    if (opt.night) Fish.bump(npcId, 6);
     const reply = NPCManager.getNPCReaction(npcId);
     s.social.messages.push({ npc: npcId, day: s.calendar.day, out: opt.text, reply });
     return reply;
@@ -2899,6 +2908,8 @@ const Events = {
     const pri = { BOND: 0, COND: 1, NPC: 2 };
     const main = due.filter(d => d.ev.type === "MAIN"), other = due.filter(d => d.ev.type !== "MAIN").sort((a, b) => (pri[a.ev.type] ?? 3) - (pri[b.ev.type] ?? 3)).slice(0, 1);
     const list = [...main, ...other];
+    // 魚塘撞船：週初抽中後，排進今天的事件
+    if (s.fish && s.fish.crashPending && STORIES.fish_crash) list.push({ kind: "event", ev: { id: "ev_fish_crash_d" + s.calendar.day, type: "COND", story: "fish_crash" } });
     // 個別拆穿事件
     NPC_IDS.forEach(id => { const r = s.npcRelations[id]; if (r.suspicion >= CONFIG.exposeAt && !r.exposed) list.push({ kind: "expose", id }); });
     // 自動修羅場：兩名 NPC 懷疑 ≥ 60
@@ -3022,7 +3033,7 @@ const Actions = {
       case "chat": Battle.startBattle({ memLabel: `和${NPCS[target].name}聊天的時候`, title: `與${NPCS[target].name}聊天`, participants: [target], context: "small", rounds: 1, type: "chat", goal: 0 }, () => { Status.addTrust(target, 2); s.npcRelations[target].lastChatDay = s.calendar.day; fin(); }); break;
       case "date": Battle.startBattle({ memLabel: `和${NPCS[target].name}私下約會那次`, title: `與${NPCS[target].name}私下約會`, participants: [target], context: "private", rounds: 2, type: "date", goal: 55 }, key => {
           const notes = [];
-          if (key !== "fail") { notes.push(...Effects.apply([["favor", target, 6], ["trust", target, 5], ["emo", target, 15]])); }
+          if (key !== "fail") { notes.push(...Effects.apply([["favor", target, 6], ["trust", target, 5], ["emo", target, 15]])); Fish.bump(target, 10); }
           if (target === "lin") { Romance.log("date", false); Status.addRelation("lin", "shen", -3); Status.addRelation("shen", "lin", -2); if (Utils.chance(0.5)) notes.push(...Effects.apply([["sus", "shen", 5], ["global", 1]])); }
           if (notes.length) UI.toast(notes.join("　")); fin();
         }); break;
@@ -3060,9 +3071,11 @@ const Schedule = {
   startDay() {
     const s = State.get(); this.syncCalendar(); s.calendar.remainingActions = CONFIG.actionsPerDay; s.calendar.weather = Utils.pick(WEATHERS);
     s.calendar.dmCount = 0; s.calendar.randomRolled = false; s.calendar.suspicious = false; s.calendar.publicIncident = false; s.calendar.npcEvidence = false;
+    if (typeof Fish !== "undefined") Fish.daily();
     if (s.weekly.week !== s.calendar.week) {
       s.weekly = { week: s.calendar.week, freeChat: 0, clubBonusUsed: false };
       s.player.talentPoints += 1; UI.toast(`第 ${s.calendar.week} 週開始：${WEEK_THEMES[s.calendar.week]}（天賦點 +1）`, "gold");
+      Fish.weekly();
       if (s.story.flags.bond_chen_true) { s.calendar.remainingActions += 1; GameLog.add("柏宇幫妳跑腿：今天多一次行動", "event"); setTimeout(() => UI.toast("🔧 柏宇幫妳跑腿：今天多一次行動"), 900); }
       if (s.story.flags.bond_xu_true) { const k = Utils.pick(Intel.unknown()); if (k && Intel.gain(k)) setTimeout(() => UI.toast(`📱 沐橙偷偷告訴妳：${INTEL[k].name}`, "gold"), 1500); }
       Save.checkpoint();
@@ -3215,6 +3228,7 @@ const Battle = {
     Status.addEmotion(targetId, Utils.round(r.favor * 0.5) - (r.intent.bad ? 6 : 0));
     // 對予辰示好：若晴在場會直接受傷，不在場也會從別人口中聽說
     if (targetId === "lin" && card.tags.includes("FLIRT")) Romance.log("flirt", this.observers(b).includes("shen"));
+    if (card.tags.includes("FLIRT") && typeof Fish !== "undefined") Fish.bump(targetId, 8); // 魚塘：曖昧卡
     if (targetId === "lin" && card.tags.includes("FLIRT") && !s.story.flags.lin_shen_broke_up) { const hit = this.observers(b).includes("shen") ? 4 : 2; Status.addRelation("shen", "lin", -hit); Status.addRelation("lin", "shen", -Math.ceil(hit / 2)); }
     // 挑撥：傷害目標與其最親近者的關係
     if (card.tags.includes("MANIPULATE")) {
@@ -3452,6 +3466,8 @@ const Ending = {
     if (s.status.globalSuspicion >= 100 || s.story.flags.failed_judgment || !s.story.flags.passed_judgment) return "exposed";
     // 隱藏結局：頂樓坦白＋通過審判＋風聲平穩
     if (s.story.flags.bond_gu_true && s.status.globalSuspicion < 50) return "unmask";
+    // 海后：同時吊著 3 條以上的魚、從沒撞船失敗
+    if (typeof Fish !== "undefined" && s.fish && Fish.count(70) >= 3 && (s.fish.crashFails || 0) === 0 && s.status.globalSuspicion < 70) return "seaqueen";
     const sc = this.calculateEndingScore();
     const cands = [["lotus", sc.lotus, sc.reqLotus], ["queen", sc.queen, sc.reqQueen], ["schemer", sc.schemer, sc.reqSchemer]];
     const ok = cands.filter(c => c[2]).sort((a, b) => b[1] - a[1]);
@@ -3465,7 +3481,7 @@ const Ending = {
   unlockEnding(id) {
     const s = State.get(); s.ending = id; s.gameOver = true;
     if (!s.statistics.endingsUnlocked.includes(id)) s.statistics.endingsUnlocked.push(id);
-    Achievements.unlock({ lotus: "a_end_lotus", schemer: "a_end_schemer", queen: "a_end_queen", exposed: "a_end_exposed", unmask: "a_end_unmask" }[id]);
+    Achievements.unlock({ lotus: "a_end_lotus", schemer: "a_end_schemer", queen: "a_end_queen", exposed: "a_end_exposed", unmask: "a_end_unmask", seaqueen: "a_end_seaqueen" }[id]);
     const m = Save.meta(); if (!m.endings.includes(id)) m.endings.push(id); m.clears++;
     m.collection = [...new Set([...(m.collection || []), ...s.deck.collection])];
     Object.entries(s.deck.cardLevels).forEach(([k, v]) => m.cardLevels[k] = Math.max(m.cardLevels[k] || 1, v));
@@ -3622,7 +3638,7 @@ const UI = {
   },
   openExtras() {
     const m = Save.meta();
-    const items = [["cg_light.jpg", "白蓮花女神", m.endings.includes("lotus")], ["cg_queen.jpg", "社交女王", m.endings.includes("queen")], ["cg_dark.jpg", "腹黑操盤手", m.endings.includes("schemer")], ["cg_exposed.jpg", "全員鑑茶", m.endings.includes("exposed")], ["cg_end_unmask.jpg", "卸下面具", m.endings.includes("unmask")], ["cg_boss.jpg", "鑑茶女王的審判", !!m.judgmentSeen], ["char_player_dark.png", "小茶的另一面", (m.clears || 0) > 0],
+    const items = [["cg_light.jpg", "白蓮花女神", m.endings.includes("lotus")], ["cg_queen.jpg", "社交女王", m.endings.includes("queen")], ["cg_dark.jpg", "腹黑操盤手", m.endings.includes("schemer")], ["cg_exposed.jpg", "全員鑑茶", m.endings.includes("exposed")], ["cg_end_unmask.jpg", "卸下面具", m.endings.includes("unmask")], ["cg_end_seaqueen.jpg", "海后", m.endings.includes("seaqueen")], ["cg_boss.jpg", "鑑茶女王的審判", !!m.judgmentSeen], ["char_player_dark.png", "小茶的另一面", (m.clears || 0) > 0],
       ...["lin", "shen", "gu", "chen", "xu"].map(id => [`cg_ev_${id}.jpg`, BACKGROUNDS["cg_" + id].name, (m.cgSeen || []).includes("cg_" + id)])];
     const html = `<p style="margin-top:0">達成結局與里程碑後解鎖。點圖片可放大。</p><div class="gal">${items.map(([f, n, ok]) => `<div class="g ${ok ? "" : "lock"}"><img class="${ok ? "cg-thumb" : ""}" data-src="assets/${f}" src="assets/${f}" onerror="this.style.background='linear-gradient(135deg,#3a1f4d,#c9558b)';this.removeAttribute('src')"><b>${ok ? n : "？？？"}</b></div>`).join("")}</div>`;
     const md = this.albumModal("cg", html);
@@ -3946,11 +3962,13 @@ const UI = {
     const dms = () => NPC_IDS.map(id => { const last = [...s.social.messages].reverse().find(m => m.npc === id); return `<div class="dm-row" data-dm="${id}">${this.ava(id)}<div><b>${NPCS[id].name}</b><div style="font-size:calc(12px * var(--fs));color:var(--ink-l)">${last ? Utils.esc(last.reply) : "傳個訊息吧"}</div></div>${s.npcRelations[id].dmDay === s.calendar.day ? `<span class="chip" style="margin-left:auto">今日已聊</span>` : ""}</div>`; }).join("");
     const friends = () => `<div style="padding:12px"><p>追蹤者：<b>${Social.followers()}</b>　社群影響力：<b>${s.status.socialInfluence}</b></p>${NPC_IDS.map(id => `<div class="dm-row">${this.ava(id)}<div><b>${NPCS[id].name}</b><div style="font-size:calc(12px * var(--fs));color:var(--ink-l)">${s.npcRelations[id].favor >= 30 ? "好友" : "追蹤中（非好友）"}・${NPCS[id].role}</div></div></div>`).join("")}</div>`;
     const html = `<div class="phone"><div class="phone-top"><span>Starlit</span><span style="font-size:calc(12px * var(--fs))">@${Utils.esc(s.player.nickname || s.player.name)}</span></div>
-      <div class="phone-tabs" data-left="${Math.max(0, Social.dmLeft())}"><button data-pt="feed" class="${tab === "feed" ? "on" : ""}">動態</button><button data-pt="dm" class="${tab === "dm" ? "on" : ""}">私訊（剩 ${Math.max(0, Social.dmLeft())}）</button><button data-pt="friends" class="${tab === "friends" ? "on" : ""}">好友</button></div>
-      <div class="phone-body">${tab === "feed" ? feed() : tab === "dm" ? dms() : friends()}</div></div>`;
+      <div class="phone-tabs" data-left="${Math.max(0, Social.dmLeft())}"><button data-pt="feed" class="${tab === "feed" ? "on" : ""}">動態</button><button data-pt="dm" class="${tab === "dm" ? "on" : ""}">私訊（剩 ${Math.max(0, Social.dmLeft())}）</button><button data-pt="pond" class="${tab === "pond" ? "on" : ""}">🐟 魚塘</button><button data-pt="friends" class="${tab === "friends" ? "on" : ""}">好友</button></div>
+      <div class="phone-body">${tab === "feed" ? feed() : tab === "dm" ? dms() : tab === "pond" ? this.pondHTML() : friends()}</div></div>`;
     const m = this.modal("社群", html, {});
     $$("[data-pt]", m).forEach(b => b.onclick = () => this.openSocial(b.dataset.pt));
     $$("[data-dm]", m).forEach(b => b.onclick = () => this.openDM(b.dataset.dm));
+    $$("[data-fish]", m).forEach(b => b.onclick = () => FISH[b.dataset.fish] ? this.openFishDM(b.dataset.fish) : this.openDM(b.dataset.fish));
+    if (tab === "pond") Tips.show("t_pond");
   },
   openDM(id) {
     Tips.show("t_dm");
@@ -4123,10 +4141,10 @@ const UI = {
     const grade = total >= 90 ? "SS" : total >= 80 ? "S" : total >= 70 ? "A" : total >= 55 ? "B" : total >= 40 ? "C" : "D";
     const top = axes.slice().sort((a, b) => b[1] - a[1])[0][0];
     const titles = { "純潔演技": ["人間白蓮花", "清純本純"], "心機手腕": ["茶藝宗師", "暗黑操盤手"], "人氣經營": ["社交天后", "萬人迷本迷"], "隱匿程度": ["無影無蹤", "完美隱形茶"] };
-    const title = endingId === "unmask" ? "不再泡茶的人" : endingId === "exposed" ? (total >= 35 ? "差一點就成功的茶" : "翻車現行犯") : titles[top][grade === "SS" || grade === "S" ? 0 : 1];
+    const title = endingId === "seaqueen" ? "沒有人認識的人" : endingId === "unmask" ? "不再泡茶的人" : endingId === "exposed" ? (total >= 35 ? "差一點就成功的茶" : "翻車現行犯") : titles[top][grade === "SS" || grade === "S" ? 0 : 1];
     const comments0 = { SS: "教科書等級的茶藝，連鑑茶女王都只能點頭。", S: "滴水不漏，社團的空氣都在妳的掌握之中。", A: "表現亮眼，只差一點點就能封神。", B: "有模有樣，但破綻還是被人記住了。", C: "茶有點苦，下次記得泡淡一點。", D: "全員鑑茶。綠茶終究會涼。" };
     const keys = (s.story.choices || []).map(c => STORIES[c.story]?.nodes?.[c.node]?.ch?.[c.choice]).filter(c => c && c.inner).map(c => c.t.replace(/（[^）]*）/g, "").replace(/^【[^】]*】/, "").replace(/^「|」$/g, ""));
-    return { axes, total, grade, title, comment: endingId === "unmask" ? "妳把面具放下了。這一局，最高明的茶藝是不泡茶。" : comments0[grade], keys: keys.slice(-3), endingId };
+    return { axes, total, grade, title, comment: endingId === "seaqueen" ? "所有人都愛妳，但沒有人真正認識妳。" : endingId === "unmask" ? "妳把面具放下了。這一局，最高明的茶藝是不泡茶。" : comments0[grade], keys: keys.slice(-3), endingId };
   },
   drawScoreCard(sc, withImg = true) {
     const s = State.get(), W = 1080, H = 1350, cv = document.createElement("canvas"); cv.width = W; cv.height = H;
@@ -4358,6 +4376,194 @@ const ProLink = {
 };
 
 /* ============================================================
+ * 魚塘系統（v1.4.0）：同時經營好幾段曖昧，越多越容易撞船
+ * - 三條只在私訊出現的魚：邵子赫、周以衡、韓牧（頭像，不畫立繪）
+ * - 予辰、柏宇也算魚：用曖昧卡、約會、深夜私訊累積曖昧值
+ * - 結局〈海后〉：通過審判＋3 條以上魚曖昧值 ≥70＋撞船從未失敗＋警報 <70
+ * ============================================================ */
+const FISH = {
+  zihe: { name: "邵子赫", role: "熱音社主唱", age: 20, color: "#8e6cc9", img: "assets/av_zihe.jpg", likes: "worship", likesText: "被崇拜", minDay: 8, story: "fish_meet_zihe",
+    bio: "自戀的熱音社主唱。喜歡站在台上被看著。", aff: { FLIRT: 1.3, PUBLIC: 1.2, CARE: 1.1, WEAKNESS: 0.9 },
+    reply: { good: "妳懂我。下次演出，第一排留給妳。", ok: "哈，妳也太晚睡了吧。", bad: "……妳是不是對樂團沒興趣啊？" } },
+  yiheng: { name: "周以衡", role: "隔壁系研究生學長", age: 24, color: "#a07850", img: "assets/av_yiheng.jpg", likes: "depend", likesText: "被依賴", minDay: 10, story: "fish_meet_yiheng",
+    bio: "溫和穩重的學長。被需要的時候最溫柔。", aff: { WEAKNESS: 1.3, CARE: 1.2, FLIRT: 1.0, MANIPULATE: 0.8 },
+    reply: { good: "當然可以。妳慢慢說，我都在。", ok: "早點睡，明天還有課吧？", bad: "嗯……妳好像不太需要我呢。" } },
+  hanmu: { name: "韓牧", role: "學生會副會長", age: 21, color: "#5c7a99", img: "assets/av_hanmu.jpg", likes: "chase", likesText: "有挑戰", minDay: 16, story: "fish_meet_hanmu",
+    bio: "冷淡又敏銳的副會長。越追不到的越想要。", aff: { MANIPULATE: 1.2, DEFLECT: 1.1, FLIRT: 1.1, WEAKNESS: 0.8 },
+    reply: { good: "有意思。很少有人讓我等。", ok: "……現在幾點了？", bad: "妳很閒？" } }
+};
+const FISH_STYLES = {
+  worship: { name: "崇拜", text: "你今天那首歌好好聽，我一直在台下看你。" },
+  depend: { name: "依賴", text: "學長……這個我真的弄不懂，可以教我嗎？" },
+  chase: { name: "欲擒故縱", text: "（三小時後才回）剛剛在忙～你說什麼？" },
+  flirt: { name: "曖昧", text: "睡不著，想到你就傳了。" }
+};
+const POND_IDS = ["zihe", "yiheng", "hanmu", "lin", "chen"];
+
+// 讓新魚也能參加修羅場（撞船）：註冊為 NPC，但不出現在人際面板
+Object.entries(FISH).forEach(([id, f]) => {
+  NPCS[id] = { id, name: f.name, age: f.age, role: f.role, color: f.color, img: f.img, noPortrait: true, fish: true, traits: "喜歡" + f.likesText, bio: f.bio,
+    personality: ["fish"], attributes: { sensitivity: 50, protectiveness: 30, rationality: 50, emotionalStability: 50, jealousy: 70, vanity: 60 },
+    initialRelationship: { favor: 40, trust: 30, suspicion: 0, emotion: 10 }, cardAffinity: f.aff };
+  NPC_INTENT_POOL[id] = ["question", "probe", "accuse"];
+});
+Object.assign(ACHIEVEMENTS, { a_end_seaqueen: { name: "沒有人認識的人", desc: "達成結局「海后」" }, a_fish_crash: { name: "撞船", desc: "第一次被兩條魚當場抓包" } });
+Object.assign(ENDINGS, {
+  seaqueen: { name: "海后", cg: "assets/cg_end_seaqueen.jpg", sub: "THE QUEEN OF THE DEEP", hidden: true,
+    t: "評選結束那晚，妳的手機一直在震。\n主唱說他寫了一首歌給妳，學長說明天一起吃早餐，副會長說「妳贏了」。\n妳把每一則都回得恰到好處。\n凌晨三點，宿舍很安靜。妳往上滑，十幾個聊天室，每一個人都說喜歡妳。\n妳突然想不起來，上一次有人問妳「妳今天好嗎」，是什麼時候。" }
+});
+BACKGROUNDS.cg_seaqueen = { img: "assets/cg_end_seaqueen.jpg", name: "海后", cg: true, pos: "50% center", grad: "linear-gradient(160deg,#1a1030,#4a2a70)" };
+EPILOGUES.unshift(
+  { cond: s => s.ending === "seaqueen" && Fish.love("zihe") >= 70, t: "【尾聲・子赫】子赫的新歌叫〈已讀〉。副歌只有一句：「妳到底有沒有在看我？」" },
+  { cond: s => s.ending === "seaqueen" && Fish.love("yiheng") >= 70, t: "【尾聲・以衡】以衡學長還是每天問妳吃了沒。妳總是回「吃了」，其實妳已經很久沒和誰一起吃飯。" },
+  { cond: s => s.ending === "seaqueen" && Fish.love("hanmu") >= 70, t: "【尾聲・韓牧】韓牧的資料夾裡存了一張妳的截圖。檔名是：「唯一沒追到的人」。" },
+  { cond: s => s.ending === "seaqueen" && Fish.love("lin") >= 70, t: "【尾聲・予辰】予辰在妳的每一則限動下按讚，卻再也沒有傳過一則訊息。" },
+  { cond: s => s.ending === "seaqueen" && Fish.love("chen") >= 70, t: "【尾聲・柏宇】柏宇還是會在社辦放兩杯奶茶。只是另一杯，他已經不確定要給誰。" }
+);
+EVENTS.push(
+  { id: "ev_fish_zihe", type: "COND", minDay: 8, story: "fish_meet_zihe", trigger: { flags: ["joined_starlight_club"] } },
+  { id: "ev_fish_yiheng", type: "COND", minDay: 10, story: "fish_meet_yiheng", trigger: { flags: ["joined_starlight_club"] } },
+  { id: "ev_fish_hanmu", type: "COND", minDay: 16, story: "fish_meet_hanmu", trigger: { flags: ["joined_starlight_club"] } }
+);
+Object.assign(EVENT_INFO, { ev_fish_zihe: ["台下的視線", "第 8 天後"], ev_fish_yiheng: ["同一組的學長", "第 10 天後"], ev_fish_hanmu: ["被批評的提案", "第 16 天後"] });
+Object.assign(STORY_LABELS, { fish_meet_zihe: "聯合迎新", fish_meet_yiheng: "通識課分組", fish_meet_hanmu: "跨社團會議", fish_crash: "撞船" });
+Object.assign(STORIES, {
+  fish_meet_zihe: { start: "m1", nodes: {
+    m1: { bg: "gala", sp: "narr", t: "社團聯合迎新。熱音社主唱唱完最後一首歌，跳下舞台，直直走向妳。", n: "m2" },
+    m2: { sp: "zihe", t: "剛剛妳是不是一直在看我？……加個好友吧。", special: "fish_unlock_zihe", n: "m3" },
+    m3: { sp: "narr", t: "【魚塘】邵子赫加入了妳的好友。他喜歡「被崇拜」。（社群 → 魚塘）", end: true }
+  } },
+  fish_meet_yiheng: { start: "m1", nodes: {
+    m1: { bg: "library", sp: "narr", t: "通識課分組。妳被分到和隔壁系的研究生學長同一組。", n: "m2" },
+    m2: { sp: "yiheng", t: "報告的部分我來就好。妳有不懂的，隨時問我。", special: "fish_unlock_yiheng", n: "m3" },
+    m3: { sp: "narr", t: "【魚塘】周以衡加入了妳的好友。他喜歡「被依賴」。", end: true }
+  } },
+  fish_meet_hanmu: { start: "m1", nodes: {
+    m1: { bg: "office", sp: "narr", t: "跨社團會議上，學生會副會長把妳的提案批得一無是處。散會後，手機卻跳出他的訊息。", n: "m2" },
+    m2: { sp: "hanmu", t: "提案很爛。但妳反駁我的樣子，很有意思。", special: "fish_unlock_hanmu", n: "m3" },
+    m3: { sp: "narr", t: "【魚塘】韓牧加入了妳的好友。他喜歡「有挑戰」。", end: true }
+  } }
+});
+
+const Fish = {
+  ensure(s = State.get()) {
+    if (!s) return;
+    s.fish = Object.assign({ love: {}, unlocked: [], last: {}, gone: [], msgs: [], crashes: 0, crashFails: 0 }, s.fish || {});
+    Object.keys(FISH).forEach(id => {
+      if (!s.npcRelations[id]) s.npcRelations[id] = Object.assign({}, s.npcRelations.lin, NPCS[id].initialRelationship, { exposed: false });
+      if (!s.npcMemories[id]) s.npcMemories[id] = [];
+    });
+  },
+  love(id) { const s = State.get(); return s && s.fish ? Math.round(s.fish.love[id] || 0) : 0; },
+  inPond(id) { const s = State.get(); if (s.fish.gone.includes(id)) return false; return FISH[id] ? s.fish.unlocked.includes(id) : this.love(id) > 0; },
+  bump(id, n) {
+    const s = State.get(); if (!s || !s.fish || !POND_IDS.includes(id) || s.fish.gone.includes(id)) return;
+    s.fish.love[id] = Utils.clamp((s.fish.love[id] || 0) + n, 0, 100); s.fish.last[id] = s.calendar.day;
+  },
+  unlock(id) { const s = State.get(); this.ensure(s); if (!s.fish.unlocked.includes(id)) { s.fish.unlocked.push(id); s.fish.love[id] = 15; s.fish.last[id] = s.calendar.day; } },
+  // 每天：太久沒聯絡的魚曖昧值下降，降到 0 就游走
+  daily() {
+    const s = State.get(); this.ensure(s);
+    Object.keys(FISH).forEach(id => {
+      if (!s.fish.unlocked.includes(id) || s.fish.gone.includes(id)) return;
+      const idle = s.calendar.day - (s.fish.last[id] || 0);
+      if (idle > 4 && s.fish.love[id] > 0) {
+        s.fish.love[id] = Math.max(0, s.fish.love[id] - 4);
+        if (s.fish.love[id] === 0) { s.fish.gone.push(id); UI.toast(`🐟 ${FISH[id].name} 游走了（太久沒聯絡）`, "bad"); GameLog.add(`${FISH[id].name} 不再回妳訊息了`, "bad"); }
+      }
+    });
+  },
+  hot() { return POND_IDS.filter(id => this.inPond(id) && this.love(id) >= 50); },
+  crashChance() {
+    const s = State.get(), n = this.hot().length; if (n < 2) return 0;
+    let p = 0.18 * (n - 1) + s.status.globalSuspicion / 400;
+    if (s.story.flags.bond_xu_true) p -= 0.06; // 沐橙不再傳妳的閒話
+    return Utils.clamp(p, 0.05, 0.7);
+  },
+  // 每週：曖昧中的魚越多，越容易撞船
+  weekly() {
+    const s = State.get(); this.ensure(s);
+    if (s.story.flags.gala_done || !Utils.chance(this.crashChance())) return;
+    const hot = this.hot().sort((a, b) => this.love(b) - this.love(a)); const [a, b] = hot.slice(0, 2);
+    s.fish.crash = [a, b];
+    const A = NPCS[a].name, B = NPCS[b].name;
+    STORIES.fish_crash = { start: "c1", nodes: {
+      c1: { bg: "dorm", sp: "narr", special: "fish_crash_start", t: `深夜，手機同時跳出兩則訊息。${A} 和 ${B}，各自傳來同一張截圖——妳回給對方的那句話。`, n: "c2" },
+      c2: { sp: a, t: "所以，這是怎樣？", n: "c3" },
+      c3: { sp: b, t: "我也想知道。", n: "c4" },
+      c4: { sp: "narr", t: "【撞船】兩個人被拉進同一個聊天室，等妳解釋。", battle: { title: "撞船", participants: [a, b], context: "small", rounds: 3, goal: 65, type: "shuraba", noIntel: true, result: { perfect: "w", win: "w", counter: "w", sacrifice: "s", fail: "f" } } },
+      w: { sp: "inner", t: "……圓過去了。可是兩個人說話的語氣，都冷了一點。", special: "fish_crash_win", end: true },
+      s: { sp: "inner", t: "只能保住一個。另一個，已經封鎖我了。", special: "fish_crash_sac", end: true },
+      f: { sp: "inner", t: "兩個人都走了。截圖也傳開了。", special: "fish_crash_fail", end: true }
+    } };
+    s.fish.crashPending = true; // 交給今天的事件佇列播放，避免和其他劇情同時開始
+  },
+  count(min) { return POND_IDS.filter(id => this.inPond(id) && this.love(id) >= min).length; },
+  // 私訊新魚：選對他喜歡的相處方式才會加分
+  send(id, style) {
+    const s = State.get(), f = FISH[id]; this.ensure(s);
+    if (!f || !s.fish.unlocked.includes(id) || s.fish.gone.includes(id)) return null;
+    if (s.fish.last[id] === s.calendar.day && s.fish.msgs.some(m => m.id === id && m.day === s.calendar.day)) { UI.toast("今天已經傳過訊息給他了", "bad"); return null; }
+    if (Social.dmLeft() <= 0) { UI.toast("今天的私訊次數用完了", "bad"); return null; }
+    if (s.player.energy < CONFIG.dmEnergy) { UI.toast(`精力不足（私訊需要 ${CONFIG.dmEnergy}）`, "bad"); return null; }
+    Status.addEnergy(-CONFIG.dmEnergy); s.calendar.dmCount = (s.calendar.dmCount || 0) + 1;
+    const grade = style === f.likes ? "good" : style === "flirt" ? "ok" : "bad";
+    this.bump(id, { good: 12, ok: 7, bad: -6 }[grade]);
+    if (grade === "good") Status.addPureAura(-1); // 同時經營好幾段曖昧，總會留下痕跡
+    s.fish.msgs.push({ id, day: s.calendar.day, out: FISH_STYLES[style].text, reply: f.reply[grade], grade });
+    if (s.fish.msgs.length > 60) s.fish.msgs.shift();
+    Tips.show("t_pond");
+    return grade;
+  }
+};
+SpecialNodes.fish_unlock_zihe = () => Fish.unlock("zihe");
+SpecialNodes.fish_crash_start = () => {
+  const s = State.get(); s.fish.crashPending = false; Achievements.unlock("a_fish_crash");
+  // 被抓包的兩個人正在氣頭上：情緒低落（卡牌效果打折）、懷疑升高
+  (s.fish.crash || []).forEach(id => { const r = s.npcRelations[id]; if (r) { r.emotion = Math.min(r.emotion, -25); r.suspicion = Math.max(r.suspicion, 50); } });
+};
+SpecialNodes.fish_unlock_yiheng = () => Fish.unlock("yiheng");
+SpecialNodes.fish_unlock_hanmu = () => Fish.unlock("hanmu");
+SpecialNodes.fish_crash_win = () => { const s = State.get(); s.fish.crashPending = false; s.fish.crashes++; (s.fish.crash || []).forEach(id => Fish.bump(id, -8)); Status.addGlobalSuspicion(3); };
+SpecialNodes.fish_crash_sac = () => {
+  const s = State.get(); s.fish.crashPending = false; s.fish.crashes++; const [a, b] = s.fish.crash || []; const lose = Fish.love(a) <= Fish.love(b) ? a : b, keep = lose === a ? b : a;
+  if (lose) { s.fish.gone.push(lose); s.fish.love[lose] = 0; } if (keep) Fish.bump(keep, -10); Status.addGlobalSuspicion(5);
+};
+SpecialNodes.fish_crash_fail = () => {
+  const s = State.get(); s.fish.crashPending = false; s.fish.crashes++; s.fish.crashFails++;
+  (s.fish.crash || []).forEach(id => { if (id) { s.fish.gone.push(id); s.fish.love[id] = 0; } });
+  Status.addGlobalSuspicion(10);
+  Memory.addMemory("xu", { type: "sus_post", label: "撞船", detail: "她同時跟好幾個人曖昧，被抓包了", severity: 2 });
+};
+TIPS.t_pond = ["🐟 魚塘", "每條魚喜歡的相處方式都不一樣。同時曖昧的人越多，越容易撞船；太久不聯絡，魚會游走。"];
+
+/* ---------- 魚塘介面（社群 → 魚塘分頁、和新魚的私訊） ---------- */
+Object.assign(UI, {
+  pondHTML() {
+    const s = State.get(); Fish.ensure(s);
+    const rows = POND_IDS.filter(id => FISH[id] ? s.fish.unlocked.includes(id) : true).map(id => {
+      const f = FISH[id], gone = s.fish.gone.includes(id), lv = Fish.love(id), idle = f ? s.calendar.day - (s.fish.last[id] || s.calendar.day) : 0;
+      const sub = gone ? "已經游走了" : f ? `喜歡${f.likesText}${idle > 3 ? `・${idle} 天沒聯絡` : ""}` : "曖昧卡、約會、深夜私訊會累積曖昧";
+      return `<div class="dm-row pond-row ${gone ? "gone" : ""}" ${gone ? "" : `data-fish="${id}"`}>${this.ava(id)}<div style="flex:1"><b>${NPCS[id].name}</b> <small style="color:var(--ink-l)">${NPCS[id].role}</small>
+        <div class="pond-bar"><i style="width:${lv}%"></i></div><div style="font-size:calc(11.5px * var(--fs));color:var(--ink-l)">曖昧 ${lv}・${sub}</div></div></div>`;
+    }).join("");
+    const p = Math.round(Fish.crashChance() * 100), hot = Fish.hot().length;
+    return `<div class="pond-head">曖昧中（50 以上）：<b>${hot}</b> 人　本週撞船風險：<b style="color:${p >= 30 ? "var(--bad)" : "inherit"}">${p}%</b><br><small>同時 3 條以上的魚曖昧 70 以上、從沒撞船失敗，並通過審判……也許會成為傳說。</small></div>${rows || `<p style="padding:16px;text-align:center;color:var(--ink-l)">還沒有魚。第 8 天後，會有人主動來加妳好友。</p>`}`;
+  },
+  openFishDM(id) {
+    const s = State.get(), f = FISH[id]; if (!f) return this.openDM(id);
+    const msgs = s.fish.msgs.filter(m => m.id === id).slice(-8);
+    const done = s.fish.msgs.some(m => m.id === id && m.day === s.calendar.day) || Social.dmLeft() <= 0;
+    const html = `<div class="phone"><div class="phone-top"><button class="btn sm ghost" id="dmBack">‹</button><span>${f.name}</span><span></span></div>
+      <div class="phone-body">${msgs.map(m => `<div class="bubble me">${Utils.esc(m.out)}</div><div class="bubble them">${Utils.esc(m.reply)}</div>`).join("") || `<p style="text-align:center;color:var(--ink-l);padding:20px">（他喜歡${f.likesText}。選對相處方式，曖昧值才會上升。）</p>`}</div>
+      <div style="padding:8px;display:flex;flex-direction:column;gap:6px;border-top:1px solid #f0dce6">${Object.entries(FISH_STYLES).map(([k, v]) => `<button class="btn sm" data-fs="${k}" ${done ? "disabled" : ""}><b>${v.name}</b>｜${v.text}</button>`).join("")}</div></div>`;
+    const m = this.modal("私訊", html, {});
+    $("#dmBack", m).onclick = () => this.openSocial("pond");
+    $$("[data-fs]", m).forEach(b => b.onclick = () => { const g = Fish.send(id, b.dataset.fs); if (g) { this.toast(g === "good" ? `💗 ${f.name} 曖昧 +12` : g === "ok" ? `${f.name} 曖昧 +7` : `${f.name} 曖昧 -6`, g === "bad" ? "bad" : ""); this.refresh(); this.openFishDM(id); } });
+  }
+});
+
+/* ============================================================
  * GameManager：遊戲主流程
  * ============================================================ */
 const Game = {
@@ -4375,11 +4581,11 @@ const Game = {
     const seed = Number.isFinite(opt.seed) ? opt.seed : Number.isFinite(window.__GTS_SEED) ? window.__GTS_SEED : (Date.now() ^ (Math.random() * 1e9)) & 0x7fffffff;
     s.meta.seed = seed; s.meta.rng = seed;
     s.log = []; GameLog.add(`${s.player.name}（${p.name}）踏入了星光公關社。`);
-    ProLink.apply(); UI.showGame(); UI.setBackground("campus"); Schedule.startDay();
+    ProLink.apply(); Fish.ensure(); UI.showGame(); UI.setBackground("campus"); Schedule.startDay();
   },
   continueGame() { if (Save.loadGame("auto")) this.afterLoad(); },
   afterLoad() {
-    ProLink.apply(); const s = State.get(); Battle.active = null; Story.cur = null; UI.hideDialogue(); UI.closeBattle();
+    ProLink.apply(); Fish.ensure(); const s = State.get(); Battle.active = null; Story.cur = null; UI.hideDialogue(); UI.closeBattle();
     if (s.gameOver && s.ending) { UI.showEnding(s.ending); return; }
     UI.showGame(); UI.setBackground("clubroom"); UI.lock(false);
     // 若讀檔時有未完成的事件，重新檢查
