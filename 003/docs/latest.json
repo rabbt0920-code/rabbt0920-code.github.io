@@ -3,16 +3,16 @@
   "taiwan_futures": {
     "symbol": "TX",
     "name": "臺股期貨近月（官方夜盤）",
-    "price": 38482.0,
-    "last_verified_price": 38482.0,
+    "price": 38397.0,
+    "last_verified_price": 38397.0,
     "quote_status": "fresh",
-    "retrieved_at_taipei": "2026-11-26 13:00:19",
+    "retrieved_at_taipei": "2026-11-27 12:59:25",
     "weekday_age": 1,
-    "latest_status_note": "官方夜盤資料交易日期 2026-11-25；距台灣今日已過 1 個平日。資料日期通過新鮮度檢查。",
-    "change_pct": -4.57,
-    "day_high": 40900.0,
-    "day_low": 37730.0,
-    "volume": 95642,
+    "latest_status_note": "官方夜盤資料交易日期 2026-11-26；距台灣今日已過 1 個平日。資料日期通過新鮮度檢查。",
+    "change_pct": 0.72,
+    "day_high": 38397.0,
+    "day_low": 35933.0,
+    "volume": 79451,
     "rsi": null,
     "macd": 0.0,
     "macd_signal": 0.0,
@@ -25,8 +25,8 @@
     "volume_ratio": null,
     "bb_upper": null,
     "bb_lower": null,
-    "support20": 37730.0,
-    "resistance20": 40900.0,
+    "support20": 35933.0,
+    "resistance20": 38397.0,
     "stop_reference": null,
     "technical_score": 0,
     "trend": "中性",
@@ -34,12 +34,12 @@
     "reasons": [],
     "daily": [
       {
-        "date": "2026-11-25",
-        "open": 40772.0,
-        "high": 40900.0,
-        "low": 37730.0,
-        "close": 38482.0,
-        "volume": 95642,
+        "date": "2026-11-26",
+        "open": 37868.0,
+        "high": 38397.0,
+        "low": 35933.0,
+        "close": 38397.0,
+        "volume": 79451,
         "sma20": null,
         "sma50": null,
         "bb_upper": null,
@@ -49,7 +49,7 @@
     "extended": [],
     "extended_note": "官方收盤資料採 TAIFEX OpenAPI；Info Hub 僅作盤中參考交叉檢視，不覆蓋官方收盤值。",
     "session": "盤後（夜盤）",
-    "session_date": "2026-11-25",
+    "session_date": "2026-11-26",
     "contract_month": "202612",
     "source": "TAIFEX OpenAPI DailyMarketReportFut",
     "open_interest": null,
@@ -1712,12 +1712,12 @@
         {
           "time": "2026-11-24T15:15:00-05:00",
           "close": 50.59,
-          "volume": 1784
+          "volume": 1849
         },
         {
           "time": "2026-11-24T15:20:00-05:00",
           "close": 50.62,
-          "volume": 2601
+          "volume": 2536
         },
         {
           "time": "2026-11-24T15:25:00-05:00",
@@ -1742,22 +1742,22 @@
         {
           "time": "2026-11-24T15:45:00-05:00",
           "close": 50.6,
-          "volume": 4120
+          "volume": 4220
         },
         {
           "time": "2026-11-24T15:50:00-05:00",
           "close": 50.6,
-          "volume": 6504
+          "volume": 6404
         },
         {
           "time": "2026-11-24T15:55:00-05:00",
-          "close": 50.57,
-          "volume": 19347
+          "close": 50.56,
+          "volume": 19447
         },
         {
           "time": "2026-11-24T16:00:00-05:00",
           "close": 50.59,
-          "volume": 16735
+          "volume": 16635
         },
         {
           "time": "2026-11-25T09:30:00-05:00",
@@ -1992,12 +1992,12 @@
         {
           "time": "2026-11-25T13:30:00-05:00",
           "close": 50.12,
-          "volume": 774
+          "volume": 765
         },
         {
           "time": "2026-11-25T13:40:00-05:00",
           "close": 50.08,
-          "volume": 1784
+          "volume": 1793
         },
         {
           "time": "2026-11-25T13:45:00-05:00",
@@ -2126,13 +2126,13 @@
         },
         {
           "time": "2026-11-25T15:50:00-05:00",
-          "close": 50.01,
-          "volume": 7268
+          "close": 50.0,
+          "volume": 7168
         },
         {
           "time": "2026-11-25T15:55:00-05:00",
           "close": 50.07,
-          "volume": 29080
+          "volume": 29180
         },
         {
           "time": "2026-11-25T16:00:00-05:00",
@@ -2181,7 +2181,7 @@
       "change_pct": -1.57,
       "day_high": 13.25,
       "day_low": 12.08,
-      "volume": 16674400,
+      "volume": 16695000,
       "rsi": 36.15,
       "macd": -1.6374,
       "macd_signal": -1.6945,
@@ -3642,7 +3642,7 @@
           "high": 13.25,
           "low": 12.08,
           "close": 13.19,
-          "volume": 16674400,
+          "volume": 16695000,
           "sma20": 14.84,
           "sma50": 19.45,
           "bb_upper": 17.82,
@@ -3650,11 +3650,6 @@
         }
       ],
       "extended": [
-        {
-          "time": "2026-11-25T07:55:00-05:00",
-          "close": 12.16,
-          "volume": 0
-        },
         {
           "time": "2026-11-25T08:00:00-05:00",
           "close": 12.01,
@@ -3753,12 +3748,12 @@
         {
           "time": "2026-11-25T09:50:00-05:00",
           "close": 12.37,
-          "volume": 442514
+          "volume": 442859
         },
         {
           "time": "2026-11-25T09:55:00-05:00",
           "close": 12.48,
-          "volume": 259189
+          "volume": 258844
         },
         {
           "time": "2026-11-25T10:00:00-05:00",
@@ -3788,12 +3783,12 @@
         {
           "time": "2026-11-25T10:25:00-05:00",
           "close": 12.33,
-          "volume": 136786
+          "volume": 136787
         },
         {
           "time": "2026-11-25T10:30:00-05:00",
           "close": 12.36,
-          "volume": 174073
+          "volume": 174072
         },
         {
           "time": "2026-11-25T10:35:00-05:00",
@@ -3978,12 +3973,12 @@
         {
           "time": "2026-11-25T13:35:00-05:00",
           "close": 12.94,
-          "volume": 67896
+          "volume": 67884
         },
         {
           "time": "2026-11-25T13:40:00-05:00",
           "close": 13.02,
-          "volume": 141334
+          "volume": 141346
         },
         {
           "time": "2026-11-25T13:45:00-05:00",
@@ -4113,12 +4108,12 @@
         {
           "time": "2026-11-25T15:50:00-05:00",
           "close": 13.12,
-          "volume": 260081
+          "volume": 260521
         },
         {
           "time": "2026-11-25T15:55:00-05:00",
           "close": 13.2,
-          "volume": 1001479
+          "volume": 1001039
         },
         {
           "time": "2026-11-25T16:00:00-05:00",
@@ -4183,6 +4178,11 @@
         {
           "time": "2026-11-25T17:25:00-05:00",
           "close": 13.01,
+          "volume": 0
+        },
+        {
+          "time": "2026-11-25T17:40:00-05:00",
+          "close": 13.2,
           "volume": 0
         },
         {
@@ -4254,6 +4254,12 @@
       "extended_note": "已取得部分延伸交易時段資料；可用性依 Yahoo Finance 回傳為準",
       "news": [
         {
+          "title": "GFS' AI Optical Connectivity Business Gains Traction: Can it Sustain?",
+          "publisher": "Zacks",
+          "published": "2026-11-26T11:25:00Z",
+          "url": "https://finance.yahoo.com/technology/ai/articles/gfs-ai-optical-connectivity-business-112500727.html"
+        },
+        {
           "title": "United Microelectronics (UMC) – A Chipmaker with a Bargain Entry that Investors Wrote Off Too Soon?",
           "publisher": "Insider Monkey",
           "published": "2026-11-24T21:40:44Z",
@@ -4270,12 +4276,6 @@
           "publisher": "Trefis",
           "published": "2026-11-23T19:37:10Z",
           "url": "https://www.trefis.com/stock/tsm/articles/627659/history-says-tsmc-stock-falls-before-its-sales/2026-11-23"
-        },
-        {
-          "title": "UMC Soars 21%, ASE Up 23% as Taiwan Bans Short Sales to Halt AI Chip Rout",
-          "publisher": "TIKR",
-          "published": "2026-11-23T14:32:11Z",
-          "url": "https://www.tikr.com/blog/umc-soars-21-ase-up-23-as-taiwan-bans-short-sales-to-halt-ai-chip-rout?ref=yahoofinance&tlnk=yf-261123-vp3xwchf"
         }
       ],
       "name": "聯華電子（聯電）",
@@ -5764,12 +5764,12 @@
         {
           "time": "2026-11-24T13:50:00-05:00",
           "close": 7.5,
-          "volume": 4117
+          "volume": 4116
         },
         {
           "time": "2026-11-24T13:55:00-05:00",
           "close": 7.49,
-          "volume": 5557
+          "volume": 5558
         },
         {
           "time": "2026-11-24T14:00:00-05:00",
@@ -5784,12 +5784,12 @@
         {
           "time": "2026-11-24T14:10:00-05:00",
           "close": 7.41,
-          "volume": 10836
+          "volume": 10729
         },
         {
           "time": "2026-11-24T14:15:00-05:00",
           "close": 7.41,
-          "volume": 10531
+          "volume": 10638
         },
         {
           "time": "2026-11-24T14:20:00-05:00",
@@ -5864,22 +5864,22 @@
         {
           "time": "2026-11-24T15:30:00-05:00",
           "close": 7.32,
-          "volume": 64405
+          "volume": 64468
         },
         {
           "time": "2026-11-24T15:35:00-05:00",
           "close": 7.32,
-          "volume": 63058
+          "volume": 62988
         },
         {
           "time": "2026-11-24T15:40:00-05:00",
           "close": 7.3,
-          "volume": 59462
+          "volume": 59453
         },
         {
           "time": "2026-11-24T15:45:00-05:00",
           "close": 7.34,
-          "volume": 48631
+          "volume": 48647
         },
         {
           "time": "2026-11-24T15:50:00-05:00",
@@ -6099,12 +6099,12 @@
         {
           "time": "2026-11-25T11:50:00-05:00",
           "close": 6.99,
-          "volume": 15743
+          "volume": 15756
         },
         {
           "time": "2026-11-25T11:55:00-05:00",
           "close": 7.01,
-          "volume": 9842
+          "volume": 9829
         },
         {
           "time": "2026-11-25T12:00:00-05:00",
@@ -6149,12 +6149,12 @@
         {
           "time": "2026-11-25T12:40:00-05:00",
           "close": 7.23,
-          "volume": 7691
+          "volume": 7750
         },
         {
           "time": "2026-11-25T12:45:00-05:00",
           "close": 7.22,
-          "volume": 7922
+          "volume": 7863
         },
         {
           "time": "2026-11-25T12:50:00-05:00",
@@ -6189,12 +6189,12 @@
         {
           "time": "2026-11-25T13:20:00-05:00",
           "close": 7.32,
-          "volume": 7470
+          "volume": 7401
         },
         {
           "time": "2026-11-25T13:25:00-05:00",
           "close": 7.33,
-          "volume": 3125
+          "volume": 3194
         },
         {
           "time": "2026-11-25T13:30:00-05:00",
@@ -6357,13 +6357,19 @@
           "volume": 0
         },
         {
-          "time": "2026-11-25T17:50:47-05:00",
+          "time": "2026-11-25T17:50:00-05:00",
           "close": 7.5,
           "volume": 0
         }
       ],
       "extended_note": "已取得部分延伸交易時段資料；可用性依 Yahoo Finance 回傳為準",
       "news": [
+        {
+          "title": "Himax Technologies (HIMX) Stock Looks Cheap Even After A 42% Gain",
+          "publisher": "Simply Wall St.",
+          "published": "2026-11-26T15:11:00Z",
+          "url": "https://finance.yahoo.com/markets/stocks/articles/himax-technologies-himx-stock-looks-151100722.html"
+        },
         {
           "title": "Asian Equities Traded in the US as American Depositary Receipts Soar in Monday Trading",
           "publisher": "MT Newswires",
@@ -6381,12 +6387,6 @@
           "publisher": "StockStory",
           "published": "2026-11-09T08:21:36Z",
           "url": "https://finance.yahoo.com/markets/stocks/articles/himx-q3-2026-deep-dive-082136666.html"
-        },
-        {
-          "title": "Asian Equities Traded in the US as American Depositary Receipts Surge in Friday Trading",
-          "publisher": "MT Newswires",
-          "published": "2026-11-06T15:44:51Z",
-          "url": "https://finance.yahoo.com/markets/world-indices/articles/asian-equities-traded-us-american-154451331.html"
         }
       ],
       "name": "奇景光電",
@@ -6403,7 +6403,7 @@
       "change_pct": -1.96,
       "day_high": 343.17,
       "day_low": 321.1,
-      "volume": 22717200,
+      "volume": 22861100,
       "rsi": 38.87,
       "macd": -20.6778,
       "macd_signal": -17.5711,
@@ -6413,7 +6413,7 @@
       "atr14": 23.05,
       "atr_pct": 6.73,
       "adx14": 32.46,
-      "volume_ratio": 1.18,
+      "volume_ratio": 1.19,
       "bb_upper": 437.0,
       "bb_lower": 322.0,
       "support20": 318.48,
@@ -7864,7 +7864,7 @@
           "high": 343.17,
           "low": 321.1,
           "close": 342.34,
-          "volume": 22717200,
+          "volume": 22861100,
           "sma20": 379.5,
           "sma50": 418.26,
           "bb_upper": 437.0,
@@ -7875,7 +7875,7 @@
         {
           "time": "2026-11-25T10:00:00-05:00",
           "close": 330.25,
-          "volume": 354736
+          "volume": 354760
         },
         {
           "time": "2026-11-25T10:05:00-05:00",
@@ -7935,12 +7935,12 @@
         {
           "time": "2026-11-25T11:00:00-05:00",
           "close": 326.1,
-          "volume": 263919
+          "volume": 263960
         },
         {
           "time": "2026-11-25T11:05:00-05:00",
           "close": 324.51,
-          "volume": 263508
+          "volume": 263467
         },
         {
           "time": "2026-11-25T11:10:00-05:00",
@@ -7955,17 +7955,17 @@
         {
           "time": "2026-11-25T11:20:00-05:00",
           "close": 325.79,
-          "volume": 312120
+          "volume": 312118
         },
         {
           "time": "2026-11-25T11:25:00-05:00",
           "close": 324.75,
-          "volume": 295441
+          "volume": 295449
         },
         {
           "time": "2026-11-25T11:30:00-05:00",
           "close": 323.37,
-          "volume": 327742
+          "volume": 327736
         },
         {
           "time": "2026-11-25T11:35:00-05:00",
@@ -7990,17 +7990,17 @@
         {
           "time": "2026-11-25T11:55:00-05:00",
           "close": 324.92,
-          "volume": 880013
+          "volume": 879983
         },
         {
           "time": "2026-11-25T12:00:00-05:00",
           "close": 326.21,
-          "volume": 234367
+          "volume": 234395
         },
         {
           "time": "2026-11-25T12:05:00-05:00",
           "close": 328.33,
-          "volume": 325344
+          "volume": 325346
         },
         {
           "time": "2026-11-25T12:10:00-05:00",
@@ -8050,12 +8050,12 @@
         {
           "time": "2026-11-25T12:55:00-05:00",
           "close": 333.92,
-          "volume": 150954
+          "volume": 151002
         },
         {
           "time": "2026-11-25T13:00:00-05:00",
           "close": 334.39,
-          "volume": 138928
+          "volume": 138880
         },
         {
           "time": "2026-11-25T13:05:00-05:00",
@@ -8075,12 +8075,12 @@
         {
           "time": "2026-11-25T13:20:00-05:00",
           "close": 337.02,
-          "volume": 240950
+          "volume": 240964
         },
         {
           "time": "2026-11-25T13:25:00-05:00",
           "close": 337.67,
-          "volume": 225759
+          "volume": 225745
         },
         {
           "time": "2026-11-25T13:30:00-05:00",
@@ -8120,22 +8120,22 @@
         {
           "time": "2026-11-25T14:05:00-05:00",
           "close": 341.41,
-          "volume": 125609
+          "volume": 125598
         },
         {
           "time": "2026-11-25T14:10:00-05:00",
           "close": 340.55,
-          "volume": 140716
+          "volume": 140727
         },
         {
           "time": "2026-11-25T14:15:00-05:00",
           "close": 339.87,
-          "volume": 142743
+          "volume": 142742
         },
         {
           "time": "2026-11-25T14:20:00-05:00",
           "close": 340.87,
-          "volume": 130181
+          "volume": 130182
         },
         {
           "time": "2026-11-25T14:25:00-05:00",
@@ -8175,17 +8175,17 @@
         {
           "time": "2026-11-25T15:00:00-05:00",
           "close": 341.32,
-          "volume": 132250
+          "volume": 132202
         },
         {
           "time": "2026-11-25T15:05:00-05:00",
           "close": 341.07,
-          "volume": 168849
+          "volume": 168931
         },
         {
           "time": "2026-11-25T15:10:00-05:00",
           "close": 341.13,
-          "volume": 122652
+          "volume": 122618
         },
         {
           "time": "2026-11-25T15:15:00-05:00",
@@ -8200,12 +8200,12 @@
         {
           "time": "2026-11-25T15:25:00-05:00",
           "close": 340.42,
-          "volume": 75427
+          "volume": 75467
         },
         {
           "time": "2026-11-25T15:30:00-05:00",
           "close": 339.57,
-          "volume": 226494
+          "volume": 226454
         },
         {
           "time": "2026-11-25T15:35:00-05:00",
@@ -8476,28 +8476,28 @@
       "extended_note": "已取得部分延伸交易時段資料；可用性依 Yahoo Finance 回傳為準",
       "news": [
         {
-          "title": "Taiwan shares tumble 4.8% as AI chip stocks slump",
-          "publisher": "IntelliNews",
-          "published": "2026-11-26T03:51:11Z",
-          "url": "http://www.intellinews.com/taiwan-shares-tumble-4-8-as-ai-chip-stocks-slump-488520/"
-        },
-        {
-          "title": "Asian tech stocks jump as bargain buyers boost battered AI trade",
-          "publisher": "Investing.com",
-          "published": "2026-11-26T03:03:16Z",
-          "url": "https://finance.yahoo.com/markets/stocks/articles/asian-tech-stocks-jump-bargain-030316035.html"
-        },
-        {
-          "title": "5 Best Strong Buy Growth Stocks to Buy for 2027",
+          "title": "TSMC (TSM) Is Building a Semiconductor Moat That Rivals May Struggle to Cross",
           "publisher": "Insider Monkey",
-          "published": "2026-11-26T00:46:10Z",
-          "url": "https://finance.yahoo.com/markets/stocks/articles/5-best-strong-buy-growth-004610627.html"
+          "published": "2026-11-27T03:11:14Z",
+          "url": "https://finance.yahoo.com/technology/articles/tsmc-tsm-building-semiconductor-moat-031114980.html"
         },
         {
-          "title": "Altimeter’s Brad Gerstner Says Nvidia Was Priced for “Negative Growth for 2028 and 2029.” Wall Street Expects 29%",
-          "publisher": "TIKR",
-          "published": "2026-11-25T23:39:02Z",
-          "url": "https://www.tikr.com/blog/altimeters-brad-gerstner-says-nvidia-was-priced-for-negative-growth-for-2028-and-2029-wall-street-expects-29?ref=yahoofinance&tlnk=yf-261125-3qj6vf95"
+          "title": "Taiwan Semiconductor Stocks Slip 1.96% as Taiwan's Market Sinks 4.8% in Chip Rout",
+          "publisher": "GuruFocus.com",
+          "published": "2026-11-26T19:03:19Z",
+          "url": "https://finance.yahoo.com/markets/stocks/articles/taiwan-semiconductor-stocks-slip-1-190319001.html"
+        },
+        {
+          "title": "3 Top Stocks to Buy Before 2027 as Quantum Enters AI Data Centers",
+          "publisher": "Zacks",
+          "published": "2026-11-26T19:00:00Z",
+          "url": "https://finance.yahoo.com/markets/stocks/articles/3-top-stocks-buy-2027-190000024.html"
+        },
+        {
+          "title": "This AI Investing Prodigy Lost 65% in a Single Quarter and Is Still Up 88.5% in 2026. Here’s the Lesson for Investors.",
+          "publisher": "24/7 Wall St.",
+          "published": "2026-11-26T16:55:13Z",
+          "url": "https://247wallst.com/investing/2026/11/26/this-ai-investing-prodigy-lost-65-in-a-single-quarter-and-is-still-up-88-5-in-2026-heres-the-lesson-for-investors/"
         }
       ],
       "name": "台灣積體電路製造（台積電）",
@@ -8514,7 +8514,7 @@
       "change_pct": 0.55,
       "day_high": 29.59,
       "day_low": 26.66,
-      "volume": 15428700,
+      "volume": 15464000,
       "rsi": 39.86,
       "macd": -2.9426,
       "macd_signal": -2.5788,
@@ -9975,7 +9975,7 @@
           "high": 29.59,
           "low": 26.66,
           "close": 29.49,
-          "volume": 15428700,
+          "volume": 15464000,
           "sma20": 34.26,
           "sma50": 39.84,
           "bb_upper": 43.21,
@@ -10101,17 +10101,17 @@
         {
           "time": "2026-11-25T09:55:00-05:00",
           "close": 27.6,
-          "volume": 197404
+          "volume": 197424
         },
         {
           "time": "2026-11-25T10:00:00-05:00",
           "close": 27.55,
-          "volume": 308129
+          "volume": 307732
         },
         {
           "time": "2026-11-25T10:05:00-05:00",
           "close": 27.25,
-          "volume": 249384
+          "volume": 249761
         },
         {
           "time": "2026-11-25T10:10:00-05:00",
@@ -10171,12 +10171,12 @@
         {
           "time": "2026-11-25T11:05:00-05:00",
           "close": 27.01,
-          "volume": 147028
+          "volume": 146493
         },
         {
           "time": "2026-11-25T11:10:00-05:00",
           "close": 27.16,
-          "volume": 119681
+          "volume": 120216
         },
         {
           "time": "2026-11-25T11:15:00-05:00",
@@ -10236,12 +10236,12 @@
         {
           "time": "2026-11-25T12:10:00-05:00",
           "close": 27.81,
-          "volume": 190502
+          "volume": 190552
         },
         {
           "time": "2026-11-25T12:15:00-05:00",
           "close": 28.04,
-          "volume": 233469
+          "volume": 233419
         },
         {
           "time": "2026-11-25T12:20:00-05:00",
@@ -10251,47 +10251,47 @@
         {
           "time": "2026-11-25T12:25:00-05:00",
           "close": 27.85,
-          "volume": 134631
+          "volume": 134671
         },
         {
           "time": "2026-11-25T12:30:00-05:00",
           "close": 27.94,
-          "volume": 129926
+          "volume": 129886
         },
         {
           "time": "2026-11-25T12:35:00-05:00",
           "close": 28.12,
-          "volume": 135917
+          "volume": 135942
         },
         {
           "time": "2026-11-25T12:40:00-05:00",
           "close": 28.3,
-          "volume": 111185
+          "volume": 111160
         },
         {
           "time": "2026-11-25T12:45:00-05:00",
           "close": 28.29,
-          "volume": 181670
+          "volume": 181750
         },
         {
           "time": "2026-11-25T12:50:00-05:00",
           "close": 28.47,
-          "volume": 124643
+          "volume": 124563
         },
         {
           "time": "2026-11-25T12:55:00-05:00",
           "close": 28.29,
-          "volume": 98626
+          "volume": 98716
         },
         {
           "time": "2026-11-25T13:00:00-05:00",
           "close": 28.35,
-          "volume": 80189
+          "volume": 80034
         },
         {
           "time": "2026-11-25T13:05:00-05:00",
           "close": 28.38,
-          "volume": 63245
+          "volume": 63310
         },
         {
           "time": "2026-11-25T13:10:00-05:00",
@@ -10406,12 +10406,12 @@
         {
           "time": "2026-11-25T15:00:00-05:00",
           "close": 29.39,
-          "volume": 83547
+          "volume": 83687
         },
         {
           "time": "2026-11-25T15:05:00-05:00",
           "close": 29.31,
-          "volume": 105122
+          "volume": 104982
         },
         {
           "time": "2026-11-25T15:10:00-05:00",
@@ -10509,8 +10509,8 @@
           "volume": 0
         },
         {
-          "time": "2026-11-25T17:55:00-05:00",
-          "close": 29.57,
+          "time": "2026-11-25T17:40:00-05:00",
+          "close": 29.65,
           "volume": 0
         },
         {
@@ -10540,7 +10540,7 @@
         },
         {
           "time": "2026-11-25T18:55:00-05:00",
-          "close": 29.95,
+          "close": 29.94,
           "volume": 0
         },
         {
@@ -10587,6 +10587,18 @@
       "extended_note": "已取得部分延伸交易時段資料；可用性依 Yahoo Finance 回傳為準",
       "news": [
         {
+          "title": "ASX's LEAP Demand Accelerates: Can Revenue Growth Stay Strong?",
+          "publisher": "Zacks",
+          "published": "2026-11-26T16:04:00Z",
+          "url": "https://finance.yahoo.com/markets/stocks/articles/asxs-leap-demand-accelerates-revenue-160400372.html"
+        },
+        {
+          "title": "Diodes Rides on AI, Automotive & Industrial Traction: Should You Buy?",
+          "publisher": "Zacks",
+          "published": "2026-11-26T11:47:00Z",
+          "url": "https://finance.yahoo.com/technology/articles/diodes-rides-ai-automotive-industrial-114700492.html"
+        },
+        {
           "title": "Asian Equities Traded in the US as American Depositary Receipts Tumble in Wednesday Trading",
           "publisher": "MT Newswires",
           "published": "2026-11-25T15:46:25Z",
@@ -10597,18 +10609,6 @@
           "publisher": "Zacks",
           "published": "2026-11-25T15:43:00Z",
           "url": "https://finance.yahoo.com/technology/ai/articles/axti-vs-asx-ai-semiconductor-154300925.html"
-        },
-        {
-          "title": "ASX Stock More Than Doubles in the Past Year: Is it Worth a Buy Now?",
-          "publisher": "Zacks",
-          "published": "2026-11-25T12:26:00Z",
-          "url": "https://finance.yahoo.com/markets/stocks/articles/asx-stock-more-doubles-past-122600017.html"
-        },
-        {
-          "title": "ASE Technology (ASX) Is Widening Its Margins. Here’s How",
-          "publisher": "Insider Monkey",
-          "published": "2026-11-24T19:13:15Z",
-          "url": "https://finance.yahoo.com/markets/stocks/articles/ase-technology-asx-widening-margins-191315596.html"
         }
       ],
       "name": "日月光投控",
@@ -14303,12 +14303,12 @@
         {
           "time": "2026-11-24T10:50:00-05:00",
           "close": 39.56,
-          "volume": 1019
+          "volume": 1061
         },
         {
           "time": "2026-11-24T11:00:00-05:00",
           "close": 39.21,
-          "volume": 1748
+          "volume": 1706
         },
         {
           "time": "2026-11-24T11:25:00-05:00",
@@ -14438,12 +14438,12 @@
         {
           "time": "2026-11-24T14:55:00-05:00",
           "close": 39.89,
-          "volume": 376
+          "volume": 428
         },
         {
           "time": "2026-11-24T15:00:00-05:00",
           "close": 39.78,
-          "volume": 3511
+          "volume": 3459
         },
         {
           "time": "2026-11-24T15:15:00-05:00",
@@ -14498,7 +14498,7 @@
         {
           "time": "2026-11-25T09:30:00-05:00",
           "close": 36.61,
-          "volume": 1749
+          "volume": 1729
         },
         {
           "time": "2026-11-25T09:35:00-05:00",
@@ -15147,7 +15147,7 @@
           "volume": 530400,
           "sma20": 308.97,
           "sma50": 279.14,
-          "bb_upper": 347.97,
+          "bb_upper": 347.96,
           "bb_lower": 269.97
         },
         {
@@ -16364,12 +16364,12 @@
         {
           "time": "2026-11-24T15:20:00-05:00",
           "close": 134.76,
-          "volume": 15785
+          "volume": 15842
         },
         {
           "time": "2026-11-24T15:25:00-05:00",
           "close": 134.29,
-          "volume": 7852
+          "volume": 7795
         },
         {
           "time": "2026-11-24T15:30:00-05:00",
@@ -16824,12 +16824,12 @@
         {
           "time": "2026-11-25T14:55:00-05:00",
           "close": 138.64,
-          "volume": 3302
+          "volume": 3347
         },
         {
           "time": "2026-11-25T15:00:00-05:00",
           "close": 138.93,
-          "volume": 4582
+          "volume": 4537
         },
         {
           "time": "2026-11-25T15:05:00-05:00",
@@ -16920,6 +16920,12 @@
       "extended_note": "已取得部分延伸交易時段資料；可用性依 Yahoo Finance 回傳為準",
       "news": [
         {
+          "title": "Seagate Shares Tumble 46% in 6 months: Buy, Sell or Hold STX Now?",
+          "publisher": "Zacks",
+          "published": "2026-11-26T11:55:00Z",
+          "url": "https://finance.yahoo.com/markets/stocks/articles/seagate-shares-tumble-46-6-115500291.html"
+        },
+        {
           "title": "Asian Equities Traded in the US as American Depositary Receipts Drop Sharply in Tuesday Trading",
           "publisher": "MT Newswires",
           "published": "2026-11-24T15:42:23Z",
@@ -16936,12 +16942,6 @@
           "publisher": "Simply Wall St.",
           "published": "2026-11-19T15:19:30Z",
           "url": "https://finance.yahoo.com/technology/ai/articles/3-ai-chip-stocks-earnings-151930349.html"
-        },
-        {
-          "title": "Silicon Motion: the under-the-radar memory stock with AI storage exposure",
-          "publisher": "Investing.com",
-          "published": "2026-11-18T15:56:13Z",
-          "url": "https://finance.yahoo.com/technology/ai/articles/silicon-motion-under-radar-memory-155613788.html"
         }
       ],
       "name": "慧榮科技",
@@ -16953,21 +16953,21 @@
       "investment_view": "風險優先"
     }
   ],
-  "generated_at": "2026-11-26T13:00:19.250189+08:00",
-  "generated_at_taipei": "2026-11-26 13:00:19",
+  "generated_at": "2026-11-27T12:59:25.940582+08:00",
+  "generated_at_taipei": "2026-11-27 12:59:25",
   "market": {
     "score": -9,
     "regime": "偏空",
     "risk_level": "偏高",
     "summary": "大盤趨勢或波動條件不利，應降低追價意願並優先管理既有部位風險。",
-    "vix": 28.29,
+    "vix": 26.8,
     "mega_cap_above_sma20_pct": 9.09,
     "notes": [
       "SPY：偏空（技術分數 -4）",
       "QQQ：偏空（技術分數 -4）",
       "DIA：偏空（技術分數 -4）",
       "IWM：偏空（技術分數 -4）",
-      "VIX 28.3：波動偏高",
+      "VIX 26.8：波動偏高",
       "觀察科技股中僅 9% 位於 SMA20 上方：廣度偏弱"
     ]
   },
@@ -16978,7 +16978,7 @@
       "change_pct": -0.29,
       "day_high": 718.43,
       "day_low": 695.45,
-      "volume": 72919200,
+      "volume": 73112800,
       "rsi": 39.85,
       "macd": -12.9326,
       "macd_signal": -9.9981,
@@ -18439,7 +18439,7 @@
           "high": 718.43,
           "low": 695.45,
           "close": 716.7,
-          "volume": 72919200,
+          "volume": 73112800,
           "sma20": 740.33,
           "sma50": 757.85,
           "bb_upper": 781.27,
@@ -18456,7 +18456,7 @@
       "change_pct": -0.65,
       "day_high": 634.89,
       "day_low": 607.74,
-      "volume": 81600300,
+      "volume": 81996700,
       "rsi": 38.59,
       "macd": -20.142,
       "macd_signal": -17.6342,
@@ -18466,7 +18466,7 @@
       "atr14": 21.54,
       "atr_pct": 3.4,
       "adx14": 32.42,
-      "volume_ratio": 1.28,
+      "volume_ratio": 1.29,
       "bb_upper": 717.43,
       "bb_lower": 616.03,
       "support20": 606.23,
@@ -19917,7 +19917,7 @@
           "high": 634.89,
           "low": 607.74,
           "close": 633.93,
-          "volume": 81600300,
+          "volume": 81996700,
           "sma20": 666.73,
           "sma50": 707.02,
           "bb_upper": 717.43,
@@ -19977,7 +19977,7 @@
           "date": "2026-06-09",
           "open": 507.67,
           "high": 509.72,
-          "low": 499.34,
+          "low": 499.33,
           "close": 505.62,
           "volume": 6249400,
           "sma20": 501.2,
@@ -21412,7 +21412,7 @@
       "change_pct": 0.65,
       "day_high": 269.77,
       "day_low": 260.84,
-      "volume": 33293000,
+      "volume": 33322300,
       "rsi": 45.01,
       "macd": -3.6921,
       "macd_signal": -2.783,
@@ -22873,7 +22873,7 @@
           "high": 269.77,
           "low": 260.84,
           "close": 268.87,
-          "volume": 33293000,
+          "volume": 33322300,
           "sma20": 274.39,
           "sma50": 277.16,
           "bb_upper": 289.65,
@@ -22890,7 +22890,7 @@
       "change_pct": -0.83,
       "day_high": 155.98,
       "day_low": 148.39,
-      "volume": 19691800,
+      "volume": 19722400,
       "rsi": 36.96,
       "macd": -7.4688,
       "macd_signal": -6.6811,
@@ -24351,7 +24351,7 @@
           "high": 155.98,
           "low": 148.39,
           "close": 155.79,
-          "volume": 19691800,
+          "volume": 19722400,
           "sma20": 167.88,
           "sma50": 182.87,
           "bb_upper": 186.46,
@@ -24368,7 +24368,7 @@
       "change_pct": -1.01,
       "day_high": 422.97,
       "day_low": 393.88,
-      "volume": 14007200,
+      "volume": 14039500,
       "rsi": 36.93,
       "macd": -31.4099,
       "macd_signal": -28.1436,
@@ -25829,7 +25829,7 @@
           "high": 422.97,
           "low": 393.88,
           "close": 422.46,
-          "volume": 14007200,
+          "volume": 14039500,
           "sma20": 476.59,
           "sma50": 541.11,
           "bb_upper": 554.54,
@@ -25846,7 +25846,7 @@
       "change_pct": 0.71,
       "day_high": 56.71,
       "day_low": 55.33,
-      "volume": 38637700,
+      "volume": 38669900,
       "rsi": 49.51,
       "macd": -0.0567,
       "macd_signal": 0.2227,
@@ -27307,7 +27307,7 @@
           "high": 56.71,
           "low": 55.33,
           "close": 56.51,
-          "volume": 38637700,
+          "volume": 38669900,
           "sma20": 57.2,
           "sma50": 55.83,
           "bb_upper": 59.58,
@@ -31758,7 +31758,7 @@
       "change_pct": 0.46,
       "day_high": 92.87,
       "day_low": 91.86,
-      "volume": 23032500,
+      "volume": 23074900,
       "rsi": 61.44,
       "macd": 1.1932,
       "macd_signal": 1.3741,
@@ -31768,7 +31768,7 @@
       "atr14": 1.49,
       "atr_pct": 1.62,
       "adx14": 31.82,
-      "volume_ratio": 1.02,
+      "volume_ratio": 1.03,
       "bb_upper": 93.19,
       "bb_lower": 88.56,
       "support20": 87.4,
@@ -33219,7 +33219,7 @@
           "high": 92.87,
           "low": 91.86,
           "close": 92.3,
-          "volume": 23032500,
+          "volume": 23074900,
           "sma20": 90.88,
           "sma50": 86.84,
           "bb_upper": 93.19,
@@ -33308,7 +33308,7 @@
           "volume": 10548800,
           "sma20": 148.21,
           "sma50": 146.25,
-          "bb_upper": 153.97,
+          "bb_upper": 153.98,
           "bb_lower": 142.44
         },
         {
@@ -34714,7 +34714,7 @@
       "change_pct": 0.74,
       "day_high": 61.29,
       "day_low": 59.63,
-      "volume": 26523200,
+      "volume": 26534900,
       "rsi": 38.63,
       "macd": -1.3561,
       "macd_signal": -0.9951,
@@ -36175,7 +36175,7 @@
           "high": 61.29,
           "low": 59.63,
           "close": 60.9,
-          "volume": 26523200,
+          "volume": 26534900,
           "sma20": 63.36,
           "sma50": 64.42,
           "bb_upper": 69.12,
@@ -36192,7 +36192,7 @@
       "change_pct": 0.92,
       "day_high": 82.81,
       "day_low": 82.17,
-      "volume": 48928800,
+      "volume": 48998300,
       "rsi": 63.49,
       "macd": 0.332,
       "macd_signal": 0.2265,
@@ -37653,7 +37653,7 @@
           "high": 82.81,
           "low": 82.17,
           "close": 82.24,
-          "volume": 48928800,
+          "volume": 48998300,
           "sma20": 81.02,
           "sma50": 79.85,
           "bb_upper": 82.88,
@@ -37670,7 +37670,7 @@
       "change_pct": 0.61,
       "day_high": 328.68,
       "day_low": 313.96,
-      "volume": 17008300,
+      "volume": 17062100,
       "rsi": 31.71,
       "macd": -12.7932,
       "macd_signal": -9.7155,
@@ -39132,7 +39132,7 @@
           "high": 328.68,
           "low": 313.96,
           "close": 327.45,
-          "volume": 17008300,
+          "volume": 17062100,
           "sma20": 354.04,
           "sma50": 371.04,
           "bb_upper": 389.32,
@@ -39151,7 +39151,7 @@
       "change_pct": -0.83,
       "day_high": 155.98,
       "day_low": 148.39,
-      "volume": 19691800,
+      "volume": 19722400,
       "rsi": 36.96,
       "macd": -7.4688,
       "macd_signal": -6.6811,
@@ -40612,7 +40612,7 @@
           "high": 155.98,
           "low": 148.39,
           "close": 155.79,
-          "volume": 19691800,
+          "volume": 19722400,
           "sma20": 167.88,
           "sma50": 182.87,
           "bb_upper": 186.46,
@@ -40629,7 +40629,7 @@
       "change_pct": -1.01,
       "day_high": 422.97,
       "day_low": 393.88,
-      "volume": 14007200,
+      "volume": 14039500,
       "rsi": 36.93,
       "macd": -31.4099,
       "macd_signal": -28.1436,
@@ -42090,7 +42090,7 @@
           "high": 422.97,
           "low": 393.88,
           "close": 422.46,
-          "volume": 14007200,
+          "volume": 14039500,
           "sma20": 476.59,
           "sma50": 541.11,
           "bb_upper": 554.54,
@@ -42107,7 +42107,7 @@
       "change_pct": 0.71,
       "day_high": 56.71,
       "day_low": 55.33,
-      "volume": 38637700,
+      "volume": 38669900,
       "rsi": 49.51,
       "macd": -0.0567,
       "macd_signal": 0.2227,
@@ -43568,7 +43568,7 @@
           "high": 56.71,
           "low": 55.33,
           "close": 56.51,
-          "volume": 38637700,
+          "volume": 38669900,
           "sma20": 57.2,
           "sma50": 55.83,
           "bb_upper": 59.58,
@@ -48019,7 +48019,7 @@
       "change_pct": 0.46,
       "day_high": 92.87,
       "day_low": 91.86,
-      "volume": 23032500,
+      "volume": 23074900,
       "rsi": 61.44,
       "macd": 1.1932,
       "macd_signal": 1.3741,
@@ -48029,7 +48029,7 @@
       "atr14": 1.49,
       "atr_pct": 1.62,
       "adx14": 31.82,
-      "volume_ratio": 1.02,
+      "volume_ratio": 1.03,
       "bb_upper": 93.19,
       "bb_lower": 88.56,
       "support20": 87.4,
@@ -49480,7 +49480,7 @@
           "high": 92.87,
           "low": 91.86,
           "close": 92.3,
-          "volume": 23032500,
+          "volume": 23074900,
           "sma20": 90.88,
           "sma50": 86.84,
           "bb_upper": 93.19,
@@ -49569,7 +49569,7 @@
           "volume": 10548800,
           "sma20": 148.21,
           "sma50": 146.25,
-          "bb_upper": 153.97,
+          "bb_upper": 153.98,
           "bb_lower": 142.44
         },
         {
@@ -50975,7 +50975,7 @@
       "change_pct": 0.74,
       "day_high": 61.29,
       "day_low": 59.63,
-      "volume": 26523200,
+      "volume": 26534900,
       "rsi": 38.63,
       "macd": -1.3561,
       "macd_signal": -0.9951,
@@ -52436,7 +52436,7 @@
           "high": 61.29,
           "low": 59.63,
           "close": 60.9,
-          "volume": 26523200,
+          "volume": 26534900,
           "sma20": 63.36,
           "sma50": 64.42,
           "bb_upper": 69.12,
@@ -52453,7 +52453,7 @@
       "change_pct": 0.92,
       "day_high": 82.81,
       "day_low": 82.17,
-      "volume": 48928800,
+      "volume": 48998300,
       "rsi": 63.49,
       "macd": 0.332,
       "macd_signal": 0.2265,
@@ -53914,7 +53914,7 @@
           "high": 82.81,
           "low": 82.17,
           "close": 82.24,
-          "volume": 48928800,
+          "volume": 48998300,
           "sma20": 81.02,
           "sma50": 79.85,
           "bb_upper": 82.88,
@@ -53931,7 +53931,7 @@
       "change_pct": 0.61,
       "day_high": 328.68,
       "day_low": 313.96,
-      "volume": 17008300,
+      "volume": 17062100,
       "rsi": 31.71,
       "macd": -12.7932,
       "macd_signal": -9.7155,
@@ -55393,7 +55393,7 @@
           "high": 328.68,
           "low": 313.96,
           "close": 327.45,
-          "volume": 17008300,
+          "volume": 17062100,
           "sma20": 354.04,
           "sma50": 371.04,
           "bb_upper": 389.32,
@@ -55408,26 +55408,26 @@
   "macros": [
     {
       "symbol": "^VIX",
-      "price": 28.29,
-      "change_pct": 7.32,
-      "day_high": 34.95,
-      "day_low": 27.49,
+      "price": 26.8,
+      "change_pct": -5.27,
+      "day_high": 27.54,
+      "day_low": 26.57,
       "volume": 0,
-      "rsi": 57.76,
-      "macd": 2.7673,
-      "macd_signal": 2.1976,
-      "sma20": 23.12,
-      "sma50": 19.02,
-      "sma200": 18.78,
-      "atr14": 5.75,
-      "atr_pct": 20.31,
-      "adx14": 35.99,
+      "rsi": 55.44,
+      "macd": 2.6535,
+      "macd_signal": 2.2888,
+      "sma20": 23.6,
+      "sma50": 19.25,
+      "sma200": 18.82,
+      "atr14": 5.46,
+      "atr_pct": 20.37,
+      "adx14": 35.09,
       "volume_ratio": null,
-      "bb_upper": 33.07,
-      "bb_lower": 13.17,
+      "bb_upper": 33.27,
+      "bb_lower": 13.93,
       "support20": 15.39,
       "resistance20": 40.03,
-      "stop_reference": 16.79,
+      "stop_reference": 15.88,
       "relative_strength_vs_spy_pct": null,
       "technical_score": 4,
       "trend": "偏多",
@@ -55439,18 +55439,6 @@
         "RSI 位於 50–70"
       ],
       "daily": [
-        {
-          "date": "2026-06-09",
-          "open": 18.19,
-          "high": 23.34,
-          "low": 17.52,
-          "close": 19.87,
-          "volume": 0,
-          "sma20": 17.24,
-          "sma50": 18.54,
-          "bb_upper": 20.39,
-          "bb_lower": 14.1
-        },
         {
           "date": "2026-06-10",
           "open": 20.1,
@@ -56878,6 +56866,18 @@
           "sma50": 19.02,
           "bb_upper": 33.07,
           "bb_lower": 13.17
+        },
+        {
+          "date": "2026-11-26",
+          "open": 27.18,
+          "high": 27.54,
+          "low": 26.57,
+          "close": 26.8,
+          "volume": 0,
+          "sma20": 23.6,
+          "sma50": 19.25,
+          "bb_upper": 33.27,
+          "bb_lower": 13.93
         }
       ],
       "extended": [],
@@ -58364,26 +58364,26 @@
     },
     {
       "symbol": "DX-Y.NYB",
-      "price": 103.8,
-      "change_pct": -0.01,
-      "day_high": 103.84,
-      "day_low": 103.68,
+      "price": 103.75,
+      "change_pct": 0.08,
+      "day_high": 103.86,
+      "day_low": 103.64,
       "volume": 0,
-      "rsi": 63.45,
-      "macd": 0.6019,
-      "macd_signal": 0.521,
-      "sma20": 102.84,
-      "sma50": 102.14,
-      "sma200": 100.11,
+      "rsi": 62.23,
+      "macd": 0.5714,
+      "macd_signal": 0.5294,
+      "sma20": 102.92,
+      "sma50": 102.2,
+      "sma200": 100.15,
       "atr14": 0.52,
       "atr_pct": 0.5,
-      "adx14": 33.65,
+      "adx14": 33.82,
       "volume_ratio": null,
-      "bb_upper": 104.77,
-      "bb_lower": 100.91,
+      "bb_upper": 104.84,
+      "bb_lower": 101.0,
       "support20": 101.1,
       "resistance20": 104.53,
-      "stop_reference": 102.76,
+      "stop_reference": 102.71,
       "relative_strength_vs_spy_pct": null,
       "technical_score": 4,
       "trend": "偏多",
@@ -58395,18 +58395,6 @@
         "RSI 位於 50–70"
       ],
       "daily": [
-        {
-          "date": "2026-06-08",
-          "open": 100.15,
-          "high": 100.21,
-          "low": 99.82,
-          "close": 100.05,
-          "volume": 0,
-          "sma20": 99.13,
-          "sma50": 98.91,
-          "bb_upper": 100.13,
-          "bb_lower": 98.12
-        },
         {
           "date": "2026-06-09",
           "open": 100.03,
@@ -59825,15 +59813,27 @@
         },
         {
           "date": "2026-11-25",
-          "open": 103.73,
-          "high": 103.84,
-          "low": 103.68,
-          "close": 103.8,
+          "open": 103.86,
+          "high": 104.1,
+          "low": 103.55,
+          "close": 103.67,
           "volume": 0,
-          "sma20": 102.84,
-          "sma50": 102.14,
-          "bb_upper": 104.77,
+          "sma20": 102.83,
+          "sma50": 102.13,
+          "bb_upper": 104.75,
           "bb_lower": 100.91
+        },
+        {
+          "date": "2026-11-26",
+          "open": 103.83,
+          "high": 103.86,
+          "low": 103.64,
+          "close": 103.75,
+          "volume": 0,
+          "sma20": 102.92,
+          "sma50": 102.2,
+          "bb_upper": 104.84,
+          "bb_lower": 101.0
         }
       ],
       "extended": [],
@@ -59848,7 +59848,7 @@
       "change_pct": 0.43,
       "day_high": 356.75,
       "day_low": 345.13,
-      "volume": 53060252,
+      "volume": 54285300,
       "rsi": 58.04,
       "macd": 3.0298,
       "macd_signal": 3.1569,
@@ -59858,7 +59858,7 @@
       "atr14": 8.56,
       "atr_pct": 2.41,
       "adx14": 13.9,
-      "volume_ratio": 1.03,
+      "volume_ratio": 1.05,
       "bb_upper": 361.41,
       "bb_lower": 335.67,
       "support20": 325.08,
@@ -61305,11 +61305,11 @@
         },
         {
           "date": "2026-11-25",
-          "open": 353.59,
+          "open": 353.48,
           "high": 356.75,
           "low": 345.13,
           "close": 355.58,
-          "volume": 53060252,
+          "volume": 54285300,
           "sma20": 348.54,
           "sma50": 342.84,
           "bb_upper": 361.41,
@@ -61318,39 +61318,34 @@
       ],
       "extended": [
         {
-          "time": "2026-11-25T09:50:00-05:00",
-          "close": 349.82,
-          "volume": 780726
-        },
-        {
           "time": "2026-11-25T09:55:00-05:00",
           "close": 350.52,
-          "volume": 671198
+          "volume": 671199
         },
         {
           "time": "2026-11-25T10:00:00-05:00",
           "close": 350.3,
-          "volume": 999985
+          "volume": 999984
         },
         {
           "time": "2026-11-25T10:05:00-05:00",
           "close": 350.34,
-          "volume": 459943
+          "volume": 459924
         },
         {
           "time": "2026-11-25T10:10:00-05:00",
           "close": 349.84,
-          "volume": 614763
+          "volume": 614782
         },
         {
           "time": "2026-11-25T10:15:00-05:00",
           "close": 347.45,
-          "volume": 466540
+          "volume": 466562
         },
         {
           "time": "2026-11-25T10:20:00-05:00",
           "close": 346.69,
-          "volume": 563652
+          "volume": 563630
         },
         {
           "time": "2026-11-25T10:25:00-05:00",
@@ -61375,12 +61370,12 @@
         {
           "time": "2026-11-25T10:45:00-05:00",
           "close": 345.98,
-          "volume": 406662
+          "volume": 406691
         },
         {
           "time": "2026-11-25T10:50:00-05:00",
           "close": 345.95,
-          "volume": 357826
+          "volume": 357797
         },
         {
           "time": "2026-11-25T10:55:00-05:00",
@@ -61435,12 +61430,12 @@
         {
           "time": "2026-11-25T11:45:00-05:00",
           "close": 348.05,
-          "volume": 0
+          "volume": 236743
         },
         {
           "time": "2026-11-25T11:50:00-05:00",
           "close": 348.24,
-          "volume": 17229805
+          "volume": 229487
         },
         {
           "time": "2026-11-25T11:55:00-05:00",
@@ -61475,17 +61470,17 @@
         {
           "time": "2026-11-25T12:25:00-05:00",
           "close": 351.35,
-          "volume": 386592
+          "volume": 386593
         },
         {
           "time": "2026-11-25T12:30:00-05:00",
           "close": 351.73,
-          "volume": 407523
+          "volume": 407570
         },
         {
           "time": "2026-11-25T12:35:00-05:00",
           "close": 352.27,
-          "volume": 366397
+          "volume": 366349
         },
         {
           "time": "2026-11-25T12:40:00-05:00",
@@ -61495,12 +61490,12 @@
         {
           "time": "2026-11-25T12:45:00-05:00",
           "close": 353.01,
-          "volume": 266028
+          "volume": 265988
         },
         {
           "time": "2026-11-25T12:50:00-05:00",
           "close": 353.38,
-          "volume": 407173
+          "volume": 407213
         },
         {
           "time": "2026-11-25T12:55:00-05:00",
@@ -61555,12 +61550,12 @@
         {
           "time": "2026-11-25T13:45:00-05:00",
           "close": 356.33,
-          "volume": 786799
+          "volume": 786763
         },
         {
           "time": "2026-11-25T13:50:00-05:00",
           "close": 355.43,
-          "volume": 562058
+          "volume": 562094
         },
         {
           "time": "2026-11-25T13:55:00-05:00",
@@ -61570,12 +61565,12 @@
         {
           "time": "2026-11-25T14:00:00-05:00",
           "close": 355.17,
-          "volume": 230577
+          "volume": 230579
         },
         {
           "time": "2026-11-25T14:05:00-05:00",
           "close": 355.25,
-          "volume": 282645
+          "volume": 282643
         },
         {
           "time": "2026-11-25T14:10:00-05:00",
@@ -61650,12 +61645,12 @@
         {
           "time": "2026-11-25T15:20:00-05:00",
           "close": 354.68,
-          "volume": 697635
+          "volume": 697620
         },
         {
           "time": "2026-11-25T15:25:00-05:00",
           "close": 354.35,
-          "volume": 207618
+          "volume": 207633
         },
         {
           "time": "2026-11-25T15:30:00-05:00",
@@ -61719,7 +61714,7 @@
         },
         {
           "time": "2026-11-25T16:30:00-05:00",
-          "close": 355.15,
+          "close": 355.06,
           "volume": 0
         },
         {
@@ -61803,13 +61798,18 @@
           "volume": 0
         },
         {
+          "time": "2026-11-25T18:00:00-05:00",
+          "close": 354.58,
+          "volume": 0
+        },
+        {
           "time": "2026-11-25T18:05:00-05:00",
           "close": 355.0,
           "volume": 0
         },
         {
           "time": "2026-11-25T18:10:00-05:00",
-          "close": 355.33,
+          "close": 355.3,
           "volume": 0
         },
         {
@@ -61921,28 +61921,28 @@
       "extended_note": "已取得部分延伸交易時段資料；可用性依 Yahoo Finance 回傳為準",
       "news": [
         {
-          "title": "Is the market experiencing a 'dead cat' bounce?",
-          "publisher": "Yahoo Finance Video",
-          "published": "2026-11-25T21:27:04Z",
-          "url": "https://finance.yahoo.com/video/is-the-market-experiencing-a-dead-cat-bounce-212704552.html"
+          "title": "Apple (AAPL) Has Found a New AI Opportunity That Has Little to Do With the iPhone",
+          "publisher": "Insider Monkey",
+          "published": "2026-11-27T03:19:05Z",
+          "url": "https://finance.yahoo.com/technology/ai/articles/apple-aapl-found-ai-opportunity-031905510.html"
         },
         {
-          "title": "Dow Jones Futures Rise After Nasdaq Slashes Losses In Wild Market Ride",
-          "publisher": "Investor's Business Daily",
-          "published": "2026-11-26T04:06:32Z",
-          "url": "https://www.investors.com/market-trend/stock-market-today/dow-jones-futures-market-wild-ride-nasdaq-nvidia-slash-losses-anthropic-higher/?src=A00220&yptr=yahoo"
+          "title": "Target cut its Apple Black Friday discount in half",
+          "publisher": "TheStreet",
+          "published": "2026-11-27T03:17:00Z",
+          "url": "https://www.thestreet.com/retail/target-cut-its-apple-black-friday-discount-in-half"
         },
         {
-          "title": "Michael Burry Says He’s Shorting The Market’s ‘Generals’ As Apple Flashes A Warning Last Seen In 2002",
-          "publisher": "Stocktwits",
-          "published": "2026-11-26T03:44:40Z",
-          "url": "https://stocktwits.com/news-articles/markets/equity/michael-burry-shorting-market-generals-apple-warning-last-seen-in-2002/cNbx7IxR9Ze"
+          "title": "Apple Enters the AI Agent Race as It Takes on OpenAI, Anthropic, and Meta. What That Means for AAPL Stock.",
+          "publisher": "Barchart",
+          "published": "2026-11-26T19:30:03Z",
+          "url": "https://www.barchart.com/story/news/9022924/apple-enters-the-ai-agent-race-as-it-takes-on-openai-anthropic-and-meta-what-that-means-for-aapl-stock"
         },
         {
-          "title": "Nvidia’s Market Cap Falls Below Microsoft’s: Analyst Flags Five Overhangs For NVDA Stock",
-          "publisher": "Stocktwits",
-          "published": "2026-11-26T02:39:42Z",
-          "url": "https://stocktwits.com/news-articles/markets/equity/nvidia-s-market-cap-falls-below-microsoft-s-analyst-flags-five-overhangs-for-nvda-stock/cNbx4KZR9Z3"
+          "title": "Apple Stocks Rise as AI Selloff Spares the iPhone Maker",
+          "publisher": "GuruFocus.com",
+          "published": "2026-11-26T19:00:38Z",
+          "url": "https://finance.yahoo.com/markets/stocks/articles/apple-stocks-rise-ai-selloff-190038273.html"
         }
       ],
       "relative_strength_bonus": 1,
@@ -61956,7 +61956,7 @@
       "change_pct": -1.18,
       "day_high": 383.73,
       "day_low": 357.64,
-      "volume": 34789900,
+      "volume": 34915800,
       "rsi": 50.31,
       "macd": -0.232,
       "macd_signal": 0.6282,
@@ -63417,7 +63417,7 @@
           "high": 383.73,
           "low": 357.64,
           "close": 380.14,
-          "volume": 34789900,
+          "volume": 34915800,
           "sma20": 382.15,
           "sma50": 377.17,
           "bb_upper": 415.76,
@@ -63428,7 +63428,7 @@
         {
           "time": "2026-11-25T10:00:00-05:00",
           "close": 364.37,
-          "volume": 743659
+          "volume": 742334
         },
         {
           "time": "2026-11-25T10:05:00-05:00",
@@ -63438,22 +63438,22 @@
         {
           "time": "2026-11-25T10:10:00-05:00",
           "close": 365.01,
-          "volume": 450772
+          "volume": 450780
         },
         {
           "time": "2026-11-25T10:15:00-05:00",
           "close": 363.02,
-          "volume": 352067
+          "volume": 352059
         },
         {
           "time": "2026-11-25T10:20:00-05:00",
           "close": 362.1,
-          "volume": 362502
+          "volume": 362500
         },
         {
           "time": "2026-11-25T10:25:00-05:00",
           "close": 363.0,
-          "volume": 315472
+          "volume": 315474
         },
         {
           "time": "2026-11-25T10:30:00-05:00",
@@ -63508,12 +63508,12 @@
         {
           "time": "2026-11-25T11:20:00-05:00",
           "close": 363.55,
-          "volume": 303985
+          "volume": 303746
         },
         {
           "time": "2026-11-25T11:25:00-05:00",
           "close": 364.37,
-          "volume": 330314
+          "volume": 330553
         },
         {
           "time": "2026-11-25T11:30:00-05:00",
@@ -63543,12 +63543,12 @@
         {
           "time": "2026-11-25T11:55:00-05:00",
           "close": 365.72,
-          "volume": 309920
+          "volume": 309910
         },
         {
           "time": "2026-11-25T12:00:00-05:00",
           "close": 365.92,
-          "volume": 331745
+          "volume": 331755
         },
         {
           "time": "2026-11-25T12:05:00-05:00",
@@ -63688,12 +63688,12 @@
         {
           "time": "2026-11-25T14:20:00-05:00",
           "close": 382.43,
-          "volume": 367655
+          "volume": 367656
         },
         {
           "time": "2026-11-25T14:25:00-05:00",
           "close": 382.82,
-          "volume": 425087
+          "volume": 425086
         },
         {
           "time": "2026-11-25T14:30:00-05:00",
@@ -63703,12 +63703,12 @@
         {
           "time": "2026-11-25T14:35:00-05:00",
           "close": 383.22,
-          "volume": 238569
+          "volume": 238471
         },
         {
           "time": "2026-11-25T14:40:00-05:00",
           "close": 381.4,
-          "volume": 268224
+          "volume": 268322
         },
         {
           "time": "2026-11-25T14:45:00-05:00",
@@ -63758,12 +63758,12 @@
         {
           "time": "2026-11-25T15:30:00-05:00",
           "close": 380.87,
-          "volume": 307327
+          "volume": 307263
         },
         {
           "time": "2026-11-25T15:35:00-05:00",
           "close": 380.01,
-          "volume": 274027
+          "volume": 274091
         },
         {
           "time": "2026-11-25T15:40:00-05:00",
@@ -63917,7 +63917,7 @@
         },
         {
           "time": "2026-11-25T18:10:00-05:00",
-          "close": 380.6,
+          "close": 380.78,
           "volume": 0
         },
         {
@@ -64029,28 +64029,28 @@
       "extended_note": "已取得部分延伸交易時段資料；可用性依 Yahoo Finance 回傳為準",
       "news": [
         {
-          "title": "Ten reasons the market is selling off again before Thanksgiving",
-          "publisher": "Yahoo Finance Video",
-          "published": "2026-11-25T16:04:24Z",
-          "url": "https://finance.yahoo.com/video/ten-reasons-the-market-is-selling-off-again-before-thanksgiving-160424234.html"
+          "title": "What Could Tesla (TSLA) Merger Talks Mean For Its Stock?",
+          "publisher": "Simply Wall St.",
+          "published": "2026-11-27T01:30:07Z",
+          "url": "https://finance.yahoo.com/markets/stocks/articles/could-tesla-tsla-merger-talks-013007632.html"
         },
         {
-          "title": "Tesla and SpaceX stocks sink as merger concerns mount",
-          "publisher": "Yahoo Finance",
-          "published": "2026-11-25T15:41:59Z",
-          "url": "https://finance.yahoo.com/markets/stocks/article/tesla-and-spacex-stocks-sink-as-merger-concerns-mount-154159372.html"
-        },
-        {
-          "title": "Cathie Wood Buys More SpaceX Amid Tesla Merger Talks — Ron Baron Says SpaceX Could Make $50B A Year From One Data Center",
-          "publisher": "Stocktwits",
-          "published": "2026-11-26T03:32:35Z",
-          "url": "https://stocktwits.com/news-articles/markets/equity/cathie-wood-buys-spacex-tesla-merger-talks-ron-baron-spacex-50b-one-data-center/cNbxeDKR9Z4"
-        },
-        {
-          "title": "Mark Cuban Says the Most Common Mistake He Saw Founders Make on 'Shark Tank' Was a Job They Kept Handing Off: 'You're Going to Fail'",
+          "title": "‘How Can TSLA Compete With Waymo?’ Gary Black Questions Tesla’s Robotaxi Strategy, Predicts Waymo Will Lead in Miles and Trips",
           "publisher": "Benzinga",
-          "published": "2026-11-26T03:30:07Z",
-          "url": "https://finance.yahoo.com/small-business/articles/mark-cuban-says-most-common-033007508.html"
+          "published": "2026-11-27T01:30:07Z",
+          "url": "https://finance.yahoo.com/technology/articles/tsla-compete-waymo-gary-black-013007370.html"
+        },
+        {
+          "title": "Should You Buy Tesla Stock Before December?",
+          "publisher": "Motley Fool",
+          "published": "2026-11-26T22:35:02Z",
+          "url": "https://www.fool.com/investing/2026/11/26/should-you-buy-tesla-stock-before-december/"
+        },
+        {
+          "title": "Tesla Stocks Slip 1.18% as EU Delays Self-Driving Vote to December 15",
+          "publisher": "GuruFocus.com",
+          "published": "2026-11-26T19:03:57Z",
+          "url": "https://finance.yahoo.com/markets/stocks/articles/tesla-stocks-slip-1-18-190357031.html"
         }
       ],
       "relative_strength_bonus": 1,
@@ -64064,7 +64064,7 @@
       "change_pct": -3.12,
       "day_high": 246.56,
       "day_low": 235.96,
-      "volume": 62276400,
+      "volume": 62479500,
       "rsi": 41.95,
       "macd": -0.9804,
       "macd_signal": 0.9062,
@@ -65525,7 +65525,7 @@
           "high": 246.56,
           "low": 235.96,
           "close": 244.43,
-          "volume": 62276400,
+          "volume": 62479500,
           "sma20": 257.19,
           "sma50": 255.12,
           "bb_upper": 276.09,
@@ -65536,12 +65536,12 @@
         {
           "time": "2026-11-25T10:00:00-05:00",
           "close": 241.36,
-          "volume": 1032128
+          "volume": 1031757
         },
         {
           "time": "2026-11-25T10:05:00-05:00",
           "close": 241.47,
-          "volume": 875693
+          "volume": 875679
         },
         {
           "time": "2026-11-25T10:10:00-05:00",
@@ -65551,22 +65551,22 @@
         {
           "time": "2026-11-25T10:15:00-05:00",
           "close": 239.81,
-          "volume": 636448
+          "volume": 636298
         },
         {
           "time": "2026-11-25T10:20:00-05:00",
           "close": 238.52,
-          "volume": 789835
+          "volume": 789985
         },
         {
           "time": "2026-11-25T10:25:00-05:00",
           "close": 237.6,
-          "volume": 1249652
+          "volume": 1249694
         },
         {
           "time": "2026-11-25T10:30:00-05:00",
           "close": 238.32,
-          "volume": 896675
+          "volume": 896633
         },
         {
           "time": "2026-11-25T10:35:00-05:00",
@@ -65576,22 +65576,22 @@
         {
           "time": "2026-11-25T10:40:00-05:00",
           "close": 236.74,
-          "volume": 659386
+          "volume": 659193
         },
         {
           "time": "2026-11-25T10:45:00-05:00",
           "close": 237.01,
-          "volume": 753542
+          "volume": 753735
         },
         {
           "time": "2026-11-25T10:50:00-05:00",
           "close": 236.3,
-          "volume": 890238
+          "volume": 890394
         },
         {
           "time": "2026-11-25T10:55:00-05:00",
           "close": 236.93,
-          "volume": 624364
+          "volume": 624208
         },
         {
           "time": "2026-11-25T11:00:00-05:00",
@@ -65641,22 +65641,22 @@
         {
           "time": "2026-11-25T11:45:00-05:00",
           "close": 238.63,
-          "volume": 440798
+          "volume": 440831
         },
         {
           "time": "2026-11-25T11:50:00-05:00",
           "close": 238.97,
-          "volume": 414843
+          "volume": 414810
         },
         {
           "time": "2026-11-25T11:55:00-05:00",
           "close": 240.4,
-          "volume": 702293
+          "volume": 702264
         },
         {
           "time": "2026-11-25T12:00:00-05:00",
           "close": 241.29,
-          "volume": 615179
+          "volume": 615208
         },
         {
           "time": "2026-11-25T12:05:00-05:00",
@@ -65726,12 +65726,12 @@
         {
           "time": "2026-11-25T13:10:00-05:00",
           "close": 243.98,
-          "volume": 246062
+          "volume": 0
         },
         {
           "time": "2026-11-25T13:15:00-05:00",
           "close": 245.0,
-          "volume": 397824
+          "volume": 34636157
         },
         {
           "time": "2026-11-25T13:20:00-05:00",
@@ -65781,12 +65781,12 @@
         {
           "time": "2026-11-25T14:05:00-05:00",
           "close": 246.27,
-          "volume": 270801
+          "volume": 270941
         },
         {
           "time": "2026-11-25T14:10:00-05:00",
           "close": 245.77,
-          "volume": 337440
+          "volume": 337300
         },
         {
           "time": "2026-11-25T14:15:00-05:00",
@@ -65796,12 +65796,12 @@
         {
           "time": "2026-11-25T14:20:00-05:00",
           "close": 245.79,
-          "volume": 343608
+          "volume": 343596
         },
         {
           "time": "2026-11-25T14:25:00-05:00",
           "close": 246.21,
-          "volume": 374498
+          "volume": 374510
         },
         {
           "time": "2026-11-25T14:30:00-05:00",
@@ -65851,32 +65851,32 @@
         {
           "time": "2026-11-25T15:15:00-05:00",
           "close": 244.98,
-          "volume": 245361
+          "volume": 245390
         },
         {
           "time": "2026-11-25T15:20:00-05:00",
           "close": 245.08,
-          "volume": 331716
+          "volume": 331687
         },
         {
           "time": "2026-11-25T15:25:00-05:00",
           "close": 245.03,
-          "volume": 227613
+          "volume": 227612
         },
         {
           "time": "2026-11-25T15:30:00-05:00",
           "close": 244.93,
-          "volume": 408870
+          "volume": 408871
         },
         {
           "time": "2026-11-25T15:35:00-05:00",
           "close": 244.6,
-          "volume": 368794
+          "volume": 368760
         },
         {
           "time": "2026-11-25T15:40:00-05:00",
           "close": 244.94,
-          "volume": 356346
+          "volume": 356380
         },
         {
           "time": "2026-11-25T15:45:00-05:00",
@@ -65886,12 +65886,12 @@
         {
           "time": "2026-11-25T15:50:00-05:00",
           "close": 244.89,
-          "volume": 1080384
+          "volume": 1080344
         },
         {
           "time": "2026-11-25T15:55:00-05:00",
           "close": 244.24,
-          "volume": 2658820
+          "volume": 2658860
         },
         {
           "time": "2026-11-25T16:00:00-05:00",
@@ -66137,28 +66137,28 @@
       "extended_note": "已取得部分延伸交易時段資料；可用性依 Yahoo Finance 回傳為準",
       "news": [
         {
-          "title": "Jensen Huang's return, neocloud risk, and a holiday retail rally",
-          "publisher": "Yahoo Finance Video",
-          "published": "2026-11-25T21:00:00Z",
-          "url": "https://finance.yahoo.com/video/jensen-huangs-return-neocloud-risk-and-a-holiday-retail-rally-222042649.html"
+          "title": "Amazon Lost 40 Satellites on a Boeing-Lockheed Rocket in November. SpaceX Is the Only Company That Can Fix Amazon’s Problem. Is the Stock a Buy Near $130?",
+          "publisher": "Motley Fool",
+          "published": "2026-11-27T03:53:02Z",
+          "url": "https://www.fool.com/investing/2026/11/26/amazon-lost-40-satellites-on-a-boeing-lockheed-rocket-in-november-spacex-is-the-only-company-that-can-fix-amazon-s-problem-is-the-stock-a-buy-near-usd130/"
         },
         {
-          "title": "Nvidia is cheap on paper, so why won't the market buy it?",
-          "publisher": "Yahoo Finance Video",
-          "published": "2026-11-25T19:22:15Z",
-          "url": "https://finance.yahoo.com/video/nvidia-is-cheap-on-paper-so-why-wont-the-market-buy-it-192215326.html"
+          "title": "Can Amazon (AMZN) Turn Its AWS Growth Outlook Into Cash?",
+          "publisher": "Insider Monkey",
+          "published": "2026-11-27T03:52:40Z",
+          "url": "https://finance.yahoo.com/markets/stocks/articles/amazon-amzn-turn-aws-growth-035240906.html"
         },
         {
-          "title": "Tariffs are back as Anthropic sinks further below its IPO price",
-          "publisher": "Yahoo Finance Video",
-          "published": "2026-11-25T16:05:24Z",
-          "url": "https://finance.yahoo.com/video/tariffs-are-back-as-anthropic-sinks-further-below-its-ipo-price-160524926.html"
+          "title": "5 Best Quantum Computing Stocks To Buy for 2027",
+          "publisher": "Insider Monkey",
+          "published": "2026-11-27T03:21:49Z",
+          "url": "https://finance.yahoo.com/technology/articles/5-best-quantum-computing-stocks-032149616.html"
         },
         {
-          "title": "Amazon and Meta are negotiating the future of AI shopping. Consumers aren't quite there yet.",
-          "publisher": "Yahoo Finance",
-          "published": "2026-11-25T14:42:15Z",
-          "url": "https://finance.yahoo.com/technology/article/amazon-and-meta-are-negotiating-the-future-of-ai-shopping-consumers-arent-quite-there-yet-144215428.html"
+          "title": "5 Best Tech Stocks to Buy for 2027 According to Hedge Funds",
+          "publisher": "Insider Monkey",
+          "published": "2026-11-27T03:08:56Z",
+          "url": "https://finance.yahoo.com/markets/stocks/articles/5-best-tech-stocks-buy-030856400.html"
         }
       ],
       "relative_strength_bonus": 1,
@@ -66172,7 +66172,7 @@
       "change_pct": -2.13,
       "day_high": 273.62,
       "day_low": 262.73,
-      "volume": 41164500,
+      "volume": 41283700,
       "rsi": 36.93,
       "macd": -12.0675,
       "macd_signal": -12.6769,
@@ -67633,7 +67633,7 @@
           "high": 273.62,
           "low": 262.73,
           "close": 273.1,
-          "volume": 41164500,
+          "volume": 41283700,
           "sma20": 283.05,
           "sma50": 318.24,
           "bb_upper": 298.82,
@@ -67644,7 +67644,7 @@
         {
           "time": "2026-11-25T10:00:00-05:00",
           "close": 268.17,
-          "volume": 827645
+          "volume": 827640
         },
         {
           "time": "2026-11-25T10:05:00-05:00",
@@ -67709,12 +67709,12 @@
         {
           "time": "2026-11-25T11:05:00-05:00",
           "close": 264.16,
-          "volume": 514473
+          "volume": 514272
         },
         {
           "time": "2026-11-25T11:10:00-05:00",
           "close": 264.87,
-          "volume": 346995
+          "volume": 347196
         },
         {
           "time": "2026-11-25T11:15:00-05:00",
@@ -67774,17 +67774,17 @@
         {
           "time": "2026-11-25T12:10:00-05:00",
           "close": 268.7,
-          "volume": 377434
+          "volume": 377447
         },
         {
           "time": "2026-11-25T12:15:00-05:00",
           "close": 270.25,
-          "volume": 615485
+          "volume": 615459
         },
         {
           "time": "2026-11-25T12:20:00-05:00",
           "close": 269.1,
-          "volume": 386770
+          "volume": 386783
         },
         {
           "time": "2026-11-25T12:25:00-05:00",
@@ -67814,12 +67814,12 @@
         {
           "time": "2026-11-25T12:50:00-05:00",
           "close": 270.99,
-          "volume": 228146
+          "volume": 228181
         },
         {
           "time": "2026-11-25T12:55:00-05:00",
           "close": 270.57,
-          "volume": 375110
+          "volume": 375075
         },
         {
           "time": "2026-11-25T13:00:00-05:00",
@@ -67849,12 +67849,12 @@
         {
           "time": "2026-11-25T13:25:00-05:00",
           "close": 271.23,
-          "volume": 236508
+          "volume": 236507
         },
         {
           "time": "2026-11-25T13:30:00-05:00",
           "close": 270.51,
-          "volume": 208366
+          "volume": 208367
         },
         {
           "time": "2026-11-25T13:35:00-05:00",
@@ -67914,47 +67914,47 @@
         {
           "time": "2026-11-25T14:30:00-05:00",
           "close": 272.29,
-          "volume": 216853
+          "volume": 216970
         },
         {
           "time": "2026-11-25T14:35:00-05:00",
           "close": 272.77,
-          "volume": 179115
+          "volume": 179603
         },
         {
           "time": "2026-11-25T14:40:00-05:00",
           "close": 271.8,
-          "volume": 268734
+          "volume": 268129
         },
         {
           "time": "2026-11-25T14:45:00-05:00",
           "close": 272.43,
-          "volume": 212633
+          "volume": 212928
         },
         {
           "time": "2026-11-25T14:50:00-05:00",
           "close": 272.89,
-          "volume": 285271
+          "volume": 284976
         },
         {
           "time": "2026-11-25T14:55:00-05:00",
           "close": 272.15,
-          "volume": 176601
+          "volume": 176581
         },
         {
           "time": "2026-11-25T15:00:00-05:00",
           "close": 272.24,
-          "volume": 154495
+          "volume": 154515
         },
         {
           "time": "2026-11-25T15:05:00-05:00",
           "close": 272.13,
-          "volume": 192162
+          "volume": 192103
         },
         {
           "time": "2026-11-25T15:10:00-05:00",
           "close": 271.86,
-          "volume": 166799
+          "volume": 166858
         },
         {
           "time": "2026-11-25T15:15:00-05:00",
@@ -67974,12 +67974,12 @@
         {
           "time": "2026-11-25T15:30:00-05:00",
           "close": 271.85,
-          "volume": 347890
+          "volume": 348078
         },
         {
           "time": "2026-11-25T15:35:00-05:00",
           "close": 271.79,
-          "volume": 292061
+          "volume": 291873
         },
         {
           "time": "2026-11-25T15:40:00-05:00",
@@ -67994,12 +67994,12 @@
         {
           "time": "2026-11-25T15:50:00-05:00",
           "close": 272.54,
-          "volume": 678637
+          "volume": 678644
         },
         {
           "time": "2026-11-25T15:55:00-05:00",
-          "close": 272.95,
-          "volume": 1693896
+          "close": 272.98,
+          "volume": 1693169
         },
         {
           "time": "2026-11-25T16:00:00-05:00",
@@ -68245,28 +68245,28 @@
       "extended_note": "已取得部分延伸交易時段資料；可用性依 Yahoo Finance 回傳為準",
       "news": [
         {
-          "title": "SpaceX gets approval for 1 million data center satellites",
-          "publisher": "LA Times",
-          "published": "2026-11-26T02:38:47Z",
-          "url": "https://finance.yahoo.com/technology/ai/articles/spacex-gets-approval-1-million-023847485.html"
-        },
-        {
-          "title": "Apple Stock Defies AI Selloff: Is It the Market's Safe Haven?",
-          "publisher": "BeInCrypto",
-          "published": "2026-11-26T01:00:00Z",
-          "url": "https://beincrypto.com/apple-stock-ai-selloff-safe-haven/"
-        },
-        {
-          "title": "5 Best Strong Buy Growth Stocks to Buy for 2027",
+          "title": "5 Best Quantum Computing Stocks To Buy for 2027",
           "publisher": "Insider Monkey",
-          "published": "2026-11-26T00:46:10Z",
-          "url": "https://finance.yahoo.com/markets/stocks/articles/5-best-strong-buy-growth-004610627.html"
+          "published": "2026-11-27T03:21:49Z",
+          "url": "https://finance.yahoo.com/technology/articles/5-best-quantum-computing-stocks-032149616.html"
         },
         {
-          "title": "SpaceX wins approval to launch one million AI data centre satellites",
-          "publisher": "Proactive",
-          "published": "2026-11-26T00:27:00Z",
-          "url": "https://www.proactiveinvestors.com/companies/news/1102478/spacex-wins-approval-to-launch-one-million-ai-data-centre-satellites-1102478.html"
+          "title": "5 Best Tech Stocks to Buy for 2027 According to Hedge Funds",
+          "publisher": "Insider Monkey",
+          "published": "2026-11-27T03:08:56Z",
+          "url": "https://finance.yahoo.com/markets/stocks/articles/5-best-tech-stocks-buy-030856400.html"
+        },
+        {
+          "title": "‘How Can TSLA Compete With Waymo?’ Gary Black Questions Tesla’s Robotaxi Strategy, Predicts Waymo Will Lead in Miles and Trips",
+          "publisher": "Benzinga",
+          "published": "2026-11-27T01:30:07Z",
+          "url": "https://finance.yahoo.com/technology/articles/tsla-compete-waymo-gary-black-013007370.html"
+        },
+        {
+          "title": "Jim Lebenthal Says This Is “a Correction, Not Something Worse.” Why He’s Buying More Alphabet",
+          "publisher": "24/7 Wall St.",
+          "published": "2026-11-26T22:07:55Z",
+          "url": "https://247wallst.com/investing/2026/11/26/jim-lebenthal-says-this-is-a-correction-not-something-worse-why-hes-buying-more-alphabet/"
         }
       ],
       "relative_strength_bonus": -1,
@@ -68280,7 +68280,7 @@
       "change_pct": 3.4,
       "day_high": 611.06,
       "day_low": 567.75,
-      "volume": 18599400,
+      "volume": 18668200,
       "rsi": 45.7,
       "macd": -18.2695,
       "macd_signal": -17.997,
@@ -69741,7 +69741,7 @@
           "high": 611.06,
           "low": 567.75,
           "close": 609.89,
-          "volume": 18599400,
+          "volume": 18668200,
           "sma20": 615.27,
           "sma50": 672.4,
           "bb_upper": 654.48,
@@ -69762,12 +69762,12 @@
         {
           "time": "2026-11-25T10:05:00-05:00",
           "close": 580.52,
-          "volume": 212833
+          "volume": 212862
         },
         {
           "time": "2026-11-25T10:10:00-05:00",
           "close": 580.05,
-          "volume": 192401
+          "volume": 192372
         },
         {
           "time": "2026-11-25T10:15:00-05:00",
@@ -69777,12 +69777,12 @@
         {
           "time": "2026-11-25T10:20:00-05:00",
           "close": 575.06,
-          "volume": 172497
+          "volume": 172517
         },
         {
           "time": "2026-11-25T10:25:00-05:00",
           "close": 574.47,
-          "volume": 110228
+          "volume": 110208
         },
         {
           "time": "2026-11-25T10:30:00-05:00",
@@ -69797,17 +69797,17 @@
         {
           "time": "2026-11-25T10:40:00-05:00",
           "close": 576.96,
-          "volume": 162373
+          "volume": 162431
         },
         {
           "time": "2026-11-25T10:45:00-05:00",
           "close": 578.07,
-          "volume": 129908
+          "volume": 130523
         },
         {
           "time": "2026-11-25T10:50:00-05:00",
           "close": 576.85,
-          "volume": 95556
+          "volume": 94883
         },
         {
           "time": "2026-11-25T10:55:00-05:00",
@@ -69867,12 +69867,12 @@
         {
           "time": "2026-11-25T11:50:00-05:00",
           "close": 582.63,
-          "volume": 114407
+          "volume": 114404
         },
         {
           "time": "2026-11-25T11:55:00-05:00",
           "close": 585.98,
-          "volume": 182273
+          "volume": 182276
         },
         {
           "time": "2026-11-25T12:00:00-05:00",
@@ -69882,12 +69882,12 @@
         {
           "time": "2026-11-25T12:05:00-05:00",
           "close": 593.1,
-          "volume": 250698
+          "volume": 250738
         },
         {
           "time": "2026-11-25T12:10:00-05:00",
           "close": 594.16,
-          "volume": 338660
+          "volume": 338620
         },
         {
           "time": "2026-11-25T12:15:00-05:00",
@@ -69947,12 +69947,12 @@
         {
           "time": "2026-11-25T13:10:00-05:00",
           "close": 601.33,
-          "volume": 145450
+          "volume": 145452
         },
         {
           "time": "2026-11-25T13:15:00-05:00",
           "close": 604.12,
-          "volume": 157202
+          "volume": 157200
         },
         {
           "time": "2026-11-25T13:20:00-05:00",
@@ -69967,12 +69967,12 @@
         {
           "time": "2026-11-25T13:30:00-05:00",
           "close": 604.33,
-          "volume": 111052
+          "volume": 111054
         },
         {
           "time": "2026-11-25T13:35:00-05:00",
           "close": 605.76,
-          "volume": 121634
+          "volume": 121632
         },
         {
           "time": "2026-11-25T13:40:00-05:00",
@@ -69982,17 +69982,17 @@
         {
           "time": "2026-11-25T13:45:00-05:00",
           "close": 607.92,
-          "volume": 190700
+          "volume": 190698
         },
         {
           "time": "2026-11-25T13:50:00-05:00",
           "close": 606.56,
-          "volume": 112118
+          "volume": 112141
         },
         {
           "time": "2026-11-25T13:55:00-05:00",
           "close": 604.65,
-          "volume": 119779
+          "volume": 119758
         },
         {
           "time": "2026-11-25T14:00:00-05:00",
@@ -70062,22 +70062,22 @@
         {
           "time": "2026-11-25T15:05:00-05:00",
           "close": 607.06,
-          "volume": 160088
+          "volume": 160087
         },
         {
           "time": "2026-11-25T15:10:00-05:00",
           "close": 607.16,
-          "volume": 142473
+          "volume": 142474
         },
         {
           "time": "2026-11-25T15:15:00-05:00",
           "close": 605.45,
-          "volume": 92879
+          "volume": 92734
         },
         {
           "time": "2026-11-25T15:20:00-05:00",
           "close": 604.77,
-          "volume": 108276
+          "volume": 108421
         },
         {
           "time": "2026-11-25T15:25:00-05:00",
@@ -70102,17 +70102,17 @@
         {
           "time": "2026-11-25T15:45:00-05:00",
           "close": 605.36,
-          "volume": 554467
+          "volume": 554457
         },
         {
           "time": "2026-11-25T15:50:00-05:00",
           "close": 606.01,
-          "volume": 477083
+          "volume": 477073
         },
         {
           "time": "2026-11-25T15:55:00-05:00",
           "close": 609.8,
-          "volume": 1132535
+          "volume": 1132555
         },
         {
           "time": "2026-11-25T16:00:00-05:00",
@@ -70353,28 +70353,28 @@
       "extended_note": "已取得部分延伸交易時段資料；可用性依 Yahoo Finance 回傳為準",
       "news": [
         {
-          "title": "Nvidia is cheap on paper, so why won't the market buy it?",
-          "publisher": "Yahoo Finance Video",
-          "published": "2026-11-25T19:22:15Z",
-          "url": "https://finance.yahoo.com/video/nvidia-is-cheap-on-paper-so-why-wont-the-market-buy-it-192215326.html"
+          "title": "5 Best Tech Stocks to Buy for 2027 According to Hedge Funds",
+          "publisher": "Insider Monkey",
+          "published": "2026-11-27T03:08:56Z",
+          "url": "https://finance.yahoo.com/markets/stocks/articles/5-best-tech-stocks-buy-030856400.html"
         },
         {
-          "title": "Tariffs are back as Anthropic sinks further below its IPO price",
-          "publisher": "Yahoo Finance Video",
-          "published": "2026-11-25T16:05:24Z",
-          "url": "https://finance.yahoo.com/video/tariffs-are-back-as-anthropic-sinks-further-below-its-ipo-price-160524926.html"
+          "title": "Jensen Huang’s Return Doesn’t Make Nvidia Stock (NVDA) a Buy",
+          "publisher": "TipRanks",
+          "published": "2026-11-26T21:22:00Z",
+          "url": "https://finance.yahoo.com/markets/stocks/articles/jensen-huang-return-doesn-t-212200380.html"
         },
         {
-          "title": "Amazon and Meta are negotiating the future of AI shopping. Consumers aren't quite there yet.",
-          "publisher": "Yahoo Finance",
-          "published": "2026-11-25T14:42:15Z",
-          "url": "https://finance.yahoo.com/technology/article/amazon-and-meta-are-negotiating-the-future-of-ai-shopping-consumers-arent-quite-there-yet-144215428.html"
+          "title": "Apple Enters the AI Agent Race as It Takes on OpenAI, Anthropic, and Meta. What That Means for AAPL Stock.",
+          "publisher": "Barchart",
+          "published": "2026-11-26T19:30:03Z",
+          "url": "https://www.barchart.com/story/news/9022924/apple-enters-the-ai-agent-race-as-it-takes-on-openai-anthropic-and-meta-what-that-means-for-aapl-stock"
         },
         {
-          "title": "Amazon, Meta reportedly in talks to remove block on Muse AI agent",
-          "publisher": "Yahoo Finance Video",
-          "published": "2026-11-25T14:36:16Z",
-          "url": "https://finance.yahoo.com/video/amazon-meta-reportedly-in-talks-to-remove-block-on-muse-ai-agent-143616531.html"
+          "title": "AMD Stocks Slip 1.75% After Filing Registers 337 Million Shares for Resale",
+          "publisher": "GuruFocus.com",
+          "published": "2026-11-26T18:29:28Z",
+          "url": "https://finance.yahoo.com/markets/stocks/articles/amd-stocks-slip-1-75-182928246.html"
         }
       ],
       "relative_strength_bonus": 1,
@@ -70388,7 +70388,7 @@
       "change_pct": 0.92,
       "day_high": 59.57,
       "day_low": 57.03,
-      "volume": 45693600,
+      "volume": 45756500,
       "rsi": 38.78,
       "macd": -2.3759,
       "macd_signal": -2.2951,
@@ -71849,7 +71849,7 @@
           "high": 59.57,
           "low": 57.03,
           "close": 59.41,
-          "volume": 45693600,
+          "volume": 45756500,
           "sma20": 61.68,
           "sma50": 66.24,
           "bb_upper": 66.92,
@@ -71858,9 +71858,14 @@
       ],
       "extended": [
         {
+          "time": "2026-11-25T09:55:00-05:00",
+          "close": 57.94,
+          "volume": 610978
+        },
+        {
           "time": "2026-11-25T10:00:00-05:00",
           "close": 58.19,
-          "volume": 716989
+          "volume": 716854
         },
         {
           "time": "2026-11-25T10:05:00-05:00",
@@ -71975,12 +71980,12 @@
         {
           "time": "2026-11-25T11:55:00-05:00",
           "close": 57.77,
-          "volume": 558592
+          "volume": 558640
         },
         {
           "time": "2026-11-25T12:00:00-05:00",
           "close": 58.05,
-          "volume": 657006
+          "volume": 656958
         },
         {
           "time": "2026-11-25T12:05:00-05:00",
@@ -72015,12 +72020,12 @@
         {
           "time": "2026-11-25T12:35:00-05:00",
           "close": 58.66,
-          "volume": 411846
+          "volume": 411766
         },
         {
           "time": "2026-11-25T12:40:00-05:00",
           "close": 58.72,
-          "volume": 273495
+          "volume": 273575
         },
         {
           "time": "2026-11-25T12:45:00-05:00",
@@ -72055,12 +72060,12 @@
         {
           "time": "2026-11-25T13:15:00-05:00",
           "close": 58.85,
-          "volume": 303767
+          "volume": 303682
         },
         {
           "time": "2026-11-25T13:20:00-05:00",
           "close": 58.91,
-          "volume": 260673
+          "volume": 260758
         },
         {
           "time": "2026-11-25T13:25:00-05:00",
@@ -72145,12 +72150,12 @@
         {
           "time": "2026-11-25T14:45:00-05:00",
           "close": 59.25,
-          "volume": 318210
+          "volume": 318162
         },
         {
           "time": "2026-11-25T14:50:00-05:00",
           "close": 59.33,
-          "volume": 380504
+          "volume": 380552
         },
         {
           "time": "2026-11-25T14:55:00-05:00",
@@ -72190,12 +72195,12 @@
         {
           "time": "2026-11-25T15:30:00-05:00",
           "close": 59.24,
-          "volume": 436459
+          "volume": 436460
         },
         {
           "time": "2026-11-25T15:35:00-05:00",
           "close": 59.22,
-          "volume": 553564
+          "volume": 553563
         },
         {
           "time": "2026-11-25T15:40:00-05:00",
@@ -72348,11 +72353,6 @@
           "volume": 0
         },
         {
-          "time": "2026-11-25T18:10:00-05:00",
-          "close": 59.25,
-          "volume": 0
-        },
-        {
           "time": "2026-11-25T18:15:00-05:00",
           "close": 59.21,
           "volume": 0
@@ -72461,28 +72461,28 @@
       "extended_note": "已取得部分延伸交易時段資料；可用性依 Yahoo Finance 回傳為準",
       "news": [
         {
-          "title": "Netflix Has 2 Growth Engines That Could Drive Its Stock Higher in 2027",
-          "publisher": "24/7 Wall St.",
-          "published": "2026-11-25T18:04:06Z",
-          "url": "https://247wallst.com/investing/2026/11/25/netflix-has-2-growth-engines-that-could-drive-its-stock-higher-in-2027/"
+          "title": "Here's What Would Prove Me Wrong About Netflix Stock",
+          "publisher": "Motley Fool",
+          "published": "2026-11-26T18:01:02Z",
+          "url": "https://www.fool.com/investing/2026/11/26/here-s-what-would-prove-me-wrong-about-netflix-stock/"
         },
         {
-          "title": "Netflix Stock in Focus After $380 Million Radford Studio Center Purchase",
+          "title": "NFL's Thanksgiving Boom Raises Stakes for Disney, Netflix",
           "publisher": "GuruFocus.com",
-          "published": "2026-11-25T17:00:53Z",
-          "url": "https://finance.yahoo.com/markets/stocks/articles/netflix-stock-focus-380-million-170053613.html"
+          "published": "2026-11-26T17:42:28Z",
+          "url": "https://finance.yahoo.com/media-advertising/articles/nfls-thanksgiving-boom-raises-stakes-174228885.html"
         },
         {
-          "title": "What Could Netflix (NFLX) Gain From Owning The Radford Studio Center?",
-          "publisher": "Simply Wall St.",
-          "published": "2026-11-25T04:26:01Z",
-          "url": "https://finance.yahoo.com/media-advertising/articles/could-netflix-nflx-gain-owning-042601498.html"
+          "title": "Netflix Stock Is Down 36% in 2026. Can Its Disney Partnership Make It a Buy Again?",
+          "publisher": "24/7 Wall St.",
+          "published": "2026-11-26T16:38:57Z",
+          "url": "https://247wallst.com/investing/2026/11/26/netflix-stock-is-down-36-in-2026-can-its-disney-partnership-make-it-a-buy-again/"
         },
         {
-          "title": "NFLX Stock Edges Lower Overnight: Streaming Giant Buys Historic ‘Seinfeld’ Studio Lot In Reported $380M Deal",
-          "publisher": "Stocktwits",
-          "published": "2026-11-25T02:46:32Z",
-          "url": "https://stocktwits.com/news-articles/markets/equity/nflx-stock-edges-lower-overnight-streaming-giant-buys-historic-seinfeld-studio-lot-in-reported-380-m-deal/cNbu6SoR9l4"
+          "title": "Netflix vs. Apple: Which Streaming Stock Has an Edge Right Now?",
+          "publisher": "Zacks",
+          "published": "2026-11-26T14:21:00Z",
+          "url": "https://finance.yahoo.com/markets/stocks/articles/netflix-vs-apple-streaming-stock-142100099.html"
         }
       ],
       "relative_strength_bonus": 1,
@@ -72496,7 +72496,7 @@
       "change_pct": -1.25,
       "day_high": 493.44,
       "day_low": 477.39,
-      "volume": 26733600,
+      "volume": 26759500,
       "rsi": 38.99,
       "macd": -8.3458,
       "macd_signal": -4.1453,
@@ -73957,7 +73957,7 @@
           "high": 493.44,
           "low": 477.39,
           "close": 489.93,
-          "volume": 26733600,
+          "volume": 26759500,
           "sma20": 516.38,
           "sma50": 518.64,
           "bb_upper": 553.72,
@@ -73968,7 +73968,7 @@
         {
           "time": "2026-11-25T09:40:00-05:00",
           "close": 477.61,
-          "volume": 551688
+          "volume": 551681
         },
         {
           "time": "2026-11-25T09:45:00-05:00",
@@ -74008,12 +74008,12 @@
         {
           "time": "2026-11-25T10:20:00-05:00",
           "close": 479.14,
-          "volume": 170237
+          "volume": 170236
         },
         {
           "time": "2026-11-25T10:25:00-05:00",
           "close": 479.16,
-          "volume": 191913
+          "volume": 191914
         },
         {
           "time": "2026-11-25T10:30:00-05:00",
@@ -74083,12 +74083,12 @@
         {
           "time": "2026-11-25T11:35:00-05:00",
           "close": 479.96,
-          "volume": 169168
+          "volume": 169148
         },
         {
           "time": "2026-11-25T11:40:00-05:00",
           "close": 479.54,
-          "volume": 120913
+          "volume": 120933
         },
         {
           "time": "2026-11-25T11:45:00-05:00",
@@ -74103,12 +74103,12 @@
         {
           "time": "2026-11-25T11:55:00-05:00",
           "close": 483.05,
-          "volume": 119788
+          "volume": 119799
         },
         {
           "time": "2026-11-25T12:00:00-05:00",
           "close": 483.19,
-          "volume": 143436
+          "volume": 143425
         },
         {
           "time": "2026-11-25T12:05:00-05:00",
@@ -74138,12 +74138,12 @@
         {
           "time": "2026-11-25T12:30:00-05:00",
           "close": 486.07,
-          "volume": 162833
+          "volume": 162706
         },
         {
           "time": "2026-11-25T12:35:00-05:00",
           "close": 487.04,
-          "volume": 168021
+          "volume": 168148
         },
         {
           "time": "2026-11-25T12:40:00-05:00",
@@ -74163,12 +74163,12 @@
         {
           "time": "2026-11-25T12:55:00-05:00",
           "close": 487.88,
-          "volume": 119034
+          "volume": 119042
         },
         {
           "time": "2026-11-25T13:00:00-05:00",
           "close": 487.74,
-          "volume": 102255
+          "volume": 102247
         },
         {
           "time": "2026-11-25T13:05:00-05:00",
@@ -74183,12 +74183,12 @@
         {
           "time": "2026-11-25T13:15:00-05:00",
           "close": 489.47,
-          "volume": 126228
+          "volume": 126227
         },
         {
           "time": "2026-11-25T13:20:00-05:00",
           "close": 489.55,
-          "volume": 130325
+          "volume": 130326
         },
         {
           "time": "2026-11-25T13:25:00-05:00",
@@ -74208,7 +74208,7 @@
         {
           "time": "2026-11-25T13:40:00-05:00",
           "close": 490.7,
-          "volume": 103892
+          "volume": 103887
         },
         {
           "time": "2026-11-25T13:45:00-05:00",
@@ -74218,27 +74218,27 @@
         {
           "time": "2026-11-25T13:50:00-05:00",
           "close": 492.04,
-          "volume": 164578
+          "volume": 164583
         },
         {
           "time": "2026-11-25T13:55:00-05:00",
           "close": 491.14,
-          "volume": 71167
+          "volume": 71164
         },
         {
           "time": "2026-11-25T14:00:00-05:00",
           "close": 492.2,
-          "volume": 119337
+          "volume": 119340
         },
         {
           "time": "2026-11-25T14:05:00-05:00",
           "close": 492.51,
-          "volume": 107623
+          "volume": 107604
         },
         {
           "time": "2026-11-25T14:10:00-05:00",
           "close": 491.97,
-          "volume": 111385
+          "volume": 111404
         },
         {
           "time": "2026-11-25T14:15:00-05:00",
@@ -74263,12 +74263,12 @@
         {
           "time": "2026-11-25T14:35:00-05:00",
           "close": 492.37,
-          "volume": 100550
+          "volume": 100549
         },
         {
           "time": "2026-11-25T14:40:00-05:00",
           "close": 490.53,
-          "volume": 108114
+          "volume": 108115
         },
         {
           "time": "2026-11-25T14:45:00-05:00",
@@ -74298,12 +74298,12 @@
         {
           "time": "2026-11-25T15:10:00-05:00",
           "close": 489.56,
-          "volume": 92687
+          "volume": 92857
         },
         {
           "time": "2026-11-25T15:15:00-05:00",
           "close": 489.44,
-          "volume": 116396
+          "volume": 116226
         },
         {
           "time": "2026-11-25T15:20:00-05:00",
@@ -74569,28 +74569,28 @@
       "extended_note": "已取得部分延伸交易時段資料；可用性依 Yahoo Finance 回傳為準",
       "news": [
         {
-          "title": "Japan's biggest banks pick Solana as Fidelity adds DeFi tokens",
-          "publisher": "Yahoo Finance Video",
-          "published": "2026-11-25T17:00:00Z",
-          "url": "https://finance.yahoo.com/video/japans-biggest-banks-pick-solana-as-fidelity-adds-defi-tokens-222056705.html"
+          "title": "Microsoft’s Brad Smith Says ‘We Didn’t Know’ $10 Million Trump Ballroom Donation Would Involve Demolition of the East Wing: ’We Never Expect to Get Everything Perfect",
+          "publisher": "Benzinga",
+          "published": "2026-11-27T03:30:07Z",
+          "url": "https://finance.yahoo.com/technology/articles/microsoft-brad-smith-says-didn-033007136.html"
         },
         {
-          "title": "Tariffs are back as Anthropic sinks further below its IPO price",
-          "publisher": "Yahoo Finance Video",
-          "published": "2026-11-25T16:05:24Z",
-          "url": "https://finance.yahoo.com/video/tariffs-are-back-as-anthropic-sinks-further-below-its-ipo-price-160524926.html"
+          "title": "5 Best Quantum Computing Stocks To Buy for 2027",
+          "publisher": "Insider Monkey",
+          "published": "2026-11-27T03:21:49Z",
+          "url": "https://finance.yahoo.com/technology/articles/5-best-quantum-computing-stocks-032149616.html"
         },
         {
-          "title": "Microsoft declares a code red in the middle of a 'Patchpocalypse'",
-          "publisher": "Yahoo Finance",
-          "published": "2026-11-24T19:37:40Z",
-          "url": "https://finance.yahoo.com/markets/article/microsoft-declares-a-code-red-in-the-middle-of-a-patchpocalypse-193740712.html"
+          "title": "5 Best Tech Stocks to Buy for 2027 According to Hedge Funds",
+          "publisher": "Insider Monkey",
+          "published": "2026-11-27T03:08:56Z",
+          "url": "https://finance.yahoo.com/markets/stocks/articles/5-best-tech-stocks-buy-030856400.html"
         },
         {
-          "title": "Nvidia’s Market Cap Falls Below Microsoft’s: Analyst Flags Five Overhangs For NVDA Stock",
-          "publisher": "Stocktwits",
-          "published": "2026-11-26T02:39:42Z",
-          "url": "https://stocktwits.com/news-articles/markets/equity/nvidia-s-market-cap-falls-below-microsoft-s-analyst-flags-five-overhangs-for-nvda-stock/cNbx4KZR9Z3"
+          "title": "Tech Stock Sell-Off: Down 13%, Is Microsoft a Buy Now?",
+          "publisher": "Motley Fool",
+          "published": "2026-11-26T22:20:02Z",
+          "url": "https://www.fool.com/investing/2026/11/26/tech-stock-sell-off-down-13-is-microsoft-a-buy-now/"
         }
       ],
       "relative_strength_bonus": 0,
@@ -74604,7 +74604,7 @@
       "change_pct": -3.91,
       "day_high": 150.37,
       "day_low": 141.17,
-      "volume": 363377300,
+      "volume": 366571900,
       "rsi": 37.45,
       "macd": -16.9154,
       "macd_signal": -16.2396,
@@ -76065,7 +76065,7 @@
           "high": 150.37,
           "low": 141.17,
           "close": 149.3,
-          "volume": 363377300,
+          "volume": 366571900,
           "sma20": 172.48,
           "sma50": 203.65,
           "bb_upper": 220.2,
@@ -76074,631 +76074,631 @@
       ],
       "extended": [
         {
-          "time": "2026-11-24T10:00:00-05:00",
-          "close": 155.01,
-          "volume": 5905976
+          "time": "2026-11-25T10:00:00-05:00",
+          "close": 145.44,
+          "volume": 6327656
         },
         {
-          "time": "2026-11-24T10:05:00-05:00",
-          "close": 154.24,
-          "volume": 7112972
+          "time": "2026-11-25T10:05:00-05:00",
+          "close": 143.7,
+          "volume": 5920951
         },
         {
-          "time": "2026-11-24T10:10:00-05:00",
-          "close": 155.37,
-          "volume": 5553779
+          "time": "2026-11-25T10:10:00-05:00",
+          "close": 144.55,
+          "volume": 5918763
         },
         {
-          "time": "2026-11-24T10:15:00-05:00",
-          "close": 153.3,
-          "volume": 5519803
+          "time": "2026-11-25T10:15:00-05:00",
+          "close": 144.11,
+          "volume": 6530027
         },
         {
-          "time": "2026-11-24T10:20:00-05:00",
-          "close": 153.04,
-          "volume": 6162969
+          "time": "2026-11-25T10:20:00-05:00",
+          "close": 143.69,
+          "volume": 4972302
         },
         {
-          "time": "2026-11-24T10:25:00-05:00",
-          "close": 152.46,
-          "volume": 6514079
+          "time": "2026-11-25T10:25:00-05:00",
+          "close": 143.28,
+          "volume": 4107014
         },
         {
-          "time": "2026-11-24T10:30:00-05:00",
-          "close": 153.07,
-          "volume": 5258458
+          "time": "2026-11-25T10:30:00-05:00",
+          "close": 144.0,
+          "volume": 4276921
         },
         {
-          "time": "2026-11-24T10:35:00-05:00",
-          "close": 153.37,
-          "volume": 4323965
+          "time": "2026-11-25T10:35:00-05:00",
+          "close": 142.99,
+          "volume": 3845324
         },
         {
-          "time": "2026-11-24T10:40:00-05:00",
-          "close": 151.65,
-          "volume": 5237739
+          "time": "2026-11-25T10:40:00-05:00",
+          "close": 142.65,
+          "volume": 3971514
         },
         {
-          "time": "2026-11-24T10:45:00-05:00",
-          "close": 152.16,
-          "volume": 6433070
+          "time": "2026-11-25T10:45:00-05:00",
+          "close": 142.76,
+          "volume": 5269144
         },
         {
-          "time": "2026-11-24T10:50:00-05:00",
-          "close": 152.23,
-          "volume": 5342460
+          "time": "2026-11-25T10:50:00-05:00",
+          "close": 142.9,
+          "volume": 3886693
         },
         {
-          "time": "2026-11-24T10:55:00-05:00",
-          "close": 152.16,
-          "volume": 4237582
+          "time": "2026-11-25T10:55:00-05:00",
+          "close": 142.48,
+          "volume": 3610179
         },
         {
-          "time": "2026-11-24T11:00:00-05:00",
-          "close": 151.62,
-          "volume": 4806467
+          "time": "2026-11-25T11:00:00-05:00",
+          "close": 142.62,
+          "volume": 3153210
         },
         {
-          "time": "2026-11-24T11:05:00-05:00",
-          "close": 151.9,
-          "volume": 4886713
+          "time": "2026-11-25T11:05:00-05:00",
+          "close": 141.91,
+          "volume": 3206086
         },
         {
-          "time": "2026-11-24T11:10:00-05:00",
-          "close": 151.21,
-          "volume": 6089488
+          "time": "2026-11-25T11:10:00-05:00",
+          "close": 142.38,
+          "volume": 3867053
         },
         {
-          "time": "2026-11-24T11:15:00-05:00",
-          "close": 151.54,
-          "volume": 4865030
+          "time": "2026-11-25T11:15:00-05:00",
+          "close": 141.53,
+          "volume": 3614668
         },
         {
-          "time": "2026-11-24T11:20:00-05:00",
-          "close": 152.43,
-          "volume": 4261324
+          "time": "2026-11-25T11:20:00-05:00",
+          "close": 142.04,
+          "volume": 3329372
         },
         {
-          "time": "2026-11-24T11:25:00-05:00",
-          "close": 151.47,
-          "volume": 3776935
+          "time": "2026-11-25T11:25:00-05:00",
+          "close": 142.11,
+          "volume": 3940910
         },
         {
-          "time": "2026-11-24T11:30:00-05:00",
-          "close": 151.7,
-          "volume": 4423681
+          "time": "2026-11-25T11:30:00-05:00",
+          "close": 142.03,
+          "volume": 2501002
         },
         {
-          "time": "2026-11-24T11:35:00-05:00",
-          "close": 150.81,
-          "volume": 5886476
+          "time": "2026-11-25T11:35:00-05:00",
+          "close": 142.11,
+          "volume": 2360134
         },
         {
-          "time": "2026-11-24T11:40:00-05:00",
-          "close": 151.3,
-          "volume": 3555511
+          "time": "2026-11-25T11:40:00-05:00",
+          "close": 141.53,
+          "volume": 2612993
         },
         {
-          "time": "2026-11-24T11:45:00-05:00",
-          "close": 151.77,
-          "volume": 3498732
+          "time": "2026-11-25T11:45:00-05:00",
+          "close": 141.68,
+          "volume": 4843728
         },
         {
-          "time": "2026-11-24T11:50:00-05:00",
-          "close": 151.31,
-          "volume": 3421811
-        },
-        {
-          "time": "2026-11-24T11:55:00-05:00",
-          "close": 150.82,
-          "volume": 3358711
-        },
-        {
-          "time": "2026-11-24T12:00:00-05:00",
-          "close": 150.83,
-          "volume": 3242160
-        },
-        {
-          "time": "2026-11-24T12:05:00-05:00",
-          "close": 152.75,
-          "volume": 4290272
-        },
-        {
-          "time": "2026-11-24T12:10:00-05:00",
-          "close": 153.11,
-          "volume": 4373919
-        },
-        {
-          "time": "2026-11-24T12:15:00-05:00",
-          "close": 152.99,
-          "volume": 3117403
-        },
-        {
-          "time": "2026-11-24T12:20:00-05:00",
-          "close": 152.74,
-          "volume": 3260357
-        },
-        {
-          "time": "2026-11-24T12:25:00-05:00",
-          "close": 153.83,
-          "volume": 2805593
-        },
-        {
-          "time": "2026-11-24T12:30:00-05:00",
-          "close": 153.69,
-          "volume": 3624405
-        },
-        {
-          "time": "2026-11-24T12:35:00-05:00",
-          "close": 153.33,
-          "volume": 2912608
-        },
-        {
-          "time": "2026-11-24T12:40:00-05:00",
-          "close": 153.81,
-          "volume": 2657327
-        },
-        {
-          "time": "2026-11-24T12:45:00-05:00",
-          "close": 153.11,
-          "volume": 3300688
-        },
-        {
-          "time": "2026-11-24T12:50:00-05:00",
-          "close": 152.89,
-          "volume": 2490744
-        },
-        {
-          "time": "2026-11-24T12:55:00-05:00",
-          "close": 153.48,
-          "volume": 2711068
-        },
-        {
-          "time": "2026-11-24T13:00:00-05:00",
-          "close": 152.95,
-          "volume": 2513708
-        },
-        {
-          "time": "2026-11-24T13:05:00-05:00",
-          "close": 152.8,
-          "volume": 1938086
-        },
-        {
-          "time": "2026-11-24T13:10:00-05:00",
-          "close": 153.07,
-          "volume": 2147894
-        },
-        {
-          "time": "2026-11-24T13:15:00-05:00",
-          "close": 153.02,
-          "volume": 1763462
-        },
-        {
-          "time": "2026-11-24T13:20:00-05:00",
-          "close": 153.34,
-          "volume": 1634488
-        },
-        {
-          "time": "2026-11-24T13:25:00-05:00",
-          "close": 153.48,
-          "volume": 1768007
-        },
-        {
-          "time": "2026-11-24T13:30:00-05:00",
-          "close": 153.8,
-          "volume": 2205642
-        },
-        {
-          "time": "2026-11-24T13:35:00-05:00",
-          "close": 154.02,
-          "volume": 2372806
-        },
-        {
-          "time": "2026-11-24T13:40:00-05:00",
-          "close": 153.89,
-          "volume": 2266922
-        },
-        {
-          "time": "2026-11-24T13:45:00-05:00",
-          "close": 153.76,
-          "volume": 1914249
-        },
-        {
-          "time": "2026-11-24T13:50:00-05:00",
-          "close": 153.57,
-          "volume": 1881504
-        },
-        {
-          "time": "2026-11-24T13:55:00-05:00",
-          "close": 153.31,
-          "volume": 1793998
-        },
-        {
-          "time": "2026-11-24T14:00:00-05:00",
-          "close": 152.98,
-          "volume": 2199025
-        },
-        {
-          "time": "2026-11-24T14:05:00-05:00",
-          "close": 152.93,
-          "volume": 2678497
-        },
-        {
-          "time": "2026-11-24T14:10:00-05:00",
-          "close": 152.92,
-          "volume": 1793005
-        },
-        {
-          "time": "2026-11-24T14:15:00-05:00",
-          "close": 153.48,
-          "volume": 2017812
-        },
-        {
-          "time": "2026-11-24T14:20:00-05:00",
-          "close": 153.42,
-          "volume": 1861092
-        },
-        {
-          "time": "2026-11-24T14:25:00-05:00",
-          "close": 153.23,
-          "volume": 1643482
-        },
-        {
-          "time": "2026-11-24T14:30:00-05:00",
-          "close": 152.62,
-          "volume": 2498876
-        },
-        {
-          "time": "2026-11-24T14:35:00-05:00",
-          "close": 152.37,
-          "volume": 2255329
-        },
-        {
-          "time": "2026-11-24T14:40:00-05:00",
-          "close": 152.72,
-          "volume": 1862993
-        },
-        {
-          "time": "2026-11-24T14:45:00-05:00",
-          "close": 153.0,
-          "volume": 2295124
-        },
-        {
-          "time": "2026-11-24T14:50:00-05:00",
-          "close": 152.81,
-          "volume": 1983766
-        },
-        {
-          "time": "2026-11-24T14:55:00-05:00",
-          "close": 152.6,
-          "volume": 2085084
-        },
-        {
-          "time": "2026-11-24T15:00:00-05:00",
-          "close": 152.17,
-          "volume": 2404862
-        },
-        {
-          "time": "2026-11-24T15:05:00-05:00",
-          "close": 152.03,
-          "volume": 2387235
-        },
-        {
-          "time": "2026-11-24T15:10:00-05:00",
-          "close": 152.97,
-          "volume": 2257468
-        },
-        {
-          "time": "2026-11-24T15:15:00-05:00",
-          "close": 153.07,
-          "volume": 2261427
-        },
-        {
-          "time": "2026-11-24T15:20:00-05:00",
-          "close": 152.79,
-          "volume": 2424589
-        },
-        {
-          "time": "2026-11-24T15:25:00-05:00",
-          "close": 152.79,
-          "volume": 1984940
-        },
-        {
-          "time": "2026-11-24T15:30:00-05:00",
-          "close": 152.87,
-          "volume": 2521901
-        },
-        {
-          "time": "2026-11-24T15:35:00-05:00",
-          "close": 152.64,
-          "volume": 2737908
-        },
-        {
-          "time": "2026-11-24T15:40:00-05:00",
-          "close": 152.95,
-          "volume": 4302029
-        },
-        {
-          "time": "2026-11-24T15:45:00-05:00",
-          "close": 153.76,
-          "volume": 3816051
-        },
-        {
-          "time": "2026-11-24T15:50:00-05:00",
-          "close": 155.11,
-          "volume": 8365254
-        },
-        {
-          "time": "2026-11-24T15:55:00-05:00",
-          "close": 155.47,
-          "volume": 13275742
-        },
-        {
-          "time": "2026-11-24T16:00:00-05:00",
-          "close": 154.65,
+          "time": "2026-11-25T11:50:00-05:00",
+          "close": 141.88,
           "volume": 0
         },
         {
-          "time": "2026-11-24T16:05:00-05:00",
-          "close": 154.52,
+          "time": "2026-11-25T11:55:00-05:00",
+          "close": 142.14,
+          "volume": 178267793
+        },
+        {
+          "time": "2026-11-25T12:00:00-05:00",
+          "close": 143.04,
+          "volume": 3629718
+        },
+        {
+          "time": "2026-11-25T12:05:00-05:00",
+          "close": 143.94,
+          "volume": 2832549
+        },
+        {
+          "time": "2026-11-25T12:10:00-05:00",
+          "close": 144.71,
+          "volume": 4377910
+        },
+        {
+          "time": "2026-11-25T12:15:00-05:00",
+          "close": 145.24,
+          "volume": 5795901
+        },
+        {
+          "time": "2026-11-25T12:20:00-05:00",
+          "close": 144.0,
+          "volume": 5843097
+        },
+        {
+          "time": "2026-11-25T12:25:00-05:00",
+          "close": 143.77,
+          "volume": 4421595
+        },
+        {
+          "time": "2026-11-25T12:30:00-05:00",
+          "close": 143.74,
+          "volume": 3926748
+        },
+        {
+          "time": "2026-11-25T12:35:00-05:00",
+          "close": 144.1,
+          "volume": 3489322
+        },
+        {
+          "time": "2026-11-25T12:40:00-05:00",
+          "close": 144.76,
+          "volume": 3279732
+        },
+        {
+          "time": "2026-11-25T12:45:00-05:00",
+          "close": 144.79,
+          "volume": 2819219
+        },
+        {
+          "time": "2026-11-25T12:50:00-05:00",
+          "close": 146.04,
+          "volume": 4341812
+        },
+        {
+          "time": "2026-11-25T12:55:00-05:00",
+          "close": 145.65,
+          "volume": 3718957
+        },
+        {
+          "time": "2026-11-25T13:00:00-05:00",
+          "close": 145.96,
+          "volume": 2750149
+        },
+        {
+          "time": "2026-11-25T13:05:00-05:00",
+          "close": 146.34,
+          "volume": 2604823
+        },
+        {
+          "time": "2026-11-25T13:10:00-05:00",
+          "close": 146.19,
+          "volume": 2447666
+        },
+        {
+          "time": "2026-11-25T13:15:00-05:00",
+          "close": 147.48,
+          "volume": 3967071
+        },
+        {
+          "time": "2026-11-25T13:20:00-05:00",
+          "close": 147.23,
+          "volume": 3645608
+        },
+        {
+          "time": "2026-11-25T13:25:00-05:00",
+          "close": 147.46,
+          "volume": 2439036
+        },
+        {
+          "time": "2026-11-25T13:30:00-05:00",
+          "close": 147.25,
+          "volume": 2641819
+        },
+        {
+          "time": "2026-11-25T13:35:00-05:00",
+          "close": 147.16,
+          "volume": 3912051
+        },
+        {
+          "time": "2026-11-25T13:40:00-05:00",
+          "close": 147.7,
+          "volume": 2847031
+        },
+        {
+          "time": "2026-11-25T13:45:00-05:00",
+          "close": 148.18,
+          "volume": 3056743
+        },
+        {
+          "time": "2026-11-25T13:50:00-05:00",
+          "close": 148.32,
+          "volume": 2732910
+        },
+        {
+          "time": "2026-11-25T13:55:00-05:00",
+          "close": 147.85,
+          "volume": 2057187
+        },
+        {
+          "time": "2026-11-25T14:00:00-05:00",
+          "close": 148.12,
+          "volume": 2778759
+        },
+        {
+          "time": "2026-11-25T14:05:00-05:00",
+          "close": 148.32,
+          "volume": 2797397
+        },
+        {
+          "time": "2026-11-25T14:10:00-05:00",
+          "close": 147.4,
+          "volume": 3342367
+        },
+        {
+          "time": "2026-11-25T14:15:00-05:00",
+          "close": 147.1,
+          "volume": 2755426
+        },
+        {
+          "time": "2026-11-25T14:20:00-05:00",
+          "close": 147.65,
+          "volume": 2430477
+        },
+        {
+          "time": "2026-11-25T14:25:00-05:00",
+          "close": 148.08,
+          "volume": 1967461
+        },
+        {
+          "time": "2026-11-25T14:30:00-05:00",
+          "close": 148.24,
+          "volume": 2198578
+        },
+        {
+          "time": "2026-11-25T14:35:00-05:00",
+          "close": 148.32,
+          "volume": 3367172
+        },
+        {
+          "time": "2026-11-25T14:40:00-05:00",
+          "close": 147.97,
+          "volume": 2258660
+        },
+        {
+          "time": "2026-11-25T14:45:00-05:00",
+          "close": 147.68,
+          "volume": 2227546
+        },
+        {
+          "time": "2026-11-25T14:50:00-05:00",
+          "close": 148.46,
+          "volume": 2246640
+        },
+        {
+          "time": "2026-11-25T14:55:00-05:00",
+          "close": 147.84,
+          "volume": 2164294
+        },
+        {
+          "time": "2026-11-25T15:00:00-05:00",
+          "close": 147.92,
+          "volume": 1528247
+        },
+        {
+          "time": "2026-11-25T15:05:00-05:00",
+          "close": 147.87,
+          "volume": 1924768
+        },
+        {
+          "time": "2026-11-25T15:10:00-05:00",
+          "close": 148.06,
+          "volume": 2004690
+        },
+        {
+          "time": "2026-11-25T15:15:00-05:00",
+          "close": 147.99,
+          "volume": 1626901
+        },
+        {
+          "time": "2026-11-25T15:20:00-05:00",
+          "close": 148.08,
+          "volume": 1962028
+        },
+        {
+          "time": "2026-11-25T15:25:00-05:00",
+          "close": 148.18,
+          "volume": 2069048
+        },
+        {
+          "time": "2026-11-25T15:30:00-05:00",
+          "close": 147.71,
+          "volume": 3021236
+        },
+        {
+          "time": "2026-11-25T15:35:00-05:00",
+          "close": 147.43,
+          "volume": 2641791
+        },
+        {
+          "time": "2026-11-25T15:40:00-05:00",
+          "close": 147.72,
+          "volume": 2115109
+        },
+        {
+          "time": "2026-11-25T15:45:00-05:00",
+          "close": 148.53,
+          "volume": 3799975
+        },
+        {
+          "time": "2026-11-25T15:50:00-05:00",
+          "close": 149.01,
+          "volume": 5872472
+        },
+        {
+          "time": "2026-11-25T15:55:00-05:00",
+          "close": 149.27,
+          "volume": 9835224
+        },
+        {
+          "time": "2026-11-25T16:00:00-05:00",
+          "close": 149.51,
           "volume": 0
         },
         {
-          "time": "2026-11-24T16:10:00-05:00",
-          "close": 153.99,
+          "time": "2026-11-25T16:05:00-05:00",
+          "close": 148.96,
           "volume": 0
         },
         {
-          "time": "2026-11-24T16:15:00-05:00",
-          "close": 153.69,
+          "time": "2026-11-25T16:10:00-05:00",
+          "close": 148.98,
           "volume": 0
         },
         {
-          "time": "2026-11-24T16:20:00-05:00",
-          "close": 154.06,
+          "time": "2026-11-25T16:15:00-05:00",
+          "close": 148.95,
           "volume": 0
         },
         {
-          "time": "2026-11-24T16:25:00-05:00",
-          "close": 154.17,
+          "time": "2026-11-25T16:20:00-05:00",
+          "close": 149.48,
           "volume": 0
         },
         {
-          "time": "2026-11-24T16:30:00-05:00",
-          "close": 154.2,
+          "time": "2026-11-25T16:25:00-05:00",
+          "close": 149.43,
           "volume": 0
         },
         {
-          "time": "2026-11-24T16:35:00-05:00",
-          "close": 153.76,
+          "time": "2026-11-25T16:30:00-05:00",
+          "close": 149.18,
           "volume": 0
         },
         {
-          "time": "2026-11-24T16:40:00-05:00",
-          "close": 153.5,
+          "time": "2026-11-25T16:35:00-05:00",
+          "close": 149.48,
           "volume": 0
         },
         {
-          "time": "2026-11-24T16:45:00-05:00",
-          "close": 153.62,
+          "time": "2026-11-25T16:40:00-05:00",
+          "close": 149.45,
           "volume": 0
         },
         {
-          "time": "2026-11-24T16:50:00-05:00",
-          "close": 153.35,
+          "time": "2026-11-25T16:45:00-05:00",
+          "close": 149.08,
           "volume": 0
         },
         {
-          "time": "2026-11-24T16:55:00-05:00",
-          "close": 152.94,
+          "time": "2026-11-25T16:50:00-05:00",
+          "close": 149.0,
           "volume": 0
         },
         {
-          "time": "2026-11-24T17:00:00-05:00",
-          "close": 153.22,
+          "time": "2026-11-25T16:55:00-05:00",
+          "close": 148.52,
           "volume": 0
         },
         {
-          "time": "2026-11-24T17:05:00-05:00",
-          "close": 153.55,
+          "time": "2026-11-25T17:00:00-05:00",
+          "close": 148.5,
           "volume": 0
         },
         {
-          "time": "2026-11-24T17:10:00-05:00",
-          "close": 153.7,
+          "time": "2026-11-25T17:05:00-05:00",
+          "close": 148.6,
           "volume": 0
         },
         {
-          "time": "2026-11-24T17:15:00-05:00",
-          "close": 153.73,
+          "time": "2026-11-25T17:10:00-05:00",
+          "close": 148.55,
           "volume": 0
         },
         {
-          "time": "2026-11-24T17:20:00-05:00",
-          "close": 153.59,
+          "time": "2026-11-25T17:15:00-05:00",
+          "close": 148.58,
           "volume": 0
         },
         {
-          "time": "2026-11-24T17:25:00-05:00",
-          "close": 153.85,
+          "time": "2026-11-25T17:20:00-05:00",
+          "close": 148.71,
           "volume": 0
         },
         {
-          "time": "2026-11-24T17:30:00-05:00",
-          "close": 154.22,
+          "time": "2026-11-25T17:25:00-05:00",
+          "close": 148.84,
           "volume": 0
         },
         {
-          "time": "2026-11-24T17:35:00-05:00",
-          "close": 154.11,
+          "time": "2026-11-25T17:30:00-05:00",
+          "close": 149.2,
           "volume": 0
         },
         {
-          "time": "2026-11-24T17:40:00-05:00",
-          "close": 154.13,
+          "time": "2026-11-25T17:35:00-05:00",
+          "close": 149.39,
           "volume": 0
         },
         {
-          "time": "2026-11-24T17:45:00-05:00",
-          "close": 153.88,
+          "time": "2026-11-25T17:40:00-05:00",
+          "close": 149.47,
           "volume": 0
         },
         {
-          "time": "2026-11-24T17:50:00-05:00",
-          "close": 154.15,
+          "time": "2026-11-25T17:45:00-05:00",
+          "close": 150.51,
           "volume": 0
         },
         {
-          "time": "2026-11-24T17:55:00-05:00",
-          "close": 154.12,
+          "time": "2026-11-25T17:50:00-05:00",
+          "close": 150.2,
           "volume": 0
         },
         {
-          "time": "2026-11-24T18:00:00-05:00",
-          "close": 154.36,
+          "time": "2026-11-25T17:55:00-05:00",
+          "close": 149.92,
           "volume": 0
         },
         {
-          "time": "2026-11-24T18:05:00-05:00",
-          "close": 154.58,
+          "time": "2026-11-25T18:00:00-05:00",
+          "close": 149.7,
           "volume": 0
         },
         {
-          "time": "2026-11-24T18:10:00-05:00",
-          "close": 154.05,
+          "time": "2026-11-25T18:05:00-05:00",
+          "close": 149.75,
           "volume": 0
         },
         {
-          "time": "2026-11-24T18:15:00-05:00",
-          "close": 153.65,
+          "time": "2026-11-25T18:10:00-05:00",
+          "close": 149.53,
           "volume": 0
         },
         {
-          "time": "2026-11-24T18:20:00-05:00",
-          "close": 153.45,
+          "time": "2026-11-25T18:15:00-05:00",
+          "close": 149.69,
           "volume": 0
         },
         {
-          "time": "2026-11-24T18:25:00-05:00",
-          "close": 153.5,
+          "time": "2026-11-25T18:20:00-05:00",
+          "close": 149.73,
           "volume": 0
         },
         {
-          "time": "2026-11-24T18:30:00-05:00",
-          "close": 152.8,
+          "time": "2026-11-25T18:25:00-05:00",
+          "close": 149.65,
           "volume": 0
         },
         {
-          "time": "2026-11-24T18:35:00-05:00",
-          "close": 153.0,
+          "time": "2026-11-25T18:30:00-05:00",
+          "close": 150.0,
           "volume": 0
         },
         {
-          "time": "2026-11-24T18:40:00-05:00",
-          "close": 153.01,
+          "time": "2026-11-25T18:35:00-05:00",
+          "close": 150.24,
           "volume": 0
         },
         {
-          "time": "2026-11-24T18:45:00-05:00",
-          "close": 152.9,
+          "time": "2026-11-25T18:40:00-05:00",
+          "close": 150.3,
           "volume": 0
         },
         {
-          "time": "2026-11-24T18:50:00-05:00",
-          "close": 152.66,
+          "time": "2026-11-25T18:45:00-05:00",
+          "close": 150.0,
           "volume": 0
         },
         {
-          "time": "2026-11-24T18:55:00-05:00",
-          "close": 152.69,
+          "time": "2026-11-25T18:50:00-05:00",
+          "close": 150.34,
           "volume": 0
         },
         {
-          "time": "2026-11-24T19:00:00-05:00",
-          "close": 152.97,
+          "time": "2026-11-25T18:55:00-05:00",
+          "close": 150.52,
           "volume": 0
         },
         {
-          "time": "2026-11-24T19:05:00-05:00",
-          "close": 152.3,
+          "time": "2026-11-25T19:00:00-05:00",
+          "close": 150.38,
           "volume": 0
         },
         {
-          "time": "2026-11-24T19:10:00-05:00",
-          "close": 151.96,
+          "time": "2026-11-25T19:05:00-05:00",
+          "close": 150.91,
           "volume": 0
         },
         {
-          "time": "2026-11-24T19:15:00-05:00",
-          "close": 151.7,
+          "time": "2026-11-25T19:10:00-05:00",
+          "close": 151.34,
           "volume": 0
         },
         {
-          "time": "2026-11-24T19:20:00-05:00",
+          "time": "2026-11-25T19:15:00-05:00",
+          "close": 151.42,
+          "volume": 0
+        },
+        {
+          "time": "2026-11-25T19:20:00-05:00",
+          "close": 151.87,
+          "volume": 0
+        },
+        {
+          "time": "2026-11-25T19:25:00-05:00",
+          "close": 151.75,
+          "volume": 0
+        },
+        {
+          "time": "2026-11-25T19:30:00-05:00",
           "close": 151.82,
           "volume": 0
         },
         {
-          "time": "2026-11-24T19:25:00-05:00",
-          "close": 151.64,
+          "time": "2026-11-25T19:35:00-05:00",
+          "close": 151.84,
           "volume": 0
         },
         {
-          "time": "2026-11-24T19:30:00-05:00",
-          "close": 151.66,
+          "time": "2026-11-25T19:40:00-05:00",
+          "close": 151.47,
           "volume": 0
         },
         {
-          "time": "2026-11-24T19:35:00-05:00",
-          "close": 151.7,
+          "time": "2026-11-25T19:45:00-05:00",
+          "close": 151.53,
           "volume": 0
         },
         {
-          "time": "2026-11-24T19:40:00-05:00",
-          "close": 152.03,
+          "time": "2026-11-25T19:50:00-05:00",
+          "close": 151.42,
           "volume": 0
         },
         {
-          "time": "2026-11-24T19:45:00-05:00",
-          "close": 151.95,
-          "volume": 0
-        },
-        {
-          "time": "2026-11-24T19:50:00-05:00",
-          "close": 152.2,
-          "volume": 0
-        },
-        {
-          "time": "2026-11-24T19:55:00-05:00",
-          "close": 151.95,
+          "time": "2026-11-25T19:55:00-05:00",
+          "close": 151.22,
           "volume": 0
         }
       ],
       "extended_note": "已取得部分延伸交易時段資料；可用性依 Yahoo Finance 回傳為準",
       "news": [
         {
-          "title": "Jensen Huang reclaims throne at Nvidia: Here's the bottom line for investors",
+          "title": "Will Jensen Huang's second act as Nvidia CEO be different?",
           "publisher": "Yahoo Finance Video",
-          "published": "2026-11-25T21:28:03Z",
-          "url": "https://finance.yahoo.com/video/jensen-huang-reclaims-throne-at-nvidia-heres-the-bottom-line-for-investors-212803135.html"
+          "published": "2026-11-26T14:00:00Z",
+          "url": "https://finance.yahoo.com/video/jensen-huangs-second-act-nvidia-140000599.html"
         },
         {
-          "title": "Jensen Huang's return, neocloud risk, and a holiday retail rally",
+          "title": "Jensen Huang 'absolutely could be fired again,' legal expert says",
           "publisher": "Yahoo Finance Video",
-          "published": "2026-11-25T21:00:00Z",
-          "url": "https://finance.yahoo.com/video/jensen-huangs-return-neocloud-risk-and-a-holiday-retail-rally-222042649.html"
+          "published": "2026-11-26T13:00:00Z",
+          "url": "https://finance.yahoo.com/video/jensen-huang-absolutely-could-fired-130000374.html"
         },
         {
-          "title": "Nvidia is cheap on paper, so why won't the market buy it?",
-          "publisher": "Yahoo Finance Video",
-          "published": "2026-11-25T19:22:15Z",
-          "url": "https://finance.yahoo.com/video/nvidia-is-cheap-on-paper-so-why-wont-the-market-buy-it-192215326.html"
+          "title": "Dow Jones Futures Rise; Look For This Bullish Market Signal On Black Friday",
+          "publisher": "Investor's Business Daily",
+          "published": "2026-11-27T04:23:58Z",
+          "url": "https://www.investors.com/market-trend/stock-market-today/dow-jones-futures-market-wild-ride-nasdaq-nvidia-slash-losses-anthropic-higher/?src=A00220&yptr=yahoo"
         },
         {
-          "title": "Why Nvidia's 'Jensen put' failed to stop the AI trade meltdown",
-          "publisher": "Yahoo Finance",
-          "published": "2026-11-25T18:53:34Z",
-          "url": "https://finance.yahoo.com/markets/article/why-nvidias-jensen-put-did-little-to-ease-the-ai-trade-meltdown-185334279.html"
+          "title": "Nvidia (NVDA) Stock Fair Value Falls After Analysts Reassess Leadership And Regulatory Risks",
+          "publisher": "Simply Wall St.",
+          "published": "2026-11-27T04:23:01Z",
+          "url": "https://finance.yahoo.com/markets/stocks/articles/nvidia-nvda-stock-fair-value-042301514.html"
         }
       ],
       "relative_strength_bonus": -1,
@@ -76712,7 +76712,7 @@
       "change_pct": -0.07,
       "day_high": 301.27,
       "day_low": 278.0,
-      "volume": 34256900,
+      "volume": 34349500,
       "rsi": 40.75,
       "macd": -7.3308,
       "macd_signal": -4.2384,
@@ -78173,7 +78173,7 @@
           "high": 301.27,
           "low": 278.0,
           "close": 300.86,
-          "volume": 34256900,
+          "volume": 34349500,
           "sma20": 326.99,
           "sma50": 340.53,
           "bb_upper": 368.97,
@@ -78184,7 +78184,7 @@
         {
           "time": "2026-11-25T10:00:00-05:00",
           "close": 288.82,
-          "volume": 494678
+          "volume": 494378
         },
         {
           "time": "2026-11-25T10:05:00-05:00",
@@ -78198,23 +78198,23 @@
         },
         {
           "time": "2026-11-25T10:15:00-05:00",
-          "close": 283.3,
-          "volume": 387794
+          "close": 283.18,
+          "volume": 387495
         },
         {
           "time": "2026-11-25T10:20:00-05:00",
           "close": 282.67,
-          "volume": 386461
+          "volume": 386735
         },
         {
           "time": "2026-11-25T10:25:00-05:00",
           "close": 282.6,
-          "volume": 240440
+          "volume": 240353
         },
         {
           "time": "2026-11-25T10:30:00-05:00",
           "close": 284.14,
-          "volume": 509244
+          "volume": 509356
         },
         {
           "time": "2026-11-25T10:35:00-05:00",
@@ -78224,12 +78224,12 @@
         {
           "time": "2026-11-25T10:40:00-05:00",
           "close": 283.02,
-          "volume": 198445
+          "volume": 198433
         },
         {
           "time": "2026-11-25T10:45:00-05:00",
           "close": 282.96,
-          "volume": 482453
+          "volume": 482465
         },
         {
           "time": "2026-11-25T10:50:00-05:00",
@@ -78239,27 +78239,27 @@
         {
           "time": "2026-11-25T10:55:00-05:00",
           "close": 283.59,
-          "volume": 233921
+          "volume": 233930
         },
         {
           "time": "2026-11-25T11:00:00-05:00",
           "close": 283.02,
-          "volume": 300211
+          "volume": 300202
         },
         {
           "time": "2026-11-25T11:05:00-05:00",
           "close": 282.25,
-          "volume": 200979
+          "volume": 200941
         },
         {
           "time": "2026-11-25T11:10:00-05:00",
           "close": 282.36,
-          "volume": 389155
+          "volume": 389180
         },
         {
           "time": "2026-11-25T11:15:00-05:00",
           "close": 281.5,
-          "volume": 268679
+          "volume": 268692
         },
         {
           "time": "2026-11-25T11:20:00-05:00",
@@ -78279,12 +78279,12 @@
         {
           "time": "2026-11-25T11:35:00-05:00",
           "close": 281.95,
-          "volume": 177889
+          "volume": 177888
         },
         {
           "time": "2026-11-25T11:40:00-05:00",
           "close": 281.3,
-          "volume": 268815
+          "volume": 268816
         },
         {
           "time": "2026-11-25T11:45:00-05:00",
@@ -78294,17 +78294,17 @@
         {
           "time": "2026-11-25T11:50:00-05:00",
           "close": 282.49,
-          "volume": 206066
+          "volume": 206067
         },
         {
           "time": "2026-11-25T11:55:00-05:00",
           "close": 283.24,
-          "volume": 222179
+          "volume": 222195
         },
         {
           "time": "2026-11-25T12:00:00-05:00",
           "close": 284.67,
-          "volume": 255664
+          "volume": 255647
         },
         {
           "time": "2026-11-25T12:05:00-05:00",
@@ -78319,22 +78319,22 @@
         {
           "time": "2026-11-25T12:15:00-05:00",
           "close": 288.41,
-          "volume": 303408
+          "volume": 303428
         },
         {
           "time": "2026-11-25T12:20:00-05:00",
           "close": 287.02,
-          "volume": 255431
+          "volume": 255413
         },
         {
           "time": "2026-11-25T12:25:00-05:00",
           "close": 286.67,
-          "volume": 193955
+          "volume": 193933
         },
         {
           "time": "2026-11-25T12:30:00-05:00",
           "close": 286.62,
-          "volume": 247939
+          "volume": 247959
         },
         {
           "time": "2026-11-25T12:35:00-05:00",
@@ -78349,12 +78349,12 @@
         {
           "time": "2026-11-25T12:45:00-05:00",
           "close": 288.15,
-          "volume": 261556
+          "volume": 261543
         },
         {
           "time": "2026-11-25T12:50:00-05:00",
           "close": 289.36,
-          "volume": 160291
+          "volume": 160304
         },
         {
           "time": "2026-11-25T12:55:00-05:00",
@@ -78379,17 +78379,17 @@
         {
           "time": "2026-11-25T13:15:00-05:00",
           "close": 291.27,
-          "volume": 240715
+          "volume": 240785
         },
         {
           "time": "2026-11-25T13:20:00-05:00",
           "close": 292.27,
-          "volume": 210150
+          "volume": 210012
         },
         {
           "time": "2026-11-25T13:25:00-05:00",
           "close": 292.19,
-          "volume": 180072
+          "volume": 180140
         },
         {
           "time": "2026-11-25T13:30:00-05:00",
@@ -78524,12 +78524,12 @@
         {
           "time": "2026-11-25T15:40:00-05:00",
           "close": 296.79,
-          "volume": 162237
+          "volume": 162132
         },
         {
           "time": "2026-11-25T15:45:00-05:00",
           "close": 297.58,
-          "volume": 222447
+          "volume": 222552
         },
         {
           "time": "2026-11-25T15:50:00-05:00",
@@ -78538,8 +78538,8 @@
         },
         {
           "time": "2026-11-25T15:55:00-05:00",
-          "close": 300.49,
-          "volume": 1714705
+          "close": 300.55,
+          "volume": 1714967
         },
         {
           "time": "2026-11-25T16:00:00-05:00",
@@ -78673,7 +78673,7 @@
         },
         {
           "time": "2026-11-25T18:10:00-05:00",
-          "close": 300.0,
+          "close": 300.3,
           "volume": 0
         },
         {
@@ -78785,28 +78785,28 @@
       "extended_note": "已取得部分延伸交易時段資料；可用性依 Yahoo Finance 回傳為準",
       "news": [
         {
-          "title": "Why Retail Investors Are Watching AMD and AI Infrastructure Stocks After SpaceX Satellite News",
-          "publisher": "Simply Wall St.",
-          "published": "2026-11-26T02:12:15Z",
-          "url": "https://finance.yahoo.com/technology/ai/articles/why-retail-investors-watching-amd-021215050.html"
-        },
-        {
-          "title": "Broadcom Stock Hasn't Traded This Low Since July 2025. I Think It's a Buy.",
-          "publisher": "Motley Fool",
-          "published": "2026-11-26T01:03:02Z",
-          "url": "https://www.fool.com/investing/2026/11/25/broadcom-stock-hasn-t-traded-this-low-since-july-2025-i-think-it-s-a-buy/"
-        },
-        {
-          "title": "5 Best Strong Buy Growth Stocks to Buy for 2027",
+          "title": "Why Redburn Downgraded Broadcom (AVGO) Despite Surging AI Revenue",
           "publisher": "Insider Monkey",
-          "published": "2026-11-26T00:46:10Z",
-          "url": "https://finance.yahoo.com/markets/stocks/articles/5-best-strong-buy-growth-004610627.html"
+          "published": "2026-11-27T03:50:57Z",
+          "url": "https://finance.yahoo.com/markets/stocks/articles/why-redburn-downgraded-broadcom-avgo-035057918.html"
         },
         {
-          "title": "AI stock rout deepens but damage is limited by afternoon bounce",
-          "publisher": "Reuters",
-          "published": "2026-11-25T22:27:33Z",
-          "url": "https://finance.yahoo.com/markets/stocks/articles/ai-stock-rout-deepens-damage-222733772.html"
+          "title": "Broadcom (AVGO) Could Be the Biggest Winner From the Shift to Custom AI Chips",
+          "publisher": "Insider Monkey",
+          "published": "2026-11-27T03:15:33Z",
+          "url": "https://finance.yahoo.com/technology/ai/articles/broadcom-avgo-could-biggest-winner-031533044.html"
+        },
+        {
+          "title": "These 2 AI Chip Stocks Are Down 36% to 39% From Their Highs. Here’s What History Says Happens Next.",
+          "publisher": "Motley Fool",
+          "published": "2026-11-27T00:20:02Z",
+          "url": "https://www.fool.com/investing/2026/11/26/these-2-ai-chip-stocks-are-down-36-to-39-from-their-highs-here-s-what-history-says-happens-next/"
+        },
+        {
+          "title": "5 Most Oversold Semiconductor Stocks to Buy for 2027",
+          "publisher": "Insider Monkey",
+          "published": "2026-11-26T19:47:38Z",
+          "url": "https://finance.yahoo.com/markets/stocks/articles/5-most-oversold-semiconductor-stocks-194738573.html"
         }
       ],
       "relative_strength_bonus": -1,
@@ -78820,7 +78820,7 @@
       "change_pct": -5.13,
       "day_high": 105.57,
       "day_low": 99.34,
-      "volume": 38324600,
+      "volume": 38491500,
       "rsi": 37.78,
       "macd": -6.5615,
       "macd_signal": -5.4938,
@@ -78830,7 +78830,7 @@
       "atr14": 8.52,
       "atr_pct": 8.2,
       "adx14": 17.48,
-      "volume_ratio": 0.94,
+      "volume_ratio": 0.95,
       "bb_upper": 137.32,
       "bb_lower": 100.28,
       "support20": 99.34,
@@ -80281,7 +80281,7 @@
           "high": 105.57,
           "low": 99.34,
           "close": 103.88,
-          "volume": 38324600,
+          "volume": 38491500,
           "sma20": 118.8,
           "sma50": 129.95,
           "bb_upper": 137.32,
@@ -80347,12 +80347,12 @@
         {
           "time": "2026-11-25T10:55:00-05:00",
           "close": 100.54,
-          "volume": 374596
+          "volume": 374589
         },
         {
           "time": "2026-11-25T11:00:00-05:00",
           "close": 100.45,
-          "volume": 218596
+          "volume": 218603
         },
         {
           "time": "2026-11-25T11:05:00-05:00",
@@ -80367,12 +80367,12 @@
         {
           "time": "2026-11-25T11:15:00-05:00",
           "close": 99.92,
-          "volume": 318280
+          "volume": 318317
         },
         {
           "time": "2026-11-25T11:20:00-05:00",
           "close": 100.39,
-          "volume": 420473
+          "volume": 420436
         },
         {
           "time": "2026-11-25T11:25:00-05:00",
@@ -80402,12 +80402,12 @@
         {
           "time": "2026-11-25T11:50:00-05:00",
           "close": 100.55,
-          "volume": 318424
+          "volume": 318407
         },
         {
           "time": "2026-11-25T11:55:00-05:00",
           "close": 101.11,
-          "volume": 312337
+          "volume": 312354
         },
         {
           "time": "2026-11-25T12:00:00-05:00",
@@ -80487,12 +80487,12 @@
         {
           "time": "2026-11-25T13:15:00-05:00",
           "close": 104.85,
-          "volume": 265710
+          "volume": 265828
         },
         {
           "time": "2026-11-25T13:20:00-05:00",
           "close": 104.65,
-          "volume": 280245
+          "volume": 280127
         },
         {
           "time": "2026-11-25T13:25:00-05:00",
@@ -80522,12 +80522,12 @@
         {
           "time": "2026-11-25T13:50:00-05:00",
           "close": 104.76,
-          "volume": 203638
+          "volume": 203816
         },
         {
           "time": "2026-11-25T13:55:00-05:00",
           "close": 104.58,
-          "volume": 244618
+          "volume": 244440
         },
         {
           "time": "2026-11-25T14:00:00-05:00",
@@ -80542,12 +80542,12 @@
         {
           "time": "2026-11-25T14:10:00-05:00",
           "close": 104.89,
-          "volume": 434008
+          "volume": 434004
         },
         {
           "time": "2026-11-25T14:15:00-05:00",
           "close": 104.85,
-          "volume": 290414
+          "volume": 290418
         },
         {
           "time": "2026-11-25T14:20:00-05:00",
@@ -80602,22 +80602,22 @@
         {
           "time": "2026-11-25T15:10:00-05:00",
           "close": 103.92,
-          "volume": 244558
+          "volume": 244432
         },
         {
           "time": "2026-11-25T15:15:00-05:00",
           "close": 104.19,
-          "volume": 436316
+          "volume": 436442
         },
         {
           "time": "2026-11-25T15:20:00-05:00",
           "close": 104.2,
-          "volume": 221782
+          "volume": 221455
         },
         {
           "time": "2026-11-25T15:25:00-05:00",
           "close": 104.0,
-          "volume": 334993
+          "volume": 335320
         },
         {
           "time": "2026-11-25T15:30:00-05:00",
@@ -80893,28 +80893,28 @@
       "extended_note": "已取得部分延伸交易時段資料；可用性依 Yahoo Finance 回傳為準",
       "news": [
         {
-          "title": "Is Oracle the First AI Casualty as It Sheds 70% of Its Value?",
-          "publisher": "BeInCrypto",
-          "published": "2026-11-26T02:15:00Z",
-          "url": "https://beincrypto.com/oracle-stock-falls-70-ai-debt/"
+          "title": "Wondering Why Oracle Fell? Here's What The Bears Saw",
+          "publisher": "Simply Wall St.",
+          "published": "2026-11-27T01:26:25Z",
+          "url": "https://finance.yahoo.com/markets/stocks/articles/wondering-why-oracle-fell-heres-012625677.html"
         },
         {
-          "title": "Tech Stocks Stall Into Thanksgiving: Will the AI Rebound Return?",
-          "publisher": "BeInCrypto",
-          "published": "2026-11-26T01:19:53Z",
-          "url": "https://beincrypto.com/tech-stocks-stall-thanksgiving-nvidia-rebound/"
+          "title": "‘Room to Spare,’ Says Investor About Oracle Stock",
+          "publisher": "TipRanks",
+          "published": "2026-11-26T21:52:43Z",
+          "url": "https://finance.yahoo.com/markets/stocks/articles/room-spare-says-investor-oracle-215243159.html"
         },
         {
-          "title": "Wall Street Can’t Seem to Find Its Footing in the Chaos of the New AI Trade",
-          "publisher": "The Wall Street Journal",
-          "published": "2026-11-25T21:48:00Z",
-          "url": "https://www.wsj.com/finance/stocks/wall-street-cant-seem-to-find-its-footing-in-the-chaos-of-the-new-ai-trade-b64564e0?siteid=yhoof2&yptr=yahoo"
+          "title": "Fleeing Stocks at 63, She Parks $700,000 of Her 401(k) in a Corporate Bond Fund for Safety. As Banks Dump Data Center Loans, a 5% Slide in Her “Safe” Fund Would Cost Her $35,000",
+          "publisher": "24/7 Wall St.",
+          "published": "2026-11-26T21:36:32Z",
+          "url": "https://247wallst.com/personal-finance/2026/11/26/fleeing-stocks-at-63-she-parks-700000-of-her-401k-in-a-corporate-bond-fund-for-safety-as-banks-dump-data-center-loans-a-5-slide-in-her-safe-fund-would-cost-her-35000/"
         },
         {
-          "title": "Stocks to Watch Recap: Nvidia, Anthropic, Dell",
-          "publisher": "The Wall Street Journal",
-          "published": "2026-11-25T21:47:17Z",
-          "url": "https://www.wsj.com/livecoverage/stock-market-today-dow-sp-500-nasdaq-11-25-2026/card/stocks-to-watch-nvidia-anthropic-dell-wt2HkwvR171Ilamwyc6E?siteid=yhoof2&yptr=yahoo"
+          "title": "Alphabet Stocks Slip 2.13% as Credit Swaps Hit Record Amid $9.1 Billion Cash Burn",
+          "publisher": "GuruFocus.com",
+          "published": "2026-11-26T18:26:01Z",
+          "url": "https://finance.yahoo.com/markets/stocks/articles/alphabet-stocks-slip-2-13-182601811.html"
         }
       ],
       "relative_strength_bonus": -1,
@@ -80928,7 +80928,7 @@
       "change_pct": -1.75,
       "day_high": 407.77,
       "day_low": 370.4,
-      "volume": 51340800,
+      "volume": 51632000,
       "rsi": 38.01,
       "macd": -28.0677,
       "macd_signal": -18.4074,
@@ -80938,7 +80938,7 @@
       "atr14": 46.51,
       "atr_pct": 11.46,
       "adx14": 20.73,
-      "volume_ratio": 1.09,
+      "volume_ratio": 1.1,
       "bb_upper": 594.01,
       "bb_lower": 384.43,
       "support20": 370.4,
@@ -82389,7 +82389,7 @@
           "high": 407.77,
           "low": 370.4,
           "close": 406.03,
-          "volume": 51340800,
+          "volume": 51632000,
           "sma20": 489.22,
           "sma50": 548.35,
           "bb_upper": 594.01,
@@ -82405,22 +82405,22 @@
         {
           "time": "2026-11-25T10:05:00-05:00",
           "close": 379.01,
-          "volume": 796076
+          "volume": 796100
         },
         {
           "time": "2026-11-25T10:10:00-05:00",
           "close": 379.81,
-          "volume": 838052
+          "volume": 838028
         },
         {
           "time": "2026-11-25T10:15:00-05:00",
           "close": 374.77,
-          "volume": 630500
+          "volume": 630641
         },
         {
           "time": "2026-11-25T10:20:00-05:00",
           "close": 373.97,
-          "volume": 543796
+          "volume": 543655
         },
         {
           "time": "2026-11-25T10:25:00-05:00",
@@ -82430,32 +82430,32 @@
         {
           "time": "2026-11-25T10:30:00-05:00",
           "close": 378.1,
-          "volume": 796640
+          "volume": 796563
         },
         {
           "time": "2026-11-25T10:35:00-05:00",
           "close": 375.78,
-          "volume": 616701
+          "volume": 616766
         },
         {
           "time": "2026-11-25T10:40:00-05:00",
           "close": 374.67,
-          "volume": 454174
+          "volume": 454226
         },
         {
           "time": "2026-11-25T10:45:00-05:00",
           "close": 376.19,
-          "volume": 597897
+          "volume": 597877
         },
         {
           "time": "2026-11-25T10:50:00-05:00",
           "close": 376.96,
-          "volume": 937944
+          "volume": 937926
         },
         {
           "time": "2026-11-25T10:55:00-05:00",
           "close": 376.5,
-          "volume": 419817
+          "volume": 419815
         },
         {
           "time": "2026-11-25T11:00:00-05:00",
@@ -82490,22 +82490,22 @@
         {
           "time": "2026-11-25T11:30:00-05:00",
           "close": 373.84,
-          "volume": 508828
+          "volume": 508802
         },
         {
           "time": "2026-11-25T11:35:00-05:00",
           "close": 374.14,
-          "volume": 306104
+          "volume": 306130
         },
         {
           "time": "2026-11-25T11:40:00-05:00",
-          "close": 371.05,
-          "volume": 2076442
+          "close": 371.04,
+          "volume": 2076362
         },
         {
           "time": "2026-11-25T11:45:00-05:00",
           "close": 373.39,
-          "volume": 734164
+          "volume": 734244
         },
         {
           "time": "2026-11-25T11:50:00-05:00",
@@ -82515,12 +82515,12 @@
         {
           "time": "2026-11-25T11:55:00-05:00",
           "close": 375.99,
-          "volume": 433774
+          "volume": 433820
         },
         {
           "time": "2026-11-25T12:00:00-05:00",
           "close": 381.17,
-          "volume": 571423
+          "volume": 571377
         },
         {
           "time": "2026-11-25T12:05:00-05:00",
@@ -82545,22 +82545,22 @@
         {
           "time": "2026-11-25T12:25:00-05:00",
           "close": 383.6,
-          "volume": 547303
+          "volume": 547333
         },
         {
           "time": "2026-11-25T12:30:00-05:00",
           "close": 384.51,
-          "volume": 645893
+          "volume": 645863
         },
         {
           "time": "2026-11-25T12:35:00-05:00",
           "close": 387.18,
-          "volume": 463423
+          "volume": 463543
         },
         {
           "time": "2026-11-25T12:40:00-05:00",
           "close": 389.71,
-          "volume": 472753
+          "volume": 472633
         },
         {
           "time": "2026-11-25T12:45:00-05:00",
@@ -82600,12 +82600,12 @@
         {
           "time": "2026-11-25T13:20:00-05:00",
           "close": 394.69,
-          "volume": 453622
+          "volume": 452744
         },
         {
           "time": "2026-11-25T13:25:00-05:00",
           "close": 395.83,
-          "volume": 421894
+          "volume": 422772
         },
         {
           "time": "2026-11-25T13:30:00-05:00",
@@ -82640,32 +82640,32 @@
         {
           "time": "2026-11-25T14:00:00-05:00",
           "close": 403.36,
-          "volume": 455872
+          "volume": 455851
         },
         {
           "time": "2026-11-25T14:05:00-05:00",
           "close": 405.58,
-          "volume": 482246
+          "volume": 482267
         },
         {
           "time": "2026-11-25T14:10:00-05:00",
           "close": 403.42,
-          "volume": 459238
+          "volume": 459366
         },
         {
           "time": "2026-11-25T14:15:00-05:00",
           "close": 402.46,
-          "volume": 361193
+          "volume": 361065
         },
         {
           "time": "2026-11-25T14:20:00-05:00",
           "close": 404.96,
-          "volume": 391369
+          "volume": 391341
         },
         {
           "time": "2026-11-25T14:25:00-05:00",
           "close": 406.08,
-          "volume": 347342
+          "volume": 347370
         },
         {
           "time": "2026-11-25T14:30:00-05:00",
@@ -82685,12 +82685,12 @@
         {
           "time": "2026-11-25T14:45:00-05:00",
           "close": 402.17,
-          "volume": 468483
+          "volume": 468488
         },
         {
           "time": "2026-11-25T14:50:00-05:00",
           "close": 405.67,
-          "volume": 438601
+          "volume": 438596
         },
         {
           "time": "2026-11-25T14:55:00-05:00",
@@ -82710,12 +82710,12 @@
         {
           "time": "2026-11-25T15:10:00-05:00",
           "close": 402.38,
-          "volume": 323022
+          "volume": 323048
         },
         {
           "time": "2026-11-25T15:15:00-05:00",
           "close": 403.02,
-          "volume": 265034
+          "volume": 265008
         },
         {
           "time": "2026-11-25T15:20:00-05:00",
@@ -82725,27 +82725,27 @@
         {
           "time": "2026-11-25T15:25:00-05:00",
           "close": 401.74,
-          "volume": 401956
+          "volume": 401955
         },
         {
           "time": "2026-11-25T15:30:00-05:00",
           "close": 398.59,
-          "volume": 555425
+          "volume": 555424
         },
         {
           "time": "2026-11-25T15:35:00-05:00",
           "close": 397.18,
-          "volume": 490012
+          "volume": 490014
         },
         {
           "time": "2026-11-25T15:40:00-05:00",
           "close": 398.92,
-          "volume": 612970
+          "volume": 613203
         },
         {
           "time": "2026-11-25T15:45:00-05:00",
           "close": 401.09,
-          "volume": 647507
+          "volume": 647274
         },
         {
           "time": "2026-11-25T15:50:00-05:00",
@@ -82754,8 +82754,8 @@
         },
         {
           "time": "2026-11-25T15:55:00-05:00",
-          "close": 406.83,
-          "volume": 1874129
+          "close": 406.78,
+          "volume": 1873629
         },
         {
           "time": "2026-11-25T16:00:00-05:00",
@@ -83001,28 +83001,28 @@
       "extended_note": "已取得部分延伸交易時段資料；可用性依 Yahoo Finance 回傳為準",
       "news": [
         {
-          "title": "Nvidia, AMD, and Micron stocks trim steep losses amid jittery AI trade",
-          "publisher": "Yahoo Finance",
-          "published": "2026-11-25T13:45:18Z",
-          "url": "https://finance.yahoo.com/markets/article/nvidia-amd-micron-stocks-sink-as-investors-flee-ai-trade-134518921.html"
+          "title": "Eric Trump-Backed Robot Startup’s Employees Lose Health Insurance After Weeks Without Pay as Company Scrambles for $150 Million Lifeline: Report",
+          "publisher": "Benzinga",
+          "published": "2026-11-27T02:30:05Z",
+          "url": "https://finance.yahoo.com/healthcare/articles/eric-trump-backed-robot-startup-023005325.html"
         },
         {
-          "title": "Why Retail Investors Are Watching AMD and AI Infrastructure Stocks After SpaceX Satellite News",
-          "publisher": "Simply Wall St.",
-          "published": "2026-11-26T02:12:15Z",
-          "url": "https://finance.yahoo.com/technology/ai/articles/why-retail-investors-watching-amd-021215050.html"
-        },
-        {
-          "title": "Tech Stocks Stall Into Thanksgiving: Will the AI Rebound Return?",
-          "publisher": "BeInCrypto",
-          "published": "2026-11-26T01:19:53Z",
-          "url": "https://beincrypto.com/tech-stocks-stall-thanksgiving-nvidia-rebound/"
-        },
-        {
-          "title": "Big AI Buyers Want a Second Source. Is AMD (AMD) It?",
+          "title": "5 Most Oversold Semiconductor Stocks to Buy for 2027",
           "publisher": "Insider Monkey",
-          "published": "2026-11-26T00:56:02Z",
-          "url": "https://finance.yahoo.com/technology/ai/articles/big-ai-buyers-want-second-005602621.html"
+          "published": "2026-11-26T19:47:38Z",
+          "url": "https://finance.yahoo.com/markets/stocks/articles/5-most-oversold-semiconductor-stocks-194738573.html"
+        },
+        {
+          "title": "KHC, PINS, AMD: 3 Bets I’d Consider Waging From Thanksgiving Eve’s Top 25 Unusually Active Options",
+          "publisher": "Barchart",
+          "published": "2026-11-26T18:30:04Z",
+          "url": "https://www.barchart.com/story/news/9022595/khc-pins-amd-3-bets-id-consider-waging-from-thanksgiving-eves-top-25-unusually-active-options"
+        },
+        {
+          "title": "AMD Stocks Slip 1.75% After Filing Registers 337 Million Shares for Resale",
+          "publisher": "GuruFocus.com",
+          "published": "2026-11-26T18:29:28Z",
+          "url": "https://finance.yahoo.com/markets/stocks/articles/amd-stocks-slip-1-75-182928246.html"
         }
       ],
       "relative_strength_bonus": -1,
