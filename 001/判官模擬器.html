@@ -9,11 +9,11 @@
 <style>
 :root{--bg:#120d0d;--panel:#1c1414;--line:#3a2a26;--red:#b3261e;--red2:#e0574c;--gold:#c9a45c;--paper:#efe6d0;--ink:#2a1f17;--txt:#e9e1d6;--dim:#9c8f84;--good:#6fae7a}
 *{box-sizing:border-box;margin:0;padding:0}
-html,body{height:100%;background:#0a0707;color:var(--txt);font-family:"Source Han Serif TC","Noto Serif TC","思源宋體","思源明體",serif;-webkit-tap-highlight-color:transparent}
+html,body{height:100%;overscroll-behavior:none;background:#0a0707;color:var(--txt);font-family:"Source Han Serif TC","Noto Serif TC","思源宋體","思源明體",serif;-webkit-tap-highlight-color:transparent}
 img.px{image-rendering:pixelated;image-rendering:crisp-edges}
 body{overflow:hidden}
 .serif{font-family:"Noto Serif TC",serif}
-#app{height:100dvh;max-width:820px;margin:0 auto;display:flex;flex-direction:column;position:relative;background:radial-gradient(ellipse at top,#2a1414 0%,var(--bg) 65%);border-left:1px solid #1f1616;border-right:1px solid #1f1616;overflow:hidden}
+#app{height:100vh;height:100dvh;height:var(--app-h,100dvh);max-width:820px;margin:0 auto;display:flex;flex-direction:column;position:relative;background:radial-gradient(ellipse at top,#2a1414 0%,var(--bg) 65%);border-left:1px solid #1f1616;border-right:1px solid #1f1616;overflow:hidden}
 #bg{position:absolute;inset:0;background-size:cover;background-position:center;image-rendering:pixelated;opacity:.32;pointer-events:none;transition:background-image .4s}
 #app>*:not(#bg){position:relative}
 #ov,#scene,#toast,#hitfx,.stampfx{position:absolute!important}
@@ -34,7 +34,7 @@ button{font:inherit;color:inherit;background:none;border:none;cursor:pointer}
 .bar .tr{height:6px;background:#2b211e;border-radius:3px;overflow:hidden;margin-top:3px}
 .bar .fl{height:100%;transition:width .3s}
 #main{flex:1;overflow-y:auto;padding:14px;-webkit-overflow-scrolling:touch}
-#foot{border-top:1px solid var(--line);padding:10px 14px calc(10px + env(safe-area-inset-bottom));background:rgba(18,13,13,.95);display:none}
+#foot{flex:none;border-top:1px solid var(--line);padding:10px 14px calc(10px + env(safe-area-inset-bottom));background:rgba(18,13,13,.95);display:none}
 /* title */
 .title-wrap{height:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;gap:18px}
 .title-wrap h1{font-family:"Noto Serif TC",serif;font-weight:900;font-size:52px;letter-spacing:10px;color:#e8d6b0;text-shadow:0 0 24px rgba(179,38,30,.6)}
@@ -169,6 +169,15 @@ input[type=text]{width:100%;padding:10px;background:#0e0a0a;border:1px solid var
 @keyframes tblink{50%{opacity:.35}}
 .tver{position:absolute;bottom:12px;left:14px;font-size:10.5px;color:#5f524a;pointer-events:none}
 .end-wrap{padding:30px 6px;text-align:center}
+.endcg{width:100%;max-width:420px;border-radius:8px;border:2px solid #5a2a22;margin:0 auto 18px;display:block}
+.trial{padding:4px 0}
+.tr-h{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:8px;gap:8px;flex-wrap:wrap}
+.tr-h b{color:var(--gold);font-size:18px}
+.tr-claim{display:flex;gap:12px;align-items:flex-start;background:#1d1414;border:1px solid #5a2a22;border-radius:8px;padding:12px;margin-top:12px}
+.tr-claim img{width:84px;height:84px;border-radius:6px;flex:none;background:#1a1010}
+.tr-claim .nm{color:var(--gold);font-weight:700;margin-bottom:4px}
+.tr-claim .serif{line-height:1.8;font-size:calc(15.5px*var(--fs,1))}
+.tr-cards .night-opt b{font-size:calc(14.5px*var(--fs,1))}
 .chain{display:flex;flex-direction:column;align-items:stretch;margin-bottom:14px}
 .chain .cn{border:1px solid var(--line);border-radius:6px;padding:7px 10px;text-align:center;font-size:14px;background:#160f0f;color:var(--dim)}
 .chain .cn.on{border-color:var(--gold);color:var(--gold);background:#1f1810}
@@ -227,8 +236,14 @@ table.arch td.gt{background:#b3261e!important;color:#fff}
   <div id="hitfx"></div>
 </div>
 <script>
+/* 手機視窗高度修正：網址列伸縮、輸入法收起後，頁面可能被推高而遮住底部操作列 */
+(function(){const fit=()=>{const h=window.visualViewport?window.visualViewport.height:window.innerHeight;document.documentElement.style.setProperty('--app-h',Math.round(h)+'px');if(window.scrollY||document.documentElement.scrollTop||document.body.scrollTop){window.scrollTo(0,0);document.body.scrollTop=0;document.documentElement.scrollTop=0;}};
+ ['resize','orientationchange','pageshow','focusout'].forEach(e=>window.addEventListener(e,()=>{fit();setTimeout(fit,300);}));
+ if(window.visualViewport){visualViewport.addEventListener('resize',fit);visualViewport.addEventListener('scroll',fit);}
+ document.addEventListener('visibilitychange',()=>{if(!document.hidden)setTimeout(fit,100);});fit();})();
+
 'use strict';
-const VERSION='v0.6.0';
+const VERSION='v1.0.0';
 const KEY='yama_night_v01';
 const $=s=>document.querySelector(s);
 
@@ -658,7 +673,7 @@ function fresh(name,gender){return{name,gender,day:1,stress:15,grudge:0,coin:50,
 function T(s){if(!S)return s;return s.replace(/\{N\}/g,S.name).replace(/\{S\}/g,S.gender==='f'?'姊':'哥').replace(/\{P\}/g,S.gender==='f'?'她':'他');}
 function snapR(){return R?{queue:R.queue,idx:R.idx,time:R.time,scores:R.scores,mirror:R.mirror,soup:R.soup}:null;}
 function save(r){try{localStorage.setItem(KEY,JSON.stringify({S,R:r||snapR(),phase:S.phase||'shift'}));}catch(e){}}
-function saveLabel(sv){if(sv.phase==='act')return `進入第${sv.S.day<=7?'二':'三'}幕`;if(sv.phase==='night')return `第 ${sv.S.day} 夜・下班後`;const r=sv.R||{idx:0};return `第 ${sv.S.day} 夜・第 ${(r.idx||0)+1} 位亡魂`;}
+function saveLabel(sv){if(sv.phase==='act')return `進入第${sv.S.day<=7?'二':sv.S.day<=14?'三':'四'}幕`;if(sv.phase==='night')return `第 ${sv.S.day} 夜・下班後`;const r=sv.R||{idx:0};return `第 ${sv.S.day} 夜・第 ${(r.idx||0)+1} 位亡魂`;}
 function loadSave(){try{const d=JSON.parse(localStorage.getItem(KEY));return d&&d.S?d:null;}catch(e){return null;}}
 function clearSave(){try{localStorage.removeItem(KEY);}catch(e){}}
 function clamp(v,a,b){return Math.max(a,Math.min(b,v));}
@@ -749,7 +764,7 @@ function sceneStep(){while(SC&&SC.i<SC.lines.length&&String(SC.lines[SC.i][0]).s
  if(sp==='旁'){html=`<div class="dlg"><div class="tx nar">${T(tx)}</div><div class="hint">點擊繼續</div></div>`;}
  else{let name,color,glyph;const info=SP[sp];
   if(sp==='我'){name=S.name;color='#8a2a22';glyph=S.name[0];}
-  else if(info){name=info[0];color=info[1];glyph=sp==='妹'?'晴':sp;}
+  else if(info){name=info[0];color=info[1];glyph=sp==='妹'?'晴':sp[0];}
   else{name=sp;color='#5a4a3a';glyph=sp[0];}
   const fg=(sp==='白')?'#222':'#fff';
   const file=sp==='我'?(S.gender==='f'?'p_f':'p_m'):PIMG[sp];
@@ -778,7 +793,7 @@ function titleScreen(){hideHud();setFoot('');R=null;setBg('');clearInterval(TICK
  <div class="tctr">今晚候審人數<b id="tcount">32,004,118</b></div>
  <div class="tti"><div class="pre">第 五 殿</div><h1>閻羅殿夜班</h1><div class="sub">每一個亡魂，都在等你蓋下那一章。</div></div>
  <div class="tmenu">${items.map((it,i)=>`<button class="tm${i===0?' on':''}" onmouseenter="tmHover(this)" onclick="${it[2]}">${it[0]}${it[1]?`<small>${it[1]}</small>`:''}</button>`).join('')}</div>
- <div class="thint">— 點擊畫面任意處，推開殿門 —</div><div class="tver">${VERSION}・第一～三幕</div></div>`;
+ <div class="thint">— 點擊畫面任意處，推開殿門 —</div><div class="tver">${VERSION}・全四幕</div></div>`;
  let n=32004118;TICK=setInterval(()=>{const el=$('#tcount');if(!el){clearInterval(TICK);return;}n+=1+Math.floor(Math.random()*4);el.textContent=n.toLocaleString('en-US');},140);}
 function tmHover(el){document.querySelectorAll('.tm').forEach(e=>e.classList.toggle('on',e===el));}
 function titleDossier(){const sv=loadSave();if(!sv)return;S=sv.S;openDossier('plot');}
@@ -802,7 +817,7 @@ function buildQueue(d){if(d===22)computeQingFate();const fixed=CASES.filter(c=>c
  S.var=S.var||{};pick.forEach(id=>{if(!ALT[id])return;const seen=META.souls[id]||[];let p=.5;if(seen.includes(0)&&!seen.includes(1))p=.75;else if(seen.includes(1)&&!seen.includes(0))p=.25;S.var[id]=Math.random()<p?1:0;});
  if(d===8)return [...fixed,...q];
  if(d===21)S.dealIds=pick.filter(id=>CMAP[id].anom);
- fixed.forEach(id=>{if(d===7||d===14||d===22)q.push(id);else q.splice(Math.floor(Math.random()*(q.length+1)),0,id);});return q;}
+ fixed.forEach(id=>{if(d===7||d===14||d===22||d===29)q.push(id);else q.splice(Math.floor(Math.random()*(q.length+1)),0,id);});return q;}
 function startDay(d){S.day=d;S.phase='shift';S.nightDone=false;const pre=[];
  if(d>1){S.stress=clamp(S.stress-5,0,100);S.grudge=clamp(S.grudge-5,0,100);
   let c=0;for(let i=0;i<S.pend;i++)if(Math.random()<.35)c++;S.pend=0;
@@ -818,10 +833,10 @@ function startDay(d){S.day=d;S.phase='shift';S.nightDone=false;const pre=[];
  ({4:'d4',5:'d5',6:'hei',10:'jiang'})[d]&&addClue(({4:'d4',5:'d5',6:'hei',10:'jiang'})[d]);
  if(d>8)S.sus=clamp((S.sus||0)-2,0,100);
  if(d===15&&S.sus>0){S.sus=Math.round(S.sus/2);pre.push(['旁','這週陸主任被第十殿叫去開會，對你的注意少了一半。（陸主任的懷疑減半）']);}
- const lines=[['旁',`第 ${d} 夜・23:00　候審亡魂：${queue.length} 位<br>試用期第 ${d} 天／30 天　｜　今晚目標：判完全部亡魂，07:00 前下班`],...(typeof DAYSTART[d]==='function'?DAYSTART[d]():(DAYSTART[d]||[])),...pre];
+ const lines=[['旁',d===30?'第 30 夜・23:00　今晚沒有候審的亡魂。':`第 ${d} 夜・23:00　候審亡魂：${queue.length} 位<br>試用期第 ${d} 天／30 天　｜　今晚目標：判完全部亡魂，07:00 前下班`],...(typeof DAYSTART[d]==='function'?DAYSTART[d]():(DAYSTART[d]||[])),...pre];
  if(d===15)act3Init();DSKIP=false;
  const go=()=>beginShift({queue:S.flags.lost17&&d===17?queue.filter(id=>id!=='H3'):queue,idx:0,time:0,scores:[],mirror:S.today.mirror,soup:S.today.soup});
- const next=d===12?()=>choiceMa(go):d===17&&allyFull('bh')?()=>choice17(go):d===21?()=>choiceDeal(go):go;
+ const next=d===30?act30:d===12?()=>choiceMa(go):d===17&&allyFull('bh')?()=>choice17(go):d===21?()=>choiceDeal(go):d===23?()=>choiceRoute(go):d===26&&isQingAlive()&&S.flags.route!=='partner'&&!S.flags.qingTaken&&!(S.flags.qingBack||S.flags.qingHunted)?()=>choiceReport(go):d===27&&!S.flags.maGive?()=>choiceForgive(go):go;
  playScene(lines,next);}
 function beginShift(r){setBg('bg_hall');R={queue:r.queue,idx:r.idx||0,time:r.time||0,scores:r.scores||[],mirror:r.mirror,soup:r.soup};if(R.idx>=R.queue.length){endShift();return;}loadCase();}
 function cur(){return caseOf(R.queue[R.idx]);}
@@ -897,6 +912,8 @@ function doVerdict(){const c=cur(),st=R.cur,v=VSEL;if(!v||R.busy)return;R.busy=t
  R.adopt=0;
  if(c.id==='G6'&&v==='back')addClue('kid');if(c.id==='G7')addClue('trap');if(c.id==='Q13')addClue('taxi');if(c.id==='G1')addClue('g1');if(c.id==='G3')addClue('g3');if(c.id==='G4')addClue('g4');
  if(c.id==='G6')S.flags.kid=v;
+ if(c.id==='JW'){if(v==='hold'){S.flags.jiangHeld=1;addClue('jianghold');}else addClue('jianghell');}
+ if(S.day>=24&&!R.adopt)R.time+=20;
  ({H1:'clinic',H2:'select',H4:'syslog',H5:'recycle',H6:'heir',H7:'pay'})[c.id]&&addClue(({H1:'clinic',H2:'select',H4:'syslog',H5:'recycle',H6:'heir',H7:'pay'})[c.id]);
  if(c.id==='H8a'&&v==='back'){S.flags.qingBack=1;S.sus=Math.min(95,Math.max(S.sus||0,90));ach('save');}if(c.id==='G7')S.flags.trap=v;
  S.seenCoach=S.seenCoach||[];if(!S.seenCoach.includes(c.id))S.seenCoach.push(c.id);
@@ -904,7 +921,7 @@ function doVerdict(){const c=cur(),st=R.cur,v=VSEL;if(!v||R.busy)return;R.busy=t
  ({F4:'f4',F8:'f8',F9:'f9'})[c.id]&&addClue(({F4:'f4',F8:'f8',F9:'f9'})[c.id]);
  const head={ok:['res-ok','判決正確'],part:['res-part','判決尚可'],bad:['res-bad','判決錯誤']}[tier];
  let txt;if(tier==='bad')txt=(c.wt&&c.wt[v])||`${c.name}帶著不甘離開了審判殿。你隱約聽見身後傳來一聲嘆息。`;else txt=c.review;
- txt=T(txt);if(bribe)txt+='<br><span style="color:#e2c58a">你把那份「心意」收進了抽屜。</span>';
+ if(c.reviews&&c.reviews[v]&&tier!=='bad')txt=c.reviews[v];txt=T(txt);if(bribe)txt+='<br><span style="color:#e2c58a">你把那份「心意」收進了抽屜。</span>';
  const dl=[];if(d.coin)dl.push(`冥幣 ${d.coin>0?'+':''}${d.coin}`);if(d.karma)dl.push(`陰德 ${d.karma>0?'+':''}${d.karma}`);dl.push(`壓力 +${d.stress}`);if(d.grudge)dl.push(`冤氣 +${d.grudge}`);if(d.sus)dl.push(`懷疑 +${d.sus}`);
  const last=R.idx>=R.queue.length-1;
  const html=`<h2 class="${head[0]}">${head[1]}</h2><p class="muted">你的判決：${V[v][0]}${tier!=='ok'?`　｜　崔判官批註：正解應為「${V[c.ans][0]}」`:''}</p>
@@ -933,6 +950,7 @@ function nightMenu(){hud();setFoot('');setBg('bg_tea');if(S.day>=15)act3Init();
  <button class="night-opt" onclick="nightDo('niu')"><b>找牛頭摸魚</b><span>壓力 -15・牛頭的故事 ${Math.min(S.rel.niu,3)}／3</span></button>
  <button class="night-opt" onclick="nightDo('ma')"><b>向馬面請教效率</b><span>明晚工時 +30 分鐘・壓力 +5・馬面的故事 ${Math.min(S.rel.ma,3)}／3</span></button>
  ${S.day>=15&&S.ally.length<2?`<button class="night-opt" onclick="openTalk()" style="border-color:#c9a45c"><b>密談・結盟</b><span>找人幫忙（最多兩位）・目前盟友：${S.ally.map(k=>ALLY[k].name).join('、')||'無'}</span></button>`:''}
+ ${S.day>=25&&S.day<=29&&heldSouls().length?`<button class="night-opt" onclick="visitHeld()" style="border-color:#2a9d8f"><b>探視暫押亡魂</b><span>請他們在公審上作證・目前 ${heldSouls().length} 人</span></button>`:''}
  <button class="night-opt" onclick="studyMenu()"><b>判官研習班</b><span>花冥幣永久升級能力</span></button>
  ${S.day>=9?`<button class="night-opt" onclick="archStart()" style="border-color:#2a9d8f"><b>潛入檔案室・名單比對</b><span>蒐集證據・壓力 +8・被抓到懷疑 +15</span></button>`:''}
  <button class="night-opt" onclick="nightDo('rest')"><b>回宿舍睡覺</b><span>壓力 -30</span></button></div>
@@ -950,6 +968,7 @@ function nightDo(k){let title,text;const i=S.day-1;
  const eff={meng:'',niu:'壓力 -15',ma:'明晚工時 +30 分鐘・壓力 +5'}[k];
  if(k==='niu')S.stress=clamp(S.stress-15,0,100);
  if(k==='ma'){S.bonusTime=30;S.stress=clamp(S.stress+5,0,100);}
+ if(k==='niu'&&S.day>=23)S.flags.niuNights=(S.flags.niuNights||0)+1;
  const stage=S.rel[k];S.rel[k]++;if(S.rel[k]>=3)ach(k+'3');const who={meng:'孟婆',niu:'牛頭',ma:'馬面'}[k];
  const pool={meng:MENG,niu:NIU,ma:MA}[k];
  if(k==='meng')setBg('bg_tea');
@@ -958,6 +977,8 @@ function nightDo(k){let title,text;const i=S.day-1;
    if(s.clue){addClue(s.clue);tx+=`<br><span style="color:var(--gold)">卷宗新增線索：${CLUES[s.clue][1]}</span>`;}
    if(eff)tx+=`<br><span class="muted">${eff}</span>`;nightResult(who,tx);});}
  else nightResult(who,`${who}：「${pool[i%pool.length]}」${eff?`<br><span class="muted">${eff}</span>`:''}`);}
+function visitHeld(){const h=heldSouls();const id=h[Math.floor(Math.random()*h.length)];const c=CMAP[id];S.flags.visited=1;PIMG[c.name]='s_'+id;
+ playScene([['旁','你走到暫押區的長椅前。'],[c.name,'判官，我們都聽說了。公審那天，我會說出我記得的每一件事。'],[c.name,'我本來不該死的。這句話，我想親口說給他們聽。']],()=>nightResult('探視暫押亡魂',`${c.name}答應在公審上作證。<br><span class="muted">暫押的亡魂共 ${h.length} 人，他們的證詞會成為一張證據。</span>`));}
 function addClue(id){S.clues=S.clues||[];if(!S.clues.includes(id)){S.clues.push(id);if(typeof checkChain==='function'&&S.day>=15)checkChain();if(R||document.querySelector('#hud').style.display==='block')toast('卷宗新增線索','good');}}
 function setBg(name){$('#bg').style.backgroundImage=name?`url(img/${name}.png)`:'none';}
 function studyMenu(){const U=[['mirror','業鏡上限 +1',price(120),`目前 ${S.up.mirror}`],['soup','試劑上限 +1',price(120),`目前 ${S.up.soup}`],['speed','速讀術',price(80),S.up.speed?'已習得':'對質耗時 15→10 分']];
@@ -972,8 +993,11 @@ const ENDINGS={
 burnout:['二次過勞','你在審判桌前睡著了，再也沒有醒來。\n崔判官說，這是他在地府三百年來，第一次看到有人在地府過勞。\n你的魂魄化成一縷青煙，連投胎的隊伍都排不上。\n陸主任在你的人事檔案上寫下最後一行：「抗壓性不足」。'],
 grudge:['冤魂索命','被你判錯的亡魂們聯名告上了第一殿。\n審判很快，判決更快。\n你被押往一座你親手判過別人的地獄。\n押送你的白無常小聲說：「新人，我們本來很看好你的。」'],
 bribe:['監守自盜','第二次被抓到收賄，崔判官親手寫了你的判決書。\n判決：油鍋獄。\n他蓋章的時候沒有看你，只說了一句：「我說過，別被我抓到。」']};
-function ending(k){closeModal();clearSave();hideHud();setFoot('');R=null;setBg('');if(!META.endings.includes(k)){META.endings.push(k);saveMeta();}metaCheck();const [t,x]=ENDINGS[k];
- $('#main').innerHTML=`<div class="end-wrap"><div class="muted">GAME OVER・結局</div><h1>〈${t}〉</h1>${x.split('\n').map(s=>`<p>${s}</p>`).join('')}<div class="row" style="justify-content:center"><button class="btn red" onclick="titleScreen()">回到標題</button></div></div>`;}
+function ending(k){closeModal();clearSave();hideHud();setFoot('');R=null;setBg('');if(!META.endings.includes(k)){META.endings.push(k);saveMeta();}
+ if(GOOD_END.includes(k)||k==='hell')ach('act4');if(k==='night')ach('trueend');if(k==='cat')ach('catend');metaCheck();
+ const [t,x]=ENDINGS[k];const good=GOOD_END.includes(k);
+ $('#main').innerHTML=`<div class="end-wrap"><div class="muted">${good?'結局':'GAME OVER・結局'}</div><h1>〈${t}〉</h1><img class="px endcg" src="img/${END_IMG[k]||'title'}.png" alt="" onerror="this.remove()">${T(x).split('\n').map(p=>`<p>${p}</p>`).join('')}
+ <div class="row" style="justify-content:center"><button class="btn" onclick="shareCard('${k}')">結局分享卡</button><button class="btn" onclick="openMerit('end')">功德簿</button><button class="btn red" onclick="titleScreen()">回到標題</button></div></div>`;$('#main').scrollTop=0;}
 function actEnd(){hideHud();setFoot('');setBg('title');const act=S.day<=7?1:S.day<=14?2:3;const k=act===1?S.stats.kpi.slice(0,7):act===2?S.stats.kpi.slice(7,14):S.stats.kpi.slice(14,22);const avg=Math.round(k.reduce((a,b)=>a+b,0)/Math.max(1,k.length));
  const g=avg>=90?'S':avg>=75?'A':avg>=60?'B':'C';const rate=S.stats.judged?Math.round(S.stats.correct/S.stats.judged*100):0;
  const cm=S.karma>=40?'崔判官把一本舊卷宗放在你桌上：「有空看看。不要讓別人知道。」':S.karma>=15?'崔判官對你點了點頭，沒說什麼。':S.karma>=0?'崔判官：「你還有很多要學。」':'崔判官看你的眼神，越來越像在看一個亡魂。';
@@ -981,16 +1005,16 @@ function actEnd(){hideHud();setFoot('');setBg('title');const act=S.day<=7?1:S.da
  const extra3=`<div class="stat"><span>小晴</span><span>${QF[S.flags.qingFate]||'—'}</span></div><div class="stat"><span>盟友</span><span>${(S.ally||[]).map(k=>ALLY[k].name).concat(S.flags.appeal?['閻羅王']:[]).join('、')||'無'}</span></div><div class="stat"><span>證據鏈</span><span>${chainCount()}／5</span></div><div class="stat"><span>陸主任的交易</span><span>${S.flags.deal?'接受':S.flags.dealBroken?'接受後毀約':'拒絕'}</span></div><div class="stat"><span>陸主任的懷疑</span><span>${S.sus||0}</span></div>`;
  const extra=act===3?extra3:act===1?`<div class="stat"><span>周文彬的判決</span><span>${S.flags.f9?V[S.flags.f9][0]:'—'}</span></div>`
   :`<div class="stat"><span>陸主任的懷疑</span><span>${S.sus||0}</span></div><div class="stat"><span>檔案室證據</span><span>${(S.evid||[]).length} 件</span></div><div class="stat"><span>馬面</span><span>${S.flags.maGive?'你救了他':'你沒有插手'}</span></div><div class="stat"><span>陳小宇</span><span>${S.flags.kid?V[S.flags.kid][0]:'—'}</span></div>`;
- if(act<3){S.phase='act';save(null);}else clearSave();
+ S.phase='act';save(null);
  {const A=META.acts[act]=META.acts[act]||{clear:0,best:''};A.clear++;if(!A.best||'SABC'.indexOf(g)<'SABC'.indexOf(A.best))A.best=g;saveMeta();
   if(act===1){ach('first');if(S.stats.judged&&S.stats.correct===S.stats.judged)ach('perfect1');}
   if(act===3){ach('act3');if(chainCount()===5)ach('chain5');}
   if(act===2){ach('act2');if(!S.stats.bribes)ach('clean');if(!S.flags.adoptAnom)ach('rebel');}metaCheck();}
- $('#main').innerHTML=`<div class="end-wrap"><div class="muted">試用期・第 ${'一二三'[act-1]}週考核</div><h1>第${'一二三'[act-1]}幕　完</h1><div class="grade">${g}</div>
+ $('#main').innerHTML=`<div class="end-wrap"><div class="muted">試用期・第 ${'一二三四'[act-1]}週考核</div><h1>第${'一二三'[act-1]}幕　完</h1><div class="grade">${g}</div>
  <div class="card" style="text-align:left"><div class="stat"><span>平均 KPI</span><span>${avg}</span></div><div class="stat"><span>累計判案數</span><span>${S.stats.judged}</span></div><div class="stat"><span>正確率</span><span>${rate}%</span></div><div class="stat"><span>發現矛盾</span><span>${S.stats.finds}</span></div><div class="stat"><span>陰德</span><span>${S.karma}</span></div><div class="stat"><span>收下的「心意」</span><span>${S.stats.bribes} 次</span></div>${extra}</div>
  <p>${cm}</p>${act===1?`<div class="row" style="justify-content:center"><button class="btn" onclick="openDossier('plot')">查看卷宗</button><button class="btn red" onclick="startDay(8)">進入第二幕〈異常〉</button></div>`
   :act===2?`<div class="row" style="justify-content:center"><button class="btn" onclick="openDossier('plot')">查看卷宗</button><button class="btn red" onclick="startDay(15)">進入第三幕〈調查〉</button></div>`
-  :`<p class="muted" style="text-align:center">第四幕〈審判〉製作中</p><div class="row" style="justify-content:center"><button class="btn" onclick="openDossier('plot')">查看卷宗</button><button class="btn red" onclick="titleScreen()">回到標題</button></div>`}</div>`;}
+  :`<div class="row" style="justify-content:center"><button class="btn" onclick="openDossier('plot')">查看卷宗</button><button class="btn red" onclick="startDay(23)">進入第四幕〈審判〉</button></div>`}</div>`;}
 
 /* ========== 卷宗 ========== */
 let DTAB='plot';
@@ -1007,7 +1031,7 @@ function openDossier(t){if(t)DTAB=t;if(!S){openHandbook();return;}
   else ln=(c.line||[]).filter(l=>S.day>=l[0]).map(l=>`<p>・${l[1]}</p>`).join('');
   const ak={崔:'cui',孟:'meng',牛:'niu',馬:'ma',白:'bh',黑:'bh'}[c.sp];if(S.day>=15&&ak){act3Init();ln=(hasAlly(ak)?`<div class="lv" style="color:var(--gold)">盟友（${S.allyMode[ak]==='full'?'全部說出':'只說一部分'}）</div>`:ALLY[ak].can()?'<div class="lv">可以密談</div>':`<div class="lv">${ALLY[ak].hint()}</div>`)+ln;}if(c.sp==='閻'&&S.flags.appeal)ln='<div class="lv" style="color:var(--gold)">盟友（殿主背書）</div>'+ln;if(c.sp==='妹'&&S.day>=16)ln=`<div class="lv">${qingState()}</div>`+ln;
   return `<div class="chr"><img class="px" src="img/${PIMG[c.sp]}.png" alt="" onerror="this.style.visibility='hidden'"><div><b>${c.name}</b>　<span class="lv">${c.role}</span><p>${c.bio}</p>${ln}</div></div>`;}).join('');}
- if(DTAB==='dex'){const ids=CASES.filter(c=>(S.day>=8||!(c.fixed>7||c.min>=8))&&(S.day>=15||!(c.fixed>14||c.min>=15))).map(c=>c.id);const dx=S.dex||{};
+ if(DTAB==='dex'){const ids=CASES.filter(c=>(S.day>=8||!(c.fixed>7||c.min>=8))&&(S.day>=15||!(c.fixed>14||c.min>=15))&&(S.day>=23||!(c.fixed>22||c.min>=23))).map(c=>c.id);const dx=S.dex||{};
   body=`<div class="muted" style="margin-bottom:8px">已審判 ${Object.keys(dx).length}／${ids.length}　點擊可看生平</div><div class="dx">`+ids.map(id=>{const c=CMAP[id],d=dx[id];
    return d?`<div class="it" onclick="dexOne('${id}')"><img class="px" src="img/s_${id}.png" alt="">${c.name}</div>`:`<div class="it lock"><img class="px" src="img/s_ghost.png" alt="" onerror="this.style.visibility='hidden'">？？？</div>`;}).join('')+'</div>';}
  if(DTAB==='rule')body=handbookHtml();
@@ -1460,14 +1484,14 @@ const ACH=[
  ['ma3','卷王的眼淚','聽完馬面的三段故事'],['arch10','檔案室常客','累計在檔案室找到 10 件證據'],['ghost','來去無蹤','累計 3 次潛入檔案室都沒被抓到'],
  ['overtime','加班狂','單夜加班超過 120 分鐘'],['ontime','準時下班','連續 7 夜在 07:00 前下班'],['finder','明察秋毫','累計發現 300 處矛盾'],
  ['all','一個都不能少','審判過圖鑑裡的每一個亡魂（跨局累計）'],['twin','輪迴','看過 10 個亡魂的兩種人生'],['again','再來一班','開始第二次試用期'],
- ['end4','地府常客','看過全部 4 種中途結局'],['act3','真相的輪廓','完成第三幕'],['save','活下去','讓小晴活下來'],['partner','合夥人','接受陸主任的交易'],['chain5','真相大白','證據鏈全部接上'],['noleak','守口如瓶','有盟友，且第 19 夜沒有被告密']
+ ['end4','地府常客','看過全部 4 種中途結局'],['act3','真相的輪廓','完成第三幕'],['save','活下去','讓小晴活下來'],['partner','合夥人','接受陸主任的交易'],['chain5','真相大白','證據鏈全部接上'],['noleak','守口如瓶','有盟友，且第 19 夜沒有被告密'],['act4','最後的夜班','走到第 30 夜的結局'],['trueend','夜班結束','看到真結局'],['catend','喵','看到隱藏結局'],['allend','十二種人生','看過全部結局']
 ];
-const ENDLIST=[['burnout','二次過勞','壓力爆表'],['grudge','冤魂索命','冤氣爆表'],['bribe','監守自盜','收賄被抓兩次'],['recycle','回收','陸主任的懷疑爆表']];
+const ENDLIST=[['night','夜班結束','真結局：公審全勝、小晴活著，選擇回到她身邊'],['firstday','復活後的第一天','公審全勝後，選擇回去上班'],['lord','第五殿主','公審全勝後，選擇留在地府'],['iron','鐵面判官','在轉輪王面前保持沉默'],['iron2','鐵面判官（贏了一半）','公審只扳倒陸主任'],['partner','合夥人','和轉輪王合作到最後'],['hell','打入地獄','公審失敗'],['cat','下輩子當貓','隱藏：和牛頭摸魚到最後'],['burnout','二次過勞','壓力爆表'],['grudge','冤魂索命','冤氣爆表'],['bribe','監守自盜','收賄被抓兩次'],['recycle','回收','陸主任的懷疑爆表']];
 function ach(id){if(META.ach.includes(id))return;META.ach.push(id);saveMeta();const a=ACH.find(x=>x[0]===id);if(a){toast('功德簿｜達成：'+a[1],'good',3600);try{sfx('coin');}catch(e){}}}
 function metaCheck(){const n=Object.keys(META.souls).length;if(n>=CASES.length)ach('all');
  if(Object.values(META.souls).filter(v=>v.length>=2).length>=10)ach('twin');
  if(META.finds>=300)ach('finder');if(META.evid>=10)ach('arch10');if(META.archSafe>=3)ach('ghost');if(META.adopt>=20)ach('follow');
- if(ENDLIST.every(e=>META.endings.includes(e[0])))ach('end4');if(META.runs>=2)ach('again');saveMeta();}
+ if(['burnout','grudge','bribe','recycle'].every(e=>META.endings.includes(e)))ach('end4');if(ENDLIST.every(e=>META.endings.includes(e[0])))ach('allend');if(META.runs>=2)ach('again');saveMeta();}
 let MTAB='stat';
 function openMerit(t){if(t)MTAB=t;const tabs=[['stat','統計'],['ach','成就'],['end','結局']];let body='';
  if(MTAB==='stat'){const acc=META.judged?Math.round(META.correct/META.judged*100):0;const sn=Object.keys(META.souls).length;
@@ -1477,11 +1501,11 @@ function openMerit(t){if(t)MTAB=t;const tabs=[['stat','統計'],['ach','成就']
   <div class="stat"><span>累計判案</span><span>${META.judged} 件</span></div><div class="stat"><span>判決正確率</span><span>${acc}%</span></div>
   <div class="stat"><span>累計發現矛盾</span><span>${META.finds} 處</span></div><div class="stat"><span>檔案室證據</span><span>${META.evid} 件</span></div>
   <div class="stat"><span>亡魂圖鑑</span><span>${sn}／${CASES.length}</span></div><div class="stat"><span>另一種人生</span><span>${seenAlt}／${alts}</span></div>
-  <div class="muted" style="margin:14px 0 4px">章節</div>${actRow(1,'第一幕〈新人報到〉')}${actRow(2,'第二幕〈異常〉')}${actRow(3,'第三幕〈調查〉')}<div class="stat"><span>第四幕〈審判〉</span><span class="muted">製作中</span></div>
+  <div class="muted" style="margin:14px 0 4px">章節</div>${actRow(1,'第一幕〈新人報到〉')}${actRow(2,'第二幕〈異常〉')}${actRow(3,'第三幕〈調查〉')}
   <p class="muted" style="font-size:12px;margin-top:10px">「另一種人生」：同一個亡魂，每次試用期可能帶著不同的證物和真相出現。</p>`;}
  if(MTAB==='ach'){body=`<div class="muted" style="margin-bottom:8px">已達成 ${META.ach.length}／${ACH.length}</div>`+ACH.map(a=>{const on=META.ach.includes(a[0]);
   return `<div class="clue" style="${on?'':'opacity:.4;border-color:var(--line)'}"><small>${on?'已達成':'未達成'}</small><b style="color:${on?'var(--gold)':'inherit'}">${a[1]}</b>　${a[2]}</div>`;}).join('');}
- if(MTAB==='end'){body=`<div class="muted" style="margin-bottom:8px">中途結局 ${ENDLIST.filter(e=>META.endings.includes(e[0])).length}／${ENDLIST.length}　｜　真結局與其他結局將在第三、四幕開放</div>`+ENDLIST.map(e=>{const on=META.endings.includes(e[0]);
+ if(MTAB==='end'){body=`<div class="muted" style="margin-bottom:8px">結局 ${ENDLIST.filter(e=>META.endings.includes(e[0])).length}／${ENDLIST.length}</div>`+ENDLIST.map(e=>{const on=META.endings.includes(e[0]);
   return `<div class="clue${on?'':' q'}" style="${on?'':'opacity:.55'}"><small>${on?'已看過':'未解鎖'}</small>${on?`〈${e[1]}〉`:'〈？？？〉'}　<span class="muted">${on?e[2]:'提示：'+e[2]}</span></div>`;}).join('');}
  modal(`<h2>功德簿</h2><div class="ctabs">${tabs.map(t=>`<button class="${MTAB===t[0]?'on':''}" onclick="openMerit('${t[0]}')">${t[1]}</button>`).join('')}</div>${body}<div class="row"><button class="btn" onclick="closeModal()">關閉</button></div>`);}
 
@@ -1821,8 +1845,230 @@ function cuiReady(){return hasAlly('cui')&&S.day>=15&&!S.today.cuiUsed&&(allyFul
 function useCui(){if(!cuiReady())return;const c=cur(),st=R.cur;const i=c.contra.findIndex((p,ix)=>!st.found.includes(ix));S.today.cuiUsed=1;sfx('tool');
  if(i>=0){st.found.push(i);toast('正本對照｜'+c.contra[i][2],'good',4200);fxHit();}else toast('正本和系統版本一致。');addClue('cuiorig');renderShift();}
 
+/* ================= 第四幕〈審判〉 案件 ================= */
+CASES.push(
+{id:'J1',fixed:24,name:'王美珠',meta:'52 歲・墜樓',sug:'tongue',
+ docs:[['book','生死簿','姓名：王美珠　享年 52 歲\n職業：萬壽健檢中心櫃檯\n紀錄：{a|多次對雇主說謊}'],
+  ['say','本人陳述','「我騙老闆說{b|抽血機器壞了}，騙了好幾次。」\n「我只是……不想再看那些年輕人坐上那張椅子。」'],
+  ['ev','證物・健檢中心紀錄','她當班的日子，{c|抽血預約取消率 80%}。'],
+  ['ev','證物・顧客證詞','「櫃檯阿姨小聲跟我說：『{d|你還年輕，今天先回家吧}。』」{x0|她還塞了一顆糖給我}。']],
+ contra:[['a','b','她說的謊，是為了讓抽血做不成。'],['b','c','她當班的日子，大部分的年輕人都沒抽到血。'],['c','d','她一個一個勸他們回家。']],
+ ans:'heaven',part:{human:.6},review:'王美珠升天。那些被她勸回家的年輕人，到現在都不知道自己欠她一條命。'},
+{id:'J2',fixed:27,name:'方怡君',meta:'28 歲・車禍',
+ docs:[['book','生死簿','姓名：方怡君　享年 28 歲\n職業：萬壽健檢中心行銷經理'],
+  ['say','本人陳述','「我只是{a|做行銷}的。免費健檢，是回饋社會。」'],
+  ['ev','證物・行銷企劃書','目標族群：{b|20–40 歲、無慢性病、無家族病史}。KPI：{x0|每月新增 3,000 名}。'],
+  ['ev','證物・內部信件','「綠點客戶轉換率很好，{c|下季加碼投放}。」']],
+ soup:'「……{d|我知道綠點是什麼。KPI 達標，我就能升總監。}」',
+ contra:[['a','b','「回饋社會」的目標族群，是最健康、陽壽最長的人。'],['b','c','她知道綠點，還要加碼投放。'],['a','d','孟婆湯下她承認：她一直都知道。']],
+ ans:'tongue',part:{oil:.6},review:'方怡君前往拔舌獄。她的最後一份企劃書，主題是「地獄觀光」。'},
+{id:'JW',fixed:29,name:'江萬壽',meta:'98 歲・猝死',
+ docs:[['book','生死簿','姓名：江萬壽　享年 98 歲\n原定陽壽：{a|61 歲}\n移轉增加：{b|37 年（來源 214 人）}'],
+  ['say','本人陳述','「我花錢買的，{c|天經地義}。」\n「判官大人，我可以把我知道的全說出來——只要別送我下去。」'],
+  ['ev','證物・移轉清單','來源包含：{d|周文彬、李建廷、王志豪……}共 214 人。'],
+  ['ev','證物・醫院紀錄','死因：{x0|多重器官衰竭}。陽間的檢調，昨天剛搜索了江氏集團。']],
+ contra:[['a','b','他原本 61 歲就該死了，多活的 37 年是偷來的。'],['b','d','那 37 年，來自 214 個人。'],['c','d','「天經地義」——他買的是別人的命。']],
+ ans:'oil',part:{hold:1,blade:.6},
+ reviews:{hold:'你蓋下「暫押待查」。江萬壽鬆了一口氣，接著又開始盤算。他會在公審上咬出轉輪王——為了他自己。',
+  oil:'江萬壽前往油鍋獄。214 個人的名字，一個一個在油鍋邊被唸出來。……但公審上，你少了一個證人。'},
+ review:'江萬壽被帶走了。'},
+/* ---- 第四幕隨機池 ---- */
+{id:'K1',min:23,name:'林志遠',meta:'40 歲・心肌梗塞',
+ docs:[['book','生死簿','姓名：林志遠　享年 40 歲\n職業：外科醫師'],['say','本人陳述','「我是{a|救人的醫生}。」'],['ev','證物・病患家屬證詞','「不包紅包，{b|手術就一直排不到}。」'],['ev','證物・帳戶紀錄','五年收受紅包 {c|1,600 萬}。{x0|他手術技術很好}。']],
+ contra:[['a','b','救人的醫生，先看紅包再排刀。'],['b','c','排不到的手術，換來一千六百萬。']],ans:'oil',part:{tongue:.4},review:'林志遠前往油鍋獄。手術室的排程表，第二天就變得很空。'},
+{id:'K2',min:23,name:'陳淑貞',meta:'35 歲・車禍',
+ docs:[['book','生死簿','姓名：陳淑貞　享年 35 歲\n職業：網路代購'],['say','本人陳述','「我的代購{a|都是正品}，評價五顆星。」'],['ev','證物・消保官紀錄','{b|收款後不出貨}，受害者 2,300 人。'],['ev','證物・評價紀錄','五星好評{c|九成來自同一批帳號}。{x0|客服回覆很快}。']],
+ contra:[['a','b','收了錢，根本沒出貨。'],['a','c','五星評價，是她自己刷的。']],ans:'tongue',part:{oil:.6},review:'陳淑貞前往拔舌獄。她的訂單，在地府也一直顯示「備貨中」。'},
+{id:'K3',min:23,name:'黃大川',meta:'67 歲・壽終',
+ docs:[['book','生死簿','姓名：黃大川　享年 67 歲\n職業：退休警察\n紀錄：{a|曾被記大過}'],['say','本人陳述','「我那次……{b|違抗了上級命令}。」'],['ev','證物・舊卷宗','上級要求他{c|撤回一件官商勾結案}，他拒絕並送交檢方。'],['ev','證物・判決書','該案{d|三名官員被定罪}。{x0|他因此提早退休}。']],
+ contra:[['a','c','他被記過，是因為不肯撤案。'],['b','d','他違抗的命令，最後讓三個貪官被定罪。']],ans:'heaven',part:{human:.6},review:'黃大川升天。崔判官看著他的卷宗，難得說了一句：「同行。」'},
+{id:'K4',min:23,name:'李佳玲',meta:'29 歲・墜樓',
+ docs:[['book','生死簿','姓名：李佳玲　享年 29 歲\n職業：醫美診所負責人'],['say','本人陳述','「我們診所{a|很專業}，客人都很滿意。」'],['ev','證物・衛生局紀錄','使用{b|來源不明的針劑}，{c|17 名客人臉部壞死}。'],['ev','證物・學歷','{x0|無醫師執照}。']],
+ contra:[['a','b','很專業的診所，用來源不明的針劑。'],['b','c','十七個人的臉，毀在那些針裡。']],ans:'blade',part:{oil:.6},review:'李佳玲前往刀山獄。刀山上沒有鏡子，她很不習慣。'},
+{id:'K5',min:23,name:'吳俊賢',meta:'50 歲・腦溢血',
+ docs:[['book','生死簿','姓名：吳俊賢　享年 50 歲\n職稱：{x0|處長}'],['say','本人陳述','「我是{a|恨鐵不成鋼}。」'],['ev','證物・會議錄音','「你們這群廢物，{b|全部給我站著開會}。」——共 2 小時。'],['ev','證物・人事紀錄','部門三年內{c|兩人因憂鬱症離職}。']],
+ contra:[['a','b','恨鐵不成鋼，是叫整個部門罰站兩小時。'],['b','c','他的「鍛鍊」，讓兩個人病倒了。']],ans:'fire',part:{ice:.4},review:'吳俊賢前往業火獄。他在獄中第一件事，是想召集大家開會。'},
+{id:'K6',min:23,name:'謝阿嬌',meta:'75 歲・壽終',
+ docs:[['book','生死簿','姓名：謝阿嬌　享年 75 歲\n職業：拾荒\n紀錄：{a|曾占用騎樓堆放回收物}'],['say','本人陳述','「我給鄰居{b|添了不少麻煩}。」'],['ev','證物・存摺','三十年存下 {c|210 萬}，{d|全數捐給兒童醫院}。'],['ev','證物・鄰居證詞','「{x0|她每天都會跟我們說早安}。」']],
+ contra:[['a','c','騎樓上的那些回收物，最後變成了兩百萬。'],['b','d','給鄰居添的麻煩，換來兒童醫院的一間病房。']],ans:'heaven',part:{human:.6},review:'謝阿嬌升天。兒童醫院的那間病房，門口掛著一個小牌子：「阿嬌阿嬤的房間」。'},
+{id:'K7',min:23,name:'鄭建成',meta:'46 歲・工地意外',
+ docs:[['book','生死簿','姓名：鄭建成　享年 46 歲\n職業：工地老闆'],['say','本人陳述','「我做工程，{a|一向守法}。」'],['ev','證物・環保局紀錄','營建廢土{b|非法傾倒於水源保護區}，累計 3 萬噸。'],['ev','證物・水質報告','下游三個村{c|自來水無法飲用}。{x0|罰款至今未繳}。']],
+ contra:[['a','b','守法的工地老闆，把廢土倒在水源區。'],['b','c','三個村子，從此喝不到乾淨的水。']],ans:'mill',part:{oil:.5},review:'鄭建成前往石磨獄。他要把那三萬噸土，一粒一粒磨乾淨。'},
+{id:'K8',min:23,name:'許文彬',meta:'24 歲・心臟驟停',anom:1,sug:'human',
+ docs:[['book','生死簿','姓名：許文彬　現年 {a|24 歲}\n陽壽：{b|80 歲}\n修改紀錄：{c|由「系統」修改}'],['say','本人陳述','「我跑外送，那天剛{x0|做完免費健檢}……」'],['ev','證物・醫院即時紀錄','急診：{d|電擊後恢復心跳}。']],
+ contra:[['a','b','陽壽 80，他才 24 歲。'],['b','d','陽壽未盡，心跳恢復了。']],ans:'back',part:{hold:.5},review:'許文彬醒了。他說以後送餐，會繞過萬壽健檢中心那條街。'},
+{id:'K9',min:23,name:'蔡淑芬',meta:'38 歲・猝死',anom:1,sug:'human',
+ docs:[['book','生死簿','姓名：蔡淑芬　享年 {a|38 歲}\n陽壽：{b|84 歲}\n修改紀錄：{c|由「系統」修改}'],['say','本人陳述','「我兒子才{x0|五歲}。」'],['ev','證物・殯儀館紀錄','遺體{d|已火化}。']],
+ contra:[['a','b','陽壽 84，她才 38 歲。'],['b','d','陽壽未盡，肉身已毀。']],ans:'hold',part:{human:.3},review:'你蓋下「暫押待查」。她問你：「暫押的時候，可以去看我兒子嗎？」你沒辦法回答。'},
+{id:'K10',min:23,name:'劉明德',meta:'58 歲・中風',
+ docs:[['book','生死簿','姓名：劉明德　享年 58 歲\n職業：民意代表'],['say','本人陳述','「我{a|為民服務}三十年。」'],['ev','證物・調查局紀錄','收受江氏集團{b|政治獻金 3,000 萬}，協助{c|萬壽健檢中心取得公益補助}。'],['ev','證物・選民服務紀錄','{x0|紅白帖從不缺席}。']],
+ contra:[['a','b','為民服務，收的是江氏集團的錢。'],['b','c','他讓「挑人」的健檢中心，拿到了公益補助。']],ans:'oil',part:{tongue:.6},review:'劉明德前往油鍋獄。他在油鍋旁還想發名片。'},
+{id:'K11',min:23,name:'黃小鳳',meta:'31 歲・車禍',
+ docs:[['book','生死簿','姓名：黃小鳳　享年 31 歲\n職業：直播主'],['say','本人陳述','「我那時候是在{a|記錄現場}。」'],['ev','證物・直播紀錄','車禍現場，傷者呼救，她{b|直播 40 分鐘，沒有報警}。'],['ev','證物・醫院紀錄','傷者{c|因延誤送醫死亡}。{x0|那場直播斗內破紀錄}。']],
+ contra:[['a','b','她記錄現場，卻沒有打一通電話。'],['b','c','有人在她的鏡頭前，慢慢死去。']],ans:'ice',part:{fire:.4},review:'黃小鳳前往寒冰獄。她的帳號還在，最後一支影片的留言區，沒有一則是好話。'},
+{id:'K12',min:23,name:'簡文雄',meta:'63 歲・壽終',
+ docs:[['book','生死簿','姓名：簡文雄　享年 63 歲\n惡行：{a|無重大惡行}'],['say','本人陳述','「我這輩子，{b|從不管別人的事}。」'],['ev','證物・鄰居證詞','「隔壁老太太跌倒呼救兩天，{c|他就住對門}。」'],['ev','證物・管委會紀錄','{x0|管理費從不遲繳}。']],
+ contra:[['a','c','沒有大惡——只是聽見呼救也不開門。'],['b','c','他從不管別人的事，連救命也不管。']],ans:'beast',part:{ice:.6},review:'簡文雄投胎成一隻寄居蟹。牠一輩子都躲在殼裡。'},
+{id:'K13',min:23,name:'王啟明',meta:'42 歲・食物中毒',
+ docs:[['book','生死簿','姓名：王啟明　享年 42 歲\n死因：{x0|食物中毒}'],['say','本人陳述','「我只是{a|討厭吵}。」'],['ev','證物・動保處紀錄','社區內{b|投放毒餌}，毒死流浪狗貓 46 隻。'],['ev','證物・警方紀錄','{c|一名孩童誤食毒餌送醫}。']],
+ contra:[['a','b','討厭吵，就毒死了四十六隻狗貓。'],['b','c','他的毒餌，差點毒死一個孩子。']],ans:'mill',part:{blade:.6},review:'王啟明前往石磨獄。他的死因，是吃了自己放錯地方的便當。'}
+);
+Object.assign(LIFE,{
+J1:'在健檢中心櫃檯坐了八年。她不懂什麼綠點，只知道最近來抽血的年輕人，過沒多久都會出現在訃聞上。',
+J2:'行銷系第一名畢業，年年達標。她最得意的作品，是「免費健檢，愛自己」那支廣告。',
+JW:'江氏集團創辦人，98 歲還在開董事會。他相信世界上的一切都有價錢，包括時間。',
+K1:'名校畢業的外科醫師，刀開得很好，紅包收得更好。',K2:'網路代購賣家，評價五顆星，出貨零件。',K3:'當了四十年警察，最後一年被記了大過。他說那是他這輩子最驕傲的一件事。',
+K4:'自稱「微整形女王」的診所老闆，其實連護理師執照都沒有。',K5:'公司裡人人怕的處長，他最常說的話是「我年輕的時候更慘」。',K6:'在巷口撿了三十年回收，大家都叫她阿嬌阿嬤。',
+K7:'工地老闆，最在意的是工期，最不在意的是工地以外的事。',K8:'剛退伍的外送員，第一份正職是送餐。',K9:'單親媽媽，兒子五歲。她去做免費健檢，是因為覺得自己不能生病。',
+K10:'連任五屆的民意代表，紅白帖從不缺席。',K11:'記錄生活的直播主，粉絲二十萬。那天她記錄到了一場車禍。',K12:'退休公務員，一生奉行「多一事不如少一事」。',K13:'社區裡最怕吵的人，他解決吵鬧的方式很安靜。'
+});
+COUNTS.push(2,3,2,2,3,2,2,0);
+
+/* ================= 第四幕 劇情 ================= */
+Object.assign(DAYSTART,{
+23:[['@bg','bg_wheel'],['旁','第四幕〈審判〉'],['旁','第十殿比你想像的還要安靜。巨大的轉輪在頭頂轉動，沒有一點聲音。'],['轉2','你就是{N}。坐吧。'],['旁','轉輪王的臉，第一次清楚地出現在你面前。他看起來很疲倦，像一個加了太久班的人。'],['轉2','你覺得我在偷東西。我只是在分配。'],['轉2','陽壽是資源。給一個每天熬夜、三十四歲就過勞的人，不如給一個能讓十萬人有飯吃的企業家。'],['@bg','bg_office'],['轉2','你自己就是例子。凌晨三點還亮著的那台電腦，是你的。'],['轉2','你的陽壽，用在別人身上有用多了。'],['@bg','bg_wheel'],['@route','']],
+24:()=>{const L=[['@bg','bg_lu'],['陸2','各位同仁，從今天起，智慧判決建議升級為「預設判決」。'],['陸2','要改掉預設判決的人，請填寫三份申請書。……我很期待大家的申請書。'],['旁','從今晚起，不採用系統建議的判決，每件要多花 20 分鐘。']];
+ if(!(hasAlly('cui')||hasAlly('meng'))&&(S.evid||[]).length){const n=Math.min(3,S.evid.length);S.evid.splice(-n,n);L.push(['旁','下班前，你發現檔案室被翻過了。你藏起來的比對紀錄，少了 '+n+' 份。'],['旁','（沒有崔判官或孟婆幫你保管，陸主任清掉了部分證據。）']);}
+ else if((S.evid||[]).length)L.push(['旁','檔案室被翻過了。但你的比對紀錄，早就被'+(hasAlly('cui')?'崔判官收進了正本櫃':'孟婆藏在茶葉罐底下')+'。']);
+ L.push(['@bg','bg_hall']);return L;},
+25:()=>{const h=heldSouls();const L=[['旁','候審大廳的角落，有一排長椅，坐著那些你判了「暫押待查」的人。']];
+ if(h.length)L.push(['旁','他們還在。'+h.slice(0,5).map(id=>CMAP[id].name).join('、')+(h.length>5?'……共 '+h.length+' 人':'')+'。'],['周文彬','判官。我們聽說要公審了。'],['周文彬','需要證人的話，我們都在這裡。'],['旁','從今晚起，夜間行動可以「探視暫押亡魂」，請他們在公審上作證。']);
+ else L.push(['旁','長椅是空的。你從來沒有讓任何人留下來。'],['旁','公審上，你將沒有受害者的證詞。']);
+ return L;},
+26:()=>sisterAct4(),
+27:()=>{const L=[['旁','馬面在茶水間門口等你，手裡抱著一本厚厚的冊子。']];
+ if(S.flags.maGive){S.flags.malog=1;L.push(['馬','這是陸主任的修改日誌。每一筆，誰改的、什麼時候改的，都在裡面。'],['馬','你救過我。這次，換我站出來。'],['旁','取得證據：陸主任的修改日誌。']);}
+ else L.push(['馬','……我知道我沒資格來找你。'],['馬',''+(S.clues.includes('leakma')?'第 19 夜，是我告的密。':'我一直都知道陸主任在做什麼，卻什麼都沒說。')],['馬','這是陸主任的修改日誌。你要不要收下，你決定。'],['@forgive','']);
+ return L;},
+28:()=>{const L=[['@bg','bg_night'],['旁','深夜，崔判官把一張泛黃的照片放在你桌上。照片裡是一個笑得很燦爛的年輕人。'],['崔孫','（照片）'],['崔','我孫子。三年前，二十六歲，健檢完一個月就走了。'],['崔','他是系統上線之後，第一個被改的人。'],['崔','我每晚抄紙本名單，不是為了等別人看見。是為了不讓自己忘記。']];
+ if(hasAlly('cui')||S.clues.includes('cuiorig')){S.flags.origCard=1;L.push(['崔','公審那天，生死簿正本，我親自送上去。'],['旁','取得證據：生死簿正本。']);}
+ else L.push(['崔','正本在我手上。但你從來沒有開口要過。'],['崔','……公審那天，我會在旁邊看著。']);
+ L.push(['@bg','bg_hall']);return L;},
+29:[['旁','凌晨兩點，陽間傳來消息：江氏集團被搜索，98 歲的江萬壽在偵訊室裡倒下。'],['白','他、他來了！排在今晚的最後一個！'],['旁','那個用 214 個人的命，多活了 37 年的人。今晚，要由你來判。']],
+30:()=>{const L=[['@bg','bg_court'],['旁','第 30 夜。試用期的最後一天。'],['旁','第十殿的公審庭，十殿閻王都到了。']];
+ if(S.flags.route==='silent')return L.concat([['旁','你沒有站上被告席，也沒有站上原告席。你只是坐在旁聽席最後一排。'],['@ending','iron']]);
+ if(S.flags.route==='partner')return L.concat([['陸','{N}判官，請。今天的被告是——第五殿崔判官，罪名：竄改生死簿。'],['旁','崔判官站在被告席上，看了你一眼，什麼都沒說。'],['@partnerTrial','']]);
+ return L.concat([['閻',S.flags.appeal?'第五殿判官{N}，越殿上訴，本殿背書。':'第五殿判官{N}，控告陸主任竄改生死簿。'],['陸2','我很期待你的證據。'],['@trial','']]);}
+});
+Object.assign(DAYEND,{});
+SP.轉2=['轉輪王','#6a5a2a'];PIMG.轉2='c_zhuan2';SP.崔孫=['崔家豪（照片）','#555'];PIMG.崔孫='c_cuigs';SP.陸3=['陸主任','#1f5f55'];PIMG.陸3='c_lu3';
+PIMG.JW='c_jiang';
+Object.assign(CLUES,{
+ route_fight:['第 23 夜','你拒絕了轉輪王。第 30 夜，公審。'],route_partner:['第 23 夜','你接受了轉輪王的邀請。'],route_silent:['第 23 夜','你選擇沉默，只想好好當判官。'],
+ qreport:['第 26 夜','小晴把何美珍的帳本交給了記者，陽間開始調查江氏集團。'],malog:['第 27 夜','馬面交出了陸主任的修改日誌。'],orig:['第 28 夜','崔判官會親自把生死簿正本送上公審庭。'],
+ jianghold:['第 29 夜','你暫押了江萬壽。他會在公審上作證。'],jianghell:['第 29 夜','你把江萬壽送進了油鍋獄。']
+});
+QUESTIONS.push([23,'第 30 夜的公審，你準備好了嗎？']);
+Object.assign(COACH,{J1:'<b>第四幕：預設判決</b>　從今晚起，不採用系統建議，每件要多花 20 分鐘（填申請書）。<br>夜間行動可以「探視暫押亡魂」，請他們在第 30 夜的公審上作證。'});
+
+/* ================= 公審劇本 ================= */
+const CARDNAME={L1:'萬壽健檢中心的挑選名單',L2:'被改的陽壽與受益人清單',L3:'延壽契約（乙方：陸○○）',L4:'LU_ADMIN 操作紀錄',L5:'轉輪基金帳冊',orig:'生死簿正本',arch:'檔案室比對紀錄',wit:'暫押亡魂的證詞',qrep:'陽間的調查報導',malog:'陸主任的修改日誌',recyc:'趙子明的考核表',jiang:'江萬壽的證詞',qingw:'小晴的證詞'};
+const TRIAL=[
+ {ph:1,who:'陸2',t:'那些年輕人都是自然死亡。健檢中心只是陽間的民間機構，與地府毫無關係。',strong:['L1'],weak:['wit','qrep','qingw']},
+ {ph:1,who:'陸2',t:'陽壽增減是天命。沒有任何人「得到」別人的陽壽。',strong:['L2'],weak:['qrep','wit','jiang']},
+ {ph:1,who:'陸2',t:'我本人與江氏集團，從來沒有任何往來。',strong:['L3'],weak:['qrep','malog']},
+ {ph:1,who:'陸2',t:'所有陽壽的修改，都是系統自動校正，沒有任何人操作。',strong:['L4','malog'],weak:['arch']},
+ {ph:1,who:'陸2',t:'我從未逼迫、也從未處分任何一位判官。',strong:['recyc'],weak:['malog','wit']},
+ {ph:2,who:'陸3',t:'……很好。但你手上的東西，全部都是偽造的。證明給我看。',strong:['orig','arch5'],weak:['arch','malog','wit']},
+ {ph:3,who:'轉2',t:'就算有人買賣陽壽，那也是陸某人的事。錢，與第十殿無關。',strong:['L5'],weak:['malog','jiang']},
+ {ph:3,who:'轉2',t:'你能證明，我知情嗎？',strong:['jiang'],weak:['L5']}
+];
+
+/* ================= 結局 ================= */
+Object.assign(ENDINGS,{
+ night:['夜班結束','公審結束的那一刻，轉輪停了。\n214 份被偷走的陽壽，一份一份回到了它們原本的地方。其中一份，是你的。\n閻羅王把你的判官筆收了回去：「試用期結束。你不合格——你本來就不該在這裡。」\n你在醫院醒來。窗外天剛亮，小晴趴在病床邊睡著了，手機還亮著，停在一則沒傳出去的訊息。\n「{S}，記得吃飯。」\n這一次，你回了。'],
+ firstday:['復活後的第一天','公審結束，被偷走的陽壽回來了。你在醫院醒來，休養了一個禮拜。\n第八天，你回到公司。主管拍拍你的肩：「歡迎回來！報表堆了一週喔。」\n凌晨三點，辦公室只剩你一個人。\n手機亮了一下。\n「{S}，你今天又加班喔？」\n……你看著螢幕，想起一個很吵的審判殿，忽然笑了出來。'],
+ lord:['第五殿主','公審之後，閻羅王回到了第一殿。他把第五殿交給了你。\n「生死簿要重新抄一遍。系統拆掉，名單用手寫。」崔判官把一疊空白的冊子放在你桌上。\n孟婆的奶茶恢復原價。牛頭還是在摸魚。馬面申請調來第五殿。\n你沒有回到陽間。但每晚 23:00，第五殿的燈會準時亮起。\n有人得留下來值夜班。'],
+ iron:['鐵面判官','你通過了試用期。考核：S。\n陸主任親手把轉正證書交給你，笑容和第一天一模一樣。\n第二天晚上，候審大廳排滿了年輕人。你翻開生死簿，修改紀錄那一欄寫著：「系統」。\n你蓋章，判投胎。下一位。蓋章，判投胎。下一位。\n你判得很快，KPI 很漂亮。\n你再也沒有夢見過任何人。'],
+ iron2:['鐵面判官','陸主任被判入油鍋獄，第五殿換了新的主管。\n但轉輪王還坐在第十殿。新的系統下個月上線，叫「智慧判決建議 2.0」。\n你通過了試用期，考核：A。\n你贏了一半。你知道那一半，總有一天會回來找你。'],
+ partner:['合夥人','你在公審上呈上了偽證。崔判官被判「回收」，他被帶走的時候，沒有看你。\n轉輪王為你辦了一場慶功宴。江萬壽舉杯：「年輕人，前途無量。」\n小晴活得好好的。她不知道她的命，是用多少人的命換來的。\n你的陽壽被改回了 78 歲。多出來的那些，是從誰身上來的，你沒有問。'],
+ hell:['打入地獄','法庭信用歸零。陸主任慢慢地站起來，整了整領帶。\n「誣告上級、偽造證據、擅自託夢、私放亡魂。」\n判決很快，比你判過的任何一件都快。\n你被押往一座你親手判過別人的地獄。經過候審大廳時，你看見長椅上那些暫押的人，一個一個低下了頭。'],
+ cat:['下輩子當貓','公審那天，你走到一半，停了下來。\n「我不想管了。」\n牛頭在門口等你，嘴裡叼著一根草：「早說嘛。我也不想管了。」\n下一世，忘川邊多了兩隻貓。一隻黑的，一隻頭上有兩個小角。\n牠們每天曬太陽，誰也不知道，牠們上輩子都在地府加過班。'],
+ burnout:['二次過勞',ENDINGS.burnout[1]],grudge:['冤魂索命',ENDINGS.grudge[1]],bribe:['監守自盜',ENDINGS.bribe[1]],recycle:['回收',ENDINGS.recycle[1]]
+});
+const END_IMG={night:'end_night',firstday:'end_firstday',lord:'end_lord',iron:'end_iron',iron2:'end_iron',partner:'end_partner',hell:'end_hell',burnout:'end_burnout',cat:'end_cat',recycle:'end_recycle',grudge:'end_hell',bribe:'end_hell'};
+const GOOD_END=['night','firstday','lord','iron','iron2','partner','cat'];
+
+/* ================= 第四幕系統 ================= */
+function heldSouls(){return Object.entries(S.dex||{}).filter(([id,d])=>d.v==='hold'&&CMAP[id]&&CMAP[id].anom&&!id.startsWith('H8')).map(([id])=>id);}
+function isQingAlive(){return (['safe','rescued'].includes(S.flags.qingFate)||S.flags.qingBack)&&!S.flags.qingTaken;}
+function sisterAct4(){const f=S.flags;const L=[['@bg','bg_qroom']];
+ if(f.route==='partner'){L.push(['陸','（傳訊）提醒你一下：你妹妹的名字，隨時可以再加回去。'],['旁','你把手機蓋上。小晴今天傳了一張海邊的照片給你，你沒有點開。']);}
+ else if((f.qingBack||f.qingHunted)&&!['deadAlive','deadGone'].includes(f.qingFate)||f.qingBack){
+  if(hasAlly('bh')||hasAlly('niu')){L.push(['旁','凌晨，紅筆名單上又出現了小晴的名字。'],hasAlly('bh')?['白','這條路，我們今晚也走不到。']:['牛','我在她家門口坐了一整晚。拘魂的看見我，以為走錯殿了。'],['旁','小晴平安度過了這一夜。']);}
+  else{f.qingTaken=1;f.qingWitness=1;L.push(['旁','凌晨，紅筆名單上又出現了小晴的名字。'],['旁','這一次，沒有人替你擋。'],['妹','{S}……我又來了。這次，我想幫你。'],['旁','小晴被帶回了第五殿。她說，她要在公審上作證。']);}}
+ else if(isQingAlive()){L.push(['@bg','bg_dream'],['旁','你最後一次走進小晴的夢。她坐在海邊，膝上放著一本影印的帳本。'],['妹','{S}，我查到了。這是何美珍阿姨留下來的副本，寄到了你以前的信箱。'],['妹','我該怎麼做？']);}
+ else{const d=(S.dex.H8a||S.dex.H8c);if(d&&d.v==='hold'){f.qingWitness=1;L.push(['旁','小晴坐在暫押區的長椅上，和周文彬聊天。'],['妹','{S}，我聽說要公審了。我要作證。'],['妹','我想讓他們知道，我本來可以活到八十六歲。']);}
+  else L.push(['旁','你經過奈何橋，孟婆說，小晴已經喝過湯了。'],['孟','她走之前一直回頭。我跟她說，你會好好的。']);}
+ L.push(['@bg','bg_hall']);return L;}
+function choiceRoute(done){const deal=S.flags.deal;window.__cr=done;
+ const opt=(k,label,sub,cls)=>`<button class="btn ${cls||''}" onclick="pickRoute('${k}')">${label}<br><small class="muted">${sub}</small></button>`;
+ modal(`<h2>轉輪王的提議</h2><p>${deal?'「你在第 21 夜就已經是我們的人了。小晴的命，是你自己換的。」':'「加入我們，或是在第 30 夜的公審上，被公開處理。」'}</p><div class="row" style="flex-direction:column">`+
+  (deal?opt('partner','繼續合作','在公審上起訴崔判官・小晴安全')+opt('fight','毀約，正面對抗','懷疑 +20・小晴會再次被盯上','red')
+   :opt('fight','拒絕，正面對抗','第 30 夜公審陸主任','red')+opt('partner','加入','在公審上起訴崔判官・陰德 −30')+opt('silent','保持沉默','不站上任何一邊，只想好好當判官'))+`</div>`);}
+function pickRoute(k){S.flags.route=k;addClue('route_'+k);if(k==='fight'&&S.flags.deal){S.flags.deal=0;S.flags.qingHunted=1;S.sus=clamp((S.sus||0)+20,0,95);}
+ if(k==='partner'&&!S.flags.deal)S.karma-=30;closeModal();window.__cr();}
+function choiceReport(done){window.__rp=done;const ok=S.qing&&S.qing.trust>=45;
+ modal(`<h2>小晴</h2><p>${ok?'她相信你。只要你一句話，她就會把帳本交給記者。':'她還是半信半疑。你說什麼，她都怕是自己瘋了。'}</p><div class="row" style="flex-direction:column">
+ <button class="btn red" onclick="closeModal();${ok?"S.flags.qingReport=1;addClue('qreport');toast('小晴把帳本交給了記者','good');":"toast('「……對不起，我不敢。」');"}window.__rp()">請她把帳本交給記者</button>
+ <button class="btn ghost" onclick="closeModal();window.__rp()">叫她什麼都別做，好好活著</button></div>`);}
+function choiceForgive(done){window.__fg=done;modal(`<h2>馬面</h2><p>他把陸主任的修改日誌遞到你面前，手還在抖。</p><div class="row" style="flex-direction:column">
+ <button class="btn red" onclick="S.flags.malog=1;addClue('malog');closeModal();window.__fg()">收下（原諒他）</button><button class="btn ghost" onclick="closeModal();window.__fg()">不收</button></div>`);}
+/* 公審 */
+let TR=null;
+function trialCards(){const c=[];CHAIN.forEach((x,i)=>{if(x[2]())c.push('L'+(i+1));});
+ if(S.flags.origCard||hasAlly('cui'))c.push('orig');if((S.evid||[]).length>=3)c.push('arch');if(heldSouls().length)c.push('wit');
+ if(S.flags.qingReport)c.push('qrep');if(S.flags.malog)c.push('malog');if(S.clues.includes('recycle'))c.push('recyc');if(S.flags.jiangHeld)c.push('jiang');if(S.flags.qingWitness)c.push('qingw');return c;}
+function cardLabel(k){if(k==='arch')return `${CARDNAME.arch}（${(S.evid||[]).length} 件）`;if(k==='wit')return `${CARDNAME.wit}（${heldSouls().length} 人）`;return CARDNAME[k];}
+function startTrial(cred){const kp=S.stats.kpi.length?S.stats.kpi.reduce((a,b)=>a+b,0)/S.stats.kpi.length:60;
+ TR={i:0,cred:cred||clamp(Math.round(50+Math.min(20,S.karma/10)+(kp>=80?10:0)+((S.ally||[]).length+(S.flags.appeal?1:0))*5),40,95),claims:TRIAL.filter(c=>c.ph<3||S.flags.appeal),ok:0,fail:0,cards:trialCards()};
+ hideHud();setFoot('');setBg('bg_court');trialRender();}
+function trialRender(){const c=TR.claims[TR.i];const ph=c.ph;const pf=PIMG[c.who];
+ $('#main').innerHTML=`<div class="trial"><div class="tr-h"><b class="serif">公審・第 ${'一二三'[ph-1]} 階段</b><span class="muted">${ph===3?'被告：第十殿殿主':'被告：陸主任'}　｜　第 ${TR.i+1}／${TR.claims.length} 項</span></div>
+ ${bar('法庭信用',TR.cred,'#c9a45c')}
+ <div class="tr-claim"><img class="px" src="img/${pf}.png" alt=""><div><div class="nm serif">${SP[c.who][0]}</div><div class="serif">「${T(c.t)}」</div></div></div>
+ <div class="muted" style="margin:10px 0 6px">出示證據</div><div class="tr-cards">${TR.cards.length?TR.cards.map(k=>`<button class="night-opt" onclick="trialPick('${k}')"><b>${cardLabel(k)}</b></button>`).join(''):'<div class="muted">你手上沒有任何證據。</div>'}</div>
+ <div class="row"><button class="btn ghost" onclick="trialPick(null)">沒有證據可以反駁</button>${TR.i===0&&(S.flags.niuNights||0)>=5?`<button class="btn ghost" onclick="ending('cat')">……我不想管了</button>`:''}</div></div>`;$('#main').scrollTop=0;}
+function trialPick(k){const c=TR.claims[TR.i];const strong=c.strong.includes(k)||(k==='arch'&&c.strong.includes('arch5')&&(S.evid||[]).length>=5);const weak=c.weak.includes(k);
+ if(k&&!strong&&!weak){TR.cred-=20;sfx('miss');fxShake();toast('「這和本案無關。」法庭信用 −20');if(TR.cred<=0)return ending('hell');return trialRender();}
+ if(!k){TR.cred-=25;TR.fail++;sfx('miss');toast('你沒能反駁。法庭信用 −25');}
+ else if(strong){TR.cred=Math.min(100,TR.cred+5);TR.ok++;sfx('stamp');fxHit();toast('有力的反駁！','good');}
+ else{TR.cred-=5;TR.ok++;sfx('hit');toast('勉強反駁。法庭信用 −5');}
+ if(TR.cred<=0)return ending('hell');
+ const next=TR.claims[TR.i+1];TR.i++;
+ if(!next||next.ph!==c.ph){if(c.ph===2){const won=TR.ok>=4;if(!won)return ending('hell');
+   if(!S.flags.appeal)return playScene([['陸3','……不可能。'],['旁','陸主任被押下了被告席。但轉輪王坐在第十殿的最高處，從頭到尾，沒有說過一句話。']],()=>ending('iron2'));
+   return playScene([['陸3','……我只是照上面的意思做事！'],['旁','陸主任被押下了被告席。閻羅王站了起來。'],['閻','第一殿、第五殿聯名，越殿上訴。被告——第十殿殿主。'],['轉2','……三百年了。你還是一樣固執。']],()=>trialRender());}
+  if(c.ph===3){const full=TR.claims.filter(x=>x.ph===3).length&&TR.fail===0||TR.ok>=TR.claims.length-1;
+   if(!full)return playScene([['轉2','證據不足。'],['旁','轉輪王全身而退。陸主任成了唯一被定罪的人。']],()=>ending('iron2'));
+   return playScene([['轉2','……我只是想讓有用的人，活得久一點。'],['閻','有沒有用，輪不到你決定。'],['@bg','bg_dawn'],['旁','轉輪停了下來。214 份被偷走的陽壽，一份一份回到了原本的地方。'],['旁','奈何橋那頭，天亮了。']],()=>finalChoice());}
+  if(c.ph===1)return playScene([['陸3','……那些都只是巧合。'],['旁','陸主任的笑容開始僵硬。']],()=>trialRender());}
+ trialRender();}
+function finalChoice(){const alive=isQingAlive();
+ modal(`<h2>試用期的最後一天</h2><p>你的陽壽回來了。閻羅王說：「你可以回去了。或者……留下來。」</p>${alive?'':'<p class="muted">小晴已經不在陽間了。</p>'}<div class="row" style="flex-direction:column">
+ ${alive?`<button class="btn red" onclick="closeModal();ending('night')">辭職，回到小晴身邊</button>`:''}
+ <button class="btn" onclick="closeModal();ending('firstday')">回陽間，回去上班</button><button class="btn" onclick="closeModal();ending('lord')">留在地府，修好這個系統</button></div>`);}
+function partnerTrial(){hideHud();setFoot('');setBg('bg_court');const steps=[
+ ['陸','第一份證據：生死簿修改紀錄，經手人「崔」。'],['崔','……'],['陸','第二位證人：本人。我親眼看見崔判官深夜進出檔案室。'],['旁','崔判官看著你。他沒有辯解，只是在等。']];
+ playScene(steps,()=>modal(`<h2>最後一份證據</h2><p>陸主任把最後一份偽造的文件交到你手上。只要呈上去，崔判官就會被回收。</p><div class="row" style="flex-direction:column">
+ <button class="btn" onclick="closeModal();ending('partner')">呈上偽證</button><button class="btn red" onclick="closeModal();S.flags.route='fight';playScene([['我','……這份文件，是偽造的。'],['陸2','你說什麼？'],['我','我要控告陸主任，竄改生死簿、偽造證據。'],['閻','本殿准了。']],()=>startTrial(45))">倒戈：揭發這是偽證</button></div>`));}
+function act30(){const r=S.flags.route;if(r==='silent')return ending('iron');if(r==='partner')return partnerTrial();startTrial();}
+/* 分享卡 */
+const GAME_URL='';
+function shareCard(k){const [t]=ENDINGS[k];const cv=document.createElement('canvas');cv.width=1080;cv.height=1350;const x=cv.getContext('2d');
+ x.fillStyle='#0d0808';x.fillRect(0,0,1080,1350);x.strokeStyle='#5a2a22';x.lineWidth=8;x.strokeRect(24,24,1032,1302);
+ const img=new Image();img.onload=()=>{x.imageSmoothingEnabled=false;x.drawImage(img,90,190,900,900);draw();};img.onerror=draw;img.src='img/'+(END_IMG[k]||'title')+'.png';
+ function draw(){x.fillStyle='#c9a45c';x.font='bold 40px "Noto Serif TC",serif';x.textAlign='center';x.fillText('《閻羅殿夜班》',540,100);
+  x.fillStyle='#e0574c';x.font='900 64px "Noto Serif TC",serif';x.fillText('〈'+t+'〉',540,165);
+  const acc=S&&S.stats.judged?Math.round(S.stats.correct/S.stats.judged*100):0;x.fillStyle='#e9e1d6';x.font='34px "Noto Serif TC",serif';
+  x.fillText(`判官 ${S?S.name:''}　｜　第 ${S?S.day:0} 夜　｜　判案 ${S?S.stats.judged:0} 件　｜　正確率 ${acc}%`,540,1160);
+  x.fillStyle='#9c8f84';x.font='28px "Noto Serif TC",serif';x.fillText(`證據鏈 ${typeof chainCount==='function'&&S&&S.day>=15?chainCount():0}／5　｜　小晴：${S&&S.flags.qingFate?(isQingAlive()?'活著':'不在了'):'—'}`,540,1215);
+  x.fillStyle='#c9a45c';x.font='30px "Noto Serif TC",serif';x.fillText(GAME_URL||'每一個亡魂，都在等你蓋下那一章。',540,1290);
+  try{const url=cv.toDataURL('image/png');modal(`<h2>結局分享卡</h2><img src="${url}" style="width:100%;border-radius:6px"><div class="row"><a class="btn red" href="${url}" download="閻羅殿夜班_${t}.png">下載圖片</a><button class="btn ghost" onclick="closeModal()">關閉</button></div>`);}
+  catch(e){toast('本機開檔無法產生圖片，請用網頁版（GitHub Pages）開啟。');}}}
+
 CASES.forEach(c=>CMAP[c.id]=c);
-(function preload(){const L=['title','bg_hall','bg_tea','bg_dorm','bg_archive','bg_night','bg_mansion','bg_lu','bg_clinic','bg_dream','bg_tenth','bg_qroom','p_m','p_f','s_grudge','s_ghost',...Object.values(PIMG),...CASES.map(c=>'s_'+c.id),...['mirror','soup','file','judge','coin','karma','clock','stress','grudge'].map(n=>'i_'+n)];L.forEach(n=>{const i=new Image();i.src='img/'+n+'.png';});})();
+(function preload(){const L=['bg_court','bg_wheel','bg_office','bg_dawn',...Object.values(END_IMG),'title','bg_hall','bg_tea','bg_dorm','bg_archive','bg_night','bg_mansion','bg_lu','bg_clinic','bg_dream','bg_tenth','bg_qroom','p_m','p_f','s_grudge','s_ghost',...Object.values(PIMG),...CASES.map(c=>'s_'+c.id),...['mirror','soup','file','judge','coin','karma','clock','stress','grudge'].map(n=>'i_'+n)];L.forEach(n=>{const i=new Image();i.src='img/'+n+'.png';});})();
 applyCfg();
 titleScreen();
 </script>
